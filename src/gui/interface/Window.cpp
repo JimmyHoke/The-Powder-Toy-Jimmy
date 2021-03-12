@@ -271,7 +271,6 @@ void Window::DoTick(float dt)
 	{
 		ui::Engine::Ref().StopTextInput();
 	}
-
 	//on mouse hover
 	for (int i = Components.size() - 1; i >= 0 && !halt; --i)
 	{
