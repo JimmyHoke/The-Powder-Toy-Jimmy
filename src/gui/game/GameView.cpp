@@ -2121,12 +2121,12 @@ void GameView::OnDraw()
 		g->fillrect(XRES-20-textWidth, 12, textWidth+8, 15, 0, 0, 0, 127);
 		g->drawtext(XRES-16-textWidth, 16, sampleInfo, 255, 50, 20, 255);
 	}
-	else if(showHud)
+	else if (showHud)
 	{
 		//Draw info about simulation under cursor
 		int wavelengthGfx = 0, alpha = 255;
 		if (toolTipPosition.Y < 120)
-			alpha = 255-toolTipPresence*3;
+			alpha = 255 - toolTipPresence * 3;
 		if (alpha < 50)
 			alpha = 50;
 		StringBuilder sampleInfo;
@@ -2138,7 +2138,7 @@ void GameView::OnDraw()
 			int ctype = sample.particle.ctype;
 
 			if (type == PT_PHOT || type == PT_BIZR || type == PT_BIZRG || type == PT_BIZRS || type == PT_FILT || type == PT_BRAY || type == PT_C5)
-				wavelengthGfx = (ctype&0x3FFFFFFF);
+				wavelengthGfx = (ctype & 0x3FFFFFFF);
 
 			if (showDebug)
 			{
@@ -2164,8 +2164,8 @@ void GameView::OnDraw()
 				else if (type == PT_FILT)
 				{
 					sampleInfo << c->ElementResolve(type, ctype);
-					String filtModes[] = {"set colour", "AND", "OR", "subtract colour", "red shift", "blue shift", "no effect", "XOR", "NOT", "old QRTZ scattering", "variable red shift", "variable blue shift"};
-					if (sample.particle.tmp>=0 && sample.particle.tmp<=11)
+					String filtModes[] = { "set colour", "AND", "OR", "subtract colour", "red shift", "blue shift", "no effect", "XOR", "NOT", "old QRTZ scattering", "variable red shift", "variable blue shift" };
+					if (sample.particle.tmp >= 0 && sample.particle.tmp <= 11)
 						sampleInfo << " (" << filtModes[sample.particle.tmp] << ")";
 					else
 						sampleInfo << " (unknown mode)";
@@ -2231,41 +2231,42 @@ void GameView::OnDraw()
 		}
 
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(XRES-20-textWidth, 12, textWidth+8, 15, 0, 0, 0, int(alpha*0.5f));
-		g->drawtext(XRES-16-textWidth, 16, sampleInfo.Build(), 255, 255, 255, int(alpha*0.75f));
+		g->fillrect(XRES - 20 - textWidth, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
+		g->drawtext(XRES - 16 - textWidth, 16, sampleInfo.Build(), 0, 250, 0, alpha*0.95f);
+
 
 #ifndef OGLI
 		if (wavelengthGfx)
 		{
-			int i, cr, cg, cb, j, h = 3, x = XRES-19-textWidth, y = 10;
+			int i, cr, cg, cb, j, h = 3, x = XRES - 19 - textWidth, y = 10;
 			int tmp;
 			g->fillrect(x, y, 30, h, 64, 64, 64, alpha); // coords -1 size +1 to work around bug in fillrect - TODO: fix fillrect
 			for (i = 0; i < 30; i++)
 			{
-				if ((wavelengthGfx >> i)&1)
+				if ((wavelengthGfx >> i) & 1)
 				{
 					// Need a spread of wavelengths to get a smooth spectrum, 5 bits seems to work reasonably well
-					if (i>2) tmp = 0x1F << (i-2);
-					else tmp = 0x1F >> (2-i);
+					if (i > 2) tmp = 0x1F << (i - 2);
+					else tmp = 0x1F >> (2 - i);
 
 					cg = 0;
 					cb = 0;
 					cr = 0;
 
-					for (j=0; j<12; j++)
+					for (j = 0; j < 12; j++)
 					{
-						cr += (tmp >> (j+18)) & 1;
+						cr += (tmp >> (j + 18)) & 1;
 						cb += (tmp >> j) & 1;
 					}
-					for (j=0; j<13; j++)
-						cg += (tmp >> (j+9)) & 1;
+					for (j = 0; j < 13; j++)
+						cg += (tmp >> (j + 9)) & 1;
 
-					tmp = 624/(cr+cg+cb+1);
+					tmp = 624 / (cr + cg + cb + 1);
 					cr *= tmp;
 					cg *= tmp;
 					cb *= tmp;
-					for (j=0; j<h; j++)
-						g->blendpixel(x+29-i, y+j, cr>255?255:cr, cg>255?255:cg, cb>255?255:cb, alpha);
+					for (j = 0; j < h; j++)
+						g->blendpixel(x + 29 - i, y + j, cr > 255 ? 255 : cr, cg > 255 ? 255 : cg, cb > 255 ? 255 : cb, alpha);
 				}
 			}
 		}
@@ -2276,9 +2277,25 @@ void GameView::OnDraw()
 			StringBuilder sampleInfo;
 			sampleInfo << Format::Precision(2);
 
+			StringBuilder sampleInfo23;
+			sampleInfo23 << Format::Precision(1);
+
 			if (type)
+			{
+				sampleInfo << "(" << sample.particle.temp << " K" << " | ";
+				sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F)" << ", ";
 				sampleInfo << "#" << sample.ParticleID << ", ";
 
+				sampleInfo23 << "Pavg0/1: (" << sample.particle.pavg[0] << " | " << sample.particle.pavg[1] << ")";
+				sampleInfo23 << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
+				sampleInfo23 << Format::Dec();
+				sampleInfo23 << ", Vx: " << sample.particle.vx;
+				sampleInfo23 << ", Vy: " << sample.particle.vy;
+
+				int textWidth23 = Graphics::textwidth(sampleInfo23.Build());
+				g->fillrect(XRES - 20 - textWidth23, 41, textWidth23 + 8, 14, 0, 0, 0, alpha*0.5f);
+				g->drawtext(XRES - 16 - textWidth23, 45, sampleInfo23.Build(), 12, 150, 250, alpha*0.95f);
+			}
 			sampleInfo << "X:" << sample.PositionX << " Y:" << sample.PositionY;
 
 			if (sample.Gravity)
@@ -2288,11 +2305,10 @@ void GameView::OnDraw()
 				sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
 
 			textWidth = Graphics::textwidth(sampleInfo.Build());
-			g->fillrect(XRES-20-textWidth, 27, textWidth+8, 14, 0, 0, 0, int(alpha*0.5f));
-			g->drawtext(XRES-16-textWidth, 30, sampleInfo.Build(), 255, 255, 255, int(alpha*0.75f));
+			g->fillrect(XRES - 20 - textWidth, 27, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
+			g->drawtext(XRES - 16 - textWidth, 30, sampleInfo.Build(), 12, 250, 150, alpha*0.95f);
 		}
 	}
-
 	if(showHud && introText < 51)
 	{
 		//FPS and some version info
@@ -2316,36 +2332,52 @@ void GameView::OnDraw()
 			fpsInfo << " [FIND]";
 
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
-		int alpha = 255-introText*5;
-		g->fillrect(12, 12, textWidth+8, 15, 0, 0, 0, int(alpha*0.5));
-		g->drawtext(16, 16, fpsInfo.Build(), 32, 216, 255, int(alpha*0.75));
+		int alpha = 255 - introText * 5;
+		g->fillrect(12, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5);
+		g->drawtext(16, 16, fpsInfo.Build(), 0, 255, 0, alpha*0.95);
+		// Second line
+		StringBuilder fpsInfo2;
+
+		time_t rawtime;
+		struct tm * timeinfo;
+		char buffer[80];
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+		strftime(buffer, 80, showDebug ?
+			"%Y-%m-%d %I:%M:%S %p" :
+			"%I:%M %p", timeinfo);
+		fpsInfo2 << buffer << " ";
+
+		int textWidth2 = Graphics::textwidth(fpsInfo2.Build());
+		g->fillrect(12, 27, textWidth2 + 8, 15, 0, 0, 0, alpha * 0.5);
+		g->drawtext(16, 30, fpsInfo2.Build(), 12, 250, 150, alpha * 0.95);
 	}
 
 	//Tooltips
 	if(infoTipPresence)
 	{
 		int infoTipAlpha = (infoTipPresence>50?50:infoTipPresence)*5;
-		g->drawtext_outline((XRES-Graphics::textwidth(infoTip))/2, (YRES/2)-2, infoTip, 255, 255, 255, infoTipAlpha);
+		g->drawtext_outline((XRES-Graphics::textwidth(infoTip))/2, (YRES/2)-2, infoTip, 12, 250, 150, infoTipAlpha);
 	}
 
 	if(toolTipPresence && toolTipPosition.X!=-1 && toolTipPosition.Y!=-1 && toolTip.length())
 	{
-		if (toolTipPosition.Y == Size.Y-MENUSIZE-10)
-			g->drawtext_outline(toolTipPosition.X, toolTipPosition.Y, toolTip, 255, 255, 255, toolTipPresence>51?255:toolTipPresence*5);
+		if (toolTipPosition.Y == Size.Y - MENUSIZE - 10)
+			g->drawtext_outline(toolTipPosition.X, toolTipPosition.Y, toolTip, 12, 250, 150, toolTipPresence > 51 ? 255 : toolTipPresence * 5);
 		else
-			g->drawtext(toolTipPosition.X, toolTipPosition.Y, toolTip, 255, 255, 255, toolTipPresence>51?255:toolTipPresence*5);
+			g->drawtext(toolTipPosition.X, toolTipPosition.Y, toolTip, 12, 250, 150, toolTipPresence > 51 ? 255 : toolTipPresence * 5);
 	}
 
 	if(buttonTipShow > 0)
 	{
-		g->drawtext(16, Size.Y-MENUSIZE-24, buttonTip, 255, 255, 255, buttonTipShow>51?255:buttonTipShow*5);
+		g->drawtext(16, Size.Y-MENUSIZE-24, buttonTip, 12, 250, 150, buttonTipShow>51?255:buttonTipShow*5);
 	}
 
 	//Introduction text
 	if(introText && showHud)
 	{
-		g->fillrect(0, 0, WINDOWW, WINDOWH, 0, 0, 0, introText>51?102:introText*2);
-		g->drawtext(16, 20, introTextMessage, 255, 255, 255, introText>51?255:introText*5);
+		g->fillrect(0, 0, WINDOWW, WINDOWH / 2, 24, 24, 24, introText > 51 ? 102 : introText * 2);
+		g->drawtext(16, 20, introTextMessage, 255, 255, 255, introText > 51 ? 255 : introText * 5);
 	}
 
 	// Clear menu areas, to ensure particle graphics don't overlap

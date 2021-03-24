@@ -20,8 +20,8 @@ namespace ui
 		TextActive(0, 0, 0),
 		TextDisabled(100, 100, 100),
 
-		BorderHover(255, 255, 255),
-		BorderInactive(200, 200, 200),
+		BorderHover(50, 50, 255),
+		BorderInactive(35, 35, 35),
 		BorderActive(235, 235, 235),
 		BorderDisabled(100, 100, 100),
 
