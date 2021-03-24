@@ -1,14 +1,12 @@
 *nohup.out
 *.swp
 *.o
-*.exe
 *.user
 *.dll
 *.a
 *.la
 *~
 *.pref
-*.lua
 *.sh
 stdout.txt
 stderr.txt

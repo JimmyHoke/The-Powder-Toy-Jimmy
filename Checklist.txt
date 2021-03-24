@@ -2,13 +2,13 @@
 1)Icon and intro text ( just copy paste)
 
 2)Scripts:
-Copy eventcompat.lua
-Add crackerk.lua and files to solution
-Add luaopen in scripthelper and script interface.
+Copy script manager in eventcompat.lua
+Add crackerk.lua to src>lua>luascripts
+add same settings for crackerk.lua as eventcompat.lua in TPTscriptinterface. 
 
 4) TOOLS:
-Copy RSET.cpp and add to project.
-Add in toolnumbers.h
+Copy RSET.cpp into src>simulation>simtools
+Add ID in meson.build
 
 5) Dark theme:
 Copy appearence.cpp from gui>interface.
@@ -17,12 +17,10 @@ Copy appearence.cpp from gui>interface.
 gui>gamecontroller.cpp
 
 7) HUD:
-Gameview.cpp (copy fpsinfo)
-simulation.cpp
-optionsview.cpp
+Gameview.cpp (copy fpsinfo and other parts)
 
 8)votes:
-Searchview.cpp
+src>gui>search>Searchview.cpp
 
 9)Elements:               Files Modified:
 (FPTC, 191);             SPRK.cpp
