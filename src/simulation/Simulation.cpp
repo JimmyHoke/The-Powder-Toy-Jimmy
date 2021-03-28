@@ -3298,6 +3298,12 @@ void Simulation::GetGravityField(int x, int y, float particleGrav, float newtonG
 				pGravX -= pGravMult * (float)(x - XCNTR);
 				pGravY -= pGravMult * (float)(y - YCNTR);
 			}
+		case 3: //Inverted
+			pGravY = -particleGrav;
+			break;
+		case 4: //Accelerated.
+			pGravY += particleGrav * 10.0;
+			break;
 	}
 }
 
@@ -3515,6 +3521,14 @@ void Simulation::UpdateParticles(int start, int end)
 						pGravD = 0.01f - hypotf(float(x - XCNTR), float(y - YCNTR));
 						pGravX = elements[t].Gravity * ((float)(x - XCNTR) / pGravD);
 						pGravY = elements[t].Gravity * ((float)(y - YCNTR) / pGravD);
+						break;
+					case 3:
+						pGravX = 0.0f;
+						pGravY = -elements[t].Gravity;
+						break;
+					case 4:
+						pGravX = 0.0f;
+						pGravY = elements[t].Gravity * 10;
 						break;
 					}
 				}
@@ -4538,6 +4552,14 @@ killed:
 										pGravX = ptGrav * ((float)(nx - XCNTR) / pGravD);
 										pGravY = ptGrav * ((float)(ny - YCNTR) / pGravD);
 										break;
+									case 3:
+										pGravX = 0.0f;
+										pGravY = -ptGrav;
+										break;
+									case 4:
+										pGravX = 0.0f;
+										pGravY = ptGrav * 10;
+										break;
 								}
 								pGravX += gravx[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
 								pGravY += gravy[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
@@ -4609,6 +4631,14 @@ killed:
 											pGravD = 0.01f - hypotf(float(nx - XCNTR), float(ny - YCNTR));
 											pGravX = ptGrav * ((float)(nx - XCNTR) / pGravD);
 											pGravY = ptGrav * ((float)(ny - YCNTR) / pGravD);
+											break;
+										case 3:
+											pGravX = 0.0f;
+											pGravY = -ptGrav;
+											break;
+										case 4:
+											pGravX = 0.0f;
+											pGravY = ptGrav * 10;
 											break;
 									}
 									pGravX += gravx[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
