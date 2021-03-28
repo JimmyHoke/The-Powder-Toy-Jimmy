@@ -14,19 +14,5 @@ todo:
 Meson:
 check if script works for linux
 Gravity modes
+Add remaining code for elements.
 
-Help:
-for debug
-
-cd /d C:\Newmod 
-cd The-Powder-Toy 
-meson build-debug 
-cd build-debug 
-ninja
-
-for static
-cd /d C:\Newmod 
-cd The-Powder-Toy (ignore if error)
-meson -Dbuildtype=release -Dstatic=prebuilt -Db_vscrt=static_from_buildtype build-release-static
-cd build-release-static
-ninja

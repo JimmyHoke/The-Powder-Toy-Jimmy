@@ -41,7 +41,8 @@ extern int Element_LOLZ_RuleTable[9][9];
 extern int Element_LOLZ_lolz[XRES/9][YRES/9];
 extern int Element_LOVE_RuleTable[9][9];
 extern int Element_LOVE_love[XRES/9][YRES/9];
-
+extern int Element_WALL_RuleTable[9][9];
+extern int Element_WALL_wall[XRES / 9][YRES / 9];
 int Simulation::Load(GameSave * save, bool includePressure)
 {
 	return Load(save, includePressure, 0, 0);
@@ -2382,6 +2383,7 @@ void Simulation::init_can_move()
 		can_move[movingType][PT_FIGH] = 0;
 		//INVS behaviour varies with pressure
 		can_move[movingType][PT_INVIS] = 3;
+		can_move[movingType][PT_PINV] = 3;
 		//stop CNCT and ROCK from being displaced by other particles
 		can_move[movingType][PT_CNCT] = 0;
 		can_move[movingType][PT_ROCK] = 0;
@@ -2406,15 +2408,16 @@ void Simulation::init_can_move()
 	// TODO: replace with property
 	for (destinationType = 0; destinationType < PT_NUM; destinationType++)
 	{
-		if (destinationType == PT_GLAS || destinationType == PT_PHOT || destinationType == PT_FILT || destinationType == PT_INVIS
+		if (destinationType == PT_GLAS || destinationType == PT_PHOT || destinationType == PT_FILT || destinationType == PT_INVIS || destinationType == PT_PINV
 		 || destinationType == PT_CLNE || destinationType == PT_PCLN || destinationType == PT_BCLN || destinationType == PT_PBCN
 		 || destinationType == PT_WATR || destinationType == PT_DSTW || destinationType == PT_SLTW || destinationType == PT_GLOW
 		 || destinationType == PT_ISOZ || destinationType == PT_ISZS || destinationType == PT_QRTZ || destinationType == PT_PQRT
 		 || destinationType == PT_H2   || destinationType == PT_BGLA || destinationType == PT_C5)
 			can_move[PT_PHOT][destinationType] = 2;
-		if (destinationType != PT_DMND && destinationType != PT_INSL && destinationType != PT_VOID && destinationType != PT_PVOD && destinationType != PT_VIBR && destinationType != PT_BVBR && destinationType != PT_PRTI && destinationType != PT_PRTO)
+		if (destinationType != PT_DMND && destinationType != PT_INSL && destinationType != PT_VOID && destinationType != PT_PVOD && destinationType != PT_VIBR && destinationType != PT_BVBR && destinationType != PT_PRTI && destinationType != PT_PRTO && destinationType != PT_SUN)
 		{
 			can_move[PT_PROT][destinationType] = 2;
+			can_move[PT_UVRD][destinationType] = 2;
 			can_move[PT_GRVT][destinationType] = 2;
 		}
 	}
@@ -2427,6 +2430,7 @@ void Simulation::init_can_move()
 	can_move[PT_DEST][PT_PBCN] = 0;
 
 	can_move[PT_NEUT][PT_INVIS] = 2;
+	can_move[PT_NEUT][PT_PINV] = 2;
 	can_move[PT_ELEC][PT_LCRY] = 2;
 	can_move[PT_ELEC][PT_EXOT] = 2;
 	can_move[PT_ELEC][PT_GLOW] = 2;
@@ -2493,6 +2497,15 @@ int Simulation::eval_move(int pt, int nx, int ny, unsigned *rr)
 				pressureResistance = 4.0f;
 
 			if (pv[ny/CELL][nx/CELL] < -pressureResistance || pv[ny/CELL][nx/CELL] > pressureResistance)
+				result = 2;
+			else
+				result = 0;
+			break;
+		}
+		case PT_PINV:
+		{
+
+			if (parts[ID(r)].life == 10)
 				result = 2;
 			else
 				result = 0;
@@ -4699,7 +4712,7 @@ void Simulation::RecalcFreeParticles(bool do_life_dec)
 				{
 					// Particles are sometimes allowed to go inside INVS and FILT
 					// To make particles collide correctly when inside these elements, these elements must not overwrite an existing pmap entry from particles inside them
-					if (!pmap[y][x] || (t!=PT_INVIS && t!= PT_FILT))
+					if (!pmap[y][x] || (t!=PT_INVIS && t!= PT_FILT && t != PT_PINV))
 						pmap[y][x] = PMAP(i, t);
 					// (there are a few exceptions, including energy particles - currently no limit on stacking those)
 					if (t!=PT_THDR && t!=PT_EMBR && t!=PT_FIGH && t!=PT_PLSM)
@@ -5065,7 +5078,7 @@ void Simulation::BeforeSim()
 		}
 
 		// LOVE and LOLZ element handling
-		if (elementCount[PT_LOVE] > 0 || elementCount[PT_LOLZ] > 0)
+		if (elementCount[PT_LOVE] > 0 || elementCount[PT_LOLZ] > 0 || elementCount[PT_WALL] > 0)
 		{
 			int nx, nnx, ny, nny, r, rt;
 			for (ny=0; ny<YRES-4; ny++)
@@ -5086,6 +5099,10 @@ void Simulation::BeforeSim()
 					else if (parts[ID(r)].type==PT_LOLZ)
 					{
 						Element_LOLZ_lolz[nx/9][ny/9] = 1;
+					}
+					else if (parts[ID(r)].type == PT_WALL)
+					{
+						Element_WALL_wall[nx / 9][ny / 9] = 1;
 					}
 				}
 			}
@@ -5111,6 +5128,7 @@ void Simulation::BeforeSim()
 							}
 					}
 					Element_LOVE_love[nx/9][ny/9]=0;
+
 					if (Element_LOLZ_lolz[nx/9][ny/9]==1)
 					{
 						for ( nnx=0; nnx<9; nnx++)
@@ -5130,6 +5148,25 @@ void Simulation::BeforeSim()
 							}
 					}
 					Element_LOLZ_lolz[nx/9][ny/9]=0;
+
+					if (Element_WALL_wall[nx / 9][ny / 9] == 1)
+					{
+						for (nnx = 0; nnx < 9; nnx++)
+							for (nny = 0; nny < 9; nny++)
+							{
+								if (ny + nny > 0 && ny + nny < YRES&&nx + nnx >= 0 && nx + nnx < XRES)
+								{
+									rt = pmap[ny + nny][nx + nnx];
+									if (!rt&&Element_WALL_RuleTable[nny][nnx] == 1)
+										create_part(-1, nx + nnx, ny + nny, PT_WALL);
+									else if (!rt)
+										continue;
+									else if (parts[ID(rt)].type == PT_WALL && Element_WALL_RuleTable[nny][nnx] == 0)
+										kill_part(ID(rt));
+								}
+							}
+					}
+					Element_WALL_wall[nx / 9][ny / 9] = 0;
 				}
 			}
 		}
