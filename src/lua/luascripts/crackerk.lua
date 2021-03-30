@@ -2171,14 +2171,6 @@ TPTMP.chatHidden = true
 evt.register(evt.tick, step)
 evt.register(evt.mousedown, mouseDown)
 evt.register(evt.mouseup, mouseUp)
-evt.register(evt.mousemove, mouseMove)
-evt.register(evt.mousewheel, mouseWheel)
-evt.register(evt.keypress, keypress)
-evt.register(evt.keyrelease, keyrelease)
-evt.register(evt.textinput, textinput)
-evt.register(evt.blur, blur)
-
-
 --Cracker1000's custom script version 7.0
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
@@ -4803,3 +4795,10 @@ fonts['5x7']['"'] = {
         }
 }
 --fontstop
+evt.register(evt.mousemove, mouseMove)
+evt.register(evt.mousewheel, mouseWheel)
+evt.register(evt.keypress, keypress)
+evt.register(evt.keyrelease, keyrelease)
+evt.register(evt.textinput, textinput)
+evt.register(evt.blur, blur)
+
