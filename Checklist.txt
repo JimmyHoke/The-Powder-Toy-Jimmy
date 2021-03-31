@@ -69,8 +69,10 @@ c) git checkout -b <branch name here>
 d) Push commits> push to origin> Done. 
 
 Help:
-for debug
+for debug, just run debug compile.bat
 
+manual:
+Debug
 cd /d C:\Newmod 
 cd The-Powder-Toy 
 meson build-debug 
