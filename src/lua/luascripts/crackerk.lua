@@ -2171,7 +2171,14 @@ TPTMP.chatHidden = true
 evt.register(evt.tick, step)
 evt.register(evt.mousedown, mouseDown)
 evt.register(evt.mouseup, mouseUp)
---Cracker1000's custom script version 7.0
+evt.register(evt.mousemove, mouseMove)
+evt.register(evt.mousewheel, mouseWheel)
+evt.register(evt.keypress, keypress)
+evt.register(evt.keyrelease, keyrelease)
+evt.register(evt.textinput, textinput)
+evt.register(evt.blur, blur)
+
+--Cracker1000's custom script version 8.0
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -3030,9 +3037,9 @@ end)
 
 mp1:action(function(sender)
 MANAGER.savesetting("CRK","savergb",2)
-MANAGER.savesetting("CRK","ar",50)
-MANAGER.savesetting("CRK","ag",50)
-MANAGER.savesetting("CRK","ab",50)
+MANAGER.savesetting("CRK","ar",40)
+MANAGER.savesetting("CRK","ag",40)
+MANAGER.savesetting("CRK","ab",40)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
@@ -4795,10 +4802,3 @@ fonts['5x7']['"'] = {
         }
 }
 --fontstop
-evt.register(evt.mousemove, mouseMove)
-evt.register(evt.mousewheel, mouseWheel)
-evt.register(evt.keypress, keypress)
-evt.register(evt.keyrelease, keyrelease)
-evt.register(evt.textinput, textinput)
-evt.register(evt.blur, blur)
-
