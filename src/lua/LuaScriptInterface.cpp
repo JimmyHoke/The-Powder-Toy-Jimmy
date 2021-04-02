@@ -387,7 +387,6 @@ tpt.partsdata = nil");
 	{
 		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
 	}
-	
 }
 
 void LuaScriptInterface::Init()

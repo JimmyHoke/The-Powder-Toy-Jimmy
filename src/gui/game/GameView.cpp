@@ -2286,7 +2286,8 @@ void GameView::OnDraw()
 				sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F)" << ", ";
 				sampleInfo << "#" << sample.ParticleID << ", ";
 
-				sampleInfo23 << "Pavg0/1: (" << sample.particle.pavg[0] << " | " << sample.particle.pavg[1] << ")";
+				sampleInfo23 << "Pavg0: " << sample.particle.pavg[0];
+				sampleInfo23 << ", Pavg1: " << sample.particle.pavg[1];
 				sampleInfo23 << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
 				sampleInfo23 << Format::Dec();
 				sampleInfo23 << ", Vx: " << sample.particle.vx;
@@ -2294,7 +2295,7 @@ void GameView::OnDraw()
 
 				int textWidth23 = Graphics::textwidth(sampleInfo23.Build());
 				g->fillrect(XRES - 20 - textWidth23, 41, textWidth23 + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(XRES - 16 - textWidth23, 45, sampleInfo23.Build(), 12, 150, 250, alpha*0.95f);
+				g->drawtext(XRES - 16 - textWidth23, 45, sampleInfo23.Build(), 255, 255, 255, alpha*0.95f);
 			}
 			sampleInfo << "X:" << sample.PositionX << " Y:" << sample.PositionY;
 
@@ -2350,7 +2351,7 @@ void GameView::OnDraw()
 
 		int textWidth2 = Graphics::textwidth(fpsInfo2.Build());
 		g->fillrect(12, 27, textWidth2 + 8, 15, 0, 0, 0, alpha * 0.5);
-		g->drawtext(16, 30, fpsInfo2.Build(), 12, 250, 150, alpha * 0.95);
+		g->drawtext(16, 30, fpsInfo2.Build(), 255, 255, 255, alpha * 0.95);
 	}
 
 	//Tooltips

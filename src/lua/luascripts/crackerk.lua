@@ -2360,6 +2360,10 @@ end)
 
 function drawcirc()
 if MANAGER.getsetting("CRK", "savergb") == "2" then
+graphics.drawText(tpt.mousex-30 , tpt.mousey - 20 - tpt.brushy ,tpt.mousex,ar,ag,ab,250)
+graphics.drawText(tpt.mousex+15 , tpt.mousey - 20 - tpt.brushy ,tpt.mousey,ar,ag,ab,250)
+graphics.drawText(tpt.mousex-20 , tpt.mousey + 20 + tpt.brushy ,tpt.brushx,ar,ag,ab,250)
+graphics.drawText(tpt.mousex+12 , tpt.mousey + 20 + tpt.brushy ,tpt.brushy,ar,ag,ab,250)
 
 graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1,ar,ag,ab,250)
 graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1, ar,ag,ab,250)
@@ -2367,10 +2371,16 @@ graphics.fillRect(tpt.mousex,tpt.mousey-15 - tpt.brushy,1 ,10,ar,ag,ab,250)
 graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, ar,ag,ab,250)
 
 else
+graphics.drawText(tpt.mousex-30 , tpt.mousey - 20 - tpt.brushy ,tpt.mousex,colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex+15 , tpt.mousey - 20 - tpt.brushy ,tpt.mousey,colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex-20 , tpt.mousey + 20 + tpt.brushy ,tpt.brushx,colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex+12 , tpt.mousey + 20 + tpt.brushy ,tpt.brushy,colourRED,colourGRN,colourBLU,250)
+
 graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1,colourRED,colourGRN,colourBLU,250)
 graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1, colourRED,colourGRN,colourBLU,250)
 graphics.fillRect(tpt.mousex,tpt.mousey-15 - tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250)
 graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250) 
+
 end
 end
 
