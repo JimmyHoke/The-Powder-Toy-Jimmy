@@ -12,19 +12,19 @@ void Element::Element_CPPR()
 	MenuSection = SC_ELEC;
 	Enabled = 1;
 
-	Advection = 0.0f;
-	AirDrag = 0.00f * CFDS;
-	AirLoss = 0.90f;
-	Loss = 0.00f;
+	Advection = 0.7f;
+	AirDrag = 0.02f * CFDS;
+	AirLoss = 0.96f;
+	Loss = 0.80f;
 	Collision = 0.0f;
-	Gravity = 0.0f;
+	Gravity = 0.1f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
-	Falldown = 0;
+	Falldown = 1;
 
 	Flammable = 0;
 	Explosive = 0;
-	Meltable = 1;
+	Meltable = 2;
 	Hardness = 1;
 
 	Weight = 100;
@@ -32,7 +32,7 @@ void Element::Element_CPPR()
 	HeatConduct = 255;
 	Description = "Copper. Heat and electricity conductor. Turns into cooper oxide when exposed to WATR/ O2, losing its conductivity.";
 
-	Properties = TYPE_SOLID|PROP_CONDUCTS|PROP_LIFE_DEC | PROP_HOT_GLOW;
+	Properties = TYPE_PART|PROP_CONDUCTS|PROP_LIFE_DEC | PROP_HOT_GLOW;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
@@ -49,6 +49,11 @@ void Element::Element_CPPR()
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].tmp2 == 0)
+	{
+		parts[i].vy = 0;
+		parts[i].vx = 0;
+	}
 
 	for (int rx = -2; rx < 3; rx++)
 		for (int ry = -2; ry < 3; ry++)
@@ -73,26 +78,10 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_SPRK:
 				{
-					if (parts[i].tmp > 40)
-					{
-						if (RNG::Ref().chance(1, 500))
-							sim->part_change_type(i, x, y, PT_BRMT);
-					}
 					if (parts[ID(r)].ctype == PT_CPPR && parts[i].tmp > 40)
 					{
 						parts[ID(r)].life = 0;
-					}
-				}
-				break;
-				case PT_IRON:
-				{
-					if (parts[i].tmp > 30)
-					{
-						if (RNG::Ref().chance(1, 100))
-						parts[i].tmp--;
-
-						if (RNG::Ref().chance(1, 1000))
-							sim->part_change_type(ID(r), x, y, PT_BRMT);
+						parts[i].tmp2 = 1;
 					}
 				}
 				break;
