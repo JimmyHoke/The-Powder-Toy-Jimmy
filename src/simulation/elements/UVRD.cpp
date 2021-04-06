@@ -30,7 +30,7 @@ void Element::Element_UVRD()
 
 	Weight = -1;
 
-	DefaultProperties.temp = R_TEMP + 100.0f + 273.15f;
+	DefaultProperties.temp = 22.15f + 273.15f;
 	HeatConduct = 251;
 	Description = "UV rays emitted by SUN, reacts differently with different elements. Visible when passing through FILT ";
 

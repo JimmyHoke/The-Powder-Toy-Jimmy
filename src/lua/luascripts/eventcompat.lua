@@ -225,8 +225,9 @@ end
 tpt.unregister_keyevent = tpt.unregister_keypress
 
 
---Script server
+--Cracker64's Autorun Script Manager
 local jacobsmod = tpt.version.jacob1s_mod
+
 local icons = {
 	["delete1"] = "\xEE\x80\x85",
 	["delete2"] = "\xEE\x80\x86",
@@ -463,9 +464,7 @@ ui_box = {
 new = function(x,y,w,h,r,g,b)
 	local box=ui_base.new()
 	box.x=x box.y=y box.w=w box.h=h box.x2=x+w box.y2=y+h
-	box.r= 70
-                box.g=70
-                box.b= 70
+	box.r=r or 50 box.g=g or 50 box.b=b or 50
 	function box:setcolor(r,g,b) self.r=r self.g=g self.b=b end
 	function box:setbackground(r,g,b,a) self.br=r self.bg=g self.bb=b self.ba=a end
 	box.drawbox=true
@@ -613,7 +612,7 @@ new = function(x,y,w,h,f,text)
 	b.clicked=false
 	b.almostselected=false
 	b.invert=true
-	b:setbackground(50,250,50,155)
+	b:setbackground(127,127,127,125)
 	b:drawadd(function(self)
 		if self.invert and self.almostselected then
 			self.almostselected=false
@@ -1130,7 +1129,7 @@ local function keypress(key,nkey,modifier,event)
 	return false
 end
 --small button on right to bring up main menu
-local WHITE = {70,70,70,255}
+local WHITE = {255,255,255,255}
 local BLACK = {0,0,0,255}
 local ICON = math.random(2) --pick a random icon
 local lua_letters= {{{2,2,2,7},{2,7,4,7},{6,7,6,11},{6,11,8,11},{8,7,8,11},{10,11,12,11},{10,11,10,15},{11,13,11,13},{12,11,12,15},},
@@ -1141,7 +1140,7 @@ local function smallstep()
 	if not MANAGER.hidden then
 		step()
 		gfx.fillRect(sidebutton.x, sidebutton.y+1, sidebutton.w+1, sidebutton.h+1)
-		color=WHITE
+		color=BLACK
 	end
 	for i,dline in ipairs(lua_letters[ICON]) do
 		tpt.drawline(dline[1]+sidebutton.x,dline[2]+sidebutton.y,dline[3]+sidebutton.x,dline[4]+sidebutton.y,color[1],color[2],color[3])

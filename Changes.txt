@@ -9,13 +9,15 @@ Rewrite BEE element. (Info added to offline wiki.)
 Change random save algorithm to avoid errors.
 Hidden elements are now also loaded on startup (if turned on in the settings.)
 Fancy cursor is now fancy pointer (Better and useful.)
-Themes now also affect the tptmp icon.
+Themes now also affect the tptmp and script manager icon.
+UV now spaws at 22C.
+Simplify the wiki and add support for multiple pages.
 
 todo:
+Fix all the warnings while compiling.
 check if script works for linux
 Make COPR conduct instantly when super cooled
 Make SUN affect the gravity around itself
-make UV not so hot.
 Add CSTE (customisable explosive)
-Fix wiki page 03.
+
 Preview for texter?
