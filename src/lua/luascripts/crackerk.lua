@@ -3013,6 +3013,7 @@ tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 end
 
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
+
 tpt.drawrect(613,1,14,95,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,136,14,269,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(612,408,612,421,colourRED,colourGRN,colourBLU,al)

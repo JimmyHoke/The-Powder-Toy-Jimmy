@@ -12,12 +12,11 @@ Fancy cursor is now fancy pointer (Better and useful.)
 Themes now also affect the tptmp and script manager icon.
 UV now spaws at 22C.
 Simplify the wiki and add support for multiple pages.
+SUN affect the gravity around itself and now emits PLSM (Newtonian gravity must be on.)
 
 todo:
 Fix all the warnings while compiling.
 check if script works for linux
 Make COPR conduct instantly when super cooled
-Make SUN affect the gravity around itself
 Add CSTE (customisable explosive)
-
-Preview for texter?
+Add preview to texter.?

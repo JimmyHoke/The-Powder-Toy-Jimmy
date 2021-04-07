@@ -50,11 +50,22 @@ void Element::Element_SUN()
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	sim->gravmap[(y / CELL)*(XRES / CELL) + (x / CELL)] = 20;
 	int r, rx, ry, rt;
 	for (rx = -1; rx < 2; rx++)
 		for (ry = -1; ry < 2; ry++)
 			if (rx || ry)
 			{
+				if (RNG::Ref().chance(1, 200))
+				{
+					int t = sim->create_part(-1, x, y+1, PT_PLSM);
+					int s = sim->create_part(-1, x, y-2, PT_PLSM);
+					parts[s].temp = 24 + 273.15f;
+					parts[s].life = 60;
+					parts[t].temp = 24 + 273.15f;
+					parts[t].life = 90;
+				}
+
 				if (RNG::Ref().chance(1, 90))
 				{
 					int r = sim->create_part(-1, x + rx, y + ry, PT_UVRD);

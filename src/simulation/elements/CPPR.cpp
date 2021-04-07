@@ -55,6 +55,8 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vx = 0;
 	}
 
+	
+
 	for (int rx = -2; rx < 3; rx++)
 		for (int ry = -2; ry < 3; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
@@ -82,6 +84,11 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 						parts[ID(r)].life = 0;
 						parts[i].tmp2 = 1;
+					}
+
+					if (parts[i].temp <= 373.15f)
+					{
+						sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
 					}
 				}
 				break;
