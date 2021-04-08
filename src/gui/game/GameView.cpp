@@ -2286,9 +2286,9 @@ void GameView::OnDraw()
 
 			if (type)
 			{
-				sampleInfo << "(" << sample.particle.temp << " K" << " | ";
-				sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F)" << ", ";
-				sampleInfo << "#" << sample.ParticleID << ", ";
+				sampleInfo << "Temp2: " << sample.particle.temp << " K" << " / ";
+				sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F";
+				sampleInfo << ", #" << sample.ParticleID << ", ";
 
 				sampleInfo23 << "Pavg0: " << sample.particle.pavg[0];
 				sampleInfo23 << ", Pavg1: " << sample.particle.pavg[1];

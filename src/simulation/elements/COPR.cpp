@@ -3,9 +3,9 @@
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
 
-void Element::Element_CPPR()
+void Element::Element_COPR()
 {
-	Identifier = "DEFAULT_PT_CPPR";
+	Identifier = "DEFAULT_PT_COPR";
 	Name = "COPR";
 	Colour = PIXPACK(0xB87333);
 	MenuVisible = 1;
@@ -32,7 +32,7 @@ void Element::Element_CPPR()
 	HeatConduct = 255;
 	Description = "Copper. Heat and electricity conductor. Turns into cooper oxide when exposed to WATR/ O2, losing its conductivity.";
 
-	Properties = TYPE_PART|PROP_CONDUCTS|PROP_LIFE_DEC | PROP_HOT_GLOW;
+	Properties = TYPE_PART|PROP_CONDUCTS|PROP_LIFE_DEC| PROP_HOT_GLOW;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
@@ -54,8 +54,6 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy = 0;
 		parts[i].vx = 0;
 	}
-
-	
 
 	for (int rx = -2; rx < 3; rx++)
 		for (int ry = -2; ry < 3; ry++)
@@ -80,15 +78,10 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_SPRK:
 				{
-					if (parts[ID(r)].ctype == PT_CPPR && parts[i].tmp > 40)
+					if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 40)
 					{
 						parts[ID(r)].life = 0;
 						parts[i].tmp2 = 1;
-					}
-
-					if (parts[i].temp <= 373.15f)
-					{
-						sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
 					}
 				}
 				break;

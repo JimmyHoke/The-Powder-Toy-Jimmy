@@ -65,7 +65,6 @@ static int update(UPDATE_FUNC_ARGS)
 					parts[t].temp = 24 + 273.15f;
 					parts[t].life = 90;
 				}
-
 				if (RNG::Ref().chance(1, 90))
 				{
 					int r = sim->create_part(-1, x + rx, y + ry, PT_UVRD);
@@ -88,7 +87,6 @@ static int update(UPDATE_FUNC_ARGS)
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	{
-
 		*firer = 100.0;
 		*fireg = 8.0;
 		*firea = 50;

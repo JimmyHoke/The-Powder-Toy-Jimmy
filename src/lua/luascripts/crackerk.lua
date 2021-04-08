@@ -2220,6 +2220,7 @@ local wiki  =  Button:new(203,28,80,30,"Wiki", "Element wiki!")
 local bare = Button:new(203,60,80,30,"Hidden Elem.", "Toggle hidden elements.")
 local barye = Button:new(293,60,80,20,"Show", "Shows hidden elements")
 local barne = Button:new(293,80,80,20,"Hide", "Hides elements")
+local remlabe = Label:new(460, 284, 10, 15, "Showing hidden elements.")
 
 local mp = Button:new(203,92,80,30,"Theme", "Changes game's theme")
 local mp1 = Button:new(293,92,75,20,"Dark", "Change the theme to default")
@@ -2392,17 +2393,16 @@ end)
 
 fanon:action(function(sender)
 clearsb()
-event.unregister(event.tick,drawcirc)
+MANAGER.savesetting("CRK", "fancurs","1") 
 event.register(event.tick,drawcirc)
-
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
 end
-
 end)
 
 fanoff:action(function(sender)
+MANAGER.savesetting("CRK", "fancurs","0") 
 event.unregister(event.tick,drawcirc)
 clearsb()
 end)
@@ -2697,6 +2697,7 @@ tpt.el.mort.menu=1
 tpt.el.rfgl.menu=1
 tpt.el.vrss.menu=1
 tpt.el.vrsg.menu=1
+newmenu:addComponent(remlabe)
 end
 
 barye:action(function(sender)
@@ -2725,12 +2726,14 @@ tpt.el.mort.menu=0
 tpt.el.rfgl.menu=0
 tpt.el.vrss.menu=0
 tpt.el.vrsg.menu=0
+newmenu:removeComponent(remlabe)
 end
 
 barne:action(function(sender)
 clearsb()
 hideyes()
 MANAGER.savesetting("CRK", "hidestate", "0")
+
 end)
 
 wikipg = "1"
@@ -3256,6 +3259,9 @@ if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 end
 
+if MANAGER.getsetting("CRK", "fancurs") == "1" then
+event.register(event.tick,drawcirc)
+end
 end
 startupcheck()
 
@@ -3328,6 +3334,7 @@ end)
 
 reset:action(function(sender)
 clearsb()
+event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
 event.unregister(event.tick,cbrightness)
@@ -3336,11 +3343,13 @@ event.unregister(event.tick,autohidehud)
 event.register(event.tick,colourblender)
 event.register(event.tick,topbar)
 newmenu:removeComponent(remlabel)
+newmenu:removeComponent(remlabe)
 brlabel:text("Turned: off")
 brightSlider:value("200")
 MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
 MANAGER.savesetting("CRK","hidestate", "0")
+MANAGER.savesetting("CRK", "fancurs","0")
 tpt.hud(1)
 ui.closeWindow(newmenu) 
 hideyes()

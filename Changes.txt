@@ -7,7 +7,7 @@ Adjustments to dark and vanilla theme.
 Debug mode now shows info in 3 different lines thus making it easier to read.
 Rewrite BEE element. (Info added to offline wiki.)
 Change random save algorithm to avoid errors.
-Hidden elements are now also loaded on startup (if turned on in the settings.)
+Hidden elements are now saved as a setting.
 Fancy cursor is now fancy pointer (Better and useful.)
 Themes now also affect the tptmp and script manager icon.
 UV now spaws at 22C.

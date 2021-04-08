@@ -219,7 +219,7 @@ simulation_elem_ids = [
     ['PPTO', 217],
     ['SEED', 218],
     ['CSNS', 219],
-    ['CPPR', 220],
+    ['COPR', 220],
 ]
 
 simulation_elem_src = []
