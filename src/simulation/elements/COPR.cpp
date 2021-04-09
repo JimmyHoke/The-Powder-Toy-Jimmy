@@ -54,6 +54,8 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy = 0;
 		parts[i].vx = 0;
 	}
+	if (parts[i].pavg[1] > 0)
+		parts[i].pavg[1]--;
 
 	for (int rx = -2; rx < 3; rx++)
 		for (int ry = -2; ry < 3; ry++)
@@ -77,7 +79,9 @@ static int update(UPDATE_FUNC_ARGS)
 				}
 				break;
 				case PT_SPRK:
-				{
+			 {
+					sim->FloodINST(x + rx, y + ry);
+					parts[i].pavg[1] = 2;
 					if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 40)
 					{
 						parts[ID(r)].life = 0;
@@ -98,8 +102,12 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colr-= cpart->tmp;
 		*colb -= cpart->tmp;
 	}
-
-	else
-    *pixel_mode |= PMODE_FLARE;
+	if (cpart->pavg[1] > 0)
+	{
+		*firer = 250;
+		*fireg = 250;
+		*firea = 55;
+		*pixel_mode |= FIRE_ADD;
+	}
 	return 0;
 }

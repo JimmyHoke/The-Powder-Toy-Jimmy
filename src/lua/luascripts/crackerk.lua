@@ -2363,8 +2363,8 @@ function drawcirc()
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 graphics.drawText(tpt.mousex-30 , tpt.mousey - 20 - tpt.brushy ,tpt.mousex,ar,ag,ab,250)
 graphics.drawText(tpt.mousex+15 , tpt.mousey - 20 - tpt.brushy ,tpt.mousey,ar,ag,ab,250)
-graphics.drawText(tpt.mousex-20 , tpt.mousey + 20 + tpt.brushy ,tpt.brushx,ar,ag,ab,250)
-graphics.drawText(tpt.mousex+12 , tpt.mousey + 20 + tpt.brushy ,tpt.brushy,ar,ag,ab,250)
+graphics.drawText(tpt.mousex-27, tpt.mousey + 20 + tpt.brushy ,"L:"..tpt.brushx,ar,ag,ab,250)
+graphics.drawText(tpt.mousex+17 , tpt.mousey + 20 + tpt.brushy ,"H:"..tpt.brushy,ar,ag,ab,250)
 
 graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1,ar,ag,ab,250)
 graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1, ar,ag,ab,250)
@@ -2374,14 +2374,13 @@ graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, ar,ag,ab,250)
 else
 graphics.drawText(tpt.mousex-30 , tpt.mousey - 20 - tpt.brushy ,tpt.mousex,colourRED,colourGRN,colourBLU,250)
 graphics.drawText(tpt.mousex+15 , tpt.mousey - 20 - tpt.brushy ,tpt.mousey,colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex-20 , tpt.mousey + 20 + tpt.brushy ,tpt.brushx,colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex+12 , tpt.mousey + 20 + tpt.brushy ,tpt.brushy,colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex-27, tpt.mousey + 20 + tpt.brushy ,"L:"..tpt.brushx,colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex+17 , tpt.mousey + 20 + tpt.brushy ,"H:"..tpt.brushy,colourRED,colourGRN,colourBLU,250)
 
 graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1,colourRED,colourGRN,colourBLU,250)
 graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1, colourRED,colourGRN,colourBLU,250)
 graphics.fillRect(tpt.mousex,tpt.mousey-15 - tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250)
 graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250) 
-
 end
 end
 
@@ -2749,7 +2748,7 @@ local creditstxt = Label:new(6,-22, 598, 418,"\nWELCOME TO THE OFFLINE WIKI\n\n1
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  20) BEE: Eats PLNT. Secretes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH.\n  Gets aggresive if life gets below 30. Uses pressure waves to communicate. Can regulate temp. to certain extent.\n\n  21) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  22) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n\n  23) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  24) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.\n\n  25) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418,"\n\n 26) CPPR: Copper, excellent conductor. Oxidises when in contact with O2 or different types of WATR thus becoming less\n conductive. Oxidation can be prevented with GOLD. Conducts instantly when cooled below -200C.")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n  26) CPPR: Copper, excellent conductor. Oxidises when in contact with O2 or different types of WATR, becoming less conductive.\n  Conducts instantly when cooled below -200C.\n\n   More info to be added later..... \n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
