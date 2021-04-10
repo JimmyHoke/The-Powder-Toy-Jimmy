@@ -30,7 +30,7 @@ void Element::Element_COPR()
 	Weight = 100;
 
 	HeatConduct = 255;
-	Description = "Copper. Heat and electricity conductor. Turns into cooper oxide when exposed to WATR/ O2, losing its conductivity.";
+	Description = "Excellent conductor. Turns into oxide when exposed to WATR/ O2, losing conductivity. Shows superconductivity at low temp.";
 
 	Properties = TYPE_PART|PROP_CONDUCTS|PROP_LIFE_DEC| PROP_HOT_GLOW;
 
@@ -54,8 +54,26 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy = 0;
 		parts[i].vx = 0;
 	}
-	if (parts[i].pavg[1] > 0)
-		parts[i].pavg[1]--;
+	if (parts[i].temp <= 173.15f)
+	{
+		if (!parts[i].life)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				static const int checkCoordsX[] = { -8, 8, 0, 0 };
+				static const int checkCoordsY[] = { 0, 0, -8, 8 };
+				int rx = checkCoordsX[j];
+				int ry = checkCoordsY[j];
+				int r = pmap[y + ry][x + rx];
+				if (r && TYP(r) == PT_SPRK && parts[ID(r)].life && parts[ID(r)].life < 4)
+				{
+					sim->part_change_type(i, x, y, PT_SPRK);
+					parts[i].life = 4;
+					parts[i].ctype = PT_COPR;
+				}
+			}
+		}
+	}
 
 	for (int rx = -2; rx < 3; rx++)
 		for (int ry = -2; ry < 3; ry++)
@@ -80,16 +98,14 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_SPRK:
 			 {
-					sim->FloodINST(x + rx, y + ry);
-					parts[i].pavg[1] = 2;
-					if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 40)
-					{
-						parts[ID(r)].life = 0;
+					if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 20)
+						sim->part_change_type(ID(r), x , y, PT_COPR);
+
+				    if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 30)
 						parts[i].tmp2 = 1;
-					}
-				}
+			}
 				break;
-				}
+			}
 			}
 	return 0;
 }
@@ -102,11 +118,21 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colr-= cpart->tmp;
 		*colb -= cpart->tmp;
 	}
-	if (cpart->pavg[1] > 0)
+	if (cpart->life > 1)
 	{
-		*firer = 250;
-		*fireg = 250;
-		*firea = 55;
+		if (cpart->temp <= 173.15f)
+		{
+			*firer = 0;
+			*fireg = 0;
+			*fireb = 250;
+		}
+		else if (cpart->temp > 173.15f)
+		{
+			*firer = 250;
+			*fireg = 250;
+			*fireb = 0;
+		}
+		*firea = 50;
 		*pixel_mode |= FIRE_ADD;
 	}
 	return 0;
