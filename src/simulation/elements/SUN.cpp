@@ -29,7 +29,7 @@ void Element::Element_SUN()
 
 	Weight = 100;
 
-	DefaultProperties.temp = R_TEMP + 8000.0f + 273.15f;
+	DefaultProperties.temp = 8300.15f;
 	HeatConduct = 0;
 	Description = "SUN.";
 
@@ -50,7 +50,7 @@ void Element::Element_SUN()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	sim->gravmap[(y / CELL)*(XRES / CELL) + (x / CELL)] = 20;
+	sim->gravmap[(y / CELL)*(XRES / CELL) + (x / CELL)] += 0.3f;
 	int r, rx, ry, rt;
 	for (rx = -1; rx < 2; rx++)
 		for (ry = -1; ry < 2; ry++)
