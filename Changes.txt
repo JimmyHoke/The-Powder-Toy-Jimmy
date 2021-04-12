@@ -14,6 +14,7 @@ Themes now also affect the tptmp and script manager icon.
 UV now spaws at 22C.
 Simplify the wiki and add support for multiple pages.
 SUN affect the gravity around itself and now emits PLSM (Newtonian gravity must be on.)
+Add an option to toggle menu shortcut.
 
 todo:
 Fix all the warnings while compiling.
@@ -21,7 +22,7 @@ check if script works for linux
 Add CSTE (customisable explosive)
 Add preview to texter.?
 Add support for headings to texter.
-Add an option to disable mod menu shortcut.
+Fix typing J in tptmp
 Add Element creator mode.
 Add Z-HOLE wall.
 Add + to cursor.

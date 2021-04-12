@@ -2232,18 +2232,18 @@ local mp6 = Button:new(293,192,75,20,"Orange", "Change the theme to Orange")
 local mp7 = Button:new(293,212,75,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(293,232,75,20,"Pulse", "RBG makes everything better.")
 local mp9 = Button:new(293,252,75,20,"Custom", "Custom options.")
-local rl = Label:new(480, 92, 10, 15, "Red")
-local gl = Label:new(480, 112, 10, 15, "Green")
-local bl = Label:new(480, 132, 10, 15, "Blue")
-local rSlider = Slider:new(373, 92, 100, 15, 255)
-local gSlider = Slider:new(373, 112, 100, 15, 255)
-local bSlider = Slider:new(373, 132, 100, 15, 255)
+local rl = Label:new(480, 192, 10, 15, "Red")
+local gl = Label:new(480, 212, 10, 15, "Green")
+local bl = Label:new(480, 232, 10, 15, "Blue")
+local rSlider = Slider:new(373, 192, 100, 15, 255)
+local gSlider = Slider:new(373, 212, 100, 15, 255)
+local bSlider = Slider:new(373, 232, 100, 15, 255)
 
-local rlb = Label:new(510, 92, 10, 15)
-local glb = Label:new(510, 112, 10, 15)
-local blb = Label:new(510, 132, 10, 15)
+local rlb = Label:new(510, 192, 10, 15)
+local glb = Label:new(510, 212, 10, 15)
+local blb = Label:new(510, 232, 10, 15)
 
-local mpop = Button:new(373,152,75,20,"Done", "Custom options.")
+local mpop = Button:new(373,252,75,20,"Done", "Custom options.")
 
 local bg = Button:new(203,124,80,30,"Backgrounds", "Sets different backgrounds.")
 local bg1 = Button:new(293,124,75,20,"BLACK", "Default")
@@ -2276,6 +2276,8 @@ local fanoff  = Button:new(483,48,40,20,"Off", "Turnoff")
 
 local Help = Button:new(396,60,80,30, "Random save", "Shows various stats.")
 
+local shrt = Button:new(396,92,80,30, "Toggle J", "Turns off the J key shortcut")
+
 local hide= Button:new(528,278,80,20, "Close menu", "Hide.")
 
 function clearm()
@@ -2298,6 +2300,7 @@ newmenu:removeComponent(brightness)
 newmenu:removeComponent(reminder)
 newmenu:removeComponent(fancur)
 newmenu:removeComponent(Help)
+newmenu:removeComponent(shrt)
 end
 
 function clearsb()
@@ -2352,6 +2355,18 @@ newmenu:removeComponent(remoff)
 newmenu:removeComponent(fanon)
 newmenu:removeComponent(fanoff)
 end
+
+local shrtv = "1"
+
+shrt:action(function(sender)
+if shrtv == "1" then
+shrtv = "0"
+else
+shrtv = "1"
+end
+
+end)
+
 
 Help:action(function(sender)
 close()
@@ -3400,6 +3415,7 @@ newmenu:addComponent(brightness)
 newmenu:addComponent(reminder)
 newmenu:addComponent(fancur)
 newmenu:addComponent(Help)
+newmenu:addComponent(shrt)
 end
 
 hide:action(function(sender)
@@ -3407,7 +3423,7 @@ close()
 end)
 
 function keyclicky(key)
-if (key =="j") and TPTMP.chatHidden == true then 
+if (key =="j") and TPTMP.chatHidden == true and shrtv == "1" then
 open()
 end
 end
