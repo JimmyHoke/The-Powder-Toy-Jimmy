@@ -1,11 +1,12 @@
 Changelog for Version 20.0 <Major>
 
 Additions/changes:
+Enable uploading saves with CGoL elements.
 New elements: Copper (CPPR)
 Minor tweeks to interface, looks cleaner now.
 Adjustments to dark and vanilla theme.
 Debug mode now shows info in 3 different lines thus making it easier to read.
-Rewrite BEE element. (Info added to offline wiki.)
+Minor improvements to BEE.
 Change random save algorithm to avoid errors.
 Hidden elements are now saved as a setting.
 Fancy cursor is now fancy pointer (Better and useful.)
@@ -17,6 +18,10 @@ SUN affect the gravity around itself and now emits PLSM (Newtonian gravity must 
 todo:
 Fix all the warnings while compiling.
 check if script works for linux
-Make COPR conduct instantly when super cooled
 Add CSTE (customisable explosive)
 Add preview to texter.?
+Add support for headings to texter.
+Add an option to disable mod menu shortcut.
+Add Element creator mode.
+Add Z-HOLE wall.
+Add + to cursor.
