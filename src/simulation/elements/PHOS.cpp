@@ -83,6 +83,12 @@ static int update(UPDATE_FUNC_ARGS)
 					sim->create_part(i, x, y, PT_FIRE);
 				}
 				break;
+				case PT_PLNT:
+			    {
+					sim->part_change_type(ID(r), x + rx, y + ry, PT_VINE);
+					sim->kill_part(i);
+				}
+				break;
 				}
 			}
 	return 0;

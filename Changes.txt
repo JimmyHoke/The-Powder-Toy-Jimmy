@@ -1,28 +1,34 @@
 Changelog for Version 20.0 <Major>
 
 Additions/changes:
+Elements:
 Enable uploading saves with CGoL elements.
 New elements: Copper (CPPR)
-Minor tweeks to interface, looks cleaner now.
-Adjustments to dark and vanilla theme.
-Debug mode now shows info in 3 different lines thus making it easier to read.
-Minor improvements to BEE.
-Change random save algorithm to avoid errors.
-Hidden elements are now saved as a setting.
-Fancy cursor is now fancy pointer (Better and useful.)
-Themes now also affect the tptmp and script manager icon.
-UV now spaws at 22C.
-Simplify the wiki and add support for multiple pages.
 SUN affect the gravity around itself and now emits PLSM (Newtonian gravity must be on.)
-Add an option to toggle menu shortcut.
+Minor improvements to BEE.
+UV now spaws at 22C.
+PHOS now also acts as a fertiliser for PLNT. 
+Minor tweeks to interface, looks cleaner now.
+
+Interface:
+Debug mode now shows info in 3 different lines thus making it easier to read.
+Themes now also affect the tptmp and script manager icon.
+Adjustments to Dark and Vanilla themes.
+Fancy cursor is now fancy pointer (Better and useful.)
+
+Misc:
+Change random save algorithm to avoid http errors.
+Hidden elements are now saved as a setting.
+Simplify the wiki and add support for multiple pages.
+Add an option to toggle menu shortcut with J key (useful when working with other scripts that also require J key.)
+Add support for apostrophe to texter, also improve some of the fonts.
+
 
 todo:
 Fix all the warnings while compiling.
 check if script works for linux
-Add CSTE (customisable explosive)
 Add preview to texter.?
-Add support for headings to texter.
-Fix typing J in tptmp
+Fix typing texts in tptmp (Merge new script version.)
 Add Element creator mode.
 Add Z-HOLE wall.
-Add + to cursor.
+Add apostrophe to texter.

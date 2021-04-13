@@ -1,4 +1,6 @@
 --Cracker64's Powder Toy Multiplayer
+--I highly recommend to use my Autorun Script Manager
+
 local version = 8
 local versionstring = "1.0.2"
 
@@ -280,10 +282,9 @@ end
 }
 ui_box = {
 new = function(x,y,w,h,r,g,b)
-
 	local box=ui_base.new()
 	box.x=x box.y=y box.w=w box.h=h box.x2=x+w box.y2=y+h
-	box.r= r or 70 box.g=g or 70 box.b= b or 70
+	box.r=r or 50 box.g=g or 50 box.b=b or 50
 	function box:setcolor(r,g,b) self.r=r self.g=g self.b=b end
 	function box:setbackground(r,g,b,a) self.br=r self.bg=g self.bb=b self.ba=a end
 	box.drawbox=true
@@ -908,7 +909,7 @@ if using_manager then
 else
 	chatwindow = ui_chatbox.new(100, 100, 225, 150)
 end
-chatwindow:setbackground(10,10,10,150) chatwindow.drawbackground=true
+chatwindow:setbackground(10,10,10,235) chatwindow.drawbackground=true
 
 local eleNameTable = {
 ["DEFAULT_PT_LIFE_GOL"] = 256,["DEFAULT_PT_LIFE_HLIF"] = 257,["DEFAULT_PT_LIFE_ASIM"] = 258,["DEFAULT_PT_LIFE_2x2"] = 259,["DEFAULT_PT_LIFE_DANI"] = 260,
@@ -2274,9 +2275,11 @@ local fancur = Button:new(396,28,80,30, "Fancy pointer", "Draws graphics around 
 local fanon = Button:new(483,28,40,20,"On", "Turnon")
 local fanoff  = Button:new(483,48,40,20,"Off", "Turnoff")
 
-local Help = Button:new(396,60,80,30, "Random save", "Shows various stats.")
+local Help = Button:new(396,60,80,30, "Random save", "Opens random save.")
 
-local shrt = Button:new(396,92,80,30, "Toggle J", "Turns off the J key shortcut")
+local shrt = Button:new(396,92,80,30, "Toggle J Key", "Turns off the J key shortcut")
+local shrtlb = Label:new(485, 98, 10, 15, "ON")
+
 
 local hide= Button:new(528,278,80,20, "Close menu", "Hide.")
 
@@ -2357,16 +2360,16 @@ newmenu:removeComponent(fanoff)
 end
 
 local shrtv = "1"
-
 shrt:action(function(sender)
 if shrtv == "1" then
 shrtv = "0"
+shrtlb:text("OFF")
+
 else
 shrtv = "1"
+shrtlb:text("ON")
 end
-
 end)
-
 
 Help:action(function(sender)
 close()
@@ -2375,6 +2378,13 @@ sim.loadSave(randsav, 0)
 end)
 
 function drawcirc()
+if tpt.brushx > 1 or tpt.brushy > 1 then
+graphics.fillRect(tpt.mousex + 1 ,tpt.mousey,8 ,1,200,200,200,200)
+graphics.fillRect(tpt.mousex -8,tpt.mousey,8,1, 200,200,200,200)
+graphics.fillRect(tpt.mousex,tpt.mousey-8,1 ,8,200,200,200,200)
+graphics.fillRect(tpt.mousex,tpt.mousey,1 ,8, 200,200,200,200)
+end
+
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 graphics.drawText(tpt.mousex-30 , tpt.mousey - 20 - tpt.brushy ,tpt.mousex,ar,ag,ab,250)
 graphics.drawText(tpt.mousex+15 , tpt.mousey - 20 - tpt.brushy ,tpt.mousey,ar,ag,ab,250)
@@ -3416,6 +3426,7 @@ newmenu:addComponent(reminder)
 newmenu:addComponent(fancur)
 newmenu:addComponent(Help)
 newmenu:addComponent(shrt)
+newmenu:addComponent(shrtlb)
 end
 
 hide:action(function(sender)
@@ -4429,37 +4440,37 @@ fonts['5x7']['/'] = {
 }
 
 fonts['5x7']['NULL'] = {
-        ['descender'] = -2,
+        ['descender'] = 0,
         ['kerning'] = 0,
         ['pixels']  = {
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 1}
+                {0, 0, 1, 0, 0},
+                {0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0}
         }
 }
-
 
 fonts['5x7']['A'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
         ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 1, 0},
-                {0, 1, 0, 1, 0},
                 {0, 1, 1, 1, 0},
                 {1, 0, 0, 0, 1},
                 {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
+                {1, 1, 1, 1, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1},
+                {1, 0, 0, 0, 1}
         }
 }
+
 fonts['5x7']['B'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
