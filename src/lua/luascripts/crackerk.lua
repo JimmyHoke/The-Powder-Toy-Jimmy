@@ -2179,20 +2179,18 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
---Cracker1000's custom script version 8.0
+--Cracker1000's custom script version 9.0
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
 local deletesparkButton =  Button:new(10,28,75,30,"Interface", "shows UI related stuff.")
+local dellb = Label:new(101, 34, 10, 15, "Shown")
 
-local UIhidey = Button:new(90,28,80,20,"Hide", "Hides the UI")
-local UIhiden = Button:new(90,48,80,20,"Show", "Shows the UI")
 
 local FPS = Button:new(10,60,75,30, "Frame limiter", "Turns the frame limiter on/off.")
-local FPS1 = Button:new(90,60,80,20, "On", "Turns the frame limiter on.")
-local FPS2 = Button:new(90,80,80,20, "Off", "Turns the frame limiter off.")
+local fplb = Label:new(94, 68, 10, 15, "ON")
 
 local reset= Button:new(10,92,75,30,"Reset", "Reset everything.")
 
@@ -2201,16 +2199,14 @@ local info1= Button:new(90,124,80,20,"Separate", "Removes top most particle from
 local info2= Button:new(90,144,80,20,"Delete", "Leaves top particle and PHOT but remove everything else.")
 
 local Ruler = Button:new(10,156,75,30, "Ruler", "Toggles in game ruler.")
-local Ry = Button:new(90,156,80,20,"Hide", "Hides the Ruler")
-local Rn = Button:new(90,176,80,20,"Show", "Shows the Ruler. (Press SHIFT)")
+local rulb = Label:new(94, 162, 10, 15, "OFF")
 
 local rc = Button:new(10,188,75,30,"Record", "Options for recording frames")
 local rc1 = Button:new(90,188,80,20,"Start", "Starts recording")
 local rc2 = Button:new(90,206,80,20,"Stop","Stops recording")
 
 local bar = Button:new(10,220,75,30,"Top bar", "Toggle top bar")
-local bary = Button:new(90,220,80,20,"Show", "Shows the bar at top")
-local barn = Button:new(90,240,80,20,"Hide", "Hides the bar")
+local barlb = Label:new(94, 228, 10, 15, "ON")
 
 local bug = Button:new(10,252,75,30,"Feedback", "Direct to Mod thread for bug report.")
 local bug1 = Button:new(90,252,50,30,"Website", "Direct to Mod thread for bug report.")
@@ -2219,9 +2215,7 @@ local bug2 = Button:new(145,252,50,30,"In game", "Direct to Mod thread for bug r
 local wiki  =  Button:new(203,28,80,30,"Wiki", "Element wiki!")
 
 local bare = Button:new(203,60,80,30,"Hidden Elem.", "Toggle hidden elements.")
-local barye = Button:new(293,60,80,20,"Show", "Shows hidden elements")
-local barne = Button:new(293,80,80,20,"Hide", "Hides elements")
-local remlabe = Label:new(460, 284, 10, 15, "Showing hidden elements.")
+local remlabe = Label:new(294, 66, 10, 15, "OFF")
 
 local mp = Button:new(203,92,80,30,"Theme", "Changes game's theme")
 local mp1 = Button:new(293,92,75,20,"Dark", "Change the theme to default")
@@ -2254,8 +2248,7 @@ local bg4 = Button:new(293,186,75,20,"GREEN", "Green background")
 local bg5 = Button:new(293,206,75,20,"YELLOW", "Yellow background")
 
 local autohide= Button:new(203,156,80,30, "Auto Hide HUD", "Hide.")
-local autohidey= Button:new(293,156,75,20, "On", "Hide.")
-local autohiden= Button:new(293,176,75,20, "Off", "Hide.")
+local autolb = Label:new(294, 162, 10, 15, "OFF")
 
 local chud = Button:new(203,188,80,30, "Texter", "for text.")
 
@@ -2272,8 +2265,7 @@ local remoff  = Button:new(293,272,45,20,"Off", "Cancel.")
 local remlabel = Label:new(66, 284, 10, 15, "Reminder is on (30 mins.)")
 
 local fancur = Button:new(396,28,80,30, "Fancy pointer", "Draws graphics around cursor.")
-local fanon = Button:new(483,28,40,20,"On", "Turnon")
-local fanoff  = Button:new(483,48,40,20,"Off", "Turnoff")
+local fanlb = Label:new(487, 34, 10, 15, "OFF")
 
 local Help = Button:new(396,60,80,30, "Random save", "Opens random save.")
 
@@ -2307,10 +2299,6 @@ newmenu:removeComponent(shrt)
 end
 
 function clearsb()
-newmenu:removeComponent(UIhiden)
-newmenu:removeComponent(UIhidey)
-newmenu:removeComponent(Ry)
-newmenu:removeComponent(Rn)
 newmenu:removeComponent(rc1)
 newmenu:removeComponent(rc2)
 newmenu:removeComponent(bug1)
@@ -2320,8 +2308,6 @@ newmenu:removeComponent(bg2)
 newmenu:removeComponent(bg3)
 newmenu:removeComponent(bg4)
 newmenu:removeComponent(bg5)
-newmenu:removeComponent(FPS1)
-newmenu:removeComponent(FPS2)
 newmenu:removeComponent(mp1)
 newmenu:removeComponent(mp2)
 newmenu:removeComponent(mp3)
@@ -2331,14 +2317,8 @@ newmenu:removeComponent(mp6)
 newmenu:removeComponent(mp7)
 newmenu:removeComponent(mp8)
 newmenu:removeComponent(mp9)
-newmenu:removeComponent(bary)
-newmenu:removeComponent(barn)
-newmenu:removeComponent(barye)
-newmenu:removeComponent(barne)
 newmenu:removeComponent(info1)
 newmenu:removeComponent(info2)
-newmenu:removeComponent(autohidey)
-newmenu:removeComponent(autohiden)
 newmenu:removeComponent(rSlider)
 newmenu:removeComponent(gSlider)
 newmenu:removeComponent(bSlider)
@@ -2355,8 +2335,6 @@ newmenu:removeComponent(brlabel)
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(remon)
 newmenu:removeComponent(remoff)
-newmenu:removeComponent(fanon)
-newmenu:removeComponent(fanoff)
 end
 
 local shrtv = "1"
@@ -2409,26 +2387,26 @@ graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, colourRED,colourGR
 end
 end
 
+local fanval = "1"
 fancur:action(function(sender)
 clearsb()
-newmenu:addComponent(fanon)
-newmenu:addComponent(fanoff)
-end)
-
-fanon:action(function(sender)
-clearsb()
+if fanval == "1" then
 MANAGER.savesetting("CRK", "fancurs","1") 
 event.register(event.tick,drawcirc)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
 end
-end)
+fanlb:text("ON")
+fanval = "0"
 
-fanoff:action(function(sender)
+elseif fanval == "0" then
 MANAGER.savesetting("CRK", "fancurs","0") 
 event.unregister(event.tick,drawcirc)
-clearsb()
+fanval = "1"
+fanlb:text("OFF")
+end
+
 end)
 
 local startTime
@@ -2644,20 +2622,22 @@ function autohidehud()
 	end
 end
 
+local autoval = "1"
 autohide:action(function(sender)
 clearsb()
-newmenu:addComponent(autohidey)
-newmenu:addComponent(autohiden)
-end)
 
-autohidey:action(function(sender)
-event.register(event.tick,autohidehud)
-clearsb()
-end)
-
-autohiden:action(function(sender)
+if autoval == "1" then
 event.unregister(event.tick,autohidehud)
-clearsb()
+event.register(event.tick,autohidehud)
+autoval = "0"
+autolb:text("ON")
+
+elseif autoval == "0" then
+event.unregister(event.tick,autohidehud)
+autoval = "1"
+
+autolb:text("OFF")
+end
 end)
 
 bug:action(function(sender)
@@ -2674,12 +2654,6 @@ end)
 bug2:action(function(sender)
 close()
 sim.loadSave(2596812,0) 
-end)
-
-bare:action(function(sender)
-clearsb()
-newmenu:addComponent(barye)
-newmenu:addComponent(barne)
 end)
 
 function hideno()
@@ -2721,14 +2695,7 @@ tpt.el.mort.menu=1
 tpt.el.rfgl.menu=1
 tpt.el.vrss.menu=1
 tpt.el.vrsg.menu=1
-newmenu:addComponent(remlabe)
 end
-
-barye:action(function(sender)
-clearsb()
-hideno()
-MANAGER.savesetting("CRK", "hidestate", "1")
-end)
 
 function hideyes()
 tpt.el.dyst.menu=0
@@ -2750,13 +2717,24 @@ tpt.el.mort.menu=0
 tpt.el.rfgl.menu=0
 tpt.el.vrss.menu=0
 tpt.el.vrsg.menu=0
-newmenu:removeComponent(remlabe)
+
 end
 
-barne:action(function(sender)
+local hidval = "1"
+bare:action(function(sender)
 clearsb()
+if hidval == "1" then 
+hideno()
+MANAGER.savesetting("CRK", "hidestate", "1")
+remlabe:text("ON")
+hidval = "0"
+
+elseif hidval == "0" then
 hideyes()
 MANAGER.savesetting("CRK", "hidestate", "0")
+remlabe:text("OFF")
+hidval = "1"
+end
 
 end)
 
@@ -3244,21 +3222,21 @@ tpt.drawline(338,0, 611,0, colourRED,colourGRN,colourBLU,al)
 end
 end
 
+local barval = "0"
+
 bar:action(function(sender)
 clearsb()
-newmenu:addComponent(bary)
-newmenu:addComponent(barn)
-end)
-
-bary:action(function(sender)
+if barval == "1" then
 event.unregister(event.tick,topbar)
 event.register(event.tick,topbar)
-clearsb()
-end)
+barval = "0"
+barlb:text("ON")
 
-barn:action(function(sender)
+elseif barval == "0" then
 event.unregister(event.tick,topbar)
-clearsb()
+barval = "1"
+barlb:text("OFF")
+end
 end)
 
 function startupcheck()
@@ -3281,83 +3259,95 @@ end
 
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
+hidval = "0"
+remlabe:text("ON")
 end
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
 event.register(event.tick,drawcirc)
+fanval = "0"
+fanlb:text("ON")
 end
 end
 startupcheck()
 
+
+local rulval = "1"
+
 Ruler:action(function(sender)
 clearsb()
-newmenu:addComponent(Ry)
-newmenu:addComponent(Rn)
-end)
-
-Ry:action(function(sender)
-tpt.setdebug(0X0)
-newmenu:removeComponent(Ry)
-newmenu:removeComponent(Rn)
-end)
-
-Rn:action(function(sender)
+if rulval == "1" then
+rulval = "0"
 tpt.setdebug(0X4)
-newmenu:removeComponent(Ry)
-newmenu:removeComponent(Rn)
-end)
+rulb:text("ON")
 
-deletesparkButton:action(function(sender)
-clearsb()
-tpt.hud(0)
-newmenu:addComponent(UIhidey)
-newmenu:addComponent(UIhiden)
+elseif rulval == "0" then
+tpt.setdebug(0X0)
+rulval = "1"
+rulb:text("OFF")
+end
 end)
 
 function UIhide()
-tpt.hud(0)
 tpt.fillrect(-1,382,616,42,0,0,0,255)
 tpt.fillrect(612,0,17,424,0,0,0,255)
 end
 
-UIhidey:action(function(sender)
-tpt.hud(0)
-newmenu:removeComponent(UIhiden)
-newmenu:removeComponent(UIhidey)
+local uival = "1"
+
+deletesparkButton:action(function(sender)
+clearsb()
+if uival == "1" then
 event.unregister(event.tick,topbar)
 event.unregister(event.tick,UIhide)
 event.register(event.tick,UIhide)
-end)
+tpt.hud(0)
+uival = "0"
+dellb:text("Hidden")
 
-UIhiden:action(function(sender)
+elseif uival == "0" then
 tpt.hud(1)
-newmenu:removeComponent(UIhiden)
-newmenu:removeComponent(UIhidey)
 event.unregister(event.tick,UIhide)
 event.register(event.tick,topbar)
+uival = "1"
+dellb:text("Shown")
+end
 end)
 
+local fpsval = "1"
 FPS:action(function(sender)
 clearsb()
-newmenu:addComponent(FPS1)
-newmenu:addComponent(FPS2)
-end)
-
-
-FPS1:action(function(sender)
-newmenu:removeComponent(FPS1)
-newmenu:removeComponent(FPS2)
-tpt.setfpscap(60)
-end)
-
-FPS2:action(function(sender)
-newmenu:removeComponent(FPS1)
-newmenu:removeComponent(FPS2)
+if fpsval == "1" then
 tpt.setfpscap(2)
+fpsval = "0"
+fplb:text("OFF")
+
+elseif fpsval == "0" then
+tpt.setfpscap(60)
+fpsval = "1"
+fplb:text("ON")
+end
 end)
 
 reset:action(function(sender)
 clearsb()
+autoval = "1"
+fanval = "1"
+shrtv = "1"
+fpsval = "1"
+uival = "1"
+rulval = "1"
+hidval = "1"
+barval = "0"
+autolb:text("OFF")
+
+shrtlb:text("ON")
+fplb:text("ON")
+rulb:text("OFF")
+dellb:text("Shown")
+barlb:text("ON")
+remlabe:text("OFF")
+fanlb:text("OFF")
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
@@ -3427,6 +3417,13 @@ newmenu:addComponent(fancur)
 newmenu:addComponent(Help)
 newmenu:addComponent(shrt)
 newmenu:addComponent(shrtlb)
+newmenu:addComponent(remlabe)
+newmenu:addComponent(fanlb)
+newmenu:addComponent(barlb)
+newmenu:addComponent(dellb)
+newmenu:addComponent(fplb)
+newmenu:addComponent(rulb)
+newmenu:addComponent(autolb)
 end
 
 hide:action(function(sender)
