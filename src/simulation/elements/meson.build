@@ -196,7 +196,6 @@ simulation_elem_ids = [
     ['LED', 194],
     ['TIMC', 195],
     ['FUEL', 196],
-    ['LITH', 191],
     ['DMRN', 198],
     ['PINV', 199],
     ['WALL', 200],
@@ -220,6 +219,7 @@ simulation_elem_ids = [
     ['SEED', 218],
     ['CSNS', 219],
     ['COPR', 220],
+	['LITH',191],
 ]
 
 simulation_elem_src = []
