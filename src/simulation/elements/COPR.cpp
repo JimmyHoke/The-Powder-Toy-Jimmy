@@ -132,7 +132,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 			*fireg = 250;
 			*fireb = 0;
 		}
-		*firea = 50;
+		*firea = 40;
 		*pixel_mode |= FIRE_ADD;
 	}
 	return 0;

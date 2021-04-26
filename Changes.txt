@@ -9,6 +9,7 @@ Minor improvements to BEE.
 UV now spaws at 22C.
 PHOS now also acts as a fertiliser for PLNT. 
 Minor tweeks to interface, looks cleaner now.
+CLUD can now move and also create SNOW when below 0C.
 
 Interface:
 Debug mode now shows info in 3 different lines thus making it easier to read.

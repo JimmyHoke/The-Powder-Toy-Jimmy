@@ -1,5 +1,4 @@
 #include "simulation/ElementCommon.h"
-
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
 
@@ -16,7 +15,7 @@ void Element::Element_CLUD()
 	AirDrag = 0.00f * CFDS;
 	AirLoss = 0.0f;
 	Loss = 0.00f;
-	Collision = -0.1f;
+	Collision = 0.1f;
 	Gravity = 0.0f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
@@ -31,7 +30,7 @@ void Element::Element_CLUD()
 
 	DefaultProperties.temp = 353.15f;
 	HeatConduct = 0;
-	Description = "Cloud, rains after sometime and creates LIGH.";
+	Description = "Cloud, rains/ snows after sometime and creates LIGH.";
 
 	Properties = TYPE_GAS;
 
@@ -75,7 +74,14 @@ static int update(UPDATE_FUNC_ARGS)
 		sim->pv[(y / CELL)][(x / CELL)] = 1.0f;
 		if (RNG::Ref().chance(1, 50))
 		{
-			sim->create_part(-1, x, y + 1, PT_WATR);
+			if (parts[i].temp >= 273.15f)
+			{
+				sim->create_part(-1, x, y + 1, PT_WATR);
+			}
+			else if (parts[i].temp < 273.15f)
+			{
+				sim->create_part(-1, x, y + 1, PT_SNOW);
+			}
 		}
 	}
 	if (parts[i].tmp < 0)
