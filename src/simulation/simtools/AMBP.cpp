@@ -4,7 +4,7 @@ static int perform(Simulation * sim, Particle * cpart, int x, int y, int brushX,
 
 void SimTool::Tool_AMBP() {
     Identifier = "DEFAULT_TOOL_AMBP";
-    Name = "AMBP";
+    Name = "AMB+";
     Colour = PIXPACK(0xFFDD00);
     Description = "Air heater. (Ambient heat required).";
     Perform = &perform;

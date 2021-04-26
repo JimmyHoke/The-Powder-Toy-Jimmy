@@ -1,13 +1,14 @@
 Changelog for Version 21
 
 Elements:
-New elements: Copper (CPPR) and official LITH.
+New elements: COPR (Copper), CLRC (Clear coat.) and New LITH.
 SUN affect the gravity around itself and now emits PLSM (Newtonian gravity must be on.)
 Minor improvements to BEE.
 UV now spaws at 22C.
-PHOS now also acts as a fertiliser for PLNT. 
+PHOS now can glow with UV and also act as a fertiliser for PLNT.
 Minor tweeks to interface, looks cleaner now.
 CLUD can also create SNOW when below 0C.
+New tools: AMB+ and AMB-
 
 Interface:
 Debug mode now shows info in 3 different lines thus making it easier to read.
@@ -17,18 +18,11 @@ Adjustments to Dark and Vanilla themes.
 Fancy cursor is now fancy pointer (Better and useful.)
 
 Misc:
+Tons of bug fixes from official version.
+Updated to latest snapshot. 
+Updated the tptmp script.
 Change random save algorithm to avoid http errors.
 Hidden elements are now saved as a setting.
 Simplify the wiki and add support for multiple pages.
 Add an option to toggle menu shortcut with J key (useful when working with other scripts that also require J key.)
 Add support for apostrophe to texter, also improve some of the fonts.
-
-
-todo:
-Fix tptmp, Add tools.
-Fix all the warnings while compiling.
-check if script works for linux
-Add preview to texter.?
-Fix typing texts in tptmp (Merge new script version.)
-Add Element creator mode.
-Add Z-HOLE wall.
