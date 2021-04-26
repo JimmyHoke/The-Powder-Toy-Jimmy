@@ -54,7 +54,8 @@ src>gui>search>Searchview.cpp
 (SEED, 218);    
 (CSNS, 219);    
 (COPR, 220);    
-(CLRC, 221);    
+(CLRC, 221);  
+(LITH2,222), SPRK.cpp 
 
 10) Run script update.bat to update the scripts for linux and mac.
 
@@ -86,4 +87,3 @@ cd The-Powder-Toy (ignore if error)
 meson -Dbuildtype=release -Dstatic=prebuilt -Db_vscrt=static_from_buildtype build-release-static
 cd build-release-static
 ninja
-
