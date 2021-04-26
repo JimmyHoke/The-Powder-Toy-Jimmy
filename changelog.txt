@@ -11,14 +11,14 @@ CLUD can also create SNOW when below 0C.
 New tools: AMB+ and AMB-
 
 Interface:
-Debug mode now shows info in 3 different lines thus making it easier to read.
+Debug mode now shows info in different rows making info. easier to read.
 Rewrite major parts of mod menu (Add on/off indicators to many options)
 Themes now also affect the tptmp and script manager icon.
 Adjustments to Dark and Vanilla themes.
 Fancy cursor is now fancy pointer (Better and useful.)
 
 Misc:
-Tons of bug fixes from official version.
+Various bug fixes.
 Updated to latest snapshot. 
 Updated the tptmp script.
 Change random save algorithm to avoid http errors.
