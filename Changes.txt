@@ -1,15 +1,16 @@
-Changelog for Version 21
+Changelog for Version 20.0 <Major>
 
+Additions/changes:
 Elements:
-New elements: COPR (Copper), CLRC (Clear coat.) and New LITH.
-Rename LITH to LITH2
+Enable uploading saves with CGoL elements.
+New elements: Copper (CPPR)
 SUN affect the gravity around itself and now emits PLSM (Newtonian gravity must be on.)
 Minor improvements to BEE.
 UV now spaws at 22C.
-PHOS now can glow with UV and also act as a fertiliser for PLNT.
+PHOS now also acts as a fertiliser for PLNT. 
 Minor tweeks to interface, looks cleaner now.
-CLUD can also create SNOW when below 0C.
-New tools: AMB+ and AMB-
+CLUD can now move and also create SNOW when below 0C.
+2 new tools :AMB+ and AMB- heats/ cools ambient heat.
 
 Interface:
 Debug mode now shows info in 3 different lines thus making it easier to read.
@@ -19,9 +20,6 @@ Adjustments to Dark and Vanilla themes.
 Fancy cursor is now fancy pointer (Better and useful.)
 
 Misc:
-Tons of bug fixes from official version.
-Updated to latest snapshot. 
-Updated the tptmp script.
 Change random save algorithm to avoid http errors.
 Hidden elements are now saved as a setting.
 Simplify the wiki and add support for multiple pages.
