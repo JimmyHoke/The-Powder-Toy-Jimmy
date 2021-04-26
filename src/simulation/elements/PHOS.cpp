@@ -48,6 +48,8 @@ void Element::Element_PHOS()
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].pavg[0] > 0)
+		parts[i].pavg[0] = 0;
 	if (parts[i].tmp < 250 && (RNG::Ref().chance(1, 5)))
 	{
 		parts[i].tmp++;
@@ -91,6 +93,12 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				}
 			}
+
+	int rp = sim->photons[y + ry][x + rx];
+	if (TYP(rp) == PT_UVRD)
+	{
+		parts[i].pavg[0] = 20;
+	}
 	return 0;
 }
 static int graphics(GRAPHICS_FUNC_ARGS)
@@ -106,5 +114,14 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	*colr += cpart->tmp;
 	*colg -= cpart->tmp/2;
 	*colb -= cpart->tmp/2;
+
+	if (cpart->pavg[0] > 0)
+	{
+		*firea = 55;
+		*firer = 255;
+		*fireg = 255;
+		*fireb = 255;
+		*pixel_mode |= FIRE_ADD;
+	}
 	return 0;
 }

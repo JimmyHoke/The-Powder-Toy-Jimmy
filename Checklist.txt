@@ -25,13 +25,12 @@ Gameview.cpp (copy fpsinfo and other parts)
 src>gui>search>Searchview.cpp
 
 9)Elements:               Files Modified:
-(FPTC, 191);             SPRK.cpp
+(FPTC, 197);             SPRK.cpp
 (FNTC, 192);             SPRK.cpp
 (CLNT, 193);
 (LED, 194);                SPRK.cpp
 (TIMC, 195);               SPRK.cpp
 (FUEL, 196);
-(LITH, 197);                SPRK.cpp
 (DMRN, 198);             Simulation.cpp
 (PINV, 199);                SPRK.cpp and simulation.cpp (check for .life!)
 (WALL, 200);              Simulation.cpp (search for love, define wall element)
@@ -55,6 +54,7 @@ src>gui>search>Searchview.cpp
 (SEED, 218);    
 (CSNS, 219);    
 (COPR, 220);    
+(CLRC, 221);    
 
 10) Run script update.bat to update the scripts for linux and mac.
 

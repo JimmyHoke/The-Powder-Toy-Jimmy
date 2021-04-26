@@ -10,6 +10,7 @@ UV now spaws at 22C.
 PHOS now also acts as a fertiliser for PLNT. 
 Minor tweeks to interface, looks cleaner now.
 CLUD can now move and also create SNOW when below 0C.
+2 new tools :AMB+ and AMB- heats/ cools ambient heat.
 
 Interface:
 Debug mode now shows info in 3 different lines thus making it easier to read.
@@ -24,12 +25,3 @@ Hidden elements are now saved as a setting.
 Simplify the wiki and add support for multiple pages.
 Add an option to toggle menu shortcut with J key (useful when working with other scripts that also require J key.)
 Add support for apostrophe to texter, also improve some of the fonts.
-
-
-todo:
-Fix all the warnings while compiling.
-check if script works for linux
-Add preview to texter.?
-Fix typing texts in tptmp (Merge new script version.)
-Add Element creator mode.
-Add Z-HOLE wall.

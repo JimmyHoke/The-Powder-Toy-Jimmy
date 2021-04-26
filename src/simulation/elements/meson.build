@@ -190,12 +190,13 @@ simulation_elem_ids = [
 	[ 'PTNM',   188 ],
 	[ 'VSNS',   189 ],
 	[ 'ROCK',   190 ],
-    ['FPTC', 197],
+	['LITH',191],
     ['FNTC', 192],
     ['CLNT', 193],
     ['LED', 194],
     ['TIMC', 195],
     ['FUEL', 196],
+    ['FPTC', 197],
     ['DMRN', 198],
     ['PINV', 199],
     ['WALL', 200],
@@ -219,7 +220,8 @@ simulation_elem_ids = [
     ['SEED', 218],
     ['CSNS', 219],
     ['COPR', 220],
-	['LITH',191],
+	['CLRC',221],
+
 ]
 
 simulation_elem_src = []

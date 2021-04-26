@@ -8,6 +8,8 @@ simulation_tool_ids = [
 	[ 'MIX',  6 ],
 	[ 'CYCL', 7 ],
 	[ 'RSET', 8 ],
+	[ 'AMBM', 9 ],
+	[ 'AMBP', 10 ],
 ]
 
 simulation_tool_src = []
