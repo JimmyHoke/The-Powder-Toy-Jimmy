@@ -221,7 +221,7 @@ simulation_elem_ids = [
     ['CSNS', 219],
     ['COPR', 220],
 	['CLRC',221],
-
+	['LITH2',222],
 ]
 
 simulation_elem_src = []

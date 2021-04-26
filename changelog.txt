@@ -2,6 +2,7 @@ Changelog for Version 21
 
 Elements:
 New elements: COPR (Copper), CLRC (Clear coat.) and New LITH.
+Rename LITH to LITH2
 SUN affect the gravity around itself and now emits PLSM (Newtonian gravity must be on.)
 Minor improvements to BEE.
 UV now spaws at 22C.
