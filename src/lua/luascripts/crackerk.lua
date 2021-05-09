@@ -2499,6 +2499,7 @@ newmenu:removeComponent(brlabel)
 newmenu:removeComponent(bropc)
 end)
 
+
 --Texter script hybrid start
 yvalue = 50
 linenumber = 01
@@ -2549,17 +2550,22 @@ function drawText(text, x, y, element, font)
 end
 
 chud:action(function(sender)
+function drawglitch2()
+graphics.drawLine(1,85,610,85,150,150,150,250)
+end
+
 close()
-local newmenu4 = Window:new(-15,-15, 610, 300)
-local scripthelp2 = Label:new(13,5,120, 20,"Welcome to the texter 2.0")
+local newmenu4 = Window:new(1,1, 610, 405)
+local scripthelp2 = Label:new(13,5,120, 20,"Welcome to the texter 3.0")
 ui.showWindow(newmenu4)
 yvalue = 50
 linenumber = 01
 local mouseX, mouseY = tpt.mousex, tpt.mousey
 local text, element, font = '', 'ARAY', '5x7'
 local textTextboxs = Textbox:new(96, 55, 42, 20, '', 'Element')
-local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type your text here.')
-local scripthelp = Label:new(133,100,120, 10,"Texter help:\nElement box: Type the desired output element here (Defaults to ARAY.)\nNewline: Inserts a new line and places existing text automatically (Max 33.)\nEnter and Cancel: To place the text or cancel it.")
+local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type the text here.')
+local scripthelp23 = Label:new(10,90,40, 10,"Preview:")
+local scripthelp = Label:new(-40,90,630, 300,"")
 local place = Button:new(10,55,40,20,"Enter", "Toggle hidden elements.")
 local cancel= Button:new(52,55,40,20,"Cancel", "Cancel the element placement.")
 local newline = Button:new(142,55,46,20,"New line", "New line.")
@@ -2570,11 +2576,15 @@ newmenu4:addComponent(textTextbox)
 newmenu4:addComponent(textTextboxs)
 newmenu4:addComponent(scripthelp) 
 newmenu4:addComponent(scripthelp2) 
+newmenu4:addComponent(scripthelp23) 
 newmenu4:addComponent(place)
 newmenu4:addComponent(cancel)
 newmenu4:addComponent(newline)
 newmenu4:addComponent(lno)
 newmenu4:addComponent(lnol)
+
+newmenu4:onDraw(drawglitch2)
+
  textTextbox:onTextChanged(
                     function(sender)
                             text = textTextbox:text();
@@ -2589,6 +2599,7 @@ newmenu4:addComponent(lnol)
 cancel:action(function(sender)
 newmenu4:removeComponent(scripthelp)
 newmenu4:removeComponent(scripthelp2)
+newmenu4:removeComponent(scripthelp23)
 newmenu4:removeComponent(textTextbox)
 newmenu4:removeComponent(textTextboxs)
 newmenu4:removeComponent(place)
@@ -2598,10 +2609,19 @@ newmenu4:removeComponent(lno)
 newmenu4:removeComponent(lnol)
 ui.closeWindow(newmenu4)
 end)
-
+local texth = scripthelp:text()
+local valueplace = 0
+local textfix = 0
 newline:action(function(sender)
+
+if linenumber >22 and valueplace == 0 then
+scripthelp:text("")
+valueplace = 1
+end
 if linenumber <= 32 then
 text = textTextbox:text();
+texth = scripthelp:text()
+scripthelp:text(texth..text.." L:"..linenumber.."\n")
 yvalue = yvalue+10
 textTextbox:text('')
 linenumber = linenumber + 1
@@ -2610,10 +2630,17 @@ end
 if linenumber <=  33 then
 drawText(string.gsub(text, '\\n', '\n') .. '\n', 11, yvalue, element, font)
 end
+
+if textfix == 0 or linenumber == 24 then 
+scripthelp:text("  .............................................................................<<Start>>...............................................................................\n"..texth..text.." L:Initial".."\n")
+textfix = 1
+end
+
 end)
 
 place:action(function(sender)
-if linenumber <=  33 then
+if linenumber <=  32 then
+yvalue = yvalue+10
 drawText(string.gsub(text, '\\n', '\n') .. '\n', 11, yvalue, element, font)
 end
 newmenu4:removeComponent(scripthelp)
@@ -2625,6 +2652,7 @@ newmenu4:removeComponent(newline)
 newmenu4:removeComponent(lno)
 newmenu4:removeComponent(lnol)
 newmenu4:removeComponent(scripthelp2)
+newmenu4:removeComponent(scripthelp23)
 ui.closeWindow(newmenu4)
 end)
 end)
