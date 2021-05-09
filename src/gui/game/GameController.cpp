@@ -1536,6 +1536,9 @@ void GameController::ClearSim()
 
 String GameController::ElementResolve(int type, int ctype)
 {
+	// "NONE" should never be displayed in the HUD
+	if (!type)
+		return "";
 	if (gameModel && gameModel->GetSimulation())
 	{
 		return gameModel->GetSimulation()->ElementResolve(type, ctype);
