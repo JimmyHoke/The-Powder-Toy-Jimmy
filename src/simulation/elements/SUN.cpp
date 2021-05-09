@@ -1,5 +1,4 @@
 #include "simulation/ElementCommon.h"
-
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
 
@@ -7,7 +6,7 @@ void Element::Element_SUN()
 {
 	Identifier = "DEFAULT_PT_SUN";
 	Name = "SUN";
-	Colour = PIXPACK(0xFFBE30);
+	Colour = PIXPACK(0xFF4500);
 	MenuVisible = 1;
 	MenuSection = SC_SPECIAL;
 	Enabled = 1;
@@ -29,7 +28,7 @@ void Element::Element_SUN()
 
 	Weight = 100;
 
-	DefaultProperties.temp = 8300.15f;
+	DefaultProperties.temp = 6300.15f;
 	HeatConduct = 0;
 	Description = "SUN.";
 
@@ -50,21 +49,31 @@ void Element::Element_SUN()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	sim->gravmap[(y / CELL)*(XRES / CELL) + (x / CELL)] += 0.3f;
+	if (parts[i].tmp > 0)
+		parts[i].tmp--;
+
+	if (RNG::Ref().chance(1, 200))
+	{
+		parts[i].tmp = 100;
+	}
+
+
+	if (RNG::Ref().chance(1, 300))
+	{
+		sim->pv[(y / CELL)][(x / CELL)] = +2.0f;
+		int t = sim->create_part(-1, x, y + 1, PT_PLSM);
+		int s = sim->create_part(-1, x, y - 1, PT_PLSM);
+		parts[s].temp = 24 + 273.15f;
+		parts[s].life = 200;
+		parts[t].temp = 24 + 273.15f;
+		parts[t].life = 200;
+	}
+
 	int r, rx, ry, rt;
 	for (rx = -1; rx < 2; rx++)
 		for (ry = -1; ry < 2; ry++)
 			if (rx || ry)
 			{
-				if (RNG::Ref().chance(1, 200))
-				{
-					int t = sim->create_part(-1, x, y+1, PT_PLSM);
-					int s = sim->create_part(-1, x, y-2, PT_PLSM);
-					parts[s].temp = 24 + 273.15f;
-					parts[s].life = 60;
-					parts[t].temp = 24 + 273.15f;
-					parts[t].life = 90;
-				}
 				if (RNG::Ref().chance(1, 90))
 				{
 					int r = sim->create_part(-1, x + rx, y + ry, PT_UVRD);
@@ -86,16 +95,19 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
+	if (cpart->tmp <= 50)
 	{
-		*firer = 100.0;
-		*fireg = 8.0;
-		*firea = 50;
-
-		*colr += *firer;
-		*colg += *fireg;
-		*pixel_mode |= FIRE_ADD;
-		*pixel_mode |= PMODE_FLARE;
-
+		*firer = 190.0;
+		*fireg = 90.0;
+		*fireb = 0.0;
 	}
+	else if (cpart->tmp > 50)
+	{
+		*firer = 0.0;
+		*fireg = 0.0;
+		*fireb = 200.0;
+	}
+	*firea = 60;
+	*pixel_mode |= FIRE_ADD;
 	return 0;
 }

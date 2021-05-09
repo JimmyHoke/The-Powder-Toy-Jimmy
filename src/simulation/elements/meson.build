@@ -213,15 +213,16 @@ simulation_elem_ids = [
     ['BEE', 211],
     ['ECLR', 212],
     ['C16', 213],
-    ['CWIR', 214],
+	['LITH2',214],
     ['PROJ', 215],
     ['PPTI', 216],
     ['PPTO', 217],
     ['SEED', 218],
     ['CSNS', 219],
-    ['COPR', 220],
+	['CWIR', 220],
 	['CLRC',221],
-	['LITH2',222],
+	['COPR', 222],
+	
 ]
 
 simulation_elem_src = []

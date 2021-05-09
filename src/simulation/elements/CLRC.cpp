@@ -25,7 +25,7 @@ void Element::Element_CLRC()
 	Flammable = 0;
 	Explosive = 0;
 	Meltable = 0;
-	Hardness = 2;
+	Hardness = 100;
 
 	Weight = 100;
 
@@ -56,7 +56,7 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy = 0;
 	}
 
-	int r, rx, ry;
+	int r, rx, ry,rp;
 	for (rx = -2; rx < 3; rx++)
 		for (ry = -2; ry < 3; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
@@ -68,23 +68,21 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					parts[i].life = 5;
 				}
+				rp = sim->photons[y + ry][x + rx];
+				if (TYP(rp) == PT_UVRD)
+				{
+					parts[i].tmp = 1;
+				}
 			}
-
-	int rp = sim->photons[y + ry][x + rx];
-	if (TYP(rp) == PT_UVRD)
-	{
-		parts[i].tmp = 1;
-	}
 	return 0;
 }
-
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp == 1)
 	{
-		*colr = 30;
-		*colb = 30;
-		*colg = 30;
+		*colr = 20;
+		*colb = 20;
+		*colg = 20;
 	}
 	return 0;
 }

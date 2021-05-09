@@ -47,15 +47,15 @@ src>gui>search>Searchview.cpp
 (BEE, 211);
 (ECLR, 212);             SPRK.cpp
 (C16, 213);
-(CWIR, 214);
+(LITH2,214), SPRK.cpp
 (PROJ, 215); 
 (PPTI, 216);     SPRK.cpp
 (PPTO, 217);     SPRK.cpp
 (SEED, 218);    
 (CSNS, 219);    
-(COPR, 220);    
+(CWIR, 220);
 (CLRC, 221);  
-(LITH2,222), SPRK.cpp 
+(COPR, 222); 
 
 10) Run script update.bat to update the scripts for linux and mac.
 

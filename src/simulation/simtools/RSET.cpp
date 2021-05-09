@@ -13,7 +13,7 @@ void SimTool::Tool_RSET()
 
 static int perform(Simulation * sim, Particle * cpart, int x, int y, int brushX, int brushY, float strength)
 {
-	if (!cpart)
+	if (!cpart||cpart->type == PT_LIFE)
 	{
 		return 0;
 	}

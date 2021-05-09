@@ -2187,8 +2187,6 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
-
-
 --Cracker1000's custom script version 9.0
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
@@ -2366,18 +2364,21 @@ sim.loadSave(randsav, 0)
 end)
 
 function drawcirc()
-if tpt.brushx > 1 or tpt.brushy > 1 then
-graphics.fillRect(tpt.mousex + 1 ,tpt.mousey,8 ,1,200,200,200,200)
-graphics.fillRect(tpt.mousex -8,tpt.mousey,8,1, 200,200,200,200)
-graphics.fillRect(tpt.mousex,tpt.mousey-8,1 ,8,200,200,200,200)
-graphics.fillRect(tpt.mousex,tpt.mousey,1 ,8, 200,200,200,200)
+if tpt.brushx > 10 and tpt.brushy > 10 then
+graphics.fillRect(tpt.mousex + 1 ,tpt.mousey,6 ,1,220,220,220,255)
+graphics.fillRect(tpt.mousex -6,tpt.mousey,6,1, 220,220,220,255)
+graphics.fillRect(tpt.mousex,tpt.mousey-6,1 ,6,220,220,220,255)
+graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
 end
 
 if MANAGER.getsetting("CRK", "savergb") == "2" then
-graphics.drawText(tpt.mousex-30 , tpt.mousey - 20 - tpt.brushy ,tpt.mousex,ar,ag,ab,250)
-graphics.drawText(tpt.mousex+15 , tpt.mousey - 20 - tpt.brushy ,tpt.mousey,ar,ag,ab,250)
-graphics.drawText(tpt.mousex-27, tpt.mousey + 20 + tpt.brushy ,"L:"..tpt.brushx,ar,ag,ab,250)
-graphics.drawText(tpt.mousex+17 , tpt.mousey + 20 + tpt.brushy ,"H:"..tpt.brushy,ar,ag,ab,250)
+graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,240)
+graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,240)
+
+if tpt.brushx > 0 or tpt.brushy > 0 then
+graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,240)
+graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,240)
+end
 
 graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1,ar,ag,ab,250)
 graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1, ar,ag,ab,250)
@@ -2385,15 +2386,18 @@ graphics.fillRect(tpt.mousex,tpt.mousey-15 - tpt.brushy,1 ,10,ar,ag,ab,250)
 graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, ar,ag,ab,250)
 
 else
-graphics.drawText(tpt.mousex-30 , tpt.mousey - 20 - tpt.brushy ,tpt.mousex,colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex+15 , tpt.mousey - 20 - tpt.brushy ,tpt.mousey,colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex-27, tpt.mousey + 20 + tpt.brushy ,"L:"..tpt.brushx,colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex+17 , tpt.mousey + 20 + tpt.brushy ,"H:"..tpt.brushy,colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey, colourRED,colourGRN,colourBLU,250)
 
-graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1,colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1, colourRED,colourGRN,colourBLU,250)
+if tpt.brushx > 0 or tpt.brushy > 0 then
+graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy, colourRED,colourGRN,colourBLU,250)
+end
+
+graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1, colourRED,colourGRN,colourBLU,250)
+graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1,  colourRED,colourGRN,colourBLU,250)
 graphics.fillRect(tpt.mousex,tpt.mousey-15 - tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250) 
+graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250)
 end
 end
 
@@ -3070,10 +3074,8 @@ tpt.drawline(613,391,627,391,colourRED,colourGRN,colourBLU,al)
 end
 
 function mpnolag()
-event.unregister(event.tick,topbar)
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
-event.register(event.tick,topbar)
 event.unregister(event.tick,colourblender)
 end
 
