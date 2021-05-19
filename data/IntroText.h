@@ -1,6 +1,5 @@
 #pragma once
 #include "Config.h"
-
 const char *const introTextData =
 "\br |------------------------------------------|\n"
 "\bo  Cracker1000's Mod 23 \bb|\bw Built on TPT 95.0 \n"
