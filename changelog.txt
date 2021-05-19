@@ -1,18 +1,12 @@
-Version 22.0
+Version 23
+COPR now lose conductivity as temp. is increased.
+Much polished texter.
+Add suppport for bigger fonts to texter.
 
-Changes/ additions:
-Changes to fancy pointer.
-CLRC is now acid resistant, also fix the coating on elements impermeable to UV.
-Rearrange some element positions.
-Reduce glow for COPR.
-Graphical improvements to SUN.
-Make username case insensitive when logging in.
-Add preview for texter (Beta)
-
-fixes:
-Fix switching themes turning on topbar even when disabled.
-Fix SUN not emitting UV with newtonian gravity turned on. 
-Fix GoL elements acting weirdly with RSET tool.
+todo:
+Add creator mode
+Add Z-Hole and one way wall.
+Add ~ and other missing fonts to texter and linespacing.
 
 
 

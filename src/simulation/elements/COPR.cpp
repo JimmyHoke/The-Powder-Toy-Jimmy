@@ -98,7 +98,7 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_SPRK:
 			 {
-					if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 20)
+					if (parts[ID(r)].ctype == PT_COPR && (parts[i].tmp > 20 || parts[i].temp >= 473.15f))
 						sim->part_change_type(ID(r), x , y, PT_COPR);
 
 				    if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 30)
