@@ -1,10 +1,23 @@
 Version 23
+Misc:
+Update to latest stable version that is 96.0.
+This enables uploading saves with CGoL elements
+
+Texter:
+Add option to choose different font size.
+Enter button now automatically places a new line.
+Improved max line detection.
+Add some missing fonts.
+Preview now shows the font sizes and is much better.
+
+Elements:
 COPR now lose conductivity as temp. is increased.
-Much polished texter.
-Add suppport for bigger fonts to texter.
+New element: CEXP (Customisable explosive.)
 
 todo:
-Add creator mode
+Complete wiki
+fix line spacing in texter.
+Add creator mode?
 Add Z-Hole and one way wall.
 Add ~ and other missing fonts to texter and linespacing.
 

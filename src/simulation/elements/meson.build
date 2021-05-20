@@ -222,7 +222,7 @@ simulation_elem_ids = [
 	['CWIR', 220],
 	['CLRC',221],
 	['COPR', 222],
-	
+	['CEXP', 223],
 ]
 
 simulation_elem_src = []
