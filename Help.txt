@@ -58,14 +58,18 @@ src>gui>search>Searchview.cpp
 (COPR, 222); 
 (CEXP, 223); 
 
-10) Run script update.bat to update the scripts for linux and mac.
+10) WALLS:
+ZHOLE (19), Simulationdata.cpp, simulationdata.h, simulation.cpp and src>gui>graphics>Renderer.cpp (Place along with Ehole in all files.)
+OWALL (20)
 
-11) To cherry pick
+11) Run script update.bat to update the scripts for linux and mac.
+
+12) To cherry pick
 a) Run cherrypick.bat
 b) FIlter branch to upstream> cherrypick and commit.
 c) Done. 
 
-12) To make a new Pull Request:
+13) To make a new Pull Request:
 a) Run new branch.bat
 b) Open gitbash> git checkout -b vanilla (in case it fails to checkout)
 c) git checkout -b <branch name here>

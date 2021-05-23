@@ -63,9 +63,11 @@
 #define WL_BLOCKAIR		16
 #define WL_ERASEALL		17
 #define WL_STASIS		18
+#define WL_ZHOLE		19
+#define WL_ONEWAY       20
 #define WL_FLOODHELPER	255
 
-#define UI_WALLCOUNT 19
+#define UI_WALLCOUNT 21
 
 #define OLD_SPC_AIR 236
 #define SPC_AIR 256

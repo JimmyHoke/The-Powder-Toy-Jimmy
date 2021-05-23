@@ -96,11 +96,13 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-
-	int stage = (int)(((float)cpart->tmp2 / (cpart->temp - 273.15))*100.0f);
-	*colr += stage;
-	*colg += stage;
-	*colb += stage;
+	if (cpart->tmp2 > 1)
+	{
+		*colb = 200;
+		*fireb = 255;
+		*firea = 100;
+		*pixel_mode |= FIRE_ADD;
+	}
 	return 0;
 }
 

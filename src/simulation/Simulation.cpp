@@ -2100,12 +2100,12 @@ void Simulation::orbitalparts_set(int *block1, int *block2, int resblock1[], int
 
 inline int Simulation::is_wire(int x, int y)
 {
-	return bmap[y][x]==WL_DETECT || bmap[y][x]==WL_EWALL || bmap[y][x]==WL_ALLOWLIQUID || bmap[y][x]==WL_WALLELEC || bmap[y][x]==WL_ALLOWALLELEC || bmap[y][x]==WL_EHOLE || bmap[y][x]==WL_STASIS;
+	return bmap[y][x]==WL_DETECT || bmap[y][x]==WL_EWALL || bmap[y][x]==WL_ALLOWLIQUID || bmap[y][x]==WL_WALLELEC || bmap[y][x]==WL_ALLOWALLELEC || bmap[y][x]==WL_EHOLE || bmap[y][x]==WL_STASIS || bmap[y][x] == WL_ZHOLE;
 }
 
 inline int Simulation::is_wire_off(int x, int y)
 {
-	return (bmap[y][x]==WL_DETECT || bmap[y][x]==WL_EWALL || bmap[y][x]==WL_ALLOWLIQUID || bmap[y][x]==WL_WALLELEC || bmap[y][x]==WL_ALLOWALLELEC || bmap[y][x]==WL_EHOLE || bmap[y][x]==WL_STASIS) && emap[y][x]<8;
+	return (bmap[y][x]==WL_DETECT || bmap[y][x]==WL_EWALL || bmap[y][x]==WL_ALLOWLIQUID || bmap[y][x]==WL_WALLELEC || bmap[y][x]==WL_ALLOWALLELEC || bmap[y][x]==WL_EHOLE || bmap[y][x]==WL_STASIS || bmap[y][x] == WL_ZHOLE) && emap[y][x]<8;
 }
 
 // implement __builtin_ctz and __builtin_clz on msvc
@@ -2590,6 +2590,8 @@ int Simulation::eval_move(int pt, int nx, int ny, unsigned *rr)
 			return 0;
 		if (bmap[ny/CELL][nx/CELL]==WL_EHOLE && !emap[ny/CELL][nx/CELL] && !(elements[pt].Properties&TYPE_SOLID) && !(elements[TYP(r)].Properties&TYPE_SOLID))
 			return 2;
+		if (bmap[ny / CELL][nx / CELL] == WL_ZHOLE && !emap[ny / CELL][nx / CELL] && !(elements[pt].Properties&TYPE_SOLID) && !(elements[TYP(r)].Properties&TYPE_SOLID))
+			return 2;
 	}
 	return result;
 }
@@ -2850,6 +2852,9 @@ int Simulation::try_move(int i, int x, int y, int nx, int ny)
 	}
 
 	if ((bmap[y/CELL][x/CELL]==WL_EHOLE && !emap[y/CELL][x/CELL]) && !(bmap[ny/CELL][nx/CELL]==WL_EHOLE && !emap[ny/CELL][nx/CELL]))
+		return 0;
+
+	if ((bmap[y / CELL][x / CELL] == WL_ZHOLE && !emap[y / CELL][x / CELL]) && !(bmap[ny / CELL][nx / CELL] == WL_ZHOLE && !emap[ny / CELL][nx / CELL]))
 		return 0;
 
 	int ri = ID(r); //ri is the particle number at r (pmap[ny][nx])
@@ -4179,6 +4184,7 @@ killed:
 				fin_yf = parts[i].y;
 				fin_x = (int)(fin_xf+0.5f);
 				fin_y = (int)(fin_yf+0.5f);
+                bool closedZholeStart = this->InBounds(fin_x, fin_y) && (bmap[fin_y/CELL][fin_x/CELL] == WL_ZHOLE && !emap[fin_y/CELL][fin_x/CELL]);
 				bool closedEholeStart = this->InBounds(fin_x, fin_y) && (bmap[fin_y/CELL][fin_x/CELL] == WL_EHOLE && !emap[fin_y/CELL][fin_x/CELL]);
 				while (1)
 				{
@@ -4223,7 +4229,7 @@ killed:
 					//block if particle can't move (0), or some special cases where it returns 1 (can_move = 3 but returns 1 meaning particle will be eaten)
 					//also photons are still blocked (slowed down) by any particle (even ones it can move through), and absorb wall also blocks particles
 					int eval = eval_move(t, fin_x, fin_y, NULL);
-					if (!eval || (can_move[t][TYP(pmap[fin_y][fin_x])] == 3 && eval == 1) || (t == PT_PHOT && pmap[fin_y][fin_x]) || bmap[fin_y/CELL][fin_x/CELL]==WL_DESTROYALL || closedEholeStart!=(bmap[fin_y/CELL][fin_x/CELL] == WL_EHOLE && !emap[fin_y/CELL][fin_x/CELL]))
+					if (!eval || (can_move[t][TYP(pmap[fin_y][fin_x])] == 3 && eval == 1) || (t == PT_PHOT && pmap[fin_y][fin_x]) || bmap[fin_y/CELL][fin_x/CELL]==WL_DESTROYALL || closedEholeStart!=(bmap[fin_y/CELL][fin_x/CELL] == WL_EHOLE && !emap[fin_y/CELL][fin_x/CELL]) || closedZholeStart != (bmap[fin_y / CELL][fin_x / CELL] == WL_ZHOLE && !emap[fin_y / CELL][fin_x / CELL]))
 					{
 						// found an obstacle
 						clear_xf = fin_xf-dx;
@@ -5037,7 +5043,7 @@ void Simulation::CheckStacking()
 			// Setting pmap_count[y][x] > NPART means BHOL will form in that spot
 			if (pmap_count[y][x]>5)
 			{
-				if (bmap[y/CELL][x/CELL]==WL_EHOLE)
+				if ((bmap[y/CELL][x/CELL]==WL_EHOLE)||(bmap[y / CELL][x / CELL] == WL_ZHOLE))
 				{
 					// Allow more stacking in E-hole
 					if (pmap_count[y][x]>1500)

@@ -596,7 +596,7 @@ VideoBuffer * Renderer::WallIcon(int wallID, int width, int height)
 					newTexture->SetPixel(i, j, 0x80, 0x80, 0x80, 255);
 			}
 	}
-	else if (wt==WL_EHOLE || wt==WL_STASIS)
+	else if (wt==WL_EHOLE || wt==WL_STASIS || wt == WL_ZHOLE)
 	{
 		for (j=0; j<height; j++)
 		{
@@ -754,7 +754,7 @@ void Renderer::DrawWalls()
 				switch (sim->wtypes[wt].drawstyle)
 				{
 				case 0:
-					if (wt == WL_EWALL || wt == WL_STASIS)
+					if (wt == WL_EWALL || wt == WL_STASIS || wt == WL_ZHOLE)
 					{
 						bool reverse = wt == WL_STASIS;
 						if ((powered > 0) ^ reverse)
@@ -878,7 +878,7 @@ void Renderer::DrawWalls()
 					switch (sim->wtypes[wt].drawstyle)
 					{
 					case 0:
-						if (wt == WL_EWALL || wt == WL_STASIS)
+						if (wt == WL_EWALL || wt == WL_STASIS || wt == WL_ZHOLE)
 						{
 							bool reverse = wt == WL_STASIS;
 							if ((powered>0) ^ reverse)

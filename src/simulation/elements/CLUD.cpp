@@ -1,5 +1,6 @@
 #include "simulation/ElementCommon.h"
 static int update(UPDATE_FUNC_ARGS);
+static void create(ELEMENT_CREATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
 
 void Element::Element_CLUD()
@@ -45,6 +46,7 @@ void Element::Element_CLUD()
 
 	Update = &update;
 	Graphics = &graphics;
+	Create = &create;
 }
 
 static int update(UPDATE_FUNC_ARGS)
@@ -93,24 +95,34 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if (cpart->tmp > 995 && cpart->tmp < 998)
+	if (cpart->life == 1)
 	{
-		*colb = 255;
-		*colr = 235;
-		*colg = 235;
-		*pixel_mode |= PMODE_LFLARE;
+		*colb = 100;
+		*colr = 100;
+		*colg = 100;
 	}
-	else 
-	{
-		*colb -= cpart->tmp / 9;
-		*colr -= cpart->tmp / 9;
-		*colg -= cpart->tmp / 9;
-		*firea = 35;
-		*fireb = *colb;
-		*firer = *colr;
-		*fireg = *colg;
-		*pixel_mode = PMODE_NONE;
-		*pixel_mode |= FIRE_BLEND;
-	}
+		if (cpart->tmp > 995 && cpart->tmp < 998)
+		{
+			*colb = 255;
+			*colr = 235;
+			*colg = 235;
+			*pixel_mode |= PMODE_LFLARE;
+		}
+		else
+		{
+			*colb -= cpart->tmp / 10;
+			*colr -= cpart->tmp / 10;
+			*colg -= cpart->tmp / 10;
+			*firea = 35;
+			*fireb = *colb;
+			*firer = *colr;
+			*fireg = *colg;
+			*pixel_mode = PMODE_NONE;
+			*pixel_mode |= FIRE_BLEND;
+		}
 		return 0;
+}
+static void create(ELEMENT_CREATE_FUNC_ARGS)
+{
+	sim->parts[i].life = RNG::Ref().between(0,1);
 }

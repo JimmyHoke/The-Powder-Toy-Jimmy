@@ -2548,8 +2548,9 @@ function drawText(text, x, y, element, font)
         end
 end
 
-chud:action(function(sender)
+local textholval = 505
 
+chud:action(function(sender)
 function drawglitch2()
 graphics.drawLine(1,85,610,85,150,150,150,250)
 end
@@ -2558,12 +2559,12 @@ close()
 local newmenu4 = Window:new(1,1, 610, 405)
 local scripthelp2 = Label:new(13,5,120, 20,"Welcome to the texter 4.0")
 ui.showWindow(newmenu4)
-yvalue = 40
+yvalue = 30
 linenumber = 01
 local mouseX, mouseY = tpt.mousex, tpt.mousey
 local text, element, font = '', 'ARAY', '5x7'
+local textTextbox = Textbox:new(10, 30, textholval, 20, '', 'Type the text here.')
 local textTextboxs = Textbox:new(96, 55, 42, 20, '', 'Element')
-local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type the text here.')
 local scripthelp23 = Label:new(10,90,40, 10,"Preview:")
 local scripthelp = Label:new(-40,90,630, 300,"")
 local place = Button:new(10,55,40,20,"Enter", "Toggle hidden elements.")
@@ -2588,7 +2589,6 @@ newmenu4:addComponent(lnol)
 newmenu4:addComponent(smalf)
 newmenu4:addComponent(bigf)
 newmenu4:addComponent(fsize)
-
 newmenu4:onDraw(drawglitch2)
 
  textTextbox:onTextChanged(
@@ -2606,18 +2606,25 @@ newmenu4:onDraw(drawglitch2)
 local ffix = "0"
 local fx = "1"
 local fontdis = "N"
+
 smalf:action(function(sender)
 font='5x7'
 ffix = "0"
 fontdis = "N"
 fsize:text("Font: Normal")
+newmenu4:removeComponent(textTextbox)
+textholval = 505
+newmenu4:addComponent(textTextbox)
 end)
 
 bigf:action(function(sender)
+textholval = 455
+newmenu4:removeComponent(textTextbox)
 font='7x10'
 ffix = "1"
 fontdis = "B"
 fsize:text("Font: Big")
+newmenu4:addComponent(textTextbox)
 end)
 
 cancel:action(function(sender)
@@ -2682,7 +2689,6 @@ scripthelp:text(texth..text.." Max lines reached.")
 end
 end
 end)
-
 end)
 
 --Texter script hybrid end
@@ -2817,11 +2823,11 @@ local prevpg = Button:new(242, 400, 40, 15, "Prev.")
 local nextpg = Button:new(292, 400, 40, 15, "Next")
 local close2 = Button:new(512, 400, 100, 15, "Close wiki")
 
-local creditstxt = Label:new(6,-22, 598, 418,"\nWELCOME TO THE OFFLINE WIKI\n\n1) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n.tmp2 property is used for setting melting point (default is 2000C).\n\n2) C-16: A powerful explosive. Explodes creating pressure about 40 units when above 65C.\n\n3) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n4) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n5) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n6) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\nEvaporates at extreme temperatures into WTRV.\n\n7) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\nIt can also block energy particles like PROT.\n\n8) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n9) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\nCan split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames).\n\n13) LITH2: Lithium ion battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\nReacts with different elements like O2, WATR, ACID etc as IRL.")
+local creditstxt = Label:new(6,-22, 598, 418,"\n                                         << Welcome To The Wiki >>\n\n1) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n.tmp2 property is used for setting melting point (default is 2000C).\n\n2) C-16: A powerful explosive. Explodes creating pressure about 40 units when above 65C.\n\n3) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n4) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n5) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n6) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\nEvaporates at extreme temperatures into WTRV.\n\n7) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\nIt can also block energy particles like PROT.\n\n8) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n9) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\nCan split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LITH2: Lithium ion battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\nReacts with different elements like O2, WATR, ACID etc as IRL.")
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows with UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  20) BEE: Eats PLNT. Secretes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH.\n  Gets aggresive if life gets below 30. Uses pressure waves to communicate. Can regulate temp. to certain extent.\n\n  21) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  22) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n\n  23) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  24) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.\n\n  25) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n  26) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or different types of WATR or when > 200C.\n  Oxide form breaks apart when sparked. Becomes a super conductor when cooled below -200C.\n\n  27) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  28) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n .Ctype decides the element it explodes into.\n .Life and .tmp2 determines the pressure and temperature that it generates while exploding\n\n  More info to be added later..... \n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n  26) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or different types of WATR or when > 200C.\n  Oxide form breaks apart when sparked. Becomes a super conductor when cooled below -200C.\n\n  27) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  28) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature that it generates while exploding\n\n  You have reached the end of wiki..... \n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
