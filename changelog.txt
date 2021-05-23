@@ -1,4 +1,5 @@
-Version 23
+Version 24.0 (23.0 was skipped.
+)
 Misc:
 Update to latest stable version that is 96.0.
 This enables uploading saves with CGoL elements
@@ -15,8 +16,6 @@ COPR now lose conductivity as temp. is increased.
 New element: CEXP (Customisable explosive.)
 
 todo:
-Complete wiki
-fix line spacing in texter.
 Add creator mode?
 Add Z-Hole and one way wall.
 Add ~ and other missing fonts to texter and linespacing.
