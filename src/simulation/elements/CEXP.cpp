@@ -47,7 +47,7 @@ void Element::Element_CEXP()
 static int update(UPDATE_FUNC_ARGS)
 {
 	//checks
-	if (parts[i].pavg[0] == 5 )
+	if (parts[i].pavg[1] == 5 )
 	{
 		sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
 		sim->kill_part(i);
@@ -76,14 +76,33 @@ static int update(UPDATE_FUNC_ARGS)
 				r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (parts[i].temp - 273.15f > parts[i].tmp)
+				if ((parts[i].temp - 273.15f > parts[i].tmp)|| parts[ID(r)].type == PT_SPRK||parts[i].pavg[0] > 1)
 				{
 					parts[ID(r)].temp = parts[i].tmp2 + 273.15f;
 					sim->create_part(-1, x, y + 1, parts[i].ctype);
 					sim->create_part(-1, x, y - 1, parts[i].ctype);
 					sim->create_part(-1, x+1, y, parts[i].ctype);
 					sim->create_part(-1, x-1, y, parts[i].ctype);
-					parts[i].pavg[0] = 5;
+					parts[i].pavg[1] = 5;
+					parts[i].pavg[0] = 10;
+				}
+				else if (TYP(r) == PT_CEXP)
+				{
+					if (!parts[i].pavg[0])
+					{
+						if (parts[ID(r)].pavg[0])
+						{
+							parts[i].pavg[0] = parts[ID(r)].pavg[0];
+							if ((ID(r)) > i)
+								parts[i].pavg[0]--;
+						}
+					}
+					else if (!parts[ID(r)].pavg[0])
+					{
+						parts[ID(r)].pavg[0] = parts[i].pavg[0];
+						if ((ID(r)) > i)
+							parts[ID(r)].pavg[0]++;
+					}
 				}
 			}
 	return 0;

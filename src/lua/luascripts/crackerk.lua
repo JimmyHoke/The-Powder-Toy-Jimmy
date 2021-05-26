@@ -2548,8 +2548,6 @@ function drawText(text, x, y, element, font)
         end
 end
 
-local textholval = 505
-
 chud:action(function(sender)
 function drawglitch2()
 graphics.drawLine(1,85,610,85,150,150,150,250)
@@ -2559,11 +2557,11 @@ close()
 local newmenu4 = Window:new(1,1, 610, 405)
 local scripthelp2 = Label:new(13,5,120, 20,"Welcome to the texter 4.0")
 ui.showWindow(newmenu4)
-yvalue = 30
+local yvalue = 30
 linenumber = 01
 local mouseX, mouseY = tpt.mousex, tpt.mousey
 local text, element, font = '', 'ARAY', '5x7'
-local textTextbox = Textbox:new(10, 30, textholval, 20, '', 'Type the text here.')
+local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
 local textTextboxs = Textbox:new(96, 55, 42, 20, '', 'Element')
 local scripthelp23 = Label:new(10,90,40, 10,"Preview:")
 local scripthelp = Label:new(-40,90,630, 300,"")
@@ -2612,19 +2610,13 @@ font='5x7'
 ffix = "0"
 fontdis = "N"
 fsize:text("Font: Normal")
-newmenu4:removeComponent(textTextbox)
-textholval = 505
-newmenu4:addComponent(textTextbox)
 end)
 
 bigf:action(function(sender)
-textholval = 455
-newmenu4:removeComponent(textTextbox)
 font='7x10'
 ffix = "1"
 fontdis = "B"
-fsize:text("Font: Big")
-newmenu4:addComponent(textTextbox)
+fsize:text("Font:  Big")
 end)
 
 cancel:action(function(sender)
@@ -2673,15 +2665,15 @@ linenumber = linenumber + 1
 lnol:text(linenumber)
 
 if linenumber <=  33 then
-drawText(string.gsub(text, '\\n', '\n') .. '\n', 11, yvalue, element, font)
+drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
 end
 
 if linenumber == 2 then 
-scripthelp:text("        ........................................................................................................................................................................\n"..texth..text.." L:1".." ("..fontdis..") \n")
+scripthelp:text("        ................................................................................V.......................................................................................\n"..texth..text.." L:1".." ("..fontdis..") \n")
 end
 
 if linenumber == 24 then 
-scripthelp:text("        ........................................................................................................................................................................\n"..texth..text.." L:23".." ("..fontdis..") \n")
+scripthelp:text("        ................................................................................V.......................................................................................\n"..texth..text.." L:23".." ("..fontdis..") \n")
 end
 
 if yvalue > 355 then
@@ -6822,6 +6814,26 @@ fonts['7x10']['NULL'] = {
                {0, 0, 0, 0, 0, 0, 0},
                {0, 0, 0, 0, 0, 0, 0},
                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10']['~'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 1, 1},
+                {1, 0, 0, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
         }
 }
 --fontstop

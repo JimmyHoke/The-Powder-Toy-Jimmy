@@ -2,7 +2,7 @@
 #include "Config.h"
 const char *const introTextData =
 "\br |------------------------------------------|\n"
-"\bo  Cracker1000's Mod 23 \bb|\bw Built on TPT 95.0 \n"
+"\bo  Cracker1000's Mod 24 \bb|\bw Built on TPT 95.0 \n"
 "\br |------------------------------------------|\n"
 "\n"
 "\bo  Some Instructions:                        \n"

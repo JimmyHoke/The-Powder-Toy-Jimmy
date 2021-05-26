@@ -11,15 +11,12 @@ Add option to choose different font size.
 Enter button now automatically places a new line.
 Improved max line detection.
 Add some missing fonts.
-Preview now shows the font sizes.
+Preview now shows the different font sizes.
 
 Elements:
 COPR now lose conductivity as temp. is increased.
 New element: CEXP (Customisable explosive.)
 Graphical improvements to TIMC and CLUD.
-
-todo:
-Add ~ and other missing fonts to texter and linespacing.
 
 
 
