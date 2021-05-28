@@ -1,11 +1,11 @@
-Version 24.0 (23.0 was skipped.)
+Version 24.0
 
 Misc:
-Update to latest version (96.0)
-This enables uploading saves with CGoL elements.
 New wall: Z-Hole (Requested by Yzaak1Scifire), Modified EHOLE that activates only with other walls.
 Fix Alignment for some wiki pages.
 Change default font from ARAY to DMND.
+Glow now actually
+Other changes from latest snasphot.
 
 Texter:
 Add option to choose different font size.
@@ -18,6 +18,6 @@ Elements:
 COPR now lose conductivity as temp. is increased.
 New element: CEXP (Customisable explosive.)
 Graphical improvements to TIMC and CLUD.
-
+GLOW element now glows under pressure (official change.)
 
 
