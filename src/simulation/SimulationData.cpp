@@ -70,8 +70,7 @@ std::vector<wall_type> LoadWalls()
 		{PIXPACK(0xDCDCDC), PIXPACK(0x000000), 1, Renderer::WallIcon, String("AIRBLOCK WALL"),   "DEFAULT_WL_NOAIR",  String("Allows all particles, but blocks air.")},
 		{PIXPACK(0x808080), PIXPACK(0x000000), 0, Renderer::WallIcon, String("ERASEALL"),        "DEFAULT_WL_ERASEA", String("Erases walls, particles, and signs.")},
 		{PIXPACK(0x800080), PIXPACK(0x000000), 0, Renderer::WallIcon, String("STASIS WALL"),     "DEFAULT_WL_STASIS", String("Freezes particles inside the wall in place until powered.")},
-		{PIXPACK(0x404040), PIXPACK(0x505050), 0, Renderer::WallIcon, String("ZHOLE"),           "DEFAULT_WL_ZHOLE", String("Z-HOLE, Modified version of EHOLE that's not affected by SPRK")},
-		{PIXPACK(0x008717), PIXPACK(0x000000), 1, Renderer::WallIcon, String("ONE WAY WALL"),    "DEFAULT_WL_ONEWAY", String("One way wall, use line tool to set direction.") }
+		{PIXPACK(0x171717), PIXPACK(0x343434), 0, Renderer::WallIcon, String("ZHOLE"),           "DEFAULT_WL_ZHOLE", String("Z-Hole, modified version of EHOLE that's not affected by SPRK")}
 	};
 }
 

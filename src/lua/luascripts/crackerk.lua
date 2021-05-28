@@ -2560,7 +2560,7 @@ ui.showWindow(newmenu4)
 local yvalue = 30
 linenumber = 01
 local mouseX, mouseY = tpt.mousex, tpt.mousey
-local text, element, font = '', 'ARAY', '5x7'
+local text, element, font = '', 'DMND', '5x7'
 local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
 local textTextboxs = Textbox:new(96, 55, 42, 20, '', 'Element')
 local scripthelp23 = Label:new(10,90,40, 10,"Preview:")
@@ -2669,11 +2669,11 @@ drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
 end
 
 if linenumber == 2 then 
-scripthelp:text("        ................................................................................V.......................................................................................\n"..texth..text.." L:1".." ("..fontdis..") \n")
+scripthelp:text("         .............................................................................V.............................................................................\n"..texth..text.." L:1".." ("..fontdis..") \n")
 end
 
 if linenumber == 24 then 
-scripthelp:text("        ................................................................................V.......................................................................................\n"..texth..text.." L:23".." ("..fontdis..") \n")
+scripthelp:text("         .............................................................................V.............................................................................\n"..texth..text.." L:23".." ("..fontdis..") \n")
 end
 
 if yvalue > 355 then

@@ -59,8 +59,8 @@ src>gui>search>Searchview.cpp
 (CEXP, 223); 
 
 10) WALLS:
-ZHOLE (19), Simulationdata.cpp, simulationdata.h, simulation.cpp and src>gui>graphics>Renderer.cpp (Place along with Ehole in all files.)
-OWALL (20)
+Z-Hole (19), Simulationdata.cpp, simulationdata.h, simulation.cpp and src>gui>graphics>Renderer.cpp (Place along with Ehole in all files.)
+
 
 11) Run script update.bat to update the scripts for linux and mac.
 

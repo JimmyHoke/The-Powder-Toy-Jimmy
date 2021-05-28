@@ -110,7 +110,7 @@ static int update(UPDATE_FUNC_ARGS)
 
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
-	sim->parts[i].tmp = 400;
+	sim->parts[i].tmp = 150;
 	sim->parts[i].tmp2 = 1000;
 	sim->parts[i].ctype = PT_FIRE;
 	sim->parts[i].life = 10.0;

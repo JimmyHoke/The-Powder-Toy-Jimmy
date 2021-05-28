@@ -1,10 +1,11 @@
 Version 24.0 (23.0 was skipped.)
 
 Misc:
-Update to latest stable version that is 96.0.
-This enables uploading saves with CGoL elements
-New wall: Zhole (Requested by Yzaak1Scifire), Modified EHOLE that activates only with other walls.
+Update to latest version (96.0)
+This enables uploading saves with CGoL elements.
+New wall: Z-Hole (Requested by Yzaak1Scifire), Modified EHOLE that activates only with other walls.
 Fix Alignment for some wiki pages.
+Change default font from ARAY to DMND.
 
 Texter:
 Add option to choose different font size.
