@@ -1,7 +1,9 @@
 Version 25.0 
+
+Fix debug mode not showing .tmp2 for CEXP, CWIR , LED  and VSNS.
+
 todo:
 Fix CEXP
-Fix debug mode not showing .tmp2 for CEXP, CWIR , LED  and VSNS.
 ADD support for cryllic font?
 
 
