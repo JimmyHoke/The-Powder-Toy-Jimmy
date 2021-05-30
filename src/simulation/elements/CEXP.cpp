@@ -46,45 +46,33 @@ void Element::Element_CEXP()
 }
 static int update(UPDATE_FUNC_ARGS)
 {
-	//checks
-	if (parts[i].pavg[1] == 5 )
+		if (parts[i].life <= -256 || parts[i].life > 273)
 	{
-		sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
-		sim->kill_part(i);
-	}
-	
-	if (parts[i].life <= -250 || parts[i].life > 270)
-	{
-		parts[i].life = 270;
+		parts[i].life = 10.0;
 	}
 
-	if (parts[i].tmp < -273 || parts[i].tmp > 9700)
+	if (parts[i].tmp < -273 || parts[i].tmp > 9724)
 	{
-		parts[i].tmp = 500;
+		parts[i].tmp = 150;
 	}
 
-	if (parts[i].tmp2 < -273 || parts[i].tmp2 > 9700)
+	if (parts[i].tmp2 < -273 || parts[i].tmp2 > 9724)
 	{
 		parts[i].tmp2 = 1000;
 	}
 
 	int r, rx, ry;
-	for (rx = -1; rx < 2; rx++)
-		for (ry = -1; ry < 2; ry++)
+	for (rx = -2; rx < 3; rx++)
+		for (ry = -2; ry < 3; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if ((parts[i].temp - 273.15f > parts[i].tmp)|| parts[ID(r)].type == PT_SPRK||parts[i].pavg[0] > 1)
+				if ((parts[i].temp - 273.15f > parts[i].tmp)|| parts[ID(r)].type == PT_SPRK)
 				{
-					parts[ID(r)].temp = parts[i].tmp2 + 273.15f;
-					sim->create_part(-1, x, y + 1, parts[i].ctype);
-					sim->create_part(-1, x, y - 1, parts[i].ctype);
-					sim->create_part(-1, x+1, y, parts[i].ctype);
-					sim->create_part(-1, x-1, y, parts[i].ctype);
-					parts[i].pavg[1] = 5;
 					parts[i].pavg[0] = 10;
+					
 				}
 				else if (TYP(r) == PT_CEXP)
 				{
@@ -105,6 +93,12 @@ static int update(UPDATE_FUNC_ARGS)
 					}
 				}
 			}
+	if (parts[i].pavg[0] > 0)
+	{
+		sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
+		parts[ID(r)].temp =  parts[i].tmp2 + 273.15f;
+		sim->create_part(i, x, y, parts[i].ctype);
+	}
 	return 0;
 }
 

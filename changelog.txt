@@ -1,10 +1,11 @@
 Version 25.0 
-
 Fix debug mode not showing .tmp2 for CEXP, CWIR , LED  and VSNS.
+Fix CEXP
 
 todo:
-Fix CEXP
 ADD support for cryllic font?
+Cherry pick from luasocket commit.
+Update tptmp to 2.0.
 
 
 

@@ -1,11 +1,11 @@
 #pragma once
 #include "Config.h"
 const char *const introTextData =
-"\br |------------------------------------------|\n"
-"\bo  Cracker1000's Mod 24 \bb|\bw Built on TPT 95.0 \n"
-"\br |------------------------------------------|\n"
+"\br |-----------------------------------------------|\n"
+"\bw  Cracker1000's Mod \bo(25.0) \bb|\bw Built on TPT \bo(96.0) \n"
+"\br |-----------------------------------------------|\n"
 "\n"
-"\bo  Some Instructions:                        \n"
+"\bo   Instructions:                        \n"
 "\br *\bw There's a new 'V' drop down button on top, press it to open the Mod menu.\n"
 "\br *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"
 "\br *\bw The Mod features an in-built 'Texter' for typing text in game.\n"
@@ -15,4 +15,4 @@ const char *const introTextData =
 "\br *\bw New gravity modes can be switched using W key aswell.\n"
 "\br *\bw Do not forget to give suggestions or feedback, use feedback option from menu for same.\n"
 "\n\n"
-"\bl Press any key (except power) to continue.....";
+"\bl Press any key (except power) to continue....."; 
