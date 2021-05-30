@@ -1,23 +1,9 @@
-Version 24.0 (23 was skipped.)
+Version 25.0 
+todo:
+Fix CEXP
+Fix debug mode not showing .tmp2 for CEXP, CWIR , LED  and VSNS.
+ADD support for cryllic font?
 
-Misc:
-New wall: Z-Hole (Requested by Yzaak1Scifire), Modified EHOLE that activates only with other walls.
-Fix Alignment for some wiki pages.
-Change default font from ARAY to DMND.
-Glow now actually
-Other changes from latest snasphot.
 
-Texter:
-Add option to choose different font size.
-Enter button now automatically places a new line.
-Improved max line detection.
-Add some missing fonts.
-Preview now shows the different font sizes.
-
-Elements:
-COPR now lose conductivity as temp. is increased.
-New element: CEXP (Customisable explosive.)
-Graphical improvements to TIMC and CLUD.
-GLOW element now glows under pressure (official change.)
 
 
