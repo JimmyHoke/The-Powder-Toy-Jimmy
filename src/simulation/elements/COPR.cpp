@@ -82,27 +82,28 @@ static int update(UPDATE_FUNC_ARGS)
 				int r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
+				if ((sim->pv[y / CELL][x / CELL] > 4.3f) && parts[i].tmp > 30)
+				{
+					parts[i].tmp2 = 1;
+				}
 				switch (TYP(r))
 				{
-				case PT_WATR:
-				case PT_SLTW:
-				case PT_CBNW:
 				case PT_O2:
 				{
 					if (parts[i].tmp < 100)
 					{
-						if (RNG::Ref().chance(1, 40))
+						if (RNG::Ref().chance(1, 80))
+						{
 							parts[i].tmp += 1;
+							sim->kill_part(ID(r));
+						}
 					}
 				}
 				break;
 				case PT_SPRK:
 			 {
-					if (parts[ID(r)].ctype == PT_COPR && (parts[i].tmp > 20 || parts[i].temp >= 473.15f))
+					if (parts[ID(r)].ctype == PT_COPR && (parts[i].tmp > 20 || parts[i].temp >= 573.15f))
 						sim->part_change_type(ID(r), x , y, PT_COPR);
-
-				    if (parts[ID(r)].ctype == PT_COPR && parts[i].tmp > 30)
-						parts[i].tmp2 = 1;
 			}
 				break;
 			}
