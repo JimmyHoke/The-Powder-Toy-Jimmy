@@ -30,7 +30,7 @@ void Element::Element_COPR()
 	Weight = 100;
 
 	HeatConduct = 255;
-	Description = "Excellent conductor. Turns into oxide when exposed to WATR/ O2, losing conductivity. Shows superconductivity at low temp.";
+	Description = "Excellent conductor. Turns into oxide when exposed to O2, losing conductivity. Shows superconductivity at low temps.";
 
 	Properties = TYPE_PART|PROP_CONDUCTS|PROP_LIFE_DEC| PROP_HOT_GLOW;
 

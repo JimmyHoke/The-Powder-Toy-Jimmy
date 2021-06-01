@@ -2346,33 +2346,36 @@ end
 
 edito:action(function(sender)
 close()
-local editomenu = Window:new(-15,-15, 610, 300)
-local doned = Button:new(310,278,80,15, "Done", "Hide.")
-local cancel = Button:new(210,278,80,15, "Cancel", "Hide.")
-local edmsg = Label:new(153,5,120, 10,"     Welcome to the Element Editor. Note: These changes are temperory and will not be saved!")
+local editomenu = Window:new(-15,-15, 610, 322)
+local doned = Button:new(310,304,80,15, "Done", "Hide.")
+local cancel = Button:new(210,304,80,15, "Cancel", "Hide.")
+local edmsg = Label:new(153,5,120, 10,"    Welcome to the Element Editor. Note: These changes are temperory and will not be saved!")
 local edelnam = Textbox:new(10, 30, 100, 15, '', 'Elem to Edit.')
 local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
 local edelname2 = Textbox:new(10, 80, 100, 15, '', 'New Color')
 local edelname4 = Textbox:new(10, 100, 100, 15, '', 'Menu Section')
 local edelname5 = Textbox:new(10, 120, 100, 15, '', 'Show = 1, Hide = 0')
-local edelname3 = Textbox:new(10, 140, 400, 15, '', '                           Description')
+local edelname3 = Textbox:new(10, 140, 400, 15, '', '                           New Element Description')
 local edelname6 = Textbox:new(10, 160, 100, 15, '', 'Explosive')
 local edelname7 = Textbox:new(10, 180, 100, 15, '', 'HeatConduct')
 local edelname8 = Textbox:new(10, 200, 100, 15, '', 'Flammable')
 local edelname9 = Textbox:new(10, 220, 100, 15, '', 'Weight')
 local edelname10 = Textbox:new(10, 240, 100, 15, '', 'Acid resistance')
+local edelname11 = Textbox:new(10, 260, 100, 15, '', 'Spawn Temp.')
+local edelname12 = Textbox:new(10, 280, 100, 15, '', 'Diffusion')
 
 local ed0 = Label:new(170,33,120, 10,"Type the element name to be edited (Eg. STNE).")
-local ed1 = Label:new(105,63,70, 10,"New name.")
-local ed2 = Label:new(140,83,110, 10,"New colour eg 0xFF0000 for Red.")
+local ed1 = Label:new(104,63,70, 10,"New name.")
+local ed2 = Label:new(154,83,110, 10,"New colour, in hexadecimal (0xRRGGBB)")
 local ed3 = Label:new(163,103,120, 10,"Menu section, 1 = electronics, 11 = special.")
 local ed4 = Label:new(200,123,120, 10,"To show or hide the element from menu. 0 = hide, 1 = Show.")
-local ed5 = Label:new(410,143,120, 10,"New element description.")
 local ed6 = Label:new(148,163,120, 10,"Explosiveness, 0 = no, 1 = with FIRE.")
 local ed7 = Label:new(150,183,120, 10,"Heat conductivity. 0 = No, 255 = Max.")
-local ed8 = Label:new(139,203,120, 10,"Flamability, 0 = No, 5000 = Max.")
-local ed9 = Label:new(169,223,120, 10,"Weight , Eg. 1 = Gas, 2 = Light, 98 = Heavy.")
-local ed10 = Label:new(171,243,120, 10,"Acid resistance , Eg. 0 = No effect, 50 = Max.")
+local ed8 = Label:new(139,203,120, 10,"Flamability, 0 = No, 1000 = Max.")
+local ed9 = Label:new(168,223,120, 10,"Weight , Eg. 1 = Gas, 2 = Light, 98 = Heavy.")
+local ed10 = Label:new(171,243,120, 10,"Acid resistance , Eg. 1 = No effect, 50 = Max.")
+local ed11 = Label:new(135,263,120, 10,"Temp. at which element is spawn")
+local ed12 = Label:new(208,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10")
 
 editomenu:addComponent(edmsg)
 editomenu:addComponent(doned)
@@ -2387,63 +2390,87 @@ editomenu:addComponent(edelname7)
 editomenu:addComponent(edelname8)
 editomenu:addComponent(edelname9)
 editomenu:addComponent(edelname10)
+editomenu:addComponent(edelname11)
+editomenu:addComponent(edelname12)
 editomenu:addComponent(ed0)
 editomenu:addComponent(ed1)
 editomenu:addComponent(ed2)
 editomenu:addComponent(ed3)
 editomenu:addComponent(ed4)
-editomenu:addComponent(ed5)
 editomenu:addComponent(ed6)
 editomenu:addComponent(ed7)
 editomenu:addComponent(ed8)
 editomenu:addComponent(ed9)
 editomenu:addComponent(ed10)
+editomenu:addComponent(ed11)
+editomenu:addComponent(ed12)
 editomenu:addComponent(cancel)
 
 ui.showWindow(editomenu)
 
 doned:action(function(sender)
 local newName = tonumber(tpt.element(edelnam:text()))
+
 if edelname:text() == "" then
 else
 elements.property(newName, "Name", edelname:text())
 end
+
 if edelname3:text() == "" then
 else
 elements.property(newName, "Description", edelname3:text())
 end
+
 if edelname2:text() == "" then
 else
 elements.property(newName, "Colour", edelname2:text())
 end
+
 if edelname4:text() == "" then
 else
 elements.property(newName, "MenuSection", edelname4:text())
 end
+
 if edelname5:text() == "" then
 else
 elements.property(newName, "MenuVisible", tonumber(edelname5:text()))
 end
+
 if edelname6:text() == "" then
 else
-elements.property(newName, "Explosive", edelname6:text())
+elements.property(newName, "Explosive", tonumber(edelname6:text()))
 end
+
 if edelname7:text() == "" then
 else
-elements.property(newName, "HeatConduct", edelname7:text())
+elements.property(newName, "HeatConduct", tonumber(edelname7:text()))
 end
+
 if edelname8:text() == "" then
 else
 elements.property(newName, "Flammable", tonumber(edelname8:text()))
 end
+
 if edelname9:text() == "" then
 else
 elements.property(newName, "Weight", tonumber(edelname9:text()))
 end
+
 if edelname10:text() == "" then
 else
 elements.property(newName, "Hardness", tonumber(edelname10:text()))
 end
+
+if edelname11:text() == "" then
+else
+elements.property(newName, "Temperature", tonumber(edelname11:text())+273.15)
+end
+
+if edelname12:text() == "" then
+else
+elements.property(newName, "Diffusion", tonumber(edelname12:text()))
+end
+
 ui.closeWindow(editomenu)
 end)
 cancel:action(function(sender)
