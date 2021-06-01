@@ -1,6 +1,3 @@
---Cracker64's Powder Toy Multiplayer
---I highly recommend to use my Autorun Script Manager
-
 local version = 8
 local versionstring = "1.0.2"
 
@@ -2279,6 +2276,7 @@ local Help = Button:new(396,60,80,30, "Random save", "Opens random save.")
 
 local shrt = Button:new(396,92,80,30, "Toggle J Key", "Turns off the J key shortcut")
 local shrtlb = Label:new(485, 98, 10, 15, "ON")
+local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
 
 
 local hide= Button:new(528,278,80,20, "Close menu", "Hide.")
@@ -2304,6 +2302,7 @@ newmenu:removeComponent(reminder)
 newmenu:removeComponent(fancur)
 newmenu:removeComponent(Help)
 newmenu:removeComponent(shrt)
+newmenu:removeComponent(edito)
 end
 
 function clearsb()
@@ -2344,6 +2343,113 @@ newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(remon)
 newmenu:removeComponent(remoff)
 end
+
+edito:action(function(sender)
+close()
+local editomenu = Window:new(-15,-15, 610, 300)
+local doned = Button:new(310,278,80,15, "Done", "Hide.")
+local cancel = Button:new(210,278,80,15, "Cancel", "Hide.")
+local edmsg = Label:new(153,5,120, 10,"     Welcome to the Element Editor. Note: These changes are temperory and will not be saved!")
+local edelnam = Textbox:new(10, 30, 100, 15, '', 'Elem to Edit.')
+local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
+local edelname2 = Textbox:new(10, 80, 100, 15, '', 'New Color')
+local edelname4 = Textbox:new(10, 100, 100, 15, '', 'Menu Section')
+local edelname5 = Textbox:new(10, 120, 100, 15, '', 'Show = 1, Hide = 0')
+local edelname3 = Textbox:new(10, 140, 400, 15, '', '                           Description')
+local edelname6 = Textbox:new(10, 160, 100, 15, '', 'Explosive')
+local edelname7 = Textbox:new(10, 180, 100, 15, '', 'HeatConduct')
+local edelname8 = Textbox:new(10, 200, 100, 15, '', 'Flammable')
+local edelname9 = Textbox:new(10, 220, 100, 15, '', 'Weight')
+local edelname10 = Textbox:new(10, 240, 100, 15, '', 'Acid resistance')
+
+local ed0 = Label:new(170,33,120, 10,"Type the element name to be edited (Eg. STNE).")
+local ed1 = Label:new(105,63,70, 10,"New name.")
+local ed2 = Label:new(140,83,110, 10,"New colour eg 0xFF0000 for Red.")
+local ed3 = Label:new(163,103,120, 10,"Menu section, 1 = electronics, 11 = special.")
+local ed4 = Label:new(200,123,120, 10,"To show or hide the element from menu. 0 = hide, 1 = Show.")
+local ed5 = Label:new(410,143,120, 10,"New element description.")
+local ed6 = Label:new(148,163,120, 10,"Explosiveness, 0 = no, 1 = with FIRE.")
+local ed7 = Label:new(150,183,120, 10,"Heat conductivity. 0 = No, 255 = Max.")
+local ed8 = Label:new(139,203,120, 10,"Flamability, 0 = No, 1000 = Max.")
+local ed9 = Label:new(169,223,120, 10,"Weight , Eg. 1 = Gas, 2 = Light, 98 = Heavy.")
+local ed10 = Label:new(171,243,120, 10,"Acid resistance , Eg. 1 = No effect, 50 = Max.")
+
+editomenu:addComponent(edmsg)
+editomenu:addComponent(doned)
+editomenu:addComponent(edelnam)
+editomenu:addComponent(edelname)
+editomenu:addComponent(edelname2)
+editomenu:addComponent(edelname3)
+editomenu:addComponent(edelname4)
+editomenu:addComponent(edelname5)
+editomenu:addComponent(edelname6)
+editomenu:addComponent(edelname7)
+editomenu:addComponent(edelname8)
+editomenu:addComponent(edelname9)
+editomenu:addComponent(edelname10)
+editomenu:addComponent(ed0)
+editomenu:addComponent(ed1)
+editomenu:addComponent(ed2)
+editomenu:addComponent(ed3)
+editomenu:addComponent(ed4)
+editomenu:addComponent(ed5)
+editomenu:addComponent(ed6)
+editomenu:addComponent(ed7)
+editomenu:addComponent(ed8)
+editomenu:addComponent(ed9)
+editomenu:addComponent(ed10)
+editomenu:addComponent(cancel)
+
+ui.showWindow(editomenu)
+
+doned:action(function(sender)
+local newName = tonumber(tpt.element(edelnam:text()))
+if edelname:text() == "" then
+else
+elements.property(newName, "Name", edelname:text())
+end
+if edelname3:text() == "" then
+else
+elements.property(newName, "Description", edelname3:text())
+end
+if edelname2:text() == "" then
+else
+elements.property(newName, "Colour", edelname2:text())
+end
+if edelname4:text() == "" then
+else
+elements.property(newName, "MenuSection", edelname4:text())
+end
+if edelname5:text() == "" then
+else
+elements.property(newName, "MenuVisible", tonumber(edelname5:text()))
+end
+if edelname6:text() == "" then
+else
+elements.property(newName, "Explosive", edelname6:text())
+end
+if edelname7:text() == "" then
+else
+elements.property(newName, "HeatConduct", edelname7:text())
+end
+if edelname8:text() == "" then
+else
+elements.property(newName, "Flammable", tonumber(edelname8:text()))
+end
+if edelname9:text() == "" then
+else
+elements.property(newName, "Weight", tonumber(edelname9:text()))
+end
+if edelname10:text() == "" then
+else
+elements.property(newName, "Hardness", tonumber(edelname10:text()))
+end
+ui.closeWindow(editomenu)
+end)
+cancel:action(function(sender)
+ui.closeWindow(editomenu)
+end)
+end)
 
 local shrtv = "1"
 shrt:action(function(sender)
@@ -3490,6 +3596,7 @@ newmenu:addComponent(dellb)
 newmenu:addComponent(fplb)
 newmenu:addComponent(rulb)
 newmenu:addComponent(autolb)
+newmenu:addComponent(edito)
 end
 
 hide:action(function(sender)
