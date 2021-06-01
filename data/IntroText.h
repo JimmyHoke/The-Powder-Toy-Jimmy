@@ -5,7 +5,7 @@ const char *const introTextData =
 "\bw  Cracker1000's Mod \bo(25.0) \bb|\bw Built on TPT \bo(96.0) \n"
 "\br |-----------------------------------------------|\n"
 "\n"
-"\bo   Instructions:                        \n"
+"\bo   Instructions (Do Not Skip!):                        \n"
 "\br *\bw There's a new 'V' drop down button on top, press it to open the Mod menu.\n"
 "\br *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"
 "\br *\bw The Mod features an in-built 'Texter' for typing text in game.\n"
