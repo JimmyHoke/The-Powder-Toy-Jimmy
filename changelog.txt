@@ -1,8 +1,7 @@
-Version 24.5
+Version 25
+Minor changes to Editor.
+Remove C-16 from wiki.
 
-New element Editor: Allows you to edit element properties in game! (Edited properties are temporary.)
-Fix debug mode not showing .tmp2 for CEXP, CWIR , LED  and VSNS.
-Fix CEXP.
-COPR oxide now separates from COPR when under pressure. It now also absorbes OXYG while eroding.
-Remove C-16 from game (CEXP can be customised to act like C-16.)
-Line tool can now change Fan wall velocity. 
+todo:
+Update tptmp.
+
