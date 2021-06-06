@@ -1,9 +1,11 @@
+--Cracker64's Powder Toy Multiplayer
+--I highly recommend to use my Autorun Script Manager
+
 local version = 8
-local versionstring = "1.0.2"
+local versionstring = "1.0.3"
 
 if TPTMP then if TPTMP.version <= version then TPTMP.disableMultiplayer() else error("newer version already running") end end local get_name = tpt.get_name -- if script already running, replace it
 TPTMP = {["version"] = version, ["versionStr"] = versionstring} -- script version sent on connect to ensure server protocol is the same
-local issocket,socket = pcall(require,"socket")
 if not http then error"Tpt version not supported" end
 local using_manager = false
 local type = type -- people like to overwrite this function with a global a lot
@@ -396,7 +398,7 @@ new=function(x,y,w,h)
 	end)
 	intext:moveadd(function(self,x,y) self.t:onmove(x,y) end)
 	function intext:setfocus(focus)
-		if ui.grabTextInput then
+		if ui and ui.grabTextInput then
 			if focus and not self.focus then
 				ui.grabTextInput()
 			elseif not focus and self.focus then
@@ -767,7 +769,6 @@ new=function(x,y,w,h)
 	--commands for chat window
 	chatcommands = {
 	connect = function(self,msg,args)
-		if not issocket then self:addline("No luasockets found") return end
 		local newname = pcall(string.dump, get_name) and "Gue".."st#"..math["random"](1111,9888) or get_name()
 		local s,r = connectToServer(args[1],tonumber(args[2]), newname~="" and newname or username)
 		if not s then self:addline(r,255,50,50) end
@@ -1983,9 +1984,6 @@ local scanFuncs = {
 	--F, frame step
 	[9] = function() if not jacobsmod or not L.ctrl then conSend(50) end end,
 
-	--H, HUD and intro text
-	[11] = function() if L.ctrl and jacobsmod then return false end end,
-
 	--I, invert pressure
 	[12] = function() conSend(62) end,
 
@@ -2055,9 +2053,6 @@ local scanFuncs = {
 
 	--;, replace mode or specific delete
 	[59] = function() if L.ctrl then  L.replacemode = bit.bxor(L.replacemode, 2) else  L.replacemode = bit.bxor(L.replacemode, 1) end conSend(38, L.replacemode) end,
-
-	--F1 , intro text
-	[58] = function() if jacobsmod then return false end end,
 
 	--F5 , save reload
 	[62] = function()
@@ -2184,7 +2179,7 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
---Cracker1000's custom script version 9.0
+--Cracker1000's custom script version 10.0
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -2956,11 +2951,11 @@ local prevpg = Button:new(242, 400, 40, 15, "Prev.")
 local nextpg = Button:new(292, 400, 40, 15, "Next")
 local close2 = Button:new(512, 400, 100, 15, "Close wiki")
 
-local creditstxt = Label:new(6,-22, 598, 418,"\n                                         << Welcome To The Wiki >>\n\n1) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n.tmp2 property is used for setting melting point (default is 2000C).\n\n2) C-16: A powerful explosive. Explodes creating pressure about 40 units when above 65C.\n\n3) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n4) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n5) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n6) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\nEvaporates at extreme temperatures into WTRV.\n\n7) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\nIt can also block energy particles like PROT.\n\n8) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n9) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\nCan split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LITH2: Lithium ion battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\nReacts with different elements like O2, WATR, ACID etc as IRL.")
+local creditstxt = Label:new(6,-22, 598, 418,"\n                                         << Welcome To The Wiki >>\n\n1) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n.tmp2 property is used for setting melting point (default is 2000C).\n\n2) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n3) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n4) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n5) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n6) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\nEvaporates at extreme temperatures into WTRV.\n\n7) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\nIt can also block energy particles like PROT.\n\n8) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n9) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\nCan split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LITH2: Lithium ion battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\nReacts with different elements like O2, WATR, ACID etc as IRL.")
 
-local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows with UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  20) BEE: Eats PLNT. Secretes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH.\n  Gets aggresive if life gets below 30. Uses pressure waves to communicate. Can regulate temp. to certain extent.\n\n  21) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  22) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n\n  23) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  24) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.\n\n  25) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.")
+local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n  26) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  27) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  28) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n\n  You have reached the end of wiki. \n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n\n  You have reached the end of wiki. \n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)

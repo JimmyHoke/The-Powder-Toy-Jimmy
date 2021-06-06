@@ -1,7 +1,19 @@
-Version 25
+Version 25.0
+
 Minor changes to Editor.
 Remove C-16 from wiki.
-
+Make hud show .tmp2 for CSNS and TMPS too.
+Merge with version 96.0
+Update tptmp to version 1.0.3
+Enable uploading saves with cGoL elements.
+Changes to GLOW.
+Fix element numbering in wiki.
+#Changes to BEE:
+Bees now avoid harmful elements and high temp. areas.
+They return to center when healthy.
+Edge detection.
+ 
 todo:
-Update tptmp.
+None.
+
 

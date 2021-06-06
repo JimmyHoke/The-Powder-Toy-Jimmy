@@ -32,7 +32,7 @@ void Element::Element_BEE()
 
 	DefaultProperties.temp = R_TEMP + 20.0f + 273.15f;
 	HeatConduct = 42;
-	Description = "BEE, Secretes wax, attacks figh/stkm, eats plant to stay alive and multiply.";
+	Description = "BEE, makes wax, attacks figh/stkm, uses plant to stay alive and reproduce. Avoids harmful elements.";
 
 	Properties = TYPE_GAS;
 
@@ -60,40 +60,93 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].life >= 100)   //Life check, god sees everything.
 		parts[i].life = 100;
 
-	else if (parts[i].life <= 1)  //Everyone has to die one day.
+	else if (parts[i].life <= 0)  //Everyone has to die one day.
 		sim->kill_part(i);
 
+	if (parts[i].life > 30)
+	{
+		sim->pv[(y / CELL)][(x / CELL)] = 0.3f;  //Search areas for food if life drops below 90.
+	}
+	if (parts[i].life <= 30)
+	{
+		sim->pv[(y / CELL)][(x / CELL)] = 0.9f;  //Search wider areas for food if life drops below 30.
+	}
+	if (parts[i].temp <= 44 + 273.15f && parts[i].life >= 75) //Temp. regulation.
+	{
+		parts[i].temp++;
+		parts[i].life--;
+	}
+
+	if (parts[i].temp > 90 + 273.15f && parts[i].life >= 75)
+	{
+		parts[i].temp--;
+		parts[i].life--;
+	}
+
+	if (parts[i].temp < 10 + 273.15f) //Stop moving when cold!
+	{
+		parts[i].vx = 0.0;
+		parts[i].vy = 0.0;
+	}
+	if (parts[i].life < 30 && parts[i].x < 600 && parts[i].x > 10 && parts[i].y < 360) //Rest if no food is found.
+	{
+		parts[i].vy = 1.0;
+	}
+	//Meet at center if life is above 80.
+	if (parts[i].life > 90)
+	{
+		if (parts[i].x <= 330)
+		{
+			parts[i].vx = 0.6;
+		}
+		else if (parts[i].x > 330)
+		{
+			parts[i].vx = -0.6;
+		}
+
+		if (parts[i].y <= 192)
+		{
+			parts[i].vy = 0.6;
+		}
+		else if (parts[i].y > 192)
+		{
+			parts[i].vy = -0.6;
+		}
+	}
+	
+	// Edge detection
+		if (parts[i].x < 10)
+		{
+			parts[i].vx = 0.6;
+		}
+		else if (parts[i].x > 600)
+		{
+			parts[i].vx = -0.6;
+		}
+
+		if (parts[i].y <= 10)
+		{
+			parts[i].vy = 0.6;
+		}
+		else if (parts[i].y > 360)
+		{
+			parts[i].vy = -0.6;
+		}
+
 	int r, rx, ry;
-	for (rx = -4; rx < 3; rx++)
-		for (ry = -4; ry < 3; ry++)
+	for (rx = -2; rx < 3; rx++)
+		for (ry = -2; ry < 3; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				r = pmap[y + ry][x + rx];
-				if (parts[i].life < 90)
+				if (!r)
+					continue;
+				if (parts[ID(r)].temp > 373.15f)
 				{
-					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = 0.2f;  //Search areas for food if life drops below 90.
-				}
-				if (parts[i].life <= 30)
-				{
-					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = 0.9f;  //Search wider areas for food if life drops below 30.
-				}
-
-				if (parts[i].temp <= 44 + 273.15f && parts[i].life >= 75) //Temp. regulation.
-				{
-					parts[i].temp++;
-					parts[i].life--;
-				}
-
-				if (parts[i].temp > 90 + 273.15f && parts[i].life >= 75)
-				{
-					parts[i].temp--;
-					parts[i].life--;
-				}
-
-				if (parts[i].temp < 10 + 273.15f) //Stop moving when cold!
-				{
-					parts[i].vx = 0.0;
-					parts[i].vy = 0.0;
+					parts[i].pavg[0] = -rx;
+					parts[i].pavg[1] = -ry;
+					parts[i].vx = parts[i].pavg[0];
+					parts[i].vy = parts[i].pavg[1];
 				}
 
 				switch (TYP(r))
@@ -110,26 +163,32 @@ static int update(UPDATE_FUNC_ARGS)
 						}
 				}
 				break;
+				// Avoid these particles.
 				case PT_FIRE:
 				case PT_PLSM:
 				case PT_SMKE:
+				case PT_ACID:
+				case PT_BOMB:
+				case PT_DEST:
+				case PT_VIRS:
 				{
-					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = 3.0f;
-					parts[i].vy -= 2;
+					parts[i].pavg[0] = -rx;
+					parts[i].pavg[1] = -ry;
+					parts[i].vx = parts[i].pavg[0];
+					parts[i].vy = parts[i].pavg[1];
 				}
 				break;
-
 				case PT_PLNT:
 				{
 					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -2.0f;
 					if (RNG::Ref().chance(1, 30))
 					{
 						parts[i].life = 100;
-						sim->part_change_type(ID(r), x + rx, y + ry, PT_NONE);
+						sim->kill_part(ID(r));
 					}
-					if (RNG::Ref().chance(1, 80))
+					if (RNG::Ref().chance(1, 90))
 					{
-						sim->create_part(-1, x + 4, y + 4, PT_BEE);
+						sim->create_part(-1, x + 3, y + 3, PT_BEE);
 					}
 				}
 				break;

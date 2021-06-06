@@ -29,7 +29,7 @@ void Element::Element_PHOS()
 	Weight = 75;
 
 	HeatConduct = 110;
-	Description = "Phosphorus, slowly turns red, melts at 45C and reacts violently with O2.";
+	Description = "Phosphorus, slowly turns red, melts at 45C and reacts violently with O2. Glows under UV.";
 
 	Properties = TYPE_PART;
 

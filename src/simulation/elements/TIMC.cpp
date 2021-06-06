@@ -98,9 +98,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp2 > 1)
 	{
-		*colb = 200;
-		*fireb = 255;
-		*firea = 100;
+		*firer = 95;
+		*fireg = 95;
+		*fireb = 125;
+		*firea = 40;
 		*pixel_mode |= FIRE_ADD;
 	}
 	return 0;
