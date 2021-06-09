@@ -113,25 +113,46 @@ static int update(UPDATE_FUNC_ARGS)
 			parts[i].vy = -0.6;
 		}
 	}
-	
-	// Edge detection
-		if (parts[i].x < 10)
-		{
-			parts[i].vx = 0.6;
-		}
-		else if (parts[i].x > 600)
-		{
-			parts[i].vx = -0.6;
-		}
 
-		if (parts[i].y <= 10)
-		{
-			parts[i].vy = 0.6;
-		}
-		else if (parts[i].y > 360)
-		{
-			parts[i].vy = -0.6;
-		}
+	// Edge detection
+	if (parts[i].x < 20)
+	{
+		parts[i].vx = 0.6;
+	}
+	else if (parts[i].x > 600)
+	{
+		parts[i].vx = -0.6;
+	}
+
+	if (parts[i].y <= 10)
+	{
+		parts[i].vy = 0.6;
+	}
+	else if (parts[i].y > 360)
+	{
+		parts[i].vy = -0.6;
+	}
+
+	if (RNG::Ref().chance(1, 10))
+	{
+		int r, rx, ry;
+		for (rx = -25; rx < 25; rx++)
+			for (ry = -25; ry < 25; ry++)
+				if (BOUNDS_CHECK && (rx || ry))
+				{
+					r = pmap[y + ry][x + rx];
+					if (!r)
+						continue;
+					if (parts[ID(r)].type == PT_PLNT)
+				{
+				parts[i].pavg[0] = rx*3;
+				parts[i].pavg[1] = ry*3;
+				parts[i].vx = parts[i].pavg[0];
+				parts[i].vy = parts[i].pavg[1];
+				sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -6.0f;
+				}
+				}
+	}
 
 	int r, rx, ry;
 	for (rx = -2; rx < 3; rx++)
@@ -171,22 +192,23 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_BOMB:
 				case PT_DEST:
 				case PT_VIRS:
+				case PT_LAVA:
+				case PT_CFLM:
 				{
 					parts[i].pavg[0] = -rx;
 					parts[i].pavg[1] = -ry;
-					parts[i].vx = parts[i].pavg[0];
-					parts[i].vy = parts[i].pavg[1];
+					parts[i].vx = parts[i].pavg[0]*2;
+					parts[i].vy = parts[i].pavg[1]*2;
 				}
 				break;
 				case PT_PLNT:
 				{
-					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -2.0f;
 					if (RNG::Ref().chance(1, 30))
 					{
 						parts[i].life = 100;
 						sim->kill_part(ID(r));
 					}
-					if (RNG::Ref().chance(1, 90))
+					if (RNG::Ref().chance(1, 140))
 					{
 						sim->create_part(-1, x + 3, y + 3, PT_BEE);
 					}
