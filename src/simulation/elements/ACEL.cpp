@@ -51,26 +51,26 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	int r, rx, ry;
 	float multiplier;
-	if (parts[i].life!=0)
+	if (parts[i].life != 0)
 	{
 		auto change = parts[i].life > 1000 ? 1000 : (parts[i].life < 0 ? 0 : parts[i].life);
-		multiplier = 1.0f+(change/100.0f);
+		multiplier = 1.0f + (change / 100.0f);
 	}
 	else
 	{
 		multiplier = 1.1f;
 	}
 	parts[i].tmp = 0;
-	for (rx=-1; rx<2; rx++)
-		for (ry=-1; ry<2; ry++)
+	for (rx = -1; rx < 2; rx++)
+		for (ry = -1; ry < 2; ry++)
 			if (BOUNDS_CHECK && (!rx != !ry))
 			{
-				r = pmap[y+ry][x+rx];
-				if(!r)
-					r = sim->photons[y+ry][x+rx];
+				r = pmap[y + ry][x + rx];
+				if (!r)
+					r = sim->photons[y + ry][x + rx];
 				if (!r)
 					continue;
-				if(sim->elements[TYP(r)].Properties & (TYPE_PART | TYPE_LIQUID | TYPE_GAS | TYPE_ENERGY))
+				if (sim->elements[TYP(r)].Properties & (TYPE_PART | TYPE_LIQUID | TYPE_GAS | TYPE_ENERGY))
 				{
 					parts[ID(r)].vx *= multiplier;
 					parts[ID(r)].vy *= multiplier;
@@ -82,7 +82,7 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if(cpart->tmp)
+	if (cpart->tmp)
 		*pixel_mode |= PMODE_GLOW;
 	return 0;
 }

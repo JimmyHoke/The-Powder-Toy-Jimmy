@@ -52,8 +52,26 @@ void Element::Element_BEE()
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	// Edge detection
+	if (parts[i].x < 20)
+	{
+		parts[i].vx = 0.6;
+	}
+	else if (parts[i].x > 600)
+	{
+		parts[i].vx = -0.6;
+	}
 
-	if (RNG::Ref().chance(1, 40)) //Slowly loses life if there's nothing to eat.
+	if (parts[i].y <= 10)
+	{
+		parts[i].vy = 0.6;
+	}
+	else if (parts[i].y > 360)
+	{
+		parts[i].vy = -0.6;
+	}
+
+	if (RNG::Ref().chance(1, 60)) //Slowly loses life if there's nothing to eat.
 	{
 		parts[i].life -= 1;
 	}
@@ -67,7 +85,7 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		sim->pv[(y / CELL)][(x / CELL)] = 0.3f;  //Search areas for food if life drops below 90.
 	}
-	if (parts[i].life <= 30)
+	else if (parts[i].life <= 30)
 	{
 		sim->pv[(y / CELL)][(x / CELL)] = 0.9f;  //Search wider areas for food if life drops below 30.
 	}
@@ -88,11 +106,11 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vx = 0.0;
 		parts[i].vy = 0.0;
 	}
-	if (parts[i].life < 30 && parts[i].x < 600 && parts[i].x > 10 && parts[i].y < 360) //Rest if no food is found.
+	if (parts[i].life < 30 && parts[i].x < 600 && parts[i].x > 20 && parts[i].y < 350) //Rest if no food is found.
 	{
-		parts[i].vy = 1.0;
+		parts[i].vy = 0.5;
 	}
-	//Meet at center if life is above 80.
+	//Meet at center if life is above 90.
 	if (parts[i].life > 90)
 	{
 		if (parts[i].x <= 330)
@@ -114,42 +132,23 @@ static int update(UPDATE_FUNC_ARGS)
 		}
 	}
 
-	// Edge detection
-	if (parts[i].x < 20)
-	{
-		parts[i].vx = 0.6;
-	}
-	else if (parts[i].x > 600)
-	{
-		parts[i].vx = -0.6;
-	}
-
-	if (parts[i].y <= 10)
-	{
-		parts[i].vy = 0.6;
-	}
-	else if (parts[i].y > 360)
-	{
-		parts[i].vy = -0.6;
-	}
-
 	if (RNG::Ref().chance(1, 10))
 	{
 		int r, rx, ry;
-		for (rx = -25; rx < 25; rx++)
-			for (ry = -25; ry < 25; ry++)
+		for (rx = -20; rx < 21; rx++)
+			for (ry = -20; ry < 21; ry++)
 				if (BOUNDS_CHECK && (rx || ry))
 				{
 					r = pmap[y + ry][x + rx];
 					if (!r)
 						continue;
-					if (parts[ID(r)].type == PT_PLNT)
+					if (TYP(r) == PT_PLNT)
 				{
 				parts[i].pavg[0] = rx*3;
 				parts[i].pavg[1] = ry*3;
 				parts[i].vx = parts[i].pavg[0];
 				parts[i].vy = parts[i].pavg[1];
-				sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -6.0f;
+				sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -4.0f;
 				}
 				}
 	}
@@ -182,6 +181,17 @@ static int update(UPDATE_FUNC_ARGS)
 								sim->part_change_type(ID(r), x + rx, y + ry, PT_MWAX);
 							}
 						}
+				}
+				break;
+				case PT_BEE:
+				{
+					if (parts[i].life > 90)
+					{
+						parts[i].pavg[0] = -rx;
+						parts[i].pavg[1] = -ry;
+						parts[i].vx = parts[i].pavg[0] * 2;
+						parts[i].vy = parts[i].pavg[1] * 2;
+					}
 				}
 				break;
 				// Avoid these particles.
