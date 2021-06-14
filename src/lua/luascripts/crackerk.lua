@@ -2495,7 +2495,7 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2688538)
+randsav = math.random(1,2731295)
 sim.loadSave(randsav, 0) 
 end)
 

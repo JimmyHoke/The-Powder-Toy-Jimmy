@@ -1,22 +1,22 @@
 Version 25.0
 
-Minor changes to Editor.
+Add some more properties to editor.
 Remove C-16 from wiki.
-Make hud show .tmp2 for CSNS and TMPS too.
+Make debug mode show .tmp2 for CSNS and TMPS.
 Merge with version 96.0
-Update tptmp to version 1.0.3
+Update tptmp to 1.0.3
 Enable uploading saves with cGoL elements.
-Changes to GLOW.
+Remove pastel glow on "inactive" GLOW, fix FIRE_ADD variables. 
 Fix element numbering in wiki.
 
 #Changes to BEE:
-Bees work much smartly now.
 Bees now avoid harmful elements and high temp. areas.
 They return to center when healthy.
 Edge detection.
 Better detection for PLNT.
- 
+
 todo:
-None.
+Add prop conducts and add . in some descriptions.
+
 
 
