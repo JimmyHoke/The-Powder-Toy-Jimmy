@@ -2341,9 +2341,9 @@ end
 
 edito:action(function(sender)
 close()
-local editomenu = Window:new(-15,-15, 610, 362)
-local doned = Button:new(310,344,80,15, "Done", "Hide.")
-local cancel = Button:new(210,344,80,15, "Cancel", "Hide.")
+local editomenu = Window:new(-15,-15, 610, 365)
+local doned = Button:new(310,347,80,15, "Done", "Hide.")
+local cancel = Button:new(210,347,80,15, "Cancel", "Hide.")
 local edmsg = Label:new(153,5,120, 10,"    Welcome to the Element Editor. Note: These changes are temporory and will not be saved!")
 local edelnam = Textbox:new(10, 30, 100, 15, '', 'Elem to Edit.')
 local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
@@ -2359,20 +2359,22 @@ local edelname10 = Textbox:new(10, 240, 100, 15, '', 'Acid resistance.')
 local edelname11 = Textbox:new(10, 260, 100, 15, '', 'Spawn Temp.')
 local edelname12 = Textbox:new(10, 280, 100, 15, '', 'Diffusion.')
 local edelname13 = Textbox:new(10, 300, 100, 15, '', 'Gravity.')
+local edelname14 = Textbox:new(10, 320, 100, 15, '', 'Advection.')
 
 local ed0 = Label:new(170,33,120, 10,"Type the element name to be edited (Eg. STNE).")
 local ed1 = Label:new(106,63,70, 10,"New name.")
 local ed2 = Label:new(158,83,110, 10,"New colour, in hexadecimal (0xRRGGBB).")
-local ed3 = Label:new(186,103,120, 10,"Menu section, 1 to 11. 1 = Electronics, 11 = Special.")
-local ed4 = Label:new(201,123,120, 10,"To show or hide the element from menu. 0 = Hide, 1 = Show.")
-local ed6 = Label:new(220,163,120, 10,"Explosiveness, 0 = No, 1 = with FIRE, 2 = FIRE or Pressure > 2.5")
+local ed3 = Label:new(183,103,120, 10,"Menu section, 1 to 11. 1 = Electronics, 14 = Tools.")
+local ed4 = Label:new(202,123,120, 10,"To show or hide the element from menu. 0 = Hide, 1 = Show.")
+local ed6 = Label:new(221,163,120, 10,"Explosiveness, 0 = No, 1 = with FIRE, 2 = FIRE or Pressure > 2.5.")
 local ed7 = Label:new(151,183,120, 10,"Heat conductivity. 0 = No, 255 = Max.")
 local ed8 = Label:new(137,203,120, 10,"Flamability, 0 to a few thousand.")
 local ed9 = Label:new(169,223,120, 10,"Weight , Eg. 1 = Gas, 2 = Light, 98 = Heavy.")
-local ed10 = Label:new(174,243,120, 10,"Acid resistance , Eg. 0 = No effect, 50 = Max.")
+local ed10 = Label:new(173,243,120, 10,"Acid resistance , Eg. 0 = No effect, 50 = Max.")
 local ed11 = Label:new(137,263,120, 10,"Temp. at which element is spawn.")
-local ed12 = Label:new(209,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10")
+local ed12 = Label:new(211,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10.")
 local ed13 = Label:new(156,303,120, 10,"How fast the particle falls. -0.1 to 0.4.")
+local ed14 = Label:new(205,323,120, 10,"How much the particle is accelerated by moving air. -1 to 01")
 
 editomenu:addComponent(edmsg)
 editomenu:addComponent(doned)
@@ -2390,6 +2392,7 @@ editomenu:addComponent(edelname10)
 editomenu:addComponent(edelname11)
 editomenu:addComponent(edelname12)
 editomenu:addComponent(edelname13)
+editomenu:addComponent(edelname14)
 editomenu:addComponent(ed0)
 editomenu:addComponent(ed1)
 editomenu:addComponent(ed2)
@@ -2403,11 +2406,17 @@ editomenu:addComponent(ed10)
 editomenu:addComponent(ed11)
 editomenu:addComponent(ed12)
 editomenu:addComponent(ed13)
+editomenu:addComponent(ed14)
 editomenu:addComponent(cancel)
 
 ui.showWindow(editomenu)
 doned:action(function(sender)
 local newName = tonumber(tpt.element(edelnam:text()))
+
+if edelname:text() == "" then
+else
+elements.property(newName, "Name", edelname:text())
+end
 
 if edelname3:text() == "" then
 else
@@ -2469,9 +2478,9 @@ else
 elements.property(newName, "Gravity", tonumber(edelname13:text()))
 end
 
-if edelname:text() == "" then
+if edelname14:text() == "" then
 else
-elements.property(newName, "Name", edelname:text())
+elements.property(newName, "Advection", tonumber(edelname14:text()))
 end
 
 ui.closeWindow(editomenu)
@@ -2955,7 +2964,7 @@ local creditstxt = Label:new(6,-22, 598, 418,"\n                                
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n\n  You have reached the end of wiki. \n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully! \n\n\n  You have reached the end of wiki. \n \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)

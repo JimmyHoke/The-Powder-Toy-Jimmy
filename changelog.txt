@@ -1,13 +1,14 @@
 Version 25.0
 
-Add some more properties to editor.
+New element: Powered Converter (PCON)
+Add more properties to editor.
 Remove C-16 from wiki.
 Make debug mode show .tmp2 for CSNS and TMPS.
 Merge with version 96.0
 Update tptmp to 1.0.3
 Enable uploading saves with cGoL elements.
 Remove pastel glow on "inactive" GLOW, fix FIRE_ADD variables. 
-Fix element numbering in wiki.
+Fix element numbering in wiki and add more info. for some elements.
 
 #Changes to BEE:
 Bees now avoid harmful elements and high temp. areas.
