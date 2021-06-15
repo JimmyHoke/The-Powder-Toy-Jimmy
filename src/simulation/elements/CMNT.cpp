@@ -51,11 +51,15 @@ void Element::Element_CMNT()
 static int update(UPDATE_FUNC_ARGS)
 {
 	{
-		if (parts[i].tmp2 == 1 && parts[i].tmp < 150)
+		if (parts[i].tmp2 == 1 && parts[i].tmp < 300)
 		{
+			if (parts[i].temp < 363.15f)
+			{
+				parts[i].temp++;
+			}
 			parts[i].tmp++;
 		}
-		if (parts[i].tmp == 150)
+		if (parts[i].tmp == 300)
 		{
 			parts[i].vx = 0;
 			parts[i].vy = 0;
@@ -69,13 +73,8 @@ static int update(UPDATE_FUNC_ARGS)
 						continue;
 					if ((TYP(r) == PT_WATR|| TYP(r) == PT_DSTW|| TYP(r) == PT_SLTW|| TYP(r) == PT_CBNW) && (parts[i].tmp2 !=1))
 					{
-						if (parts[i].temp <= 374.15f)
-						{
-							parts[i].temp += 70.15f;
-						}
 							parts[i].tmp2 = 1;
 							sim->kill_part(ID(r));
-							
 					}
 				}
 	}
@@ -85,12 +84,11 @@ static int update(UPDATE_FUNC_ARGS)
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
 
-  if (cpart->tmp == 150)
-	{
-	*colr = 70;
-	*colg = 70;
-	*colb = 70;
-	
+  if (cpart->tmp != 0)
+{
+	*colr -=  cpart->tmp / 3;
+	*colg -=  cpart->tmp / 3;
+	*colb -=  cpart->tmp / 3;
 }
 	return 0;
 }

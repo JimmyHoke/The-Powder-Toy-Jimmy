@@ -2179,6 +2179,7 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
+
 --Cracker1000's custom script version 10.0
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
@@ -2195,8 +2196,6 @@ local fplb = Label:new(94, 68, 10, 15, "ON")
 local reset= Button:new(10,92,75,30,"Reset", "Reset everything.")
 
 local info= Button:new(10,124,75,30,"Stack tools", "Usefull for subframe.")
-local info1= Button:new(90,124,80,20,"Separate", "Removes top most particle from stack.")
-local info2= Button:new(90,144,80,20,"Delete", "Leaves top particle and PHOT but remove everything else.")
 
 local Ruler = Button:new(10,156,75,30, "Ruler", "Toggles in game ruler.")
 local rulb = Label:new(94, 162, 10, 15, "OFF")
@@ -2319,8 +2318,6 @@ newmenu:removeComponent(mp6)
 newmenu:removeComponent(mp7)
 newmenu:removeComponent(mp8)
 newmenu:removeComponent(mp9)
-newmenu:removeComponent(info1)
-newmenu:removeComponent(info2)
 newmenu:removeComponent(rSlider)
 newmenu:removeComponent(gSlider)
 newmenu:removeComponent(bSlider)
@@ -2339,10 +2336,55 @@ newmenu:removeComponent(remon)
 newmenu:removeComponent(remoff)
 end
 
+local timerao = Button:new(10,356,20,15, "^", "Removes top most particle from stack.")
+local timeraf = Button:new(30,356,20,15, "^ ^", "Leaves top particle and PHOT but remove everything else under it.")
+local timerax = Button:new(50,356,20,15, "X", "Exit.")
+
+function timeradd()
+interface.addComponent(timerao)
+interface.addComponent(timeraf)
+interface.addComponent(timerax)
+end
+
+function timerremo()
+interface.removeComponent(timerao)
+interface.removeComponent(timeraf)
+interface.removeComponent(timerax)
+end
+
+info:action(function(sender)
+close()
+timerremo()
+timeradd()
+
+timerao:action(function(sender)
+for i in sim.parts() do
+		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
+		if sim.pmap (x, y) == i then 
+                                tpt.delete(i)
+		end
+	end
+end)
+
+timeraf:action(function(sender)
+for i in sim.parts() do
+		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
+		if sim.pmap(x, y) ~= i and bit.band(elem.property(sim.partProperty(i, sim.FIELD_TYPE), "Properties"), elem.TYPE_ENERGY) == 0 then
+			tpt.delete(i)
+		end
+	end
+end)
+
+timerax:action(function(sender)
+timerremo()
+end)
+
+end)
+
 edito:action(function(sender)
 close()
 local editomenu = Window:new(-15,-15, 610, 365)
-local doned = Button:new(310,347,80,15, "Done", "Hide.")
+local doned = Button:new(310,347,80,15, "Done", "Edit")
 local cancel = Button:new(210,347,80,15, "Cancel", "Hide.")
 local edmsg = Label:new(153,5,120, 10,"    Welcome to the Element Editor. Note: These changes are temporory and will not be saved!")
 local edelnam = Textbox:new(10, 30, 100, 15, '', 'Elem to Edit.')
@@ -3015,29 +3057,6 @@ close2:action(function() ui.closeWindow(creditw) end)
 clearsb()
 ui.showWindow(creditw) 
 end)
-info:action(function(sender)
-clearsb()
-newmenu:addComponent(info1)
-newmenu:addComponent(info2)
-end)
-
-info1:action(function(sender)
-for i in sim.parts() do
-		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
-		if sim.pmap (x, y) == i then 
-                                tpt.delete(i)
-		end
-	end
-end)
-
-info2:action(function(sender)
-for i in sim.parts() do
-		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
-		if sim.pmap(x, y) ~= i and bit.band(elem.property(sim.partProperty(i, sim.FIELD_TYPE), "Properties"), elem.TYPE_ENERGY) == 0 then
-			tpt.delete(i)
-		end
-	end
-end)
 
 bg:action(function(sender)
 clearsb()
@@ -3542,6 +3561,7 @@ end)
 
 reset:action(function(sender)
 clearsb()
+timerremo()
 autoval = "1"
 fanval = "1"
 shrtv = "1"

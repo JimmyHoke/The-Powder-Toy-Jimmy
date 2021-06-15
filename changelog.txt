@@ -1,6 +1,8 @@
-Version 25.0
+Version 25.0 (Final Version)
 
 New element: Powered Converter (PCON)
+Fix Stack tools not showing up properly.
+CMNT changes colour more gradually and takes some time before solidifying.
 Add more properties to editor.
 Remove C-16 from wiki.
 Make debug mode show .tmp2 for CSNS and TMPS.
