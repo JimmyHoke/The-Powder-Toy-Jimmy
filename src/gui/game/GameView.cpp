@@ -2236,7 +2236,7 @@ void GameView::OnDraw()
 
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
 		g->fillrect(XRES - 20 - textWidth, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(XRES - 16 - textWidth, 16, sampleInfo.Build(), 250, 250, 250, alpha*0.95f);
+		g->drawtext(XRES - 16 - textWidth, 16, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
 
 
 #ifndef OGLI
@@ -2311,7 +2311,7 @@ void GameView::OnDraw()
 
 			textWidth = Graphics::textwidth(sampleInfo.Build());
 			g->fillrect(XRES - 20 - textWidth, 27, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-			g->drawtext(XRES - 16 - textWidth, 30, sampleInfo.Build(), 250, 250, 250, alpha*0.95f);
+			g->drawtext(XRES - 16 - textWidth, 30, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
 		}
 	}
 	if(showHud && introText < 51)
@@ -2320,17 +2320,17 @@ void GameView::OnDraw()
 		StringBuilder fpsInfo;
 
 		int fpsfake = ui::Engine::Ref().GetFps();
-		int ar = 250;
-		int ag = 250;
-		int ab = 250;
+		int ar = 255;
+		int ag = 255;
+		int ab = 255;
 
-			if (fpsfake < 30)
+			if (fpsfake < 21)
 			{
 				ar = 255;
 				ag = 0;
 				ab = 0;
 			}
-			else if (fpsfake > 60)
+			else if (fpsfake > 57)
 			{
 				ar = 0;
 				ag = 255;
@@ -2338,7 +2338,6 @@ void GameView::OnDraw()
 			}
 
 		fpsInfo << Format::Precision(2) << "FPS: " << ui::Engine::Ref().GetFps();
-
 		if (showDebug)
 		{
 			if (ren->findingElement)

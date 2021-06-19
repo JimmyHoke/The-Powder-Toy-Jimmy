@@ -3627,7 +3627,7 @@ clearm()
 end
 
 function drawglitch()
-graphics.drawLine(7, 18,314,18,200,20,20,250)
+graphics.drawLine(7, 18,314,18,255,10,10,255)
 end
 
 function open()
