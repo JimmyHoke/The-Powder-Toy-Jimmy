@@ -2179,7 +2179,6 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
-
 --Cracker1000's custom script version 10.0
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
@@ -2336,24 +2335,29 @@ newmenu:removeComponent(remon)
 newmenu:removeComponent(remoff)
 end
 
-local timerao = Button:new(10,356,20,15, "^", "Removes top most particle from stack.")
-local timeraf = Button:new(30,356,20,15, "^ ^", "Leaves top particle and PHOT but remove everything else under it.")
-local timerax = Button:new(50,356,20,15, "X", "Exit.")
+
+local timerad = Button:new(10,356,20,15, "S", "Stacks the elements present on screen.")
+local timerao = Button:new(30,356,20,15, "R", "Removes just the top most particle from stack.")
+local timeraf = Button:new(50,356,20,15, "D", "Leaves top particle and PHOT but remove everything else under it.")
+local timerax = Button:new(70,356,20,15, "X", "Exit.")
 
 function timeradd()
 interface.addComponent(timerao)
 interface.addComponent(timeraf)
 interface.addComponent(timerax)
+interface.addComponent(timerad)
 end
 
 function timerremo()
 interface.removeComponent(timerao)
 interface.removeComponent(timeraf)
 interface.removeComponent(timerax)
+interface.removeComponent(timerad)
 end
 
 info:action(function(sender)
 close()
+tpt.selectedl = "DEFAULT_PT_SPRK"
 timerremo()
 timeradd()
 
@@ -2375,10 +2379,13 @@ for i in sim.parts() do
 	end
 end)
 
+timerad:action(function(sender)
+ tpt.set_property("x", 99, "NONE")
+end)
+
 timerax:action(function(sender)
 timerremo()
 end)
-
 end)
 
 edito:action(function(sender)

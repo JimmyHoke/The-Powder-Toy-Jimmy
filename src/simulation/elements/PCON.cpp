@@ -7,7 +7,7 @@ void Element::Element_PCON()
 {
 	Identifier = "DEFAULT_PT_PCON";
 	Name = "PCON";
-	Colour = PIXPACK(0x0AAB0A);
+	Colour = PIXPACK(0x32CD32);
 	MenuVisible = 1;
 	MenuSection = SC_POWERED;
 	Enabled = 1;
@@ -128,14 +128,8 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp2 == 10)
 	{
-		*colr = 171 ;
+		*colr = 191;
 		*colg = 10;
-		*colb = 10;
-	}
-	else if (cpart->tmp2 != 10)
-	{
-		*colr = 10;
-		*colg = 271;
 		*colb = 10;
 	}
 	return 0;

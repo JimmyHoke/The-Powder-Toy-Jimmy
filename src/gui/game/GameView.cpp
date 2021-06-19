@@ -2236,7 +2236,7 @@ void GameView::OnDraw()
 
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
 		g->fillrect(XRES - 20 - textWidth, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(XRES - 16 - textWidth, 16, sampleInfo.Build(), 0, 250, 0, alpha*0.95f);
+		g->drawtext(XRES - 16 - textWidth, 16, sampleInfo.Build(), 250, 250, 250, alpha*0.95f);
 
 
 #ifndef OGLI
@@ -2299,7 +2299,7 @@ void GameView::OnDraw()
 
 				int textWidth23 = Graphics::textwidth(sampleInfo23.Build());
 				g->fillrect(XRES - 20 - textWidth23, 41, textWidth23 + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(XRES - 16 - textWidth23, 45, sampleInfo23.Build(), 255, 255, 255, alpha*0.95f);
+				g->drawtext(XRES - 16 - textWidth23, 45, sampleInfo23.Build(), 32, 216, 255, alpha*0.95f);
 			}
 			sampleInfo << "X:" << sample.PositionX << " Y:" << sample.PositionY;
 
@@ -2311,7 +2311,7 @@ void GameView::OnDraw()
 
 			textWidth = Graphics::textwidth(sampleInfo.Build());
 			g->fillrect(XRES - 20 - textWidth, 27, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-			g->drawtext(XRES - 16 - textWidth, 30, sampleInfo.Build(), 12, 250, 150, alpha*0.95f);
+			g->drawtext(XRES - 16 - textWidth, 30, sampleInfo.Build(), 250, 250, 250, alpha*0.95f);
 		}
 	}
 	if(showHud && introText < 51)
@@ -2339,7 +2339,7 @@ void GameView::OnDraw()
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
 		g->fillrect(12, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5);
-		g->drawtext(16, 16, fpsInfo.Build(), 0, 255, 0, alpha*0.95);
+		g->drawtext(16, 16, fpsInfo.Build(), 250, 250, 250, alpha*0.95);
 		// Second line
 		StringBuilder fpsInfo2;
 
@@ -2355,7 +2355,7 @@ void GameView::OnDraw()
 
 		int textWidth2 = Graphics::textwidth(fpsInfo2.Build());
 		g->fillrect(12, 27, textWidth2 + 8, 15, 0, 0, 0, alpha * 0.5);
-		g->drawtext(16, 30, fpsInfo2.Build(), 255, 255, 255, alpha * 0.95);
+		g->drawtext(16, 30, fpsInfo2.Build(), 32, 216, 255, alpha * 0.95);
 	}
 
 	//Tooltips
@@ -2368,20 +2368,20 @@ void GameView::OnDraw()
 	if(toolTipPresence && toolTipPosition.X!=-1 && toolTipPosition.Y!=-1 && toolTip.length())
 	{
 		if (toolTipPosition.Y == Size.Y - MENUSIZE - 10)
-			g->drawtext_outline(toolTipPosition.X, toolTipPosition.Y, toolTip, 12, 250, 150, toolTipPresence > 51 ? 255 : toolTipPresence * 5);
+			g->drawtext_outline(toolTipPosition.X, toolTipPosition.Y, toolTip, 255, 255, 255, toolTipPresence > 51 ? 255 : toolTipPresence * 5);
 		else
-			g->drawtext(toolTipPosition.X, toolTipPosition.Y, toolTip, 12, 250, 150, toolTipPresence > 51 ? 255 : toolTipPresence * 5);
+			g->drawtext(toolTipPosition.X, toolTipPosition.Y, toolTip, 255, 255, 255, toolTipPresence > 51 ? 255 : toolTipPresence * 5);
 	}
 
 	if(buttonTipShow > 0)
 	{
-		g->drawtext(16, Size.Y-MENUSIZE-24, buttonTip, 12, 250, 150, buttonTipShow>51?255:buttonTipShow*5);
+		g->drawtext(16, Size.Y-MENUSIZE-24, buttonTip, 255, 255, 255, buttonTipShow>51?255:buttonTipShow*5);
 	}
 
 	//Introduction text
 	if(introText && showHud)
 	{
-		g->fillrect(0, 0, WINDOWW, WINDOWH / 2, 24, 24, 24, introText > 51 ? 102 : introText * 2);
+		g->fillrect(0, 0, WINDOWW, WINDOWH / 2, 40, 40, 40, introText > 51 ? 102 : introText * 2);
 		g->drawtext(16, 20, introTextMessage, 255, 255, 255, introText > 51 ? 255 : introText * 5);
 	}
 

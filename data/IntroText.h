@@ -1,9 +1,9 @@
 #pragma once
 #include "Config.h"
 const char *const introTextData =
-"\br |-----------------------------------------------|\n"
+"\br |---------------------------------------------|\n"
 "\bw  Cracker1000's Mod \bo(25) \bb|\bw Built on TPT \bo(96.0) \n"
-"\br |-----------------------------------------------|\n"
+"\br |---------------------------------------------|\n"
 "\n"
 "\bo   Instructions (Do Not Skip):                        \n"
 "\br *\bw There's a new 'V' drop down button on top, press it to open the Mod menu.\n"

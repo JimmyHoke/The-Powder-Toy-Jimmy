@@ -1,10 +1,11 @@
 Version 25.0 (Final Version)
 
+HUD looks more elegant. (No more vibrant colours.)
 New element: Powered Converter (PCON)
-Fix Stack tools not showing up properly.
+Rewrite stack tools.
 CMNT changes colour more gradually and takes some time before solidifying.
 Add more properties to editor.
-Remove C-16 from wiki.
+Remove C-16 from the wiki.
 Make debug mode show .tmp2 for CSNS and TMPS.
 Merge with version 96.0
 Update tptmp to 1.0.3
@@ -19,7 +20,7 @@ Edge detection.
 Better detection for PLNT.
 
 todo:
-Add prop conducts and add . in some descriptions.
+None
 
 
 
