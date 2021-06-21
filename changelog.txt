@@ -1,10 +1,12 @@
 Version 25.0 (Final Version)
-FPS shows in different colours as per performance.
+
+FPS changes colour according to performace.
 HUD looks more elegant. (No more vibrant colours.)
 New element: Powered Converter (PCON)
 Rewrite stack tools.
+Add more options to reminder.
 CMNT changes colour more gradually and takes some time before solidifying.
-Add more properties to editor.
+Add more properties to the editor.
 Remove C-16 from the wiki.
 Make debug mode show .tmp2 for CSNS and TMPS.
 Merge with version 96.0
