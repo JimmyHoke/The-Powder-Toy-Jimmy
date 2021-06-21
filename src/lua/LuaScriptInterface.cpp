@@ -1675,7 +1675,8 @@ int LuaScriptInterface::simulation_decoColor(lua_State * l)
 
 int LuaScriptInterface::simulation_clearSim(lua_State * l)
 {
-	luacon_controller->ClearSim();
+	luacon_sim->clear_sim();
+	Client::Ref().ClearAuthorInfo();
 	return 0;
 }
 
