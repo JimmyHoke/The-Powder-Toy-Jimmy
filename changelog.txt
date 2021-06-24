@@ -1,6 +1,7 @@
 Version 25.0 (Final Version)
 
 FPS changes colour according to performace.
+Texter Preview is now well aligned.
 HUD looks more elegant. (No more vibrant colours.)
 New element: Powered Converter (PCON)
 Rewrite stack tools.

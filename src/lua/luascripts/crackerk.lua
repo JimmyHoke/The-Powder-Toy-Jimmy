@@ -2179,7 +2179,8 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
---Cracker1000's custom script version 10.0
+
+--Cracker100's Script V10.0-- 
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -2187,6 +2188,7 @@ newmenu:addComponent(creditstxt1)
 
 local deletesparkButton =  Button:new(10,28,75,30,"Interface", "shows UI related stuff.")
 local dellb = Label:new(101, 34, 10, 15, "Shown")
+
 
 local FPS = Button:new(10,60,75,30, "Frame limiter", "Turns the frame limiter on/off.")
 local fplb = Label:new(94, 68, 10, 15, "ON")
@@ -2270,6 +2272,7 @@ local Help = Button:new(396,60,80,30, "Random save", "Opens random save.")
 local shrt = Button:new(396,92,80,30, "Toggle J Key", "Turns off the J key shortcut")
 local shrtlb = Label:new(485, 98, 10, 15, "ON")
 local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
+
 
 local hide= Button:new(528,278,80,20, "Close menu", "Hide.")
 
@@ -2759,8 +2762,9 @@ function drawText(text, x, y, element, font)
 end
 
 chud:action(function(sender)
+
 function drawglitch2()
-graphics.drawLine(1,85,610,85,150,150,150,250)
+graphics.drawLine(12,85,560,85,ar,ag,ab,250)
 end
 
 close()
@@ -2774,7 +2778,7 @@ local text, element, font = '', 'DMND', '5x7'
 local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
 local textTextboxs = Textbox:new(96, 55, 42, 20, '', 'Element')
 local scripthelp23 = Label:new(10,90,40, 10,"Preview:")
-local scripthelp = Label:new(-40,90,630, 300,"")
+local scripthelp = Label:new(10,90,630, 300,"")
 local place = Button:new(10,55,40,20,"Enter", "Toggle hidden elements.")
 local cancel= Button:new(52,55,40,20,"Close", "Cancel the element placement.")
 local lno  = Label:new(473, 58, 10, 15, "| Line No:")
@@ -2783,6 +2787,7 @@ local lno2  = Label:new(160, 58, 10, 15, "Font:")
 local smalf = Button:new(180,55,46,20,"Normal", "5x7.")
 local bigf = Button:new(230,55,46,20,"Big", "7x10.")
 local fsize  = Label:new(415, 58, 10, 15, "Font: Normal")
+local clrsc = Button:new(520,30,40,20,"Clear", "Clear text")
 
 newmenu4:addComponent(textTextbox)
 newmenu4:addComponent(textTextboxs)
@@ -2797,6 +2802,7 @@ newmenu4:addComponent(lnol)
 newmenu4:addComponent(smalf)
 newmenu4:addComponent(bigf)
 newmenu4:addComponent(fsize)
+newmenu4:addComponent(clrsc)
 newmenu4:onDraw(drawglitch2)
 
  textTextbox:onTextChanged(
@@ -2843,11 +2849,16 @@ newmenu4:removeComponent(lnol)
 newmenu4:removeComponent(smalf)
 newmenu4:removeComponent(bigf)
 newmenu4:removeComponent(fsize)
+newmenu4:removeComponent(clrsc)
 
 ui.closeWindow(newmenu4)
 end)
 local texth = scripthelp:text()
 local valueplace = 0
+
+clrsc:action(function(sender)
+textTextbox:text("")
+end)
 
 place:action(function(sender)
 if linenumber >22 and valueplace == 0 then
@@ -2879,11 +2890,11 @@ drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
 end
 
 if linenumber == 2 then 
-scripthelp:text("         .............................................................................V.............................................................................\n"..texth..text.." L:1".." ("..fontdis..") \n")
+scripthelp:text("                                                                                                                            .\n"..texth..text.." L:1".." ("..fontdis..") \n")
 end
 
 if linenumber == 24 then 
-scripthelp:text("         .............................................................................V.............................................................................\n"..texth..text.." L:23".." ("..fontdis..") \n")
+scripthelp:text("                                                                                                                            .\n"..texth..text.." L:24".." ("..fontdis..") \n")
 end
 
 if yvalue > 355 then
@@ -2892,7 +2903,6 @@ end
 end
 end)
 end)
-
 --Texter script hybrid end
 
 function autohidehud()

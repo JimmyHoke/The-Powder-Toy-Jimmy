@@ -4,6 +4,7 @@ const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
 "\bw                                            Welcome To The Cracker1000's Mod \n"
 "\bo                                           |-----------------------------------|\n"
+"                                                  \bo| \bwVer. 25.0 \bo||\bw TPT 96.0 \bo|"
 "\bo\n\n   INSTRUCTIONS:                        \n"
 "\br *\bw There's a new 'V' drop down button on top, press it to open the Mod menu.\n"
 "\br *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"
@@ -14,4 +15,4 @@ const char *const introTextData =
 "\br *\bw New gravity modes can be switched using W key aswell.\n"
 "\br *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same.\n"
 "\n"
-"\bl   Press any key (except power) to continue.....                                     \bo||\bw Version: 25.0 \bo||\bw Built on TPT 96.0 \bo||";
+"\br   Press Any Key (except power) To Continue...\n";
