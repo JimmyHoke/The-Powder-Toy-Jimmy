@@ -1,29 +1,33 @@
 Version 25.0 (Final Version)
 
-FPS changes colour according to performace.
-Texter Preview is now well aligned.
-HUD looks more elegant. (No more vibrant colours.)
+Elements:
+Minor speed improvement to FNTC and FPTC.
 New element: Powered Converter (PCON)
-Rewrite stack tools.
-Add more options to reminder.
-CMNT changes colour more gradually and takes some time before solidifying.
-Add more properties to the editor.
-Remove C-16 from the wiki.
-Make debug mode show .tmp2 for CSNS and TMPS.
-Merge with version 96.0
-Update tptmp to 1.0.3
-Enable uploading saves with cGoL elements.
-Remove pastel glow on "inactive" GLOW, fix FIRE_ADD variables. 
-Fix element numbering in wiki and add more info. for some elements.
-
-#Changes to BEE:
 Bees now avoid harmful elements and high temp. areas.
 They return to center when healthy.
 Edge detection.
 Better detection for PLNT.
+CMNT changes colour more gradually and takes some time before solidifying.
+
+Fixes:
+Fix element numbering in wiki and add more info. for some elements.
+Fix Debug mode not showing .tmp2 for CSNS and TMPS.
+Fix limits for PROJ's properties.
+Fix FNTC and FPTC accepting SPRK from BTRY.
+Fix FIRE_ADD variables. Remove pastel glow on "inactive" GLOW.
+
+Misc:
+Merge with version 96.0
+Update tptmp to 1.0.3
+Enable uploading saves with cGoL elements.
+FPS changes colour according to performace.
+Add clear button to texter.
+Texter Preview is now well aligned.
+HUD looks more elegant. (No more vibrant colours.)
+Rewrite Stack Tools.
+Add more options to reminder.
+Add more properties to the editor.
+Remove C-16 from the wiki.
 
 todo:
 None
-
-
-

@@ -25,8 +25,8 @@ Gameview.cpp (copy fpsinfo and other parts)
 src>gui>search>Searchview.cpp
 
 9)Elements:               Files Modified:
-(FPTC, 197);              SPRK.cpp
-(FNTC, 192);              SPRK.cpp
+(FPTC, 197);              SPRK.cpp, BTRY.cpp
+(FNTC, 192);              SPRK.cpp, BTRY.cpp
 (CLNT, 193);
 (LED, 194);                SPRK.cpp
 (TIMC, 195);               SPRK.cpp 
@@ -60,6 +60,9 @@ src>gui>search>Searchview.cpp
 
 
 Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS
+
+For BTRY, replace this
+ "if ((sim->elements[rt].Properties&PROP_CONDUCTS) && !(rt==PT_WATR||rt==PT_SLTW||rt==PT_NTCT||rt==PT_PTCT||rt==PT_INWR||rt == PT_FNTC||rt == PT_FPTC) && parts[ID(r)].life==0)"
 
 10) WALLS:
 Z-Hole (19), Simulationdata.cpp, simulationdata.h, simulation.cpp and src>gui>graphics>Renderer.cpp (Place along with Ehole in all files.)

@@ -54,9 +54,9 @@ void Element::Element_PROJ()
 static int update(UPDATE_FUNC_ARGS)
 {
 	//checks for .tmp and .temp
-	if (parts[i].tmp <= 0 || parts[i].tmp > 500)
+	if (parts[i].tmp <= 0 || parts[i].tmp > 100)
 		parts[i].tmp = 10;
-	if (parts[i].temp <= 273.15f || parts[i].temp > 473.15f )
+	if (parts[i].temp <= 273.15f || parts[i].temp > 373.15f )
 		parts[i].temp = 293.15f;
 
 	for (int rx = -1; rx <= 1; rx++)
@@ -73,8 +73,8 @@ static int update(UPDATE_FUNC_ARGS)
 					parts[i].life = 10;
 				}
 			}
-	for (int rx = -2; rx <= 2; rx++)
-		for (int ry = -2; ry <= 2; ry++)
+	for (int rx = -3; rx <= 4; rx++)
+		for (int ry = -3; ry <= 4; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				int r = pmap[y + ry][x + rx];
@@ -92,14 +92,13 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp2+= 1;
 		parts[i].vx = parts[i].pavg[1]*((parts[i].temp-273.15f)/10);
 		parts[i].vy = parts[i].pavg[2] + 0.2*(parts[i].tmp2/parts[i].tmp);
-		sim->create_part(-1, x, y - 1, PT_EMBR);
 	}
 	return 0;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 {
-	if(cpart->life == 10)
+	if (cpart->life == 10)
 	*pixel_mode |= PMODE_LFLARE;
 	return 0;
 }
