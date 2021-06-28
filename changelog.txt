@@ -21,6 +21,7 @@ Merge with version 96.0
 Update tptmp to 1.0.3
 Enable uploading saves with cGoL elements.
 FPS changes colour according to performace.
+Add alpha slider for custom themes (will only show when brightness settings are turned off.)
 Add clear button to texter.
 Texter Preview is now well aligned.
 HUD looks more elegant. (No more vibrant colours.)
@@ -30,4 +31,4 @@ Add more properties to the editor.
 Remove C-16 from the wiki.
 
 todo:
-None
+None/ Fix Alpha slider?

@@ -2181,6 +2181,7 @@ evt.register(evt.blur, blur)
 
 
 --Cracker100's Script V10.0-- 
+
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 300)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -2188,7 +2189,6 @@ newmenu:addComponent(creditstxt1)
 
 local deletesparkButton =  Button:new(10,28,75,30,"Interface", "shows UI related stuff.")
 local dellb = Label:new(101, 34, 10, 15, "Shown")
-
 
 local FPS = Button:new(10,60,75,30, "Frame limiter", "Turns the frame limiter on/off.")
 local fplb = Label:new(94, 68, 10, 15, "ON")
@@ -2226,16 +2226,19 @@ local mp6 = Button:new(293,192,75,20,"Orange", "Change the theme to Orange")
 local mp7 = Button:new(293,212,75,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(293,232,75,20,"Pulse", "RBG makes everything better.")
 local mp9 = Button:new(293,252,75,20,"Custom", "Custom options.")
-local rl = Label:new(480, 192, 10, 15, "Red")
-local gl = Label:new(480, 212, 10, 15, "Green")
-local bl = Label:new(480, 232, 10, 15, "Blue")
+local rl = Label:new(486, 192, 10, 15, "Red")
+local gl = Label:new(490, 212, 10, 15, "Green")
+local bl = Label:new(488, 232, 10, 15, "Blue")
+local als = Label:new(491, 172, 10, 15, "Alpha")
 local rSlider = Slider:new(373, 192, 100, 15, 255)
 local gSlider = Slider:new(373, 212, 100, 15, 255)
 local bSlider = Slider:new(373, 232, 100, 15, 255)
+local aSlider = Slider:new(373, 172, 100, 15, 255)
 
-local rlb = Label:new(510, 192, 10, 15)
-local glb = Label:new(510, 212, 10, 15)
-local blb = Label:new(510, 232, 10, 15)
+local rlb = Label:new(520, 192, 10, 15)
+local glb = Label:new(520, 212, 10, 15)
+local blb = Label:new(520, 232, 10, 15)
+local alb = Label:new(520, 172, 10, 15)
 
 local mpop = Button:new(373,252,75,20,"Done", "Custom options.")
 
@@ -2322,12 +2325,15 @@ newmenu:removeComponent(mp9)
 newmenu:removeComponent(rSlider)
 newmenu:removeComponent(gSlider)
 newmenu:removeComponent(bSlider)
+newmenu:removeComponent(aSlider)
+newmenu:removeComponent(als)
 newmenu:removeComponent(rl)
 newmenu:removeComponent(gl)
 newmenu:removeComponent(bl)
 newmenu:removeComponent(rlb)
 newmenu:removeComponent(glb)
 newmenu:removeComponent(blb)
+newmenu:removeComponent(alb)
 newmenu:removeComponent(mpop)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
@@ -2462,9 +2468,18 @@ editomenu:addComponent(ed14)
 editomenu:addComponent(cancel)
 
 ui.showWindow(editomenu)
-doned:action(function(sender)
-local newName = tonumber(tpt.element(edelnam:text()))
 
+
+doned:action(function(sender)
+function errormsg()
+graphics.drawText(400,351,"Please Enter Valid Element Name!", 255,0,0,255)
+end
+
+if edelnam:text() ~= nil then
+editomenu:onDraw(errormsg)
+end
+
+local newName = tonumber(tpt.element(edelnam:text()))
 if edelname:text() == "" then
 else
 elements.property(newName, "Name", edelname:text())
@@ -2537,6 +2552,7 @@ end
 
 ui.closeWindow(editomenu)
 end)
+
 cancel:action(function(sender)
 ui.closeWindow(editomenu)
 end)
@@ -3194,10 +3210,10 @@ ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
 ab = MANAGER.getsetting("CRK", "ab")
 
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-al = brightSlider:value()
+if MANAGER.getsetting("CRK", "brightstate") == "0" then
+al = MANAGER.getsetting("CRK", "al")
 else
-al = 255
+al = brightSlider:value()
 end
 
 if TPTMP.chatHidden == true then 
@@ -3218,14 +3234,12 @@ tpt.drawline(18,408,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,422,ar,ag,ab,al)
 tpt.drawline(596,409,596,422,ar,ag,ab,al)
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
-
 tpt.drawline(613,96,627,96,ar,ag,ab,al)
 tpt.drawline(613,16,627,16,ar,ag,ab,al)
 tpt.drawline(613,32,627,32,ar,ag,ab,al)
 tpt.drawline(613,48,627,48,ar,ag,ab,al)
 tpt.drawline(613,64,627,64,ar,ag,ab,al)
 tpt.drawline(613,80,627,80,ar,ag,ab,al)
-
 tpt.drawline(613,151,627,151,ar,ag,ab,al)
 tpt.drawline(613,167,627,167,ar,ag,ab,al)
 tpt.drawline(613,183,627,183,ar,ag,ab,al)
@@ -3242,6 +3256,7 @@ tpt.drawline(613,343,627,343,ar,ag,ab,al)
 tpt.drawline(613,359,627,359,ar,ag,ab,al)
 tpt.drawline(613,375,627,375,ar,ag,ab,al)
 tpt.drawline(613,391,627,391,ar,ag,ab,al)
+
 end
 
 frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
@@ -3438,12 +3453,32 @@ end
 rlb:text(MANAGER.getsetting("CRK", "ar"))
 glb:text(MANAGER.getsetting("CRK", "ag"))
 blb:text(MANAGER.getsetting("CRK", "ab"))
+alb:text(MANAGER.getsetting("CRK", "al"))
+
 rSlider:onValueChanged(function() rclr = rSlider:value() rlb:text(rclr) MANAGER.savesetting("CRK","ar", rSlider:value()) end)
 gSlider:onValueChanged(function() gclr = gSlider:value() glb:text(gclr) MANAGER.savesetting("CRK","ag",gSlider:value()) end)
 bSlider:onValueChanged(function() bclr = bSlider:value() blb:text(bclr) MANAGER.savesetting("CRK","ab",bSlider:value())  end)
+
+aSlider:onValueChanged(function()
+aclr = aSlider:value() 
+alb:text(aclr) 
+if aSlider:value() < 100 then
+aSlider:value("100")
+end
+MANAGER.savesetting("CRK","al",aSlider:value()) 
+end)
+
+aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
+
+if MANAGER.getsetting("CRK", "brightstate") == "0" then
+newmenu:addComponent(aSlider)
+newmenu:addComponent(als)
+newmenu:addComponent(alb)
+end
+
 newmenu:addComponent(rSlider)
 newmenu:addComponent(gSlider)
 newmenu:addComponent(bSlider)
