@@ -8,10 +8,6 @@
 #include <algorithm>
 
 #include "Format.h"
-#include "Platform.h"
-#include "PowderToy.h"
-
-#include "TPTScriptInterface.h"
 #include "LuaScriptHelper.h"
 #include "LuaLuna.h"
 #include "LuaBit.h"
@@ -23,9 +19,25 @@
 #include "LuaSlider.h"
 #include "LuaTextbox.h"
 #include "LuaWindow.h"
-
 #include "LuaTCPSocket.h"
+#include "PowderToy.h"
+#include "TPTScriptInterface.h"
 
+#include "client/Client.h"
+#include "client/GameSave.h"
+#include "client/SaveFile.h"
+#include "client/SaveInfo.h"
+#include "common/Platform.h"
+#include "graphics/Graphics.h"
+#include "graphics/Renderer.h"
+#include "simulation/Air.h"
+#include "simulation/ElementCommon.h"
+#include "simulation/ElementClasses.h"
+#include "simulation/ElementGraphics.h"
+#include "simulation/Simulation.h"
+#include "simulation/ToolClasses.h"
+
+#include "client/http/Request.h"
 #include "gui/interface/Window.h"
 #include "gui/interface/Engine.h"
 #include "gui/game/GameView.h"
@@ -33,23 +45,6 @@
 #include "gui/game/GameModel.h"
 #include "gui/game/Tool.h"
 #include "gui/game/Brush.h"
-
-#include "simulation/Simulation.h"
-#include "simulation/ElementGraphics.h"
-#include "simulation/ElementCommon.h"
-#include "simulation/Air.h"
-
-#include "simulation/ToolClasses.h"
-#include "simulation/ElementClasses.h"
-
-#include "client/GameSave.h"
-#include "client/SaveFile.h"
-#include "client/SaveInfo.h"
-#include "client/Client.h"
-#include "client/http/Request.h"
-
-#include "graphics/Graphics.h"
-#include "graphics/Renderer.h"
 
 #ifndef WIN
 #include <unistd.h>
@@ -400,7 +395,7 @@ void LuaScriptInterface::custom_init_can_move()
 
 void LuaScriptInterface::Init()
 {
-	if(Client::Ref().FileExists("autorun.lua"))
+	if (Platform::FileExists("autorun.lua"))
 	{
 		lua_State *l = luacon_ci->l;
 		if(luaL_loadfile(l, "autorun.lua") || lua_pcall(l, 0, 0, 0))
@@ -1417,7 +1412,7 @@ int LuaScriptInterface::simulation_floodParts(lua_State * l)
 	int cm = luaL_optint(l,4,-1);
 	int flags = luaL_optint(l,5,luacon_sim->replaceModeFlags);
 	
-	if (x < CELL || x >= XRES-CELL || y < CELL || y >= YRES-CELL)
+	if (x < 0 || x >= XRES || y < 0 || y >= YRES)
 		return luaL_error(l, "coordinates out of range (%d,%d)", x, y);
 	
 	int ret = luacon_sim->FloodParts(x, y, c, cm, flags);
@@ -1432,6 +1427,9 @@ int LuaScriptInterface::simulation_createWalls(lua_State * l)
 	int rx = luaL_optint(l,3,0);
 	int ry = luaL_optint(l,4,0);
 	int c = luaL_optint(l,5,8);
+
+	if (x < 0 || x >= XRES || y < 0 || y >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d)", x, y);
 	if (c < 0 || c >= UI_WALLCOUNT)
 		return luaL_error(l, "Unrecognised wall id '%d'", c);
 
@@ -1449,6 +1447,9 @@ int LuaScriptInterface::simulation_createWallLine(lua_State * l)
 	int rx = luaL_optint(l,5,0);
 	int ry = luaL_optint(l,6,0);
 	int c = luaL_optint(l,7,8);
+
+	if (x1 < 0 || x2 < 0 || x1 >= XRES || x2 >= XRES || y1 < 0 || y2 < 0 || y1 >= YRES || y2 >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d),(%d,%d)", x1, y1, x2, y2);
 	if (c < 0 || c >= UI_WALLCOUNT)
 		return luaL_error(l, "Unrecognised wall id '%d'", c);
 
@@ -1463,6 +1464,9 @@ int LuaScriptInterface::simulation_createWallBox(lua_State * l)
 	int x2 = luaL_optint(l,3,-1);
 	int y2 = luaL_optint(l,4,-1);
 	int c = luaL_optint(l,5,8);
+
+	if (x1 < 0 || x2 < 0 || x1 >= XRES || x2 >= XRES || y1 < 0 || y2 < 0 || y1 >= YRES || y2 >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d),(%d,%d)", x1, y1, x2, y2);
 	if (c < 0 || c >= UI_WALLCOUNT)
 		return luaL_error(l, "Unrecognised wall id '%d'", c);
 
@@ -1476,6 +1480,8 @@ int LuaScriptInterface::simulation_floodWalls(lua_State * l)
 	int y = luaL_optint(l,2,-1);
 	int c = luaL_optint(l,3,8);
 	int bm = luaL_optint(l,4,-1);
+	if (x < 0 || x >= XRES || y < 0 || y >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d)", x, y);
 	if (c < 0 || c >= UI_WALLCOUNT)
 		return luaL_error(l, "Unrecognised wall id '%d'", c);
 	if (c == WL_STREAM)
@@ -1528,6 +1534,9 @@ int LuaScriptInterface::simulation_toolLine(lua_State * l)
 	int tool = luaL_optint(l,7,0);
 	int brush = luaL_optint(l,8,CIRCLE_BRUSH);
 	float strength = luaL_optnumber(l,9,1.0f);
+	
+	if (x1 < 0 || x2 < 0 || x1 >= XRES || x2 >= XRES || y1 < 0 || y2 < 0 || y1 >= YRES || y2 >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d),(%d,%d)", x1, y1, x2, y2);
 	if (tool < 0 || tool >= (int)luacon_sim->tools.size()+1)
 		return luaL_error(l, "Invalid tool id '%d'", tool);
 
@@ -1557,6 +1566,8 @@ int LuaScriptInterface::simulation_toolBox(lua_State * l)
 	int y1 = luaL_optint(l,2,-1);
 	int x2 = luaL_optint(l,3,-1);
 	int y2 = luaL_optint(l,4,-1);
+	if (x1 < 0 || x2 < 0 || x1 >= XRES || x2 >= XRES || y1 < 0 || y2 < 0 || y1 >= YRES || y2 >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d),(%d,%d)", x1, y1, x2, y2);
 	int tool = luaL_optint(l,5,0);
 	float strength = luaL_optnumber(l,6,1.0f);
 	if (tool == (int)luacon_sim->tools.size())
@@ -1610,6 +1621,9 @@ int LuaScriptInterface::simulation_decoLine(lua_State * l)
 	int tool = luaL_optint(l,11,DECO_DRAW);
 	int brush = luaL_optint(l,12,CIRCLE_BRUSH);
 
+	if (x1 < 0 || x2 < 0 || x1 >= XRES || x2 >= XRES || y1 < 0 || y2 < 0 || y1 >= YRES || y2 >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d),(%d,%d)", x1, y1, x2, y2);
+
 	std::vector<Brush*> brushList = luacon_model->GetBrushList();
 	if (brush < 0 || brush >= (int)brushList.size())
 		return luaL_error(l, "Invalid brush id '%d'", brush);
@@ -1632,6 +1646,9 @@ int LuaScriptInterface::simulation_decoBox(lua_State * l)
 	int b = luaL_optint(l,7,255);
 	int a = luaL_optint(l,8,255);
 	int tool = luaL_optint(l,9,0);
+
+	if (x1 < 0 || x2 < 0 || x1 >= XRES || x2 >= XRES || y1 < 0 || y2 < 0 || y1 >= YRES || y2 >= YRES)
+		return luaL_error(l, "coordinates out of range (%d,%d),(%d,%d)", x1, y1, x2, y2);
 
 	luacon_sim->ApplyDecorationBox(x1, y1, x2, y2, r, g, b, a, tool);
 	return 0;
@@ -3531,23 +3548,8 @@ int LuaScriptInterface::fileSystem_exists(lua_State * l)
 {
 	const char * filename = luaL_checkstring(l, 1);
 
-	bool exists = false;
-#ifdef WIN
-	struct _stat s;
-	if(_stat(filename, &s) == 0)
-#else
-	struct stat s;
-	if(stat(filename, &s) == 0)
-#endif
-	{
-		exists = true;
-	}
-	else
-	{
-		exists = false;
-	}
-
-	lua_pushboolean(l, exists);
+	bool ret = Platform::Stat(filename);
+	lua_pushboolean(l, ret);
 	return 1;
 }
 
@@ -3555,61 +3557,17 @@ int LuaScriptInterface::fileSystem_isFile(lua_State * l)
 {
 	const char * filename = luaL_checkstring(l, 1);
 
-	bool isFile = false;
-#ifdef WIN
-	struct _stat s;
-	if(_stat(filename, &s) == 0)
-#else
-	struct stat s;
-	if(stat(filename, &s) == 0)
-#endif
-	{
-		if(s.st_mode & S_IFREG)
-		{
-			isFile = true; //Is file
-		}
-		else
-		{
-			isFile = false; //Is directory or something else
-		}
-	}
-	else
-	{
-		isFile = false; //Doesn't exist
-	}
-
-	lua_pushboolean(l, isFile);
+	bool ret = Platform::FileExists(filename);
+	lua_pushboolean(l, ret);
 	return 1;
 }
 
 int LuaScriptInterface::fileSystem_isDirectory(lua_State * l)
 {
-	const char * filename = luaL_checkstring(l, 1);
+	const char * dirname = luaL_checkstring(l, 1);
 
-	bool isDir = false;
-#ifdef WIN
-	struct _stat s;
-	if(_stat(filename, &s) == 0)
-#else
-	struct stat s;
-	if(stat(filename, &s) == 0)
-#endif
-	{
-		if(s.st_mode & S_IFDIR)
-		{
-			isDir = true; //Is directory
-		}
-		else
-		{
-			isDir = false; //Is file or something else
-		}
-	}
-	else
-	{
-		isDir = false; //Doesn't exist
-	}
-
-	lua_pushboolean(l, isDir);
+	bool ret = Platform::DirectoryExists(dirname);
+	lua_pushboolean(l, ret);
 	return 1;
 }
 
@@ -3618,22 +3576,17 @@ int LuaScriptInterface::fileSystem_makeDirectory(lua_State * l)
 	const char * dirname = luaL_checkstring(l, 1);
 
 	int ret = 0;
-	ret = Client::Ref().MakeDirectory(dirname);
+	ret = Platform::MakeDirectory(dirname);
 	lua_pushboolean(l, ret == 0);
 	return 1;
 }
 
 int LuaScriptInterface::fileSystem_removeDirectory(lua_State * l)
 {
-	const char * filename = luaL_checkstring(l, 1);
+	const char * directory = luaL_checkstring(l, 1);
 
-	int ret = 0;
-#ifdef WIN
-	ret = _rmdir(filename);
-#else
-	ret = rmdir(filename);
-#endif
-	lua_pushboolean(l, ret == 0);
+	bool ret = Platform::DeleteDirectory(directory);
+	lua_pushboolean(l, ret);
 	return 1;
 }
 
@@ -3641,13 +3594,8 @@ int LuaScriptInterface::fileSystem_removeFile(lua_State * l)
 {
 	const char * filename = luaL_checkstring(l, 1);
 
-	int ret = 0;
-#ifdef WIN
-	ret = _unlink(filename);
-#else
-	ret = unlink(filename);
-#endif
-	lua_pushboolean(l, ret == 0);
+	bool ret = Platform::DeleteFile(filename);
+	lua_pushboolean(l, ret);
 	return 1;
 }
 

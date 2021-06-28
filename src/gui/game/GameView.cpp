@@ -1,30 +1,32 @@
 #include "GameView.h"
 
-#include "GameController.h"
-#include "GameModel.h"
-
+#include "Brush.h"
 #include "Config.h"
-#include "Misc.h"
+#include "DecorationTool.h"
 #include "Favorite.h"
 #include "Format.h"
-
-#include "Notification.h"
-#include "Brush.h"
+#include "GameController.h"
+#include "GameModel.h"
 #include "IntroText.h"
-#include "QuickOptions.h"
-#include "DecorationTool.h"
-#include "ToolButton.h"
-#include "MenuButton.h"
 #include "Menu.h"
+#include "MenuButton.h"
+#include "Misc.h"
+#include "Notification.h"
+#include "ToolButton.h"
+#include "QuickOptions.h"
 
 #include "client/SaveInfo.h"
 #include "client/SaveFile.h"
 #include "client/Client.h"
-
+#include "common/Platform.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
-
 #include "gui/Style.h"
+#include "simulation/ElementClasses.h"
+#include "simulation/ElementDefs.h"
+#include "simulation/SaveRenderer.h"
+#include "simulation/SimulationData.h"
+
 #include "gui/dialogues/ConfirmPrompt.h"
 #include "gui/dialogues/ErrorMessage.h"
 #include "gui/dialogues/InformationMessage.h"
@@ -32,11 +34,6 @@
 #include "gui/interface/Colour.h"
 #include "gui/interface/Keys.h"
 #include "gui/interface/Engine.h"
-
-#include "simulation/SaveRenderer.h"
-#include "simulation/SimulationData.h"
-#include "simulation/ElementDefs.h"
-#include "simulation/ElementClasses.h"
 
 #include <cstring>
 
@@ -912,8 +909,8 @@ int GameView::Record(bool record)
 		{
 			time_t startTime = time(NULL);
 			recordingFolder = startTime;
-			Client::Ref().MakeDirectory("recordings");
-			Client::Ref().MakeDirectory(ByteString::Build("recordings", PATH_SEP, recordingFolder).c_str());
+			Platform::MakeDirectory("recordings");
+			Platform::MakeDirectory(ByteString::Build("recordings", PATH_SEP, recordingFolder).c_str());
 			recording = true;
 		}
 	}

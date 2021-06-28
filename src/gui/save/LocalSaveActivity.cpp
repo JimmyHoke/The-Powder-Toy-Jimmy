@@ -5,9 +5,8 @@
 #include "client/Client.h"
 #include "client/GameSave.h"
 #include "client/ThumbnailRendererTask.h"
-
+#include "common/Platform.h"
 #include "graphics/Graphics.h"
-
 #include "gui/Style.h"
 
 #include "gui/dialogues/ConfirmPrompt.h"
@@ -85,7 +84,7 @@ void LocalSaveActivity::Save()
 		ByteString finalFilename = ByteString(LOCAL_SAVE_DIR) + ByteString(PATH_SEP) + filenameField->GetText().ToUtf8() + ".cps";
 		save.SetDisplayName(filenameField->GetText());
 		save.SetFileName(finalFilename);
-		if(Client::Ref().FileExists(finalFilename))
+		if (Platform::FileExists(finalFilename))
 		{
 			new ConfirmPrompt("Overwrite file", "Are you sure you wish to overwrite\n"+finalFilename.FromUtf8(), { [this, finalFilename] {
 				saveWrite(finalFilename);
@@ -104,7 +103,7 @@ void LocalSaveActivity::Save()
 
 void LocalSaveActivity::saveWrite(ByteString finalFilename)
 {
-	Client::Ref().MakeDirectory(LOCAL_SAVE_DIR);
+	Platform::MakeDirectory(LOCAL_SAVE_DIR);
 	GameSave *gameSave = save.GetGameSave();
 	Json::Value localSaveInfo;
 	localSaveInfo["type"] = "localsave";
