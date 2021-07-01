@@ -1,4 +1,4 @@
-The Powder Toy - February 2020
+The Cracker1000's Mod - 2021
 ==========================
 
 Get the latest version [from the Powder Toy website](https://powdertoy.co.uk/Download.html).
@@ -20,21 +20,9 @@ See the _Powder Toy Development Help_ section [on the main page of the wiki](htt
 Thanks
 ===========================================================================
 
-* Stanislaw K Skowronek - Designed the original
-* Simon Robertshaw
-* Skresanov Savely
-* cracker64
-* Catelite
-* Bryan Hoyle
-* Nathan Cousins
-* jacksonmj
-* Felix Wallin
-* Lieuwe Mosch
-* Anthony Boot
-* Me4502
-* MaksProg
+* Cracker1000
 * jacob1
-* mniip
+* Maticzpl
 * LBPHacker
 
 Libraries and other assets used
