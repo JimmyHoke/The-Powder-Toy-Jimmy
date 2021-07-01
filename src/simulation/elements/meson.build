@@ -223,6 +223,7 @@ simulation_elem_ids = [
 	['CLRC',221],
 	['COPR', 222],
 	['PCON', 223],
+	['STRC', 224]
 ]
 
 simulation_elem_src = []
