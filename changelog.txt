@@ -15,6 +15,7 @@ Fix Debug mode not showing .tmp2 for CSNS and TMPS.
 Fix limits for PROJ's properties.
 Fix FNTC and FPTC accepting SPRK from BTRY.
 Fix FIRE_ADD variables. Remove pastel glow on "inactive" GLOW.
+Editor now shows a warning if you try to enter a wrong element name.
 
 Misc:
 Merge with version 96.0
@@ -31,4 +32,4 @@ Add more properties to the editor.
 Remove C-16 from the wiki.
 
 todo:
-None/ Fix Alpha slider?
+None/ Update tptmp to 2.0
