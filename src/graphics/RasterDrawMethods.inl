@@ -64,8 +64,9 @@ int PIXELMETHODS_CLASS::drawtext(int x, int y, String str, int r, int g, int b, 
 			case 'r': r = 255; g =   0; b =   0; break;
 			case 'l': r = 255; g =  75; b =  75; break;
 			case 'b': r =   0; g =   0; b = 255; break;
-			case 't': b = 255; g = 170; r =  32; break;
+			case 't': r =  32; g = 170; b = 255; break;
 			case 'u': r = 147; g =  83; b = 211; break;
+			case 'h': r = 8;   g = 255; b = 8;   break;
 			}
 			if(invert)
 			{

@@ -441,7 +441,8 @@ void PreviewView::NotifySaveChanged(PreviewModel * sender)
 			userIsAuthor = true;
 		else
 			userIsAuthor = false;
-		viewsLabel->SetText(String::Build("\bgViews:\bw ", save->Views));
+		
+		viewsLabel->SetText(String::Build("\bgViews:\bw ", save->Views, "\n\bgVotes:\bh ",save->votesUp,"\bw/\br",save->votesDown));
 		saveDescriptionLabel->SetText(save->Description);
 		if(save->Favourite)
 		{
