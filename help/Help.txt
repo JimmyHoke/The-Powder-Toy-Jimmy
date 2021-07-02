@@ -1,5 +1,5 @@
 //To future self, use this as a quick reference in case something goes wrong :P 
-1)Icon and intro text ( just copy paste)
+1) Icon and intro text ( just copy paste)
 
 2)Scripts:
 Copy script manager in eventcompat.lua
@@ -7,7 +7,7 @@ Add crackerk.lua to src>lua>luascripts
 add same settings for crackerk.lua as eventcompat.lua in TPTscriptinterface. 
 
 4) TOOLS:
-Copy RSET.cpp into src>simulation>simtools
+Copy RSET.cpp, AMBP and AMBM into src>simulation>simtools
 Add ID in meson.build
 
 5) Dark theme:
@@ -21,7 +21,7 @@ src>simulation>simulation.cpp
 7) HUD:
 Gameview.cpp (copy fpsinfo and other parts)
 
-8)votes:
+8) Votes:
 src>gui>search>Searchview.cpp
 
 9)Elements:               Files Modified:
@@ -57,6 +57,7 @@ src>gui>search>Searchview.cpp
 (CLRC, 221);  
 (COPR, 222); 
 (PCON, 223);                SPRK.cpp
+(STRC, 224);               
 
 
 Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS
@@ -67,15 +68,12 @@ For BTRY, replace this
 10) WALLS:
 Z-Hole (19), Simulationdata.cpp, simulationdata.h, simulation.cpp and src>gui>graphics>Renderer.cpp (Place along with Ehole in all files.)
 
-
-11) Run script update.bat to update the scripts for linux and mac.
-
-12) To cherry pick
+11) To cherry pick
 a) Run cherrypick.bat
 b) FIlter branch to upstream> cherrypick and commit.
 c) Done. 
 
-13) To make a new Pull Request:
+12) To make a new Pull Request:
 a) Run new branch.bat
 b) Open gitbash> git checkout -b vanilla (in case it fails to checkout)
 c) git checkout -b <branch name here>

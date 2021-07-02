@@ -1,17 +1,5 @@
-/*#include "../Element.h"
-#include "../ElementCommon.h"
-#include "../ElementDefs.h"
-#include "../Particle.h"
-#include "../SimulationData.h"
-#include "../../graphics/Pixel.h"*/
-//Making VS happy
-
-
 #include "simulation/ElementCommon.h"
-
 static int update(UPDATE_FUNC_ARGS);
-static int graphics(GRAPHICS_FUNC_ARGS);
-
 
 void Element::Element_STRC()
 {
@@ -54,8 +42,7 @@ void Element::Element_STRC()
 	HighTemperature = 1223.0f;
 	HighTemperatureTransition = PT_LAVA;
 
-	Update = &update;
-	Graphics = &graphics;	
+	Update = &update;	
 }
 
 
@@ -124,7 +111,6 @@ static void checkSupport(Particle* neighbor,Particle* self,Simulation* sim)
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	
 	Particle* top, * bottom, * left, * right;
 
 	top		= getNeighbor(sim, x, y - 1);
@@ -132,14 +118,13 @@ static int update(UPDATE_FUNC_ARGS)
 	left	= getNeighbor(sim, x - 1, y);
 	right	= getNeighbor(sim, x + 1, y);
 
-
-
-
 	if (bottom != nullptr)
 	{
 		if (parts[i].tmp == 0)
+		{
 			parts[i].tmp = defaultSupportStrenght;
-		parts[i].tmp2 = parts[i].tmp;
+			parts[i].tmp2 = parts[i].tmp;
+		}
 	}
 	else if (left != nullptr && right != nullptr)
 	{
@@ -165,18 +150,8 @@ static int update(UPDATE_FUNC_ARGS)
 	else
 		collapse(&parts[i]);
 
-	
-	if(parts[i].pavg[0] < defaultSupportStrenght)
+	if (parts[i].pavg[0] < defaultSupportStrenght)
 		parts[i].pavg[0] += 1;
-	
-		
+
 	return 0;
-}
-
-static int graphics(GRAPHICS_FUNC_ARGS)
-{
-	// graphics code here
-	// return 1 if nothing dymanic happens here
-
-	return 1;
 }

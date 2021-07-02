@@ -2,7 +2,7 @@ Version 25.0 (Final Version)
 
 Elements:
 Minor speed improvement to FNTC and FPTC.
-New element: Powered Converter (PCON)
+New element: Powered Converter (PCON) and STRC (Structure) by Maticzpl
 Bees now avoid harmful elements and high temp. areas.
 They return to center when healthy.
 Edge detection.
@@ -20,6 +20,7 @@ Editor now shows a warning if you try to enter a wrong element name.
 Misc:
 Merge with version 96.0
 Update tptmp to 1.0.3
+Cosmetic changes to vote counter. Save Previews now also show up and downvotes separately below the view counter.
 Enable uploading saves with cGoL elements.
 FPS changes colour according to performace.
 Add alpha slider for custom themes (will only show when brightness settings are turned off.)
