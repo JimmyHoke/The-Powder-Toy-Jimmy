@@ -9,7 +9,7 @@ void Element::Element_CLRC()
 	Name = "CLRC";
 	Colour = PIXPACK(0xD1D1D1);
 	MenuVisible = 1;
-	MenuSection = SC_SPECIAL;
+	MenuSection = SC_LIQUID;
 	Enabled = 1;
 
 	Advection = 0.3f;
