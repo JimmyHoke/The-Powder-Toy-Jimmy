@@ -1,5 +1,21 @@
 Version 25.0 (Final Version)
 
+Misc:
+Merge with Version 96.0.
+Update tptmp to 1.0.3
+Add performance mode for lower spec systems.
+Cosmetic changes to vote counter. Save Previews now also show up and downvotes separately below the view counter.
+Enable uploading saves with cGoL elements.
+FPS changes colour according to performace.
+Add alpha slider for custom themes (will only show when brightness settings are turned off.)
+Add clear button to texter.
+Texter Preview is now well aligned.
+HUD looks more elegant. (No more vibrant colours.)
+Rewrite Stack Tools.
+Add ability to set custom time for reminder.
+Add more properties to the editor.
+Remove C-16 from the wiki.
+
 Elements:
 Minor speed improvement to FNTC and FPTC.
 New element: Powered Converter (PCON) and STRC (Structure) by Maticzpl
@@ -16,21 +32,3 @@ Fix limits for PROJ's properties.
 Fix FNTC and FPTC accepting SPRK from BTRY.
 Fix FIRE_ADD variables. Remove pastel glow on "inactive" GLOW.
 Editor now shows a warning if you try to enter a wrong element name.
-
-Misc:
-Merge with version 96.0
-Update tptmp to 1.0.3
-Cosmetic changes to vote counter. Save Previews now also show up and downvotes separately below the view counter.
-Enable uploading saves with cGoL elements.
-FPS changes colour according to performace.
-Add alpha slider for custom themes (will only show when brightness settings are turned off.)
-Add clear button to texter.
-Texter Preview is now well aligned.
-HUD looks more elegant. (No more vibrant colours.)
-Rewrite Stack Tools.
-Add more options to reminder.
-Add more properties to the editor.
-Remove C-16 from the wiki.
-
-todo:
-None/ Update tptmp to 2.0

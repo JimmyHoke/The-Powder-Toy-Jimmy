@@ -2179,11 +2179,9 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
-
---Cracker100's Script V10.0-- 
-
+--Cracker1000 mod script V2.0--
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
-local newmenu = Window:new(-15,-15, 610, 300)
+local newmenu = Window:new(-15,-15, 610, 320)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
@@ -2226,21 +2224,22 @@ local mp6 = Button:new(293,192,75,20,"Orange", "Change the theme to Orange")
 local mp7 = Button:new(293,212,75,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(293,232,75,20,"Pulse", "RBG makes everything better.")
 local mp9 = Button:new(293,252,75,20,"Custom", "Custom options.")
-local rl = Label:new(486, 192, 10, 15, "Red")
-local gl = Label:new(490, 212, 10, 15, "Green")
-local bl = Label:new(488, 232, 10, 15, "Blue")
-local als = Label:new(491, 172, 10, 15, "Alpha")
-local rSlider = Slider:new(373, 192, 100, 15, 255)
-local gSlider = Slider:new(373, 212, 100, 15, 255)
-local bSlider = Slider:new(373, 232, 100, 15, 255)
-local aSlider = Slider:new(373, 172, 100, 15, 255)
+local als = Label:new(491,198, 10, 15, "Alpha")
+local rl = Label:new(486, 218, 10, 15, "Red")
+local gl = Label:new(490, 238, 10, 15, "Green")
+local bl = Label:new(488, 258, 10, 15, "Blue")
 
-local rlb = Label:new(520, 192, 10, 15)
-local glb = Label:new(520, 212, 10, 15)
-local blb = Label:new(520, 232, 10, 15)
-local alb = Label:new(520, 172, 10, 15)
+local aSlider = Slider:new(373, 198, 100, 15, 255)
+local rSlider = Slider:new(373, 218, 100, 15, 255)
+local gSlider = Slider:new(373, 238, 100, 15, 255)
+local bSlider = Slider:new(373, 258, 100, 15, 255)
 
-local mpop = Button:new(373,252,75,20,"Done", "Custom options.")
+local alb = Label:new(520,198,10, 15)
+local rlb = Label:new(520, 218, 10, 15)
+local glb = Label:new(520, 238, 10, 15)
+local blb = Label:new(520, 258, 10, 15)
+
+local mpop = Button:new(385,275,75,20,"Done", "Custom options.")
 
 local bg = Button:new(203,124,80,30,"Backgrounds", "Sets different backgrounds.")
 local bg1 = Button:new(293,124,75,20,"BLACK", "Default")
@@ -2262,10 +2261,12 @@ local bropc = Button:new(342,235,45,20,"Off", "Cancel.")
 local brlabel = Label:new(340, 210, 10, 15, "Turned: Off")
 
 local reminder = Button:new(203,252,80,30, "Reminder", "reminds after 30 mins.")
-local remon2 = Button:new(293,252,45,20,"10 min", "Save.")
-local remon = Button:new(338,252,45,20,"30 min", "Save.")
-local remoff  = Button:new(293,272,45,20,"Off", "Cancel.")
-local remlabel = Label:new(66, 284, 10, 15, "Reminder is on (30 mins.)")
+local remtime = Textbox:new(293, 255, 80, 15, '', 'Time in min.')
+remtime:text("10")
+local remon2 = Button:new(333,272,40,20,"On", "Save.")
+local remoff  = Button:new(293,272,40,20,"Off", "Cancel.")
+local remlabel = Label:new(66, 304, 10, 15, "Reminder is on (30 mins.)")
+local remlabel21 = Label:new(413, 255, 20, 15, "Time in min. (0-60)")
 
 local fancur = Button:new(396,28,80,30, "Fancy pointer", "Draws graphics around cursor.")
 local fanlb = Label:new(487, 34, 10, 15, "OFF")
@@ -2276,8 +2277,10 @@ local shrt = Button:new(396,92,80,30, "Toggle J Key", "Turns off the J key short
 local shrtlb = Label:new(485, 98, 10, 15, "ON")
 local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
 
+local perfm = Button:new(396,156,80,30, "Performance", "For lower spec systems.")
+local perlab = Label:new(485, 162, 10, 15, "OFF")
 
-local hide= Button:new(528,278,80,20, "Close menu", "Hide.")
+local hide= Button:new(528,298,80,20, "Close menu", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -2301,6 +2304,7 @@ newmenu:removeComponent(fancur)
 newmenu:removeComponent(Help)
 newmenu:removeComponent(shrt)
 newmenu:removeComponent(edito)
+newmenu:removeComponent(perfm)
 end
 
 function clearsb()
@@ -2339,11 +2343,31 @@ newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel)
 newmenu:removeComponent(brightSlider)
-newmenu:removeComponent(remon)
 newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
+newmenu:removeComponent(remtime)
+newmenu:removeComponent(remlabel21) 
 end
 
+local perfmv = "1"
+perfm:action(function(sender)
+if perfmv == "1" then
+tpt.setfpscap(70)
+tpt.setdrawcap(30)
+tpt.unregister_step(theme)
+tpt.unregister_step(colourblender)
+tpt.display_mode(7)
+perlab:text("ON")
+perfmv = "0"
+else
+perlab:text("OFF")
+perfmv = "1"
+tpt.setdrawcap(60)
+tpt.register_step(theme)
+tpt.display_mode(3)
+tpt.setfpscap(60)
+end
+end)
 
 local timerad = Button:new(10,356,20,15, "S", "Stacks the elements present on screen.")
 local timerao = Button:new(30,356,20,15, "R", "Removes just the top most particle from stack.")
@@ -2637,10 +2661,10 @@ end
 end)
 
 local startTime
-local entimey = 0
+local entimey
 function remindme()
 
-local endTime = startTime+ entimey
+local endTime = startTime+ tonumber(entimey)*60
 if os.time() >= endTime then
 event.unregister(event.tick,remindme)
 newmenu:removeComponent(remlabel)
@@ -2650,40 +2674,34 @@ end
 
 reminder:action(function(sender)
 clearsb()
-newmenu:addComponent(remon)
 newmenu:addComponent(remon2)
+newmenu:addComponent(remtime)
 newmenu:addComponent(remoff)
+newmenu:addComponent(remlabel21)
 end)
 
 remon2:action(function(sender)
 clearsb()
 startTime = os.time()
-entimey = 600
+if tonumber(remtime:text()) <= 0 or tonumber(remtime:text()) > 60 then
+entimey = "10"
+else
+entimey = tonumber(remtime:text())
+end
 event.unregister(event.tick,remindme)
 event.register(event.tick,remindme)
 newmenu:addComponent(remlabel)
-newmenu:removeComponent(remon)
 newmenu:removeComponent(remoff)
-remlabel:text("Reminder is on (10 mins.)")
+newmenu:removeComponent(remlabel21)
+remlabel:text("Reminder is on "..entimey.." mins.")
 end)
 
-remon:action(function(sender)
-clearsb()
-startTime = os.time()
-entimey = 1800
-event.unregister(event.tick,remindme)
-event.register(event.tick,remindme)
-newmenu:addComponent(remlabel)
-remlabel:text("Reminder is on (30 mins.)")
-newmenu:removeComponent(remon)
-newmenu:removeComponent(remoff)
-end)
 
 remoff:action(function(sender)
 clearsb()
 event.unregister(event.tick,remindme)
 newmenu:removeComponent(remlabel)
-newmenu:removeComponent(remon)
+newmenu:removeComponent(remlabel21)
 newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
 end)
@@ -3460,11 +3478,11 @@ gSlider:onValueChanged(function() gclr = gSlider:value() glb:text(gclr) MANAGER.
 bSlider:onValueChanged(function() bclr = bSlider:value() blb:text(bclr) MANAGER.savesetting("CRK","ab",bSlider:value())  end)
 
 aSlider:onValueChanged(function()
-aclr = aSlider:value() 
-alb:text(aclr) 
 if aSlider:value() < 100 then
 aSlider:value("100")
 end
+aclr = aSlider:value() 
+alb:text(aclr) 
 MANAGER.savesetting("CRK","al",aSlider:value()) 
 end)
 
@@ -3506,11 +3524,12 @@ end)
 end)
 
 function topbar()
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-al = brightSlider:value()
+if MANAGER.getsetting("CRK", "brightstate") == "0" then
+al = MANAGER.getsetting("CRK", "al")
 else
-al = 255
+al = brightSlider:value()
 end
+
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 tpt.drawline(1,0, 312,0, ar, ag, ab,al)
 tpt.drawline(338,0, 611,0, ar, ag, ab,al)
@@ -3630,6 +3649,8 @@ end)
 reset:action(function(sender)
 clearsb()
 timerremo()
+tpt.setdrawcap(60)
+perfmv = "1"
 autoval = "1"
 fanval = "1"
 shrtv = "1"
@@ -3639,7 +3660,7 @@ rulval = "1"
 hidval = "1"
 barval = "0"
 autolb:text("OFF")
-
+perlab:text("OFF")
 shrtlb:text("ON")
 fplb:text("ON")
 rulb:text("OFF")
@@ -3724,6 +3745,8 @@ newmenu:addComponent(fplb)
 newmenu:addComponent(rulb)
 newmenu:addComponent(autolb)
 newmenu:addComponent(edito)
+newmenu:addComponent(perfm)
+newmenu:addComponent(perlab)
 end
 
 hide:action(function(sender)

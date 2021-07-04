@@ -16,4 +16,4 @@ const char *const introTextData =
 "\br *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same.\n"
 "\n"
 "\br   Press Any Key (except power) To Continue...\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-"\bg   Credits: \bwCracker1000, \brMaticzpl\bw, \btJacob1\bw.";
+"\bg   Credits: \bw@Cracker1000, \br@Maticzpl\bw, \bt@Jacob1\bw.";
