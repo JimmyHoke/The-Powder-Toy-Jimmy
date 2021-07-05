@@ -2179,7 +2179,7 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
---Cracker1000 mod script V2.0--
+--cracker1000 mod script V2.0--
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 320)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -2352,7 +2352,7 @@ end
 local perfmv = "1"
 perfm:action(function(sender)
 if perfmv == "1" then
-tpt.setfpscap(70)
+tpt.setfpscap(80)
 tpt.setdrawcap(30)
 tpt.unregister_step(theme)
 tpt.unregister_step(colourblender)
@@ -2365,7 +2365,14 @@ perfmv = "1"
 tpt.setdrawcap(60)
 tpt.register_step(theme)
 tpt.display_mode(3)
+
+
+if fplb:text() == "OFF" then
+tpt.setfpscap(2)
+else
 tpt.setfpscap(60)
+end
+
 end
 end)
 

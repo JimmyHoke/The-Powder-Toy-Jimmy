@@ -1,9 +1,9 @@
-Version 25.0 (Final Version)
+Version 25.0
 
 Misc:
 Merge with Version 96.0.
+Add performance mode for lower spec systems (Use only when needed.)
 Update tptmp to 1.0.3
-Add performance mode for lower spec systems.
 Cosmetic changes to vote counter. Save Previews now also show up and downvotes separately below the view counter.
 Enable uploading saves with cGoL elements.
 FPS changes colour according to performace.
