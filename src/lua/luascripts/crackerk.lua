@@ -2179,9 +2179,9 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
---cracker1000 mod script V2.0--
+--cracker1000 mod script V2.5--
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
-local newmenu = Window:new(-15,-15, 610, 320)
+local newmenu = Window:new(-15,-15, 610, 310)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
@@ -2241,7 +2241,7 @@ local blb = Label:new(520, 258, 10, 15)
 
 local mpop = Button:new(385,275,75,20,"Done", "Custom options.")
 
-local bg = Button:new(203,124,80,30,"Backgrounds", "Sets different backgrounds.")
+local bg = Button:new(203,124,80,30,"Filters", "Sets different backgrounds.")
 local bg1 = Button:new(293,124,75,20,"BLACK", "Default")
 local bg2 = Button:new(293,146,75,20,"BLUE", "Blue background")
 local bg3 = Button:new(293,166,75,20,"RED", "Red background")
@@ -2265,10 +2265,10 @@ local remtime = Textbox:new(293, 255, 80, 15, '', 'Time in min.')
 remtime:text("10")
 local remon2 = Button:new(333,272,40,20,"On", "Save.")
 local remoff  = Button:new(293,272,40,20,"Off", "Cancel.")
-local remlabel = Label:new(66, 304, 10, 15, "Reminder is on (30 mins.)")
+local remlabel = Label:new(65, 294, 10, 15, "Reminder is on (30 mins.)")
 local remlabel21 = Label:new(413, 255, 20, 15, "Time in min. (0-60)")
 
-local fancur = Button:new(396,28,80,30, "Fancy pointer", "Draws graphics around cursor.")
+local fancur = Button:new(396,28,80,30, "Crosshair", "Draws graphics around cursor.")
 local fanlb = Label:new(487, 34, 10, 15, "OFF")
 
 local Help = Button:new(396,60,80,30, "Random save", "Opens random save.")
@@ -2280,7 +2280,7 @@ local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
 local perfm = Button:new(396,156,80,30, "Performance", "For lower spec systems.")
 local perlab = Label:new(485, 162, 10, 15, "OFF")
 
-local hide= Button:new(528,298,80,20, "Close menu", "Hide.")
+local hide= Button:new(528,288,80,20, "Close menu", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -2664,7 +2664,6 @@ event.unregister(event.tick,drawcirc)
 fanval = "1"
 fanlb:text("OFF")
 end
-
 end)
 
 local startTime
@@ -2723,8 +2722,13 @@ newmenu:onDraw(cbrightness)
 end
 fs.makeDirectory("scripts")
 clearsb()
-brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
-brightSlider:onValueChanged(function() MANAGER.savesetting("CRK", "brightness", brightSlider:value()+45) end)
+
+brightSlider:onValueChanged(function() 
+if brightSlider:value() < 60 then
+brightSlider:value("60")
+end
+MANAGER.savesetting("CRK", "brightness", brightSlider:value())
+end)
 newmenu:addComponent(brlabel)
 newmenu:addComponent(brightSlider)
 newmenu:addComponent(brop)
