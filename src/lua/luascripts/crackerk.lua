@@ -2616,32 +2616,32 @@ graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
 end
 
 if MANAGER.getsetting("CRK", "savergb") == "2" then
-graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,240)
-graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,240)
+graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,240)
+graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,240)
 
 if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,240)
-graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,240)
+graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,240)
+graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,240)
 end
 
-graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1,ar,ag,ab,250)
-graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1, ar,ag,ab,250)
-graphics.fillRect(tpt.mousex,tpt.mousey-15 - tpt.brushy,1 ,10,ar,ag,ab,250)
-graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, ar,ag,ab,250)
+graphics.fillRect(tpt.mousex + 3 + tpt.brushx,tpt.mousey,8 ,1,ar,ag,ab,250)
+graphics.fillRect(tpt.mousex - 11 -  tpt.brushx,tpt.mousey,8,1, ar,ag,ab,250)
+graphics.fillRect(tpt.mousex,tpt.mousey-10- tpt.brushy,1 ,8,ar,ag,ab,250)
+graphics.fillRect(tpt.mousex,tpt.mousey+3+ tpt.brushy,1 ,8, ar,ag,ab,250)
 
 else
-graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex, colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey, colourRED,colourGRN,colourBLU,250)
 
 if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-50-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx, colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex+25+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy, colourRED,colourGRN,colourBLU,250)
 end
 
-graphics.fillRect(tpt.mousex + 5 + tpt.brushx,tpt.mousey,10 ,1, colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex - 15 -  tpt.brushx,tpt.mousey,10,1,  colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex,tpt.mousey-15 - tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex,tpt.mousey+5 + tpt.brushy,1 ,10, colourRED,colourGRN,colourBLU,250)
+graphics.fillRect(tpt.mousex + 3 + tpt.brushx,tpt.mousey,8 ,1, colourRED,colourGRN,colourBLU,250)
+graphics.fillRect(tpt.mousex - 11 -  tpt.brushx,tpt.mousey,8,1,  colourRED,colourGRN,colourBLU,250)
+graphics.fillRect(tpt.mousex,tpt.mousey-10 - tpt.brushy,1 ,8, colourRED,colourGRN,colourBLU,250)
+graphics.fillRect(tpt.mousex,tpt.mousey+3 + tpt.brushy,1 ,8, colourRED,colourGRN,colourBLU,250)
 end
 end
 
@@ -2722,7 +2722,7 @@ newmenu:onDraw(cbrightness)
 end
 fs.makeDirectory("scripts")
 clearsb()
-
+brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
 brightSlider:onValueChanged(function() 
 if brightSlider:value() < 60 then
 brightSlider:value("60")
@@ -2751,6 +2751,7 @@ MANAGER.savesetting("CRK", "brightstate", "0")
 brlabel:text("Turned: off")
 event.unregister(event.tick,cbrightness)
 brightSlider:value("200")
+MANAGER.savesetting("CRK", "brightness", brightSlider:value())
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(brlabel)
@@ -3239,10 +3240,14 @@ ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
 ab = MANAGER.getsetting("CRK", "ab")
 
-if MANAGER.getsetting("CRK", "brightstate") == "0" then
+if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 al = MANAGER.getsetting("CRK", "al")
 else
 al = brightSlider:value()
+end
+
+if "al" < "60" then
+al = 255
 end
 
 if TPTMP.chatHidden == true then 
@@ -3290,11 +3295,16 @@ end
 
 frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function colourblender()
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-al = brightSlider:value()
+if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
+al = MANAGER.getsetting("CRK", "al")
 else
+al = brightSlider:value()
+end
+
+if "al" < "60" then
 al = 255
 end
+
  colourRGB = {colourRED,colourGRN,colourBLU}
  if frameCount > 1529 then frameCount = 0 else frameCount = frameCount + 1 end
  if frameCount > 0 and frameCount < 255 then
@@ -3535,10 +3545,14 @@ end)
 end)
 
 function topbar()
-if MANAGER.getsetting("CRK", "brightstate") == "0" then
+if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 al = MANAGER.getsetting("CRK", "al")
 else
 al = brightSlider:value()
+end
+
+if "al" < "60" then
+al = 255
 end
 
 if MANAGER.getsetting("CRK", "savergb") == "2" then

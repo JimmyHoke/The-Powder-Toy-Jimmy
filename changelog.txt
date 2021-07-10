@@ -31,4 +31,6 @@ Fix Debug mode not showing .tmp2 for CSNS and TMPS.
 Fix limits for PROJ's properties.
 Fix FNTC and FPTC accepting SPRK from BTRY.
 Fix FIRE_ADD variables. Remove pastel glow on "inactive" GLOW.
+Fix Brigthness slider going all the way down to 0.
+Tons of minor bug fixes.
 Editor now shows a warning if you try to enter a wrong element name.
