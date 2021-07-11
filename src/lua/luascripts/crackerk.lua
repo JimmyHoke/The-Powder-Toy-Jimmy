@@ -2179,6 +2179,8 @@ evt.register(evt.keyrelease, keyrelease)
 evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
+
+
 --cracker1000 mod script V2.5--
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 310)
@@ -3296,13 +3298,9 @@ end
 frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function colourblender()
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
-al = MANAGER.getsetting("CRK", "al")
+al = 255
 else
 al = brightSlider:value()
-end
-
-if "al" < "60" then
-al = 255
 end
 
  colourRGB = {colourRED,colourGRN,colourBLU}
@@ -3382,12 +3380,12 @@ function mpnolag()
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 event.unregister(event.tick,colourblender)
+newmenu:onDraw(theme)
 end
 
 mp:action(function(sender)
 clearsb()
 fs.makeDirectory("scripts")
-newmenu:onDraw(theme)
 newmenu:addComponent(mp1)
 newmenu:addComponent(mp2)
 newmenu:addComponent(mp3)
@@ -3487,6 +3485,9 @@ MANAGER.savesetting("CRK","ag",70)
 end
 if MANAGER.getsetting("CRK","ab") == nil then
 MANAGER.savesetting("CRK","ab",70)
+end
+if MANAGER.getsetting("CRK","al") == nil then
+MANAGER.savesetting("CRK","al",255)
 end
 
 rlb:text(MANAGER.getsetting("CRK", "ar"))

@@ -1,7 +1,8 @@
 Version 25.0
+Note: Windows defender likes to flag tpt whenever a new version gets released. Simply ignore such false positives.
 
 Misc:
-Merge with Version 96.0.
+Update the mod to TPT Version 96.0.
 Add performance mode for lower spec systems (Use only when needed.)
 Update tptmp to 1.0.3
 Cosmetic changes to vote counter. Save Previews now also show up and downvotes separately below the view counter.
