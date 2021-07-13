@@ -2180,8 +2180,7 @@ evt.register(evt.textinput, textinput)
 evt.register(evt.blur, blur)
 
 
-
---cracker1000 mod script V2.5--
+--cracker1000 mod script v3.0--
 local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
 local newmenu = Window:new(-15,-15, 610, 310)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -2364,7 +2363,7 @@ perfmv = "0"
 else
 perlab:text("OFF")
 perfmv = "1"
-tpt.setdrawcap(60)
+tpt.setdrawcap(0)
 tpt.register_step(theme)
 tpt.display_mode(3)
 
@@ -2455,7 +2454,7 @@ local edelname14 = Textbox:new(10, 320, 100, 15, '', 'Advection.')
 local ed0 = Label:new(170,33,120, 10,"Type the element name to be edited (Eg. STNE).")
 local ed1 = Label:new(106,63,70, 10,"New name.")
 local ed2 = Label:new(158,83,110, 10,"New colour, in hexadecimal (0xRRGGBB).")
-local ed3 = Label:new(183,103,120, 10,"Menu section, 1 to 11. 1 = Electronics, 14 = Tools.")
+local ed3 = Label:new(183,103,120, 10,"Menu section, 1 to 14. 1 = Electronics, 14 = Tools.")
 local ed4 = Label:new(202,123,120, 10,"To show or hide the element from menu. 0 = Hide, 1 = Show.")
 local ed6 = Label:new(221,163,120, 10,"Explosiveness, 0 = No, 1 = with FIRE, 2 = FIRE or Pressure > 2.5.")
 local ed7 = Label:new(151,183,120, 10,"Heat conductivity. 0 = No, 255 = Max.")
@@ -3237,6 +3236,21 @@ newmenu:removeComponent(rc1)
 newmenu:removeComponent(rc2)
 end)
 
+local barval = "0"
+
+bar:action(function(sender)
+clearsb()
+if barval == "1" then
+barval = "0"
+barlb:text("ON")
+
+elseif barval == "0" then
+barval = "1"
+barlb:text("OFF")
+end
+end)
+
+
 function theme()
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
@@ -3248,13 +3262,16 @@ else
 al = brightSlider:value()
 end
 
-if "al" < "60" then
-al = 255
-end
-
 if TPTMP.chatHidden == true then 
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 end
+
+if barval == "0" then
+--Topbar
+tpt.drawline(1,0, 312,0, ar, ag, ab,al)
+tpt.drawline(338,0, 611,0, ar, ag, ab,al)
+end
+
 
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 tpt.drawrect(613,1,14,95,ar,ag,ab,al)
@@ -3270,7 +3287,6 @@ tpt.drawline(18,408,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,422,ar,ag,ab,al)
 tpt.drawline(596,409,596,422,ar,ag,ab,al)
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
-tpt.drawline(613,96,627,96,ar,ag,ab,al)
 tpt.drawline(613,16,627,16,ar,ag,ab,al)
 tpt.drawline(613,32,627,32,ar,ag,ab,al)
 tpt.drawline(613,48,627,48,ar,ag,ab,al)
@@ -3334,6 +3350,12 @@ if TPTMP.chatHidden == true then
 tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 end
 
+--topbar
+if barval == "0" then
+tpt.drawline(1,0, 312,0, colourRED,colourGRN,colourBLU,al)
+tpt.drawline(338,0, 611,0, colourRED,colourGRN,colourBLU,al)
+end
+
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
 tpt.drawrect(613,1,14,95,colourRED,colourGRN,colourBLU,al)
@@ -3351,7 +3373,6 @@ tpt.drawline(580,409,580,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(596,409,596,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
 
-tpt.drawline(613,96,627,96,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(613,16,627,16,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(613,32,627,32,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(613,48,627,48,colourRED,colourGRN,colourBLU,al)
@@ -3490,6 +3511,11 @@ if MANAGER.getsetting("CRK","al") == nil then
 MANAGER.savesetting("CRK","al",255)
 end
 
+ar = 0
+ag= 0 
+ab= 0
+al = 0
+
 rlb:text(MANAGER.getsetting("CRK", "ar"))
 glb:text(MANAGER.getsetting("CRK", "ag"))
 blb:text(MANAGER.getsetting("CRK", "ab"))
@@ -3513,7 +3539,7 @@ rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
 
-if MANAGER.getsetting("CRK", "brightstate") == "0" then
+if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 newmenu:addComponent(aSlider)
 newmenu:addComponent(als)
 newmenu:addComponent(alb)
@@ -3545,51 +3571,12 @@ clearsb()
 end)
 end)
 
-function topbar()
-if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
-al = MANAGER.getsetting("CRK", "al")
-else
-al = brightSlider:value()
-end
-
-if "al" < "60" then
-al = 255
-end
-
-if MANAGER.getsetting("CRK", "savergb") == "2" then
-tpt.drawline(1,0, 312,0, ar, ag, ab,al)
-tpt.drawline(338,0, 611,0, ar, ag, ab,al)
-else
-tpt.drawline(1,0, 312,0, colourRED,colourGRN,colourBLU,al)
-tpt.drawline(338,0, 611,0, colourRED,colourGRN,colourBLU,al)
-end
-end
-
-local barval = "0"
-
-bar:action(function(sender)
-clearsb()
-if barval == "1" then
-event.unregister(event.tick,topbar)
-event.register(event.tick,topbar)
-barval = "0"
-barlb:text("ON")
-
-elseif barval == "0" then
-event.unregister(event.tick,topbar)
-barval = "1"
-barlb:text("OFF")
-end
-end)
-
 function startupcheck()
 interface.addComponent(toggle)
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 event.register(event.tick,theme)
-event.register(event.tick,topbar)
 else
 event.register(event.tick,colourblender)
-event.register(event.tick,topbar)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -3641,18 +3628,18 @@ local uival = "1"
 deletesparkButton:action(function(sender)
 clearsb()
 if uival == "1" then
-event.unregister(event.tick,topbar)
 event.unregister(event.tick,UIhide)
 event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
+barval = "1"
 dellb:text("Hidden")
 
 elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
-event.register(event.tick,topbar)
 uival = "1"
+barval = "0"
 dellb:text("Shown")
 end
 end)
@@ -3701,7 +3688,6 @@ event.unregister(event.tick,cbrightness)
 event.unregister(event.tick,UIhide)
 event.unregister(event.tick,autohidehud)
 event.register(event.tick,colourblender)
-event.register(event.tick,topbar)
 newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabe)
 brlabel:text("Turned: off")
