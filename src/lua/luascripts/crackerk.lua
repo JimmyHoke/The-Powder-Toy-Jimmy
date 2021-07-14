@@ -2309,6 +2309,7 @@ newmenu:removeComponent(perfm)
 end
 
 function clearsb()
+newmenu:onDraw(drawglitch)
 newmenu:removeComponent(rc1)
 newmenu:removeComponent(rc2)
 newmenu:removeComponent(bug1)
@@ -2352,6 +2353,7 @@ end
 
 local perfmv = "1"
 perfm:action(function(sender)
+clearsb()
 if perfmv == "1" then
 tpt.setfpscap(80)
 tpt.setdrawcap(30)
@@ -2592,6 +2594,7 @@ end)
 
 local shrtv = "1"
 shrt:action(function(sender)
+clearsb()
 if shrtv == "1" then
 shrtv = "0"
 shrtlb:text("OFF")
@@ -2652,12 +2655,12 @@ clearsb()
 if fanval == "1" then
 MANAGER.savesetting("CRK", "fancurs","1") 
 event.register(event.tick,drawcirc)
+fanlb:text("ON")
+fanval = "0"
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
 end
-fanlb:text("ON")
-fanval = "0"
 
 elseif fanval == "0" then
 MANAGER.savesetting("CRK", "fancurs","0") 
@@ -2718,11 +2721,11 @@ tpt.fillrect(-1,-1,629,424,0,0,0,255-MANAGER.getsetting("CRK", "brightness"))
 end
 
 brightness:action(function(sender)
+clearsb()
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenu:onDraw(cbrightness)
 end
 fs.makeDirectory("scripts")
-clearsb()
 brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
 brightSlider:onValueChanged(function() 
 if brightSlider:value() < 60 then
@@ -3140,12 +3143,12 @@ end)
 
 bg:action(function(sender)
 clearsb()
+newmenu:onDraw(backg)
 newmenu:addComponent(bg1)
 newmenu:addComponent(bg2)
 newmenu:addComponent(bg3)
 newmenu:addComponent(bg4)
 newmenu:addComponent(bg5)
-newmenu:onDraw(backg)
 end)
 
 backvr = 0
@@ -3172,6 +3175,7 @@ end
 
 function clearback()
 clearsb()
+newmenu:onDraw(backg)
 event.unregister(event.tick,backg)
 event.register(event.tick,backg)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -3250,7 +3254,6 @@ barlb:text("OFF")
 end
 end)
 
-
 function theme()
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
@@ -3271,7 +3274,6 @@ if barval == "0" then
 tpt.drawline(1,0, 312,0, ar, ag, ab,al)
 tpt.drawline(338,0, 611,0, ar, ag, ab,al)
 end
-
 
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 tpt.drawrect(613,1,14,95,ar,ag,ab,al)
@@ -3401,7 +3403,6 @@ function mpnolag()
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 event.unregister(event.tick,colourblender)
-newmenu:onDraw(theme)
 end
 
 mp:action(function(sender)
@@ -3426,6 +3427,7 @@ MANAGER.savesetting("CRK","ab",40)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
+newmenu:onDraw(theme)
 end)
 
 mp2:action(function(sender)
@@ -3436,6 +3438,7 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
+newmenu:onDraw(theme)
 end)
 
 mp3:action(function(sender)
@@ -3446,6 +3449,7 @@ MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
+newmenu:onDraw(theme)
 end)
 
 mp4:action(function(sender)
@@ -3456,6 +3460,7 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
+newmenu:onDraw(theme)
 end)
 
 mp5:action(function(sender)
@@ -3466,6 +3471,7 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
+newmenu:onDraw(theme)
 end)
 
 mp6:action(function(sender)
@@ -3476,6 +3482,7 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
+newmenu:onDraw(theme)
 end)
 
 mp7:action(function(sender)
@@ -3486,6 +3493,7 @@ MANAGER.savesetting("CRK","ab",210)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
 clearsb()
+newmenu:onDraw(theme)
 end)
 
 mp8:action(function(sender)
@@ -3511,10 +3519,12 @@ if MANAGER.getsetting("CRK","al") == nil then
 MANAGER.savesetting("CRK","al",255)
 end
 
-ar = 0
-ag= 0 
-ab= 0
-al = 0
+function drawprev()
+
+graphics.drawRect(558,218,24,24,255,255,255,255)
+graphics.fillRect(560,220,20,20,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+end
+newmenu:onDraw(drawprev)
 
 rlb:text(MANAGER.getsetting("CRK", "ar"))
 glb:text(MANAGER.getsetting("CRK", "ag"))
@@ -3579,14 +3589,6 @@ else
 event.register(event.tick,colourblender)
 end
 
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
-event.register(event.tick,cbrightness)
-brlabel:text("Turned: on")
-else
-MANAGER.savesetting("CRK", "brightness",200)
-end
-
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 hidval = "0"
@@ -3598,6 +3600,15 @@ event.register(event.tick,drawcirc)
 fanval = "0"
 fanlb:text("ON")
 end
+
+if MANAGER.getsetting("CRK", "brightstate") == "1" then
+brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
+event.register(event.tick,cbrightness)
+brlabel:text("Turned: on")
+else
+MANAGER.savesetting("CRK", "brightness",200)
+end
+
 end
 startupcheck()
 
