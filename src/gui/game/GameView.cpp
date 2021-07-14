@@ -2145,17 +2145,17 @@ void GameView::OnDraw()
 			{
 				if (type == PT_LAVA && c->IsValidElement(ctype))
 				{
-					sampleInfo << "Molten " << c->ElementResolve(ctype, 0);
+					sampleInfo << "Molten " << c->ElementResolve(ctype, -1);
 				}
 				else if ((type == PT_PIPE || type == PT_PPIP) && c->IsValidElement(ctype))
 				{
 					if (ctype == PT_LAVA && c->IsValidElement((int)sample.particle.pavg[1]))
 					{
-						sampleInfo << c->ElementResolve(type, 0) << " with molten " << c->ElementResolve((int)sample.particle.pavg[1], -1);
+						sampleInfo << c->ElementResolve(type, -1) << " with molten " << c->ElementResolve((int)sample.particle.pavg[1], -1);
 					}
 					else
 					{
-						sampleInfo << c->ElementResolve(type, 0) << " with " << c->ElementResolve(ctype, (int)sample.particle.pavg[1]);
+						sampleInfo << c->ElementResolve(type, -1) << " with " << c->ElementResolve(ctype, (int)sample.particle.pavg[1]);
 					}
 				}
 				else if (type == PT_LIFE)
@@ -2174,17 +2174,15 @@ void GameView::OnDraw()
 				else
 				{
 					sampleInfo << c->ElementResolve(type, ctype);
-					if (wavelengthGfx || type == PT_EMBR || type == PT_PRTI || type == PT_PRTO)
-					{
-						// Do nothing, ctype is meaningless for these elements
-					}
+					if (wavelengthGfx)
+						sampleInfo << " (" << ctype << ")";
 					// Some elements store extra LIFE info in upper bits of ctype, instead of tmp/tmp2
 					else if (type == PT_CRAY || type == PT_DRAY || type == PT_CONV || type == PT_LDTC)
 						sampleInfo << " (" << c->ElementResolve(TYP(ctype), ID(ctype)) << ")";
 					else if (type == PT_CLNE || type == PT_BCLN || type == PT_PCLN || type == PT_PBCN || type == PT_DTEC)
 						sampleInfo << " (" << c->ElementResolve(ctype, sample.particle.tmp) << ")";
-					else if (c->IsValidElement(ctype) && type != PT_GLOW && type != PT_WIRE && type != PT_SOAP && type != PT_LITH)
-						sampleInfo << " (" << c->ElementResolve(ctype, 0) << ")";
+					else if (c->IsValidElement(ctype))
+						sampleInfo << " (" << c->ElementResolve(ctype, -1) << ")";
 					else if (ctype)
 						sampleInfo << " (" << ctype << ")";
 				}
