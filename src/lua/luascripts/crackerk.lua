@@ -3241,7 +3241,7 @@ newmenu:removeComponent(rc2)
 end)
 
 function hidetog()
-if tpt.mousey <= 35 then
+if tpt.mousey <= 25 then
 interface.addComponent(toggle)
 else
 interface.removeComponent(toggle)
@@ -3254,6 +3254,8 @@ bar:action(function(sender)
 clearsb()
 if barval == "1" then
 event.unregister(event.tick,hidetog)
+interface.removeComponent(toggle)
+interface.addComponent(toggle)
 barval = "0"
 barlb:text("ON")
 
@@ -3660,6 +3662,9 @@ dellb:text("Hidden")
 elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
+event.unregister(event.tick,hidetog)
+interface.removeComponent(toggle)
+interface.addComponent(toggle)
 uival = "1"
 barval = "0"
 dellb:text("Shown")
@@ -3683,6 +3688,8 @@ end)
 
 reset:action(function(sender)
 clearsb()
+interface.removeComponent(toggle)
+interface.addComponent(toggle)
 timerremo()
 tpt.setdrawcap(0)
 perfmv = "1"
