@@ -2356,7 +2356,7 @@ perfm:action(function(sender)
 clearsb()
 if perfmv == "1" then
 tpt.setfpscap(80)
-tpt.setdrawcap(30)
+tpt.setdrawcap(35)
 tpt.unregister_step(theme)
 tpt.unregister_step(colourblender)
 tpt.display_mode(7)
@@ -3240,16 +3240,27 @@ newmenu:removeComponent(rc1)
 newmenu:removeComponent(rc2)
 end)
 
+function hidetog()
+if tpt.mousey <= 35 then
+interface.addComponent(toggle)
+else
+interface.removeComponent(toggle)
+end
+end
+
 local barval = "0"
 
 bar:action(function(sender)
 clearsb()
 if barval == "1" then
+event.unregister(event.tick,hidetog)
 barval = "0"
 barlb:text("ON")
 
 elseif barval == "0" then
 barval = "1"
+event.unregister(event.tick,hidetog)
+event.register(event.tick,hidetog)
 barlb:text("OFF")
 end
 end)
@@ -3673,7 +3684,7 @@ end)
 reset:action(function(sender)
 clearsb()
 timerremo()
-tpt.setdrawcap(60)
+tpt.setdrawcap(0)
 perfmv = "1"
 autoval = "1"
 fanval = "1"
@@ -3692,6 +3703,7 @@ dellb:text("Shown")
 barlb:text("ON")
 remlabe:text("OFF")
 fanlb:text("OFF")
+event.unregister(event.tick,hidetog)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)

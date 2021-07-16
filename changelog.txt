@@ -1,6 +1,7 @@
 Changelog for V25.1
 Note: Windows defender likes to flag tpt whenever a new version gets released. Simply ignore such false positives.
 
+Add ability to hide the mod menu button at top (Works when Top bar is turned off).
 Fixes and changes from tpt 96.1
 Add a nice little preview for custom themes.
 Fix Cross hair showing up too bright on startup even when brightness settings were turned on.
