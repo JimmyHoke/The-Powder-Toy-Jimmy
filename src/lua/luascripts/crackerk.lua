@@ -2181,7 +2181,7 @@ evt.register(evt.blur, blur)
 
 
 --cracker1000 mod script v3.0--
-local toggle = Button:new(314,0,23,12, "V", "Toggle additional menus.")
+local toggle = Button:new(380,409,90,14, "* Mod Settings *", "Open Mod Menu.")
 local newmenu = Window:new(-15,-15, 610, 310)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
@@ -3240,29 +3240,16 @@ newmenu:removeComponent(rc1)
 newmenu:removeComponent(rc2)
 end)
 
-function hidetog()
-if tpt.mousey <= 25 then
-interface.addComponent(toggle)
-else
-interface.removeComponent(toggle)
-end
-end
-
 local barval = "0"
 
 bar:action(function(sender)
 clearsb()
 if barval == "1" then
-event.unregister(event.tick,hidetog)
-interface.removeComponent(toggle)
-interface.addComponent(toggle)
 barval = "0"
 barlb:text("ON")
 
 elseif barval == "0" then
 barval = "1"
-event.unregister(event.tick,hidetog)
-event.register(event.tick,hidetog)
 barlb:text("OFF")
 end
 end)
@@ -3284,9 +3271,10 @@ end
 
 if barval == "0" then
 --Topbar
-tpt.drawline(1,0, 312,0, ar, ag, ab,al)
-tpt.drawline(338,0, 611,0, ar, ag, ab,al)
+tpt.drawline(0,0, 610,0, ar, ag, ab,al)
 end
+
+tpt.drawline(380,408,380,421,ar,ag,ab,al)
 
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 tpt.drawrect(613,1,14,95,ar,ag,ab,al)
@@ -3295,7 +3283,6 @@ tpt.drawline(612,408,612,421,ar,ag,ab,al)
 tpt.drawline(187,409,187,422,ar,ag,ab,al)
 tpt.drawline(469,408,469,421,ar,ag,ab,al)
 tpt.drawline(487,408,487,421,ar,ag,ab,al)
-tpt.drawline(507,408,507,421,ar,ag,ab,al)
 tpt.drawline(241,408,241,421,ar,ag,ab,al)
 tpt.drawline(36,408,36,421,ar,ag,ab,al)
 tpt.drawline(18,408,18,421,ar,ag,ab,al)
@@ -3367,10 +3354,10 @@ end
 
 --topbar
 if barval == "0" then
-tpt.drawline(1,0, 312,0, colourRED,colourGRN,colourBLU,al)
-tpt.drawline(338,0, 611,0, colourRED,colourGRN,colourBLU,al)
+tpt.drawline(0,0, 610,0,colourRED,colourGRN,colourBLU,al)
 end
 
+tpt.drawline(380,408,380,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
 tpt.drawrect(613,1,14,95,colourRED,colourGRN,colourBLU,al)
@@ -3379,7 +3366,6 @@ tpt.drawline(612,408,612,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(187,409,187,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(469,408,469,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(487,408,487,421,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(507,408,507,421,colourRED,colourGRN,colourBLU,al)
 
 tpt.drawline(241,408,241,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(36,408,36,421,colourRED,colourGRN,colourBLU,al)
@@ -3662,9 +3648,6 @@ dellb:text("Hidden")
 elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
-event.unregister(event.tick,hidetog)
-interface.removeComponent(toggle)
-interface.addComponent(toggle)
 uival = "1"
 barval = "0"
 dellb:text("Shown")
@@ -3688,8 +3671,6 @@ end)
 
 reset:action(function(sender)
 clearsb()
-interface.removeComponent(toggle)
-interface.addComponent(toggle)
 timerremo()
 tpt.setdrawcap(0)
 perfmv = "1"
@@ -3710,7 +3691,6 @@ dellb:text("Shown")
 barlb:text("ON")
 remlabe:text("OFF")
 fanlb:text("OFF")
-event.unregister(event.tick,hidetog)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
