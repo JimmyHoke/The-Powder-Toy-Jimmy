@@ -2181,7 +2181,7 @@ evt.register(evt.blur, blur)
 
 
 --cracker1000 mod script v3.0--
-local toggle = Button:new(380,409,90,14, "* Mod Settings *", "Open Mod Menu.")
+local toggle = Button:new(381,408,88,15, "Mod Settings", "Open Mod Menu.")
 local newmenu = Window:new(-15,-15, 610, 310)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
@@ -3316,7 +3316,7 @@ end
 frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function colourblender()
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
-al = 255
+al = 210
 else
 al = brightSlider:value()
 end
@@ -3423,7 +3423,7 @@ MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",40)
 MANAGER.savesetting("CRK","ag",40)
 MANAGER.savesetting("CRK","ab",40)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
 newmenu:onDraw(theme)
@@ -3434,7 +3434,7 @@ MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",255)
 MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",0)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
 newmenu:onDraw(theme)
@@ -3445,7 +3445,7 @@ MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",0)
 MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",255)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
 newmenu:onDraw(theme)
@@ -3456,7 +3456,7 @@ MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",0)
 MANAGER.savesetting("CRK","ag",255)
 MANAGER.savesetting("CRK","ab",0)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
 newmenu:onDraw(theme)
@@ -3467,7 +3467,7 @@ MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",250)
 MANAGER.savesetting("CRK","ag",250)
 MANAGER.savesetting("CRK","ab",0)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
 newmenu:onDraw(theme)
@@ -3478,7 +3478,7 @@ MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",255)
 MANAGER.savesetting("CRK","ag",150)
 MANAGER.savesetting("CRK","ab",0)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
 newmenu:onDraw(theme)
@@ -3489,7 +3489,7 @@ MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",210)
 MANAGER.savesetting("CRK","ag",210)
 MANAGER.savesetting("CRK","ab",210)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
 newmenu:onDraw(theme)
@@ -3634,6 +3634,15 @@ tpt.fillrect(612,0,17,424,0,0,0,255)
 end
 
 local uival = "1"
+local unhd = Button:new(315,1,40,20, "Unhide", "Unhides The Interface.")
+unhd:action(function(sender)
+tpt.hud(1)
+event.unregister(event.tick,UIhide)
+uival = "1"
+barval = "0"
+dellb:text("Shown")
+interface.removeComponent(unhd)
+end)
 
 deletesparkButton:action(function(sender)
 clearsb()
@@ -3643,6 +3652,8 @@ event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
 barval = "1"
+interface.removeComponent(unhd)
+interface.addComponent(unhd)
 dellb:text("Hidden")
 
 elseif uival == "0" then
@@ -3651,6 +3662,7 @@ event.unregister(event.tick,UIhide)
 uival = "1"
 barval = "0"
 dellb:text("Shown")
+interface.removeComponent(unhd)
 end
 end)
 
@@ -3671,6 +3683,7 @@ end)
 
 reset:action(function(sender)
 clearsb()
+interface.removeComponent(unhd)
 timerremo()
 tpt.setdrawcap(0)
 perfmv = "1"

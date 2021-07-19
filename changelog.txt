@@ -1,18 +1,7 @@
-Changelog for V25.1
+Changelog for V25.2
 Note: Windows defender likes to flag tpt whenever a new version gets released. Simply ignore such false positives.
 
-Move the Mod Menu button (V button at top) to bottom near tags.
-Add a nice little preview for custom themes.
-Fix Cross hair showing up too bright on startup even when brightness settings were turned on.
-Fix Top bar not reverting back the alpha value when switching to Pulse theme.
-Merge top bar into theme function.
-Set drawcap to 0 instead of 60 when turning off the performance mode.
-Fix editor values.
-Fix alpha slider not showing up when launching the mod for first time.
-Adjust the values for FPS colour change.
-
-Fixes and changes from snapshot 222:
-Disallow CGOL with duplicate rulestrings or names > 7 chars
-Make LITH->GLAS reaction easier
-LITH explodes when overcharged, update charge graphics
-Preserve GoL deco in older saves; deco on builtin GoL no longer renders when decorations are offDisallow GOL rulesets with no B states
+Fix the alignment of mod settings button.
+Bump version to 96.1
+Adjustments to theme's default alpha values.
+Fix certain Lua APIs mangling integers (Fixes dcolor bug for 32 bit windows version.)
