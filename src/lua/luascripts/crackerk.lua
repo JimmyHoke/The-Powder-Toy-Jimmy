@@ -2181,8 +2181,8 @@ evt.register(evt.blur, blur)
 
 
 --cracker1000 mod script v3.0--
-local toggle = Button:new(381,408,88,15, "Mod Settings", "Open Mod Menu.")
-local newmenu = Window:new(-15,-15, 610, 310)
+local toggle = Button:new(414,408,55,15, "Settings", "Open Mod Settings.")
+local newmenu = Window:new(-15,-15, 610, 303)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
@@ -2266,7 +2266,7 @@ local remtime = Textbox:new(293, 255, 80, 15, '', 'Time in min.')
 remtime:text("10")
 local remon2 = Button:new(333,272,40,20,"On", "Save.")
 local remoff  = Button:new(293,272,40,20,"Off", "Cancel.")
-local remlabel = Label:new(65, 294, 10, 15, "Reminder is on (30 mins.)")
+local remlabel = Label:new(63, 287, 10, 15, "Reminder is on 10 mins")
 local remlabel21 = Label:new(413, 255, 20, 15, "Time in min. (0-60)")
 
 local fancur = Button:new(396,28,80,30, "Crosshair", "Draws graphics around cursor.")
@@ -2281,7 +2281,7 @@ local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
 local perfm = Button:new(396,156,80,30, "Performance", "For lower spec systems.")
 local perlab = Label:new(485, 162, 10, 15, "OFF")
 
-local hide= Button:new(528,288,80,20, "Close menu", "Hide.")
+local hide= Button:new(528,281,80,20, "Close Menu", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -3271,10 +3271,10 @@ end
 
 if barval == "0" then
 --Topbar
-tpt.drawline(0,0, 610,0, ar, ag, ab,al)
+tpt.fillrect(1,0, 611,3, ar, ag, ab,al)
 end
 
-tpt.drawline(380,408,380,421,ar,ag,ab,al)
+tpt.drawline(414,408,414,421,ar,ag,ab,al)
 
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 tpt.drawrect(613,1,14,95,ar,ag,ab,al)
@@ -3316,7 +3316,7 @@ end
 frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function colourblender()
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
-al = 210
+al = 220
 else
 al = brightSlider:value()
 end
@@ -3354,10 +3354,10 @@ end
 
 --topbar
 if barval == "0" then
-tpt.drawline(0,0, 610,0,colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(1,0, 611,3,colourRED,colourGRN,colourBLU,al)
 end
 
-tpt.drawline(380,408,380,421,colourRED,colourGRN,colourBLU,al)
+tpt.drawline(414,408,414,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
 tpt.drawrect(613,1,14,95,colourRED,colourGRN,colourBLU,al)
