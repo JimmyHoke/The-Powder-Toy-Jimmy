@@ -1,30 +1,32 @@
 #include "GameView.h"
 
-#include "GameController.h"
-#include "GameModel.h"
-
+#include "Brush.h"
 #include "Config.h"
-#include "Misc.h"
+#include "DecorationTool.h"
 #include "Favorite.h"
 #include "Format.h"
-
-#include "Notification.h"
-#include "Brush.h"
+#include "GameController.h"
+#include "GameModel.h"
 #include "IntroText.h"
-#include "QuickOptions.h"
-#include "DecorationTool.h"
-#include "ToolButton.h"
-#include "MenuButton.h"
 #include "Menu.h"
+#include "MenuButton.h"
+#include "Misc.h"
+#include "Notification.h"
+#include "ToolButton.h"
+#include "QuickOptions.h"
 
 #include "client/SaveInfo.h"
 #include "client/SaveFile.h"
 #include "client/Client.h"
-
+#include "common/Platform.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
-
 #include "gui/Style.h"
+#include "simulation/ElementClasses.h"
+#include "simulation/ElementDefs.h"
+#include "simulation/SaveRenderer.h"
+#include "simulation/SimulationData.h"
+
 #include "gui/dialogues/ConfirmPrompt.h"
 #include "gui/dialogues/ErrorMessage.h"
 #include "gui/dialogues/InformationMessage.h"
@@ -33,10 +35,7 @@
 #include "gui/interface/Keys.h"
 #include "gui/interface/Engine.h"
 
-#include "simulation/SaveRenderer.h"
-#include "simulation/SimulationData.h"
-#include "simulation/ElementDefs.h"
-#include "simulation/ElementClasses.h"
+#include <cstring>
 
 #ifdef GetUserName
 # undef GetUserName // dammit windows
@@ -170,6 +169,7 @@ GameView::GameView():
 	ctrlBehaviour(false),
 	altBehaviour(false),
 	showHud(true),
+	showBrush(true),
 	showDebug(false),
 	delayedActiveMenu(-1),
 	wallBrush(false),
@@ -190,7 +190,7 @@ GameView::GameView():
 	buttonTip(""),
 	isButtonTipFadingIn(false),
 	introText(2048),
-	introTextMessage(ByteString(introTextData).FromAscii()),
+	introTextMessage(ByteString(introTextData).FromUtf8()),
 
 	doScreenshot(false),
 	screenshotIndex(0),
@@ -458,6 +458,16 @@ bool GameView::GetHudEnable()
 	return showHud;
 }
 
+void GameView::SetBrushEnable(bool brushState)
+{
+	showBrush = brushState;
+}
+
+bool GameView::GetBrushEnable()
+{
+	return showBrush;
+}
+
 void GameView::SetDebugHUD(bool mode)
 {
 	showDebug = mode;
@@ -487,37 +497,27 @@ bool GameView::GetPlacingZoom()
 
 void GameView::NotifyActiveToolsChanged(GameModel * sender)
 {
-	decoBrush = false;
 	for (size_t i = 0; i < toolButtons.size(); i++)
 	{
 		auto *tool = toolButtons[i]->tool;
-		if(sender->GetActiveTool(0) == tool)
-		{
-			toolButtons[i]->SetSelectionState(0);	//Primary
-			windTool = tool->GetIdentifier() == "DEFAULT_UI_WIND";
-
-			if (sender->GetActiveTool(0)->GetIdentifier().BeginsWith("DEFAULT_DECOR_"))
-				decoBrush = true;
-		}
-		else if(sender->GetActiveTool(1) == tool)
-		{
-			toolButtons[i]->SetSelectionState(1);	//Secondary
-			if (sender->GetActiveTool(1)->GetIdentifier().BeginsWith("DEFAULT_DECOR_"))
-				decoBrush = true;
-		}
-		else if(sender->GetActiveTool(2) == tool)
-		{
-			toolButtons[i]->SetSelectionState(2);	//Tertiary
-		}
-		else if(sender->GetActiveTool(3) == tool)
-		{
-			toolButtons[i]->SetSelectionState(3);	//Replace Mode
-		}
+		// Primary
+		if (sender->GetActiveTool(0) == tool)
+			toolButtons[i]->SetSelectionState(0);
+		// Secondary
+		else if (sender->GetActiveTool(1) == tool)
+			toolButtons[i]->SetSelectionState(1);
+		// Tertiary
+		else if (sender->GetActiveTool(2) == tool)
+			toolButtons[i]->SetSelectionState(2);
+		// Replace Mode
+		else if (sender->GetActiveTool(3) == tool)
+			toolButtons[i]->SetSelectionState(3);
+		// Not selected at all
 		else
-		{
 			toolButtons[i]->SetSelectionState(-1);
-		}
 	}
+
+	decoBrush = sender->GetActiveTool(0)->GetIdentifier().BeginsWith("DEFAULT_DECOR_");
 
 	if (sender->GetRenderer()->findingElement)
 	{
@@ -595,8 +595,19 @@ void GameView::NotifyToolListChanged(GameModel * sender)
 				}
 				else if (tempButton->GetSelectionState() == 1)
 				{
-					Favorite::Ref().RemoveFavorite(tool->GetIdentifier());
-					c->RebuildFavoritesMenu();
+					auto identifier = tool->GetIdentifier();
+					if (Favorite::Ref().IsFavorite(identifier))
+					{
+						Favorite::Ref().RemoveFavorite(identifier);
+						c->RebuildFavoritesMenu();
+					}
+					else if (identifier.BeginsWith("DEFAULT_PT_LIFECUST_"))
+					{
+						if (ConfirmPrompt::Blocking("Remove custom GOL type", "Are you sure you want to remove " + identifier.Substr(20).FromUtf8() + "?"))
+						{
+							c->RemoveCustomGOLType(identifier);
+						}
+					}
 				}
 			}
 			else
@@ -898,8 +909,8 @@ int GameView::Record(bool record)
 		{
 			time_t startTime = time(NULL);
 			recordingFolder = startTime;
-			Client::Ref().MakeDirectory("recordings");
-			Client::Ref().MakeDirectory(ByteString::Build("recordings", PATH_SEP, recordingFolder).c_str());
+			Platform::MakeDirectory("recordings");
+			Platform::MakeDirectory(ByteString::Build("recordings", PATH_SEP, recordingFolder).c_str());
 			recording = true;
 		}
 	}
@@ -926,9 +937,9 @@ void GameView::updateToolButtonScroll()
 
 			scrollBar->Position.X = (int)(((float)mouseX/((float)XRES))*(float)(XRES-scrollSize));
 
-			float overflow = totalWidth-(XRES-BARSIZE), mouseLocation = float(XRES-3)/float((XRES-2)-mouseX); //mouseLocation adjusted slightly in case you have 200 elements in one menu
+			float overflow = float(totalWidth-(XRES-BARSIZE)), mouseLocation = float(XRES-3)/float((XRES-2)-mouseX); //mouseLocation adjusted slightly in case you have 200 elements in one menu
 
-			newInitialX += overflow/mouseLocation;
+			newInitialX += int(overflow/mouseLocation);
 		}
 		else
 		{
@@ -1037,6 +1048,9 @@ void GameView::OnMouseDown(int x, int y, unsigned button)
 				return;
 			Tool *lastTool = c->GetActiveTool(toolIndex);
 			c->SetLastTool(lastTool);
+			windTool = lastTool->GetIdentifier() == "DEFAULT_UI_WIND";
+			decoBrush = lastTool->GetIdentifier().BeginsWith("DEFAULT_DECOR_");
+
 			UpdateDrawMode();
 
 			isMouseDown = true;
@@ -1265,8 +1279,6 @@ void GameView::OnKeyPress(int key, int scan, bool repeat, bool shift, bool ctrl,
 	switch(scan)
 	{
 	case SDL_SCANCODE_GRAVE:
-		SDL_StopTextInput();
-		SDL_StartTextInput();
 		c->ShowConsole();
 		break;
 	case SDL_SCANCODE_SPACE: //Space
@@ -1387,7 +1399,10 @@ void GameView::OnKeyPress(int key, int scan, bool repeat, bool shift, bool ctrl,
 		ui::Engine::Ref().ConfirmExit();
 		break;
 	case SDL_SCANCODE_U:
-		c->ToggleAHeat();
+		if (ctrl)
+			c->ResetAHeat();
+		else
+			c->ToggleAHeat();
 		break;
 	case SDL_SCANCODE_N:
 		c->ToggleNewtonianGravity();
@@ -1607,7 +1622,7 @@ void GameView::OnTick(float dt)
 
 	if(introText)
 	{
-		introText -= int(dt)>0?((int)dt < 5? dt:5):1;
+		introText -= int(dt)>0?(int(dt) < 5? int(dt):5):1;
 		if(introText < 0)
 			introText  = 0;
 	}
@@ -1683,6 +1698,12 @@ void GameView::DoTextInput(String text)
 {
 	if (c->TextInput(text))
 		Window::DoTextInput(text);
+}
+
+void GameView::DoTextEditing(String text)
+{
+	if (c->TextEditing(text))
+		Window::DoTextEditing(text);
 }
 
 void GameView::DoKeyPress(int key, int scan, bool repeat, bool shift, bool ctrl, bool alt)
@@ -1784,8 +1805,7 @@ void GameView::NotifyPlaceSaveChanged(GameModel * sender)
 	placeSaveOffset = ui::Point(0, 0);
 	if(sender->GetPlaceSave())
 	{
-		SaveRenderer::Ref().CopyModes(sender->GetRenderer());
-		placeSaveThumb = SaveRenderer::Ref().Render(sender->GetPlaceSave());
+		placeSaveThumb = SaveRenderer::Ref().Render(sender->GetPlaceSave(), true, true, sender->GetRenderer());
 		selectMode = PlaceSave;
 		selectPoint2 = mousePosition;
 	}
@@ -1932,7 +1952,7 @@ void GameView::OnDraw()
 		ren->clearScreen(1.0f);
 		ren->RenderBegin();
 		ren->SetSample(c->PointTranslate(currentMouse).X, c->PointTranslate(currentMouse).Y);
-		if (selectMode == SelectNone && (!zoomEnabled || zoomCursorFixed) && activeBrush && (isMouseDown || (currentMouse.X >= 0 && currentMouse.X < XRES && currentMouse.Y >= 0 && currentMouse.Y < YRES)))
+		if (showBrush && selectMode == SelectNone && (!zoomEnabled || zoomCursorFixed) && activeBrush && (isMouseDown || (currentMouse.X >= 0 && currentMouse.X < XRES && currentMouse.Y >= 0 && currentMouse.Y < YRES)))
 		{
 			ui::Point finalCurrentMouse = c->PointTranslate(currentMouse);
 			ui::Point initialDrawPoint = drawPoint1;
@@ -2087,7 +2107,7 @@ void GameView::OnDraw()
 					break;
 				}
 				startY -= 14;
-				g->fillrect(startX-3, startY-3, Graphics::textwidth(message)+6, 14, 0, 0, 0, 100);
+				g->fillrect(startX-3, startY-3, Graphics::textwidth(message)+6, 14, 0, 0, 0, std::min(100, alpha));
 				g->drawtext(startX, startY, message, 255, 255, 255, alpha);
 				(*iter).second -= 3;
 			}
@@ -2099,7 +2119,7 @@ void GameView::OnDraw()
 		String sampleInfo = String::Build("#", screenshotIndex, " ", String(0xE00E), " REC");
 
 		int textWidth = Graphics::textwidth(sampleInfo);
-		g->fillrect(XRES-20-textWidth, 12, textWidth+8, 15, 0, 0, 0, 255*0.5);
+		g->fillrect(XRES-20-textWidth, 12, textWidth+8, 15, 0, 0, 0, 127);
 		g->drawtext(XRES-16-textWidth, 16, sampleInfo, 255, 50, 20, 255);
 	}
 	else if(showHud)
@@ -2125,17 +2145,17 @@ void GameView::OnDraw()
 			{
 				if (type == PT_LAVA && c->IsValidElement(ctype))
 				{
-					sampleInfo << "Molten " << c->ElementResolve(ctype, -1);
+					sampleInfo << "Molten " << c->ElementResolve(ctype, 0);
 				}
 				else if ((type == PT_PIPE || type == PT_PPIP) && c->IsValidElement(ctype))
 				{
 					if (ctype == PT_LAVA && c->IsValidElement((int)sample.particle.pavg[1]))
 					{
-						sampleInfo << c->ElementResolve(type, -1) << " with molten " << c->ElementResolve((int)sample.particle.pavg[1], -1);
+						sampleInfo << c->ElementResolve(type, 0) << " with molten " << c->ElementResolve((int)sample.particle.pavg[1], -1);
 					}
 					else
 					{
-						sampleInfo << c->ElementResolve(type, -1) << " with " << c->ElementResolve(ctype, (int)sample.particle.pavg[1]);
+						sampleInfo << c->ElementResolve(type, 0) << " with " << c->ElementResolve(ctype, (int)sample.particle.pavg[1]);
 					}
 				}
 				else if (type == PT_LIFE)
@@ -2154,19 +2174,23 @@ void GameView::OnDraw()
 				else
 				{
 					sampleInfo << c->ElementResolve(type, ctype);
-					if (wavelengthGfx)
-						sampleInfo << " (" << ctype << ")";
+					if (wavelengthGfx || type == PT_EMBR || type == PT_PRTI || type == PT_PRTO)
+					{
+						// Do nothing, ctype is meaningless for these elements
+					}
 					// Some elements store extra LIFE info in upper bits of ctype, instead of tmp/tmp2
-					else if (type == PT_CRAY || type == PT_DRAY || type == PT_CONV)
+					else if (type == PT_CRAY || type == PT_DRAY || type == PT_CONV || type == PT_LDTC)
 						sampleInfo << " (" << c->ElementResolve(TYP(ctype), ID(ctype)) << ")";
-					else if (c->IsValidElement(ctype))
-						sampleInfo << " (" << c->ElementResolve(ctype, -1) << ")";
-					else
-						sampleInfo << " ()";
+					else if (type == PT_CLNE || type == PT_BCLN || type == PT_PCLN || type == PT_PBCN || type == PT_DTEC)
+						sampleInfo << " (" << c->ElementResolve(ctype, sample.particle.tmp) << ")";
+					else if (c->IsValidElement(ctype) && type != PT_GLOW && type != PT_WIRE && type != PT_SOAP && type != PT_LITH)
+						sampleInfo << " (" << c->ElementResolve(ctype, 0) << ")";
+					else if (ctype)
+						sampleInfo << " (" << ctype << ")";
 				}
 				sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C";
 				sampleInfo << ", Life: " << sample.particle.life;
-				if (sample.particle.type != PT_RFRG && sample.particle.type != PT_RFGL)
+				if (sample.particle.type != PT_RFRG && sample.particle.type != PT_RFGL && sample.particle.type != PT_LIFE)
 				{
 					if (sample.particle.type == PT_CONV)
 					{
@@ -2183,7 +2207,9 @@ void GameView::OnDraw()
 				}
 
 				// only elements that use .tmp2 show it in the debug HUD
-				if (type == PT_CRAY || type == PT_DRAY || type == PT_EXOT || type == PT_LIGH || type == PT_SOAP || type == PT_TRON || type == PT_VIBR || type == PT_VIRS || type == PT_WARP || type == PT_LCRY || type == PT_CBNW || type == PT_TSNS || type == PT_DTEC || type == PT_LSNS || type == PT_PSTN || type == PT_LDTC)
+				if (type == PT_CRAY || type == PT_DRAY || type == PT_EXOT || type == PT_LIGH || type == PT_SOAP || type == PT_TRON
+						|| type == PT_VIBR || type == PT_VIRS || type == PT_WARP || type == PT_LCRY || type == PT_CBNW || type == PT_TSNS
+						|| type == PT_DTEC || type == PT_LSNS || type == PT_PSTN || type == PT_LDTC || type == PT_VSNS || type == PT_LITH)
 					sampleInfo << ", Tmp2: " << sample.particle.tmp2;
 
 				sampleInfo << ", Pressure: " << sample.AirPressure;
@@ -2210,8 +2236,8 @@ void GameView::OnDraw()
 		}
 
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(XRES-20-textWidth, 12, textWidth+8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(XRES-16-textWidth, 16, sampleInfo.Build(), 255, 255, 255, alpha*0.75f);
+		g->fillrect(XRES-20-textWidth, 12, textWidth+8, 15, 0, 0, 0, int(alpha*0.5f));
+		g->drawtext(XRES-16-textWidth, 16, sampleInfo.Build(), 255, 255, 255, int(alpha*0.75f));
 
 #ifndef OGLI
 		if (wavelengthGfx)
@@ -2267,8 +2293,8 @@ void GameView::OnDraw()
 				sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
 
 			textWidth = Graphics::textwidth(sampleInfo.Build());
-			g->fillrect(XRES-20-textWidth, 27, textWidth+8, 14, 0, 0, 0, alpha*0.5f);
-			g->drawtext(XRES-16-textWidth, 30, sampleInfo.Build(), 255, 255, 255, alpha*0.75f);
+			g->fillrect(XRES-20-textWidth, 27, textWidth+8, 14, 0, 0, 0, int(alpha*0.5f));
+			g->drawtext(XRES-16-textWidth, 30, sampleInfo.Build(), 255, 255, 255, int(alpha*0.75f));
 		}
 	}
 
@@ -2296,8 +2322,8 @@ void GameView::OnDraw()
 
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255-introText*5;
-		g->fillrect(12, 12, textWidth+8, 15, 0, 0, 0, alpha*0.5);
-		g->drawtext(16, 16, fpsInfo.Build(), 32, 216, 255, alpha*0.75);
+		g->fillrect(12, 12, textWidth+8, 15, 0, 0, 0, int(alpha*0.5));
+		g->drawtext(16, 16, fpsInfo.Build(), 32, 216, 255, int(alpha*0.75));
 	}
 
 	//Tooltips
@@ -2321,7 +2347,7 @@ void GameView::OnDraw()
 	}
 
 	//Introduction text
-	if(introText)
+	if(introText && showHud)
 	{
 		g->fillrect(0, 0, WINDOWW, WINDOWH, 0, 0, 0, introText>51?102:introText*2);
 		g->drawtext(16, 20, introTextMessage, 255, 255, 255, introText>51?255:introText*5);

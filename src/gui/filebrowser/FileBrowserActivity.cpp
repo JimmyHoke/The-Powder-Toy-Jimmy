@@ -2,24 +2,22 @@
 
 #include <algorithm>
 
-#include "gui/interface/Label.h"
-#include "gui/interface/Textbox.h"
-#include "gui/interface/ScrollPanel.h"
-#include "gui/interface/SaveButton.h"
-#include "gui/interface/ProgressBar.h"
-
 #include "client/Client.h"
-#include "client/SaveFile.h"
 #include "client/GameSave.h"
-
+#include "client/SaveFile.h"
+#include "common/Platform.h"
+#include "graphics/Graphics.h"
 #include "gui/Style.h"
 #include "tasks/Task.h"
 
-#include "gui/dialogues/TextPrompt.h"
 #include "gui/dialogues/ConfirmPrompt.h"
 #include "gui/dialogues/ErrorMessage.h"
-
-#include "graphics/Graphics.h"
+#include "gui/dialogues/TextPrompt.h"
+#include "gui/interface/Label.h"
+#include "gui/interface/ProgressBar.h"
+#include "gui/interface/SaveButton.h"
+#include "gui/interface/ScrollPanel.h"
+#include "gui/interface/Textbox.h"
 
 //Currently, reading is done on another thread, we can't render outside the main thread due to some bullshit with OpenGL
 class LoadFilesTask: public Task
@@ -40,16 +38,18 @@ class LoadFilesTask: public Task
 
 	bool doWork() override
 	{
-		std::vector<ByteString> files = Client::Ref().DirectorySearch(directory, search, ".cps");
+		std::vector<ByteString> files = Platform::DirectorySearch(directory, search, { ".cps" });
 		std::sort(files.rbegin(), files.rend(), [](ByteString a, ByteString b) { return a.ToLower() < b.ToLower(); });
 
 		notifyProgress(-1);
 		for(std::vector<ByteString>::iterator iter = files.begin(), end = files.end(); iter != end; ++iter)
 		{
-			SaveFile * saveFile = new SaveFile(*iter);
+			SaveFile * saveFile = new SaveFile(directory + *iter);
 			try
 			{
-				std::vector<unsigned char> data = Client::Ref().ReadFile(*iter);
+				std::vector<unsigned char> data = Client::Ref().ReadFile(directory + *iter);
+				if (data.empty())
+					continue;
 				GameSave * tempSave = new GameSave(data);
 				saveFile->SetGameSave(tempSave);
 				saveFiles.push_back(saveFile);
@@ -281,7 +281,7 @@ void FileBrowserActivity::OnTick(float dt)
 		});
 
 		progressBar->SetStatus("Rendering thumbnails");
-		progressBar->SetProgress((float(totalFiles-files.size())/float(totalFiles))*100.0f);
+		progressBar->SetProgress(totalFiles ? (totalFiles - files.size()) * 100 / totalFiles : 0);
 		componentsQueue.push_back(saveButton);
 		fileX++;
 	}

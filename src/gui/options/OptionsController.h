@@ -1,5 +1,6 @@
 #ifndef OPTIONSCONTROLLER_H_
 #define OPTIONSCONTROLLER_H_
+#include "Config.h"
 
 #include <functional>
 
@@ -21,6 +22,7 @@ public:
 	void SetWaterEqualisation(bool state);
 	void SetGravityMode(int gravityMode);
 	void SetAirMode(int airMode);
+	void SetAmbientAirTemperature(float ambientAirTemp);
 	void SetEdgeMode(int edgeMode);
 	void SetFullscreen(bool fullscreen);
 	void SetAltFullscreen(bool altFullscreen);
@@ -33,6 +35,7 @@ public:
 	void SetMouseClickrequired(bool mouseClickRequired);
 	void SetIncludePressure(bool includePressure);
 	void SetPerfectCircle(bool perfectCircle);
+	void SetMomentumScroll(bool momentumScroll);
 	
 	void Exit();
 	OptionsView * GetView();

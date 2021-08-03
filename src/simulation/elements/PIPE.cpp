@@ -81,8 +81,18 @@ constexpr int PPIP_TMPFLAG_TRIGGER_OFF     = 0x08000000;
 constexpr int PPIP_TMPFLAG_TRIGGER_ON      = 0x10000000;
 constexpr int PPIP_TMPFLAG_TRIGGERS        = 0x1C000000;
 
-signed char pos_1_rx[] = {-1,-1,-1, 0, 0, 1, 1, 1};
-signed char pos_1_ry[] = {-1, 0, 1,-1, 1,-1, 0, 1};
+signed char pos_1_rx[] = { -1,-1,-1, 0, 0, 1, 1, 1 };
+signed char pos_1_ry[] = { -1, 0, 1,-1, 1,-1, 0, 1 };
+int pos_1_patch90[] = { 2, 4, 7, 1, 6, 0, 3, 5 };
+
+void Element_PIPE_patch90(Particle &part)
+{
+	auto oldDirForward = (part.tmp & 0x00001C00) >> 10;
+	auto newDirForward = pos_1_patch90[oldDirForward];
+	auto oldDirReverse = (part.tmp & 0x0001C000) >> 14;
+	auto newDirReverse = pos_1_patch90[oldDirReverse];
+	part.tmp = (part.tmp & 0xFFFE23FF) | (newDirForward << 10) | (newDirReverse << 14);
+}
 
 static unsigned int prevColor(unsigned int flags)
 {
@@ -253,7 +263,7 @@ int Element_PIPE_update(UPDATE_FUNC_ARGS)
 						transfer_part_to_pipe(parts+(ID(r)), parts+i);
 						sim->kill_part(ID(r));
 					}
-					else if (!TYP(parts[i].ctype) && TYP(r)==PT_STOR && parts[ID(r)].tmp>0 && sim->IsValidElement(parts[ID(r)].tmp) && (sim->elements[parts[ID(r)].tmp].Properties & (TYPE_PART | TYPE_LIQUID | TYPE_GAS | TYPE_ENERGY)))
+					else if (!TYP(parts[i].ctype) && TYP(r)==PT_STOR && sim->IsElement(parts[ID(r)].tmp) && (sim->elements[parts[ID(r)].tmp].Properties & (TYPE_PART | TYPE_LIQUID | TYPE_GAS | TYPE_ENERGY)))
 					{
 						// STOR stores properties in the same places as PIPE does
 						transfer_pipe_to_pipe(parts+(ID(r)), parts+i, true);
@@ -345,8 +355,8 @@ int Element_PIPE_graphics(GRAPHICS_FUNC_ARGS)
 			tpart.type = t;
 			tpart.temp = cpart->temp;
 			tpart.life = cpart->tmp2;
-			tpart.tmp = cpart->pavg[0];
-			tpart.ctype = cpart->pavg[1];
+			tpart.tmp = int(cpart->pavg[0]);
+			tpart.ctype = int(cpart->pavg[1]);
 			if (t == PT_PHOT && tpart.ctype == 0x40000000)
 				tpart.ctype = 0x3FFFFFFF;
 
@@ -408,8 +418,8 @@ void Element_PIPE_transfer_pipe_to_part(Simulation * sim, Particle *pipe, Partic
 	}
 	part->temp = pipe->temp;
 	part->life = pipe->tmp2;
-	part->tmp = pipe->pavg[0];
-	part->ctype = pipe->pavg[1];
+	part->tmp = int(pipe->pavg[0]);
+	part->ctype = int(pipe->pavg[1]);
 
 	if (!(sim->elements[part->type].Properties & TYPE_ENERGY))
 	{
@@ -428,8 +438,8 @@ static void transfer_part_to_pipe(Particle *part, Particle *pipe)
 	pipe->ctype = part->type;
 	pipe->temp = part->temp;
 	pipe->tmp2 = part->life;
-	pipe->pavg[0] = part->tmp;
-	pipe->pavg[1] = part->ctype;
+	pipe->pavg[0] = float(part->tmp);
+	pipe->pavg[1] = float(part->ctype);
 }
 
 static void transfer_pipe_to_pipe(Particle *src, Particle *dest, bool STOR)

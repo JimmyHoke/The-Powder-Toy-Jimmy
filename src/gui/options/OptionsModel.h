@@ -1,5 +1,6 @@
 #ifndef OPTIONSMODEL_H_
 #define OPTIONSMODEL_H_
+#include "Config.h"
 
 #include <vector>
 
@@ -27,6 +28,8 @@ public:
 	void SetShowAvatars(bool state);
 	int GetAirMode();
 	void SetAirMode(int airMode);
+	float GetAmbientAirTemperature();
+	void SetAmbientAirTemperature(float ambientAirTemp);
 	int GetEdgeMode();
 	void SetEdgeMode(int edgeMode);
 	int GetGravityMode();
@@ -51,6 +54,8 @@ public:
 	void SetIncludePressure(bool includePressure);
 	bool GetPerfectCircle();
 	void SetPerfectCircle(bool perfectCircle);
+	bool GetMomentumScroll();
+	void SetMomentumScroll(bool momentumScroll);
 	virtual ~OptionsModel();
 };
 

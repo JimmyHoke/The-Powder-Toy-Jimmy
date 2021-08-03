@@ -224,7 +224,7 @@ String TPTScriptInterface::FormatCommand(String command)
 	String outputData;
 
 	//Split command into words, put them on the stack
-	for(String word : command.PartitionBy(' '))
+	for(String word : command.PartitionBy(' ', true))
 		words.push_back(word);
 	while(!words.empty())
 	{
@@ -273,11 +273,11 @@ AnyType TPTScriptInterface::tptS_set(std::deque<String> * words)
 	float newValuef = 0.0f;
 	if (value.GetType() == TypeNumber)
 	{
-		newValuef = newValue = ((NumberType)value).Value();
+		newValuef = float(newValue = ((NumberType)value).Value());
 	}
 	else if (value.GetType() == TypeFloat)
 	{
-		newValue = newValuef = ((FloatType)value).Value();
+		newValue = int(newValuef = ((FloatType)value).Value());
 	}
 	else if(value.GetType() == TypeString)
 	{
@@ -320,7 +320,7 @@ AnyType TPTScriptInterface::tptS_set(std::deque<String> * words)
 		}
 		else
 			partIndex = ((NumberType)selector).Value();
-		if(partIndex<0 || partIndex>NPART || sim->parts[partIndex].type==0)
+		if(partIndex<0 || partIndex>=NPART || sim->parts[partIndex].type==0)
 			throw GeneralException("Invalid particle");
 
 		switch(propertyFormat)
@@ -332,7 +332,7 @@ AnyType TPTScriptInterface::tptS_set(std::deque<String> * words)
 			*((float*)(partsBlock+(partIndex*sizeof(Particle))+propertyOffset)) = newValuef;
 			break;
 		case FormatElement:
-			sim->part_change_type(partIndex, sim->parts[partIndex].x, sim->parts[partIndex].y, newValue);
+			sim->part_change_type(partIndex, int(sim->parts[partIndex].x + 0.5f), int(sim->parts[partIndex].y + 0.5f), newValue);
 			break;
 		default:
 			break;
@@ -369,7 +369,7 @@ AnyType TPTScriptInterface::tptS_set(std::deque<String> * words)
 					if (sim->parts[j].type)
 					{
 						returnValue++;
-						sim->part_change_type(j, sim->parts[j].x, sim->parts[j].y, newValue);
+						sim->part_change_type(j, int(sim->parts[j].x + 0.5f), int(sim->parts[j].y + 0.5f), newValue);
 					}
 			}
 			break;
@@ -417,7 +417,7 @@ AnyType TPTScriptInterface::tptS_set(std::deque<String> * words)
 					if (sim->parts[j].type == type)
 					{
 						returnValue++;
-						sim->part_change_type(j, sim->parts[j].x, sim->parts[j].y, newValue);
+						sim->part_change_type(j, int(sim->parts[j].x + 0.5f), int(sim->parts[j].y + 0.5f), newValue);
 					}
 			}
 			break;
@@ -523,7 +523,7 @@ AnyType TPTScriptInterface::tptS_bubble(std::deque<String> * words)
 
 	for (int i = 1; i<=30; i++)
 	{
-		rem2 = sim->create_part(-1, bubblePos.X+18*cosf(i/5.0), bubblePos.Y+18*sinf(i/5.0), PT_SOAP);
+		rem2 = sim->create_part(-1, int(bubblePos.X+18*cosf(i/5.0)+0.5f), int(bubblePos.Y+18*sinf(i/5.0)+0.5f), PT_SOAP);
 
 		sim->parts[rem1].ctype = 7;
 		sim->parts[rem1].tmp = rem2;

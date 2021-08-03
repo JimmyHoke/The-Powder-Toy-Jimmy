@@ -34,7 +34,6 @@ extern int tptElements; //Table for TPT element names
 extern int tptParts, tptPartsMeta, tptElementTransitions, tptPartsCData, tptPartMeta, cIndex;
 extern LuaSmartRef *tptPart;
 
-void luaopen_eventcompat(lua_State *l);
 void luacon_hook(lua_State *L, lua_Debug *ar);
 int luacon_eval(const char *command);
 String luacon_geterror();
@@ -127,6 +126,7 @@ int luatpt_setfire(lua_State* l);
 int luatpt_setdebug(lua_State* l);
 
 int luatpt_setfpscap(lua_State* l);
+int luatpt_setdrawcap(lua_State* l);
 
 int luatpt_getscript(lua_State* l);
 

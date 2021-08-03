@@ -11,13 +11,13 @@
 #include <dirent.h>
 
 #ifdef MACOSX
-#include <mach-o/dyld.h>
-#include <ApplicationServices/ApplicationServices.h>
+# include "common/macosx.h"
 #endif
 
 #ifdef WIN
 #define NOMINMAX
 #include <shlobj.h>
+#include <objidl.h>
 #include <shlwapi.h>
 #include <windows.h>
 #include <direct.h>
@@ -26,26 +26,27 @@
 #include <unistd.h>
 #endif
 
-#include "common/String.h"
+#include "ClientListener.h"
 #include "Config.h"
 #include "Format.h"
 #include "MD5.h"
-#include "Platform.h"
 #include "Update.h"
 
-#include "ClientListener.h"
-
+#include "client/GameSave.h"
+#include "client/SaveFile.h"
+#include "client/SaveInfo.h"
+#include "client/UserInfo.h"
+#include "common/Platform.h"
+#include "common/String.h"
 #include "graphics/Graphics.h"
 
-#include "gui/preview/Comment.h"
+#ifdef LUACONSOLE
+# include "lua/LuaScriptInterface.h"
+#endif
 
-#include "client/SaveInfo.h"
-#include "client/SaveFile.h"
-#include "client/GameSave.h"
-#include "client/UserInfo.h"
 #include "client/http/Request.h"
 #include "client/http/RequestManager.h"
-
+#include "gui/preview/Comment.h"
 
 extern "C"
 {
@@ -104,11 +105,13 @@ Client::Client():
 
 void Client::Initialise(ByteString proxyString, bool disableNetwork)
 {
+#if !defined(FONTEDITOR) && !defined(RENDERER)
 	if (GetPrefBool("version.update", false))
 	{
 		SetPref("version.update", false);
 		update_finish();
 	}
+#endif
 
 #ifndef NOHTTP
 	if (!disableNetwork)
@@ -158,60 +161,41 @@ bool Client::IsFirstRun()
 bool Client::DoInstallation()
 {
 #if defined(WIN)
+	CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	wchar_t programsPath[MAX_PATH];
+	IShellLinkW *shellLink = NULL;
+	IPersistFile *shellLinkPersist = NULL;
+
 	int returnval;
 	LONG rresult;
 	HKEY newkey;
-	ByteString currentfilename2 = Platform::ExecutableName();
-	// this isn't necessary but I don't feel like c++ifying this code right now
-	const char *currentfilename = currentfilename2.c_str();
-	char *iconname = NULL;
-	char *opencommand = NULL;
-	char *protocolcommand = NULL;
-	//char AppDataPath[MAX_PATH];
-	char *AppDataPath = NULL;
-	iconname = (char*)malloc(strlen(currentfilename)+6);
-	sprintf(iconname, "%s,-102", currentfilename);
+	ByteString currentfilename = Platform::ExecutableName();
+	ByteString iconname = currentfilename + ",-102";
+	ByteString AppDataPath = Platform::WinNarrow(_wgetcwd(NULL, 0));
+	ByteString opencommand = "\"" + currentfilename + "\" open \"%1\" ddir \"" + AppDataPath + "\"";
+	ByteString protocolcommand = "\"" + currentfilename + "\" ddir \"" + AppDataPath + "\" ptsave \"%1\"";
 
-	//Create Roaming application data folder
-	/*if(!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA|CSIDL_FLAG_CREATE, NULL, 0, AppDataPath)))
-	{
-		returnval = 0;
-		goto finalise;
-	}*/
-
-	AppDataPath = _getcwd(NULL, 0);
-
-	//Move Game executable into application data folder
-	//TODO: Implement
-
-	opencommand = (char*)malloc(strlen(currentfilename)+53+strlen(AppDataPath));
-	protocolcommand = (char*)malloc(strlen(currentfilename)+53+strlen(AppDataPath));
-	/*if((strlen(AppDataPath)+strlen(APPDATA_SUBDIR "\\Powder Toy"))<MAX_PATH)
-	{
-		strappend(AppDataPath, APPDATA_SUBDIR);
-		_mkdir(AppDataPath);
-		strappend(AppDataPath, "\\Powder Toy");
-		_mkdir(AppDataPath);
-	} else {
-		returnval = 0;
-		goto finalise;
-	}*/
-	sprintf(opencommand, "\"%s\" open \"%%1\" ddir \"%s\"", currentfilename, AppDataPath);
-	sprintf(protocolcommand, "\"%s\" ddir \"%s\" ptsave \"%%1\"", currentfilename, AppDataPath);
+	auto createKey = [](ByteString s, HKEY &k) {
+		return RegCreateKeyExW(HKEY_CURRENT_USER, Platform::WinWiden(s).c_str(), 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &k, NULL);
+	};
+	auto setValue = [](HKEY k, ByteString s) {
+		auto w = Platform::WinWiden(s);
+		return RegSetValueExW(k, NULL, 0, REG_SZ, (LPBYTE)&w[0], (w.size() + 1) * 2);
+	};
 
 	//Create protocol entry
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\ptsave", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\ptsave", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"Powder Toy Save", strlen("Powder Toy Save")+1);
+	rresult = setValue(newkey, "Powder Toy Save");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, (LPCSTR)"URL Protocol", 0, REG_SZ, (LPBYTE)"", strlen("")+1);
+	rresult = RegSetValueExW(newkey, (LPWSTR)L"URL Protocol", 0, REG_SZ, (LPBYTE)L"", 1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -220,12 +204,12 @@ bool Client::DoInstallation()
 	RegCloseKey(newkey);
 
 	//Set Protocol DefaultIcon
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\ptsave\\DefaultIcon", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\ptsave\\DefaultIcon", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)iconname, strlen(iconname)+1);
+	rresult = setValue(newkey, iconname);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -234,12 +218,12 @@ bool Client::DoInstallation()
 	RegCloseKey(newkey);
 
 	//Set Protocol Launch command
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\ptsave\\shell\\open\\command", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\ptsave\\shell\\open\\command", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)protocolcommand, strlen(protocolcommand)+1);
+	rresult = setValue(newkey, protocolcommand);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -248,12 +232,12 @@ bool Client::DoInstallation()
 	RegCloseKey(newkey);
 
 	//Create extension entry
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.cps", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\.cps", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderToySave", strlen("PowderToySave")+1);
+	rresult = setValue(newkey, "PowderToySave");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -261,12 +245,12 @@ bool Client::DoInstallation()
 	}
 	RegCloseKey(newkey);
 
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\.stm", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\.stm", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"PowderToySave", strlen("PowderToySave")+1);
+	rresult = setValue(newkey, "PowderToySave");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -275,12 +259,12 @@ bool Client::DoInstallation()
 	RegCloseKey(newkey);
 
 	//Create program entry
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderToySave", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\PowderToySave", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)"Powder Toy Save", strlen("Powder Toy Save")+1);
+	rresult = setValue(newkey, "Powder Toy Save");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -289,12 +273,12 @@ bool Client::DoInstallation()
 	RegCloseKey(newkey);
 
 	//Set DefaultIcon
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderToySave\\DefaultIcon", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\PowderToySave\\DefaultIcon", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)iconname, strlen(iconname)+1);
+	rresult = setValue(newkey, iconname);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -303,12 +287,12 @@ bool Client::DoInstallation()
 	RegCloseKey(newkey);
 
 	//Set Launch command
-	rresult = RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\Classes\\PowderToySave\\shell\\open\\command", 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &newkey, NULL);
+	rresult = createKey("Software\\Classes\\PowderToySave\\shell\\open\\command", newkey);
 	if (rresult != ERROR_SUCCESS) {
 		returnval = 0;
 		goto finalise;
 	}
-	rresult = RegSetValueEx(newkey, 0, 0, REG_SZ, (LPBYTE)opencommand, strlen(opencommand)+1);
+	rresult = setValue(newkey, opencommand);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
 		returnval = 0;
@@ -316,12 +300,25 @@ bool Client::DoInstallation()
 	}
 	RegCloseKey(newkey);
 
+	if (SHGetFolderPathW(NULL, CSIDL_PROGRAMS, NULL, SHGFP_TYPE_CURRENT, programsPath) != S_OK)
+		goto finalise;
+	if (CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLinkW, (LPVOID *)&shellLink) != S_OK)
+		goto finalise;
+	shellLink->SetPath(Platform::WinWiden(currentfilename).c_str());
+	shellLink->SetWorkingDirectory(Platform::WinWiden(AppDataPath).c_str());
+	shellLink->SetDescription(L"The Powder Toy");
+	if (shellLink->QueryInterface(IID_IPersistFile, (LPVOID *)&shellLinkPersist) != S_OK)
+		goto finalise;
+	shellLinkPersist->Save(Platform::WinWiden(Platform::WinNarrow(programsPath) + "\\The Powder Toy.lnk").c_str(), TRUE);
+
 	returnval = 1;
 	finalise:
 
-	free(iconname);
-	free(opencommand);
-	free(protocolcommand);
+	if (shellLinkPersist)
+		shellLinkPersist->Release();
+	if (shellLink)
+		shellLink->Release();
+	CoUninitialize();
 
 	return returnval;
 #elif defined(LIN)
@@ -434,96 +431,6 @@ bool Client::DoInstallation()
 #endif
 }
 
-std::vector<ByteString> Client::DirectorySearch(ByteString directory, ByteString search, ByteString extension)
-{
-	std::vector<ByteString> extensions;
-	extensions.push_back(extension);
-	return DirectorySearch(directory, search.ToUpper(), extensions);
-}
-
-std::vector<ByteString> Client::DirectorySearch(ByteString directory, ByteString search, std::vector<ByteString> extensions)
-{
-	//Get full file listing
-	//Normalise directory string, ensure / or \ is present
-	if(*directory.rbegin() != '/' && *directory.rbegin() != '\\')
-		directory += PATH_SEP;
-	std::vector<ByteString> directoryList;
-#if defined(WIN) && !defined(__GNUC__)
-	//Windows
-	struct _finddata_t currentFile;
-	intptr_t findFileHandle;
-	ByteString fileMatch = directory + "*.*";
-	findFileHandle = _findfirst(fileMatch.c_str(), &currentFile);
-	if (findFileHandle == -1L)
-	{
-#ifdef DEBUG
-		printf("Unable to open directory: %s\n", directory.c_str());
-#endif
-		return std::vector<ByteString>();
-	}
-	do
-	{
-		ByteString currentFileName = ByteString(currentFile.name);
-		if(currentFileName.length()>4)
-			directoryList.push_back(directory+currentFileName);
-	}
-	while (_findnext(findFileHandle, &currentFile) == 0);
-	_findclose(findFileHandle);
-#else
-	//Linux or MinGW
-	struct dirent * directoryEntry;
-	DIR *directoryHandle = opendir(directory.c_str());
-	if(!directoryHandle)
-	{
-#ifdef DEBUG
-		printf("Unable to open directory: %s\n", directory.c_str());
-#endif
-		return std::vector<ByteString>();
-	}
-	while ((directoryEntry = readdir(directoryHandle)))
-	{
-		ByteString currentFileName = ByteString(directoryEntry->d_name);
-		if(currentFileName.length()>4)
-			directoryList.push_back(directory+currentFileName);
-	}
-	closedir(directoryHandle);
-#endif
-
-	std::vector<ByteString> searchResults;
-	for(std::vector<ByteString>::iterator iter = directoryList.begin(), end = directoryList.end(); iter != end; ++iter)
-	{
-		ByteString filename = *iter, tempfilename = *iter;
-		bool extensionMatch = !extensions.size();
-		for(std::vector<ByteString>::iterator extIter = extensions.begin(), extEnd = extensions.end(); extIter != extEnd; ++extIter)
-		{
-			if(filename.EndsWith(*extIter))
-			{
-				extensionMatch = true;
-				tempfilename = filename.SubstrFromEnd(0, (*extIter).size()).ToUpper();
-				break;
-			}
-		}
-		bool searchMatch = !search.size();
-		if(search.size() && tempfilename.Contains(search))
-			searchMatch = true;
-
-		if(searchMatch && extensionMatch)
-			searchResults.push_back(filename);
-	}
-
-	//Filter results
-	return searchResults;
-}
-
-int Client::MakeDirectory(const char * dirName)
-{
-#ifdef WIN
-	return _mkdir(dirName);
-#else
-	return mkdir(dirName, 0755);
-#endif
-}
-
 bool Client::WriteFile(std::vector<unsigned char> fileData, ByteString filename)
 {
 	bool saveError = false;
@@ -545,26 +452,6 @@ bool Client::WriteFile(std::vector<unsigned char> fileData, ByteString filename)
 		saveError = true;
 	}
 	return saveError;
-}
-
-bool Client::FileExists(ByteString filename)
-{
-	bool exists = false;
-	try
-	{
-		std::ifstream fileStream;
-		fileStream.open(filename, std::ios::binary);
-		if(fileStream.is_open())
-		{
-			exists = true;
-			fileStream.close();
-		}
-	}
-	catch (std::exception & e)
-	{
-		exists = false;
-	}
-	return exists;
 }
 
 bool Client::WriteFile(std::vector<char> fileData, ByteString filename)
@@ -733,6 +620,8 @@ bool Client::CheckUpdate(http::Request *updateRequest, bool checkSession)
 			//free(data);
 			if (usingAltUpdateServer && !checkSession)
 				this->messageOfTheDay = String::Build("HTTP Error ", status, " while checking for updates: ", http::StatusText(status));
+			else
+				this->messageOfTheDay = String::Build("HTTP Error ", status, " while fetching MotD");
 		}
 		else if(data.size())
 		{
@@ -942,6 +831,7 @@ Client::~Client()
 void Client::SetAuthUser(User user)
 {
 	authUser = user;
+	WritePrefs();
 	notifyAuthUserChanged();
 }
 
@@ -975,10 +865,10 @@ RequestStatus Client::UploadSave(SaveInfo & save)
 			lastError = "Cannot serialize game save";
 			return RequestFailure;
 		}
-#if defined(SNAPSHOT) || defined(BETA) || defined(DEBUG)
-		else if (save.gameSave->fromNewerVersion)
+#if defined(SNAPSHOT) || defined(BETA) || defined(DEBUG) || MOD_ID > 0
+		else if (save.gameSave->fromNewerVersion && save.GetPublished())
 		{
-			lastError = "Cannot upload save, incompatible with latest release version";
+			lastError = "Cannot publish save, incompatible with latest release version.";
 			return RequestFailure;
 		}
 #endif
@@ -1066,7 +956,7 @@ ByteString Client::AddStamp(GameSave * saveData)
 	ByteString saveID = ByteString::Build(Format::Hex(Format::Width(lastStampTime, 8)), Format::Hex(Format::Width(lastStampName, 2)));
 	ByteString filename = STAMPS_DIR PATH_SEP + saveID + ".stm";
 
-	MakeDirectory(STAMPS_DIR);
+	Platform::MakeDirectory(STAMPS_DIR);
 
 	Json::Value stampInfo;
 	stampInfo["type"] = "stamp";
@@ -1101,7 +991,7 @@ ByteString Client::AddStamp(GameSave * saveData)
 
 void Client::updateStamps()
 {
-	MakeDirectory(STAMPS_DIR);
+	Platform::MakeDirectory(STAMPS_DIR);
 
 	std::ofstream stampsStream;
 	stampsStream.open(ByteString(STAMPS_DIR PATH_SEP "stamps.def").c_str(), std::ios::binary);
@@ -1208,26 +1098,17 @@ std::vector<unsigned char> Client::GetSaveData(int saveID, int saveDate)
 LoginStatus Client::Login(ByteString username, ByteString password, User & user)
 {
 	lastError = "";
-	char passwordHash[33];
-	char totalHash[33];
 
 	user.UserID = 0;
 	user.Username = "";
 	user.SessionID = "";
 	user.SessionKey = "";
 
-	//Doop
-	md5_ascii(passwordHash, (const unsigned char *)password.c_str(), password.length());
-	passwordHash[32] = 0;
-	ByteString total = ByteString::Build(username, "-", passwordHash);
-	md5_ascii(totalHash, (const unsigned char *)(total.c_str()), total.size());
-	totalHash[32] = 0;
-
 	ByteString data;
 	int dataStatus;
-	data = http::Request::Simple(SCHEME SERVER "/Login.json", &dataStatus, {
-		{ "Username", username },
-		{ "Hash", totalHash },
+	data = http::Request::Simple("https://" SERVER "/Login.json", &dataStatus, {
+		{ "name", username },
+		{ "pass", password },
 	});
 
 	RequestStatus ret = ParseServerReturn(data, dataStatus, true);
@@ -1239,6 +1120,7 @@ LoginStatus Client::Login(ByteString username, ByteString password, User & user)
 			Json::Value objDocument;
 			dataStream >> objDocument;
 
+			ByteString usernameTemp = objDocument["Username"].asString();
 			int userIDTemp = objDocument["UserID"].asInt();
 			ByteString sessionIDTemp = objDocument["SessionID"].asString();
 			ByteString sessionKeyTemp = objDocument["SessionKey"].asString();
@@ -1254,7 +1136,7 @@ LoginStatus Client::Login(ByteString username, ByteString password, User & user)
 				AddServerNotification(item);
 			}
 
-			user.Username = username;
+			user.Username = usernameTemp;
 			user.UserID = userIDTemp;
 			user.SessionID = sessionIDTemp;
 			user.SessionKey = sessionKeyTemp;
@@ -1478,7 +1360,7 @@ SaveInfo * Client::GetSave(int saveID, int saveDate)
 
 SaveFile * Client::LoadSaveFile(ByteString filename)
 {
-	if (!FileExists(filename))
+	if (!Platform::FileExists(filename))
 		return nullptr;
 	SaveFile * file = new SaveFile(filename);
 	try
@@ -1486,8 +1368,11 @@ SaveFile * Client::LoadSaveFile(ByteString filename)
 		GameSave * tempSave = new GameSave(ReadFile(filename));
 		file->SetGameSave(tempSave);
 	}
-	catch (ParseException & e)
+	catch (const ParseException &e)
 	{
+#ifdef LUACONSOLE
+		luacon_ci->SetLastError(ByteString(e.what()).FromUtf8());
+#endif
 		std::cerr << "Client: Invalid save file '" << filename << "': " << e.what() << std::endl;
 		file->SetLoadingError(ByteString(e.what()).FromUtf8());
 	}
@@ -1972,6 +1857,7 @@ void Client::SetPref(ByteString prop, Json::Value value)
 			preferences[split.Before()] = SetPrefHelper(preferences[split.Before()], split.After(), value);
 		else
 			preferences[prop] = value;
+		WritePrefs();
 	}
 	catch (std::exception & e)
 	{

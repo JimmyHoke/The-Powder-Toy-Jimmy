@@ -1,5 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+#include "Config.h"
 
 #include <vector>
 #include <list>
@@ -98,9 +99,6 @@ public:
 	Client();
 	~Client();
 
-	std::vector<ByteString> DirectorySearch(ByteString directory, ByteString search, std::vector<ByteString> extensions);
-	std::vector<ByteString> DirectorySearch(ByteString directory, ByteString search, ByteString extension);
-
 	ByteString FileOpenDialogue();
 	//std::string FileSaveDialogue();
 
@@ -117,10 +115,8 @@ public:
 	void Initialise(ByteString proxyString, bool disableNetwork);
 	bool IsFirstRun();
 
-	int MakeDirectory(const char * dirname);
 	bool WriteFile(std::vector<unsigned char> fileData, ByteString filename);
 	bool WriteFile(std::vector<char> fileData, ByteString filename);
-	bool FileExists(ByteString filename);
 
 	void AddListener(ClientListener * listener);
 	void RemoveListener(ClientListener * listener);

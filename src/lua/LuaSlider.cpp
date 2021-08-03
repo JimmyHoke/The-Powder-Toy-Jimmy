@@ -1,3 +1,4 @@
+#include "Config.h"
 #ifdef LUACONSOLE
 
 #include "LuaSlider.h"
@@ -51,7 +52,7 @@ int LuaSlider::steps(lua_State * l)
 
 int LuaSlider::onValueChanged(lua_State * l)
 {
-	return onValueChangedFunction.CheckAndAssignArg1();
+	return onValueChangedFunction.CheckAndAssignArg1(l);
 }
 
 int LuaSlider::value(lua_State * l)

@@ -1,8 +1,11 @@
 #include "ScrollPanel.h"
+#include "Engine.h"
 
 #include "graphics/Graphics.h"
 
 #include "common/tpt-minmax.h"
+
+#include "client/Client.h"
 
 using namespace ui;
 
@@ -21,7 +24,6 @@ ScrollPanel::ScrollPanel(Point position, Point size):
 	scrollbarInitialYClick(0),
 	scrollbarClickLocation(0)
 {
-
 }
 
 int ScrollPanel::GetScrollLimit()
@@ -35,7 +37,7 @@ int ScrollPanel::GetScrollLimit()
 
 void ScrollPanel::SetScrollPosition(int position)
 {
-	offsetY = position;
+	offsetY = float(position);
 	ViewportPosition.Y = -position;
 }
 
@@ -43,7 +45,10 @@ void ScrollPanel::XOnMouseWheelInside(int localx, int localy, int d)
 {
 	if (!d)
 		return;
-	yScrollVel -= d*2;
+	if (ui::Engine::Ref().MomentumScroll)
+		yScrollVel -= d * 2;
+	else
+		yScrollVel -= d * 20;
 }
 
 void ScrollPanel::Draw(const Point& screenPos)
@@ -63,7 +68,7 @@ void ScrollPanel::Draw(const Point& screenPos)
 		}
 
 		g->fillrect(screenPos.X+(Size.X-scrollBarWidth), screenPos.Y, scrollBarWidth, Size.Y, 125, 125, 125, 100);
-		g->fillrect(screenPos.X+(Size.X-scrollBarWidth), screenPos.Y+scrollPos, scrollBarWidth, scrollHeight+1, 255, 255, 255, 255);
+		g->fillrect(screenPos.X+(Size.X-scrollBarWidth), screenPos.Y+int(scrollPos), scrollBarWidth, int(scrollHeight)+1, 255, 255, 255, 255);
 	}
 }
 
@@ -72,7 +77,7 @@ void ScrollPanel::XOnMouseClick(int x, int y, unsigned int button)
 	if (isMouseInsideScrollbar)
 	{
 		scrollbarSelected = true;
-		scrollbarInitialYOffset = offsetY;
+		scrollbarInitialYOffset = int(offsetY);
 	}
 	scrollbarInitialYClick = y;
 	scrollbarClickLocation = 100;
@@ -100,14 +105,14 @@ void ScrollPanel::XOnMouseMoved(int x, int y, int dx, int dy)
 		{
 			if (x > 0)
 			{
-				int scrollY = float(y-scrollbarInitialYClick)/float(Size.Y)*float(InnerSize.Y)+scrollbarInitialYOffset;
+				auto scrollY = int(float(y-scrollbarInitialYClick)/float(Size.Y)*float(InnerSize.Y)+scrollbarInitialYOffset);
 				ViewportPosition.Y = -scrollY;
-				offsetY = scrollY;
+				offsetY = float(scrollY);
 			}
 			else
 			{
 				ViewportPosition.Y = -scrollbarInitialYOffset;
-				offsetY = scrollbarInitialYOffset;
+				offsetY = float(scrollbarInitialYOffset);
 			}
 		}
 
@@ -124,9 +129,6 @@ void ScrollPanel::XOnMouseMoved(int x, int y, int dx, int dy)
 
 void ScrollPanel::XTick(float dt)
 {
-	if (yScrollVel > -0.5f && yScrollVel < 0.5)
-		yScrollVel = 0;
-
 	if (xScrollVel > 7.0f) xScrollVel = 7.0f;
 	if (xScrollVel < -7.0f) xScrollVel = -7.0f;
 	if (xScrollVel > -0.5f && xScrollVel < 0.5)
@@ -136,11 +138,22 @@ void ScrollPanel::XTick(float dt)
 	maxOffset.Y = std::max(0, maxOffset.Y);
 	maxOffset.X = std::max(0, maxOffset.X);
 
-	int oldOffsetY = offsetY;
+	auto oldOffsetY = int(offsetY);
 	offsetY += yScrollVel;
 	offsetX += xScrollVel;
 
-	yScrollVel*=0.98f;
+
+	if (ui::Engine::Ref().MomentumScroll)
+	{
+		if (yScrollVel > -0.5f && yScrollVel < 0.5)
+			yScrollVel = 0;
+		yScrollVel *= 0.98f;
+	}
+	else
+	{
+		yScrollVel = 0.0f;
+	}
+
 	xScrollVel*=0.98f;
 
 	if (oldOffsetY!=int(offsetY))
@@ -152,10 +165,10 @@ void ScrollPanel::XTick(float dt)
 		}
 		else if (offsetY>maxOffset.Y)
 		{
-			offsetY = maxOffset.Y;
+			offsetY = float(maxOffset.Y);
 			yScrollVel = 0;
 		}
-		ViewportPosition.Y = -offsetY;
+		ViewportPosition.Y = -int(offsetY);
 	}
 	else
 	{
@@ -163,12 +176,12 @@ void ScrollPanel::XTick(float dt)
 		{
 			offsetY = 0;
 			yScrollVel = 0;
-			ViewportPosition.Y = -offsetY;
+			ViewportPosition.Y = -int(offsetY);
 		}
 		else if (offsetY>maxOffset.Y)
 		{
-			offsetY = maxOffset.Y;
-			ViewportPosition.Y = -offsetY;
+			offsetY = float(maxOffset.Y);
+			ViewportPosition.Y = -int(offsetY);
 		}
 	}
 
@@ -192,6 +205,6 @@ void ScrollPanel::XTick(float dt)
 			scrollbarClickLocation = 0;
 
 		offsetY += scrollbarClickLocation*scrollHeight/10;
-		ViewportPosition.Y -= scrollbarClickLocation*scrollHeight/10;
+		ViewportPosition.Y -= int(scrollbarClickLocation*scrollHeight/10);
 	}
 }

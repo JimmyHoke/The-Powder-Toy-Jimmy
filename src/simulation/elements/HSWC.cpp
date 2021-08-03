@@ -64,6 +64,8 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					r = pmap[y+ry][x+rx];
 					if (!r)
+						r = sim->photons[y+ry][x+rx];
+					if (!r)
 						continue;
 					if (TYP(r) == PT_HSWC)
 					{
@@ -78,7 +80,7 @@ static int update(UPDATE_FUNC_ARGS)
 						{
 							int newTemp = parts[ID(r)].ctype - 0x10000000;
 							if (newTemp >= MIN_TEMP && newTemp <= MAX_TEMP)
-								parts[i].temp = parts[ID(r)].ctype - 0x10000000;
+								parts[i].temp = float(parts[ID(r)].ctype - 0x10000000);
 						}
 					}
 				}

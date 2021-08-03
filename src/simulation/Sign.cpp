@@ -85,7 +85,7 @@ String sign::getDisplayText(Simulation *sim, int &x0, int &y0, int &w, int &h, b
 					}
 					else if (between_curlies == "ctype")
 					{
-						formatted_text << (part ? ((part->ctype && sim->IsValidElement(part->ctype)) ? sim->ElementResolve(part->ctype, -1) : String::Build(part->ctype)) : (formatted_text.Size() ? String::Build("empty") : String::Build("Empty")));
+						formatted_text << (part ? (sim->IsElementOrNone(part->ctype) ? sim->ElementResolve(part->ctype, -1) : String::Build(part->ctype)) : (formatted_text.Size() ? String::Build("empty") : String::Build("Empty")));
 						if (v95)
 							*v95 = true;
 					}
@@ -160,7 +160,7 @@ std::pair<int, sign::Type> sign::split()
 						return std::make_pair(0, Type::Normal);
 					}
 				}
-				return std::make_pair(pipe, text[1] == 'c' ? Type::Save : Type::Thread);
+				return std::make_pair(int(pipe), text[1] == 'c' ? Type::Save : Type::Thread);
 			}
 			break;
 
@@ -174,7 +174,7 @@ std::pair<int, sign::Type> sign::split()
 		case 's':
 			if (text[2] == ':' && (pipe = text.find('|', 3)) != text.npos)
 			{
-				return std::make_pair(pipe, Type::Search);
+				return std::make_pair(int(pipe), Type::Search);
 			}
 			break;
 		}

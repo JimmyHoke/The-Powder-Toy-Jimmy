@@ -1,5 +1,4 @@
-#if defined(RENDERER)
-
+#include "Config.h"
 #include "graphics/Graphics.h"
 #include "graphics/Renderer.h"
 
@@ -9,7 +8,6 @@
 #include <vector>
 
 #include "common/String.h"
-#include "Config.h"
 #include "Format.h"
 #include "gui/interface/Engine.h"
 
@@ -56,14 +54,21 @@ void writeFile(ByteString filename, std::vector<char> & fileData)
 	}
 }
 
+#ifdef main
+# undef main // thank you sdl
+#endif
+
 int main(int argc, char *argv[])
 {
-	ui::Engine * engine;
 	ByteString outputPrefix, inputFilename;
 	std::vector<char> inputFile;
 	ByteString ppmFilename, ptiFilename, ptiSmallFilename, pngFilename, pngSmallFilename;
 	std::vector<char> ppmFile, ptiFile, ptiSmallFile, pngFile, pngSmallFile;
 
+	if (!argv[1] || !argv[2]) {
+		std::cout << "Usage: " << argv[0] << " <inputFilename> <outputPrefix>" << std::endl;
+		return 1;
+	}
 	inputFilename = argv[1];
 	outputPrefix = argv[2];
 
@@ -74,11 +79,6 @@ int main(int argc, char *argv[])
 	pngSmallFilename = outputPrefix+"-small.png";
 
 	readFile(inputFilename, inputFile);
-
-	ui::Engine::Ref().g = new Graphics();
-
-	engine = &ui::Engine::Ref();
-	engine->Begin(WINDOWW, WINDOWH);
 
 	GameSave * gameSave = NULL;
 	try
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 	}
 
 	Simulation * sim = new Simulation();
-	Renderer * ren = new Renderer(ui::Engine::Ref().g, sim);
+	Renderer * ren = new Renderer(new Graphics(), sim);
 
 	if (gameSave)
 	{
@@ -139,5 +139,3 @@ int main(int argc, char *argv[])
 	writeFile(pngFilename, pngFile);
 	writeFile(pngSmallFilename, pngSmallFile);
 }
-
-#endif

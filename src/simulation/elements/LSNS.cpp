@@ -61,6 +61,8 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					int r = pmap[y + ry][x + rx];
 					if (!r)
+						r = sim->photons[y + ry][x + rx];
+					if (!r)
 						continue;
 					int rt = TYP(r);
 					if (sim->parts_avg(i, ID(r), PT_INSL) != PT_INSL)
@@ -125,6 +127,8 @@ static int update(UPDATE_FUNC_ARGS)
 			{
 				int r = pmap[y + ry][x + rx];
 				if (!r)
+					r = sim->photons[y + ry][x + rx];
+				if (!r)
 					continue;
 				int nx = x + rx;
 				int ny = y + ry;
@@ -142,13 +146,10 @@ static int update(UPDATE_FUNC_ARGS)
 					}
 				}
 				// .life deserialization.
-				if (doDeserialization)
+				else if (doDeserialization)
 				{
 					if (TYP(r) != PT_FILT)
-					{
 						parts[ID(r)].life = life - 0x10000000;
-						break;
-					}
 				}
 			}
 

@@ -1,5 +1,6 @@
 #ifndef LUASCRIPTINTERFACE_H_
 #define LUASCRIPTINTERFACE_H_
+#include "Config.h"
 
 #include "LuaCompat.h"
 #include "LuaSmartRef.h"
@@ -7,6 +8,7 @@
 #include "CommandInterface.h"
 #include "lua/LuaEvents.h"
 #include "simulation/StructProperty.h"
+#include "simulation/ElementDefs.h"
 
 #include <map>
 
@@ -32,11 +34,6 @@ class Tool;
 #define LUACON_EL_MODIFIED_GRAPHICS 0x2
 #define LUACON_EL_MODIFIED_MENUS 0x4
 
-// idea from mniip, makes things much simpler
-#define SETCONST(L, NAME)\
-	lua_pushinteger(L, NAME);\
-	lua_setfield(L, -2, #NAME)
-
 class Simulation;
 class TPTScriptInterface;
 class LuaComponent;
@@ -48,6 +45,7 @@ class LuaScriptInterface: public CommandInterface
 	bool luacon_mousedown;
 	bool currentCommand;
 	TPTScriptInterface * legacy;
+	int textInputRefcount;
 
 	// signs
 	static int simulation_signIndex(lua_State *l);
@@ -123,6 +121,7 @@ class LuaScriptInterface: public CommandInterface
 	static int renderer_decorations(lua_State * l);
 	static int renderer_grid(lua_State * l);
 	static int renderer_debugHUD(lua_State * l);
+	static int renderer_showBrush(lua_State * l);
 	static int renderer_depth3d(lua_State * l);
 	static int renderer_zoomEnabled(lua_State *l);
 	static int renderer_zoomWindowInfo(lua_State *l);
@@ -142,6 +141,9 @@ class LuaScriptInterface: public CommandInterface
 	static int interface_closeWindow(lua_State * l);
 	static int interface_addComponent(lua_State * l);
 	static int interface_removeComponent(lua_State * l);
+	static int interface_grabTextInput(lua_State * l);
+	static int interface_dropTextInput(lua_State * l);
+	static int interface_textInputRect(lua_State * l);
 
 	void initGraphicsAPI();
 	static int graphics_textSize(lua_State * l);
@@ -184,6 +186,8 @@ class LuaScriptInterface: public CommandInterface
 	static int http_get(lua_State * l);
 	static int http_post(lua_State * l);
 
+	void initSocketAPI();
+
 	std::vector<LuaSmartRef> lua_el_func_v, lua_gr_func_v, lua_cd_func_v;
 	std::vector<int> lua_el_mode_v;
 
@@ -199,6 +203,9 @@ public:
 	std::map<LuaComponent *, LuaSmartRef> grabbed_components;
 	LuaScriptInterface(GameController * c, GameModel * m);
 
+	char custom_can_move[PT_NUM][PT_NUM];
+	void custom_init_can_move();
+
 	void OnTick() override;
 	bool HandleEvent(LuaEvents::EventTypes eventType, Event * event) override;
 
@@ -209,5 +216,6 @@ public:
 	virtual ~LuaScriptInterface();
 };
 
+extern LuaScriptInterface *luacon_ci;
 
 #endif /* LUASCRIPTINTERFACE_H_ */

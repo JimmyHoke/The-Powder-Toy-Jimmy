@@ -1,10 +1,9 @@
 #include "LuaEvents.h"
 #ifdef LUACONSOLE
-#include "LuaCompat.h"
-#include "LuaScriptInterface.h"
-
-#include "Platform.h"
-#include "gui/interface/Engine.h"
+# include "LuaCompat.h"
+# include "LuaScriptInterface.h"
+# include "common/Platform.h"
+# include "gui/interface/Engine.h"
 #endif
 
 void Event::PushInteger(lua_State * l, int num)
@@ -33,6 +32,16 @@ TextInputEvent::TextInputEvent(String text):
 {}
 
 int TextInputEvent::PushToStack(lua_State * l)
+{
+	PushString(l, text.ToUtf8());
+	return 1;
+}
+
+TextEditingEvent::TextEditingEvent(String text):
+	text(text)
+{}
+
+int TextEditingEvent::PushToStack(lua_State * l)
 {
 	PushString(l, text.ToUtf8());
 	return 1;

@@ -2,7 +2,6 @@
 
 #include "common/String.h"
 #include "Point.h"
-#include "font.h"
 
 #include <vector>
 
@@ -39,6 +38,11 @@ namespace ui
 		String const &WrappedText() const
 		{
 			return wrapped_text;
+		}
+
+		int WrappedLines() const
+		{
+			return wrapped_lines;
 		}
 
 		Index IndexBegin() const

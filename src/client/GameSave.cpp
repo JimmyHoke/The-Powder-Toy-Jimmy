@@ -5,15 +5,17 @@
 #include <climits>
 #include <memory>
 #include <set>
-#include <bzlib.h>
 #include <cmath>
 
+#include "bzip2/bzlib.h"
 #include "Config.h"
 #include "Format.h"
 #include "hmap.h"
 
 #include "simulation/Simulation.h"
 #include "simulation/ElementClasses.h"
+
+#include "common/tpt-minmax.h"
 
 GameSave::GameSave(GameSave & save):
     majorVersion(save.majorVersion),
@@ -24,6 +26,7 @@ GameSave::GameSave(GameSave & save):
 	paused(save.paused),
 	gravityMode(save.gravityMode),
 	airMode(save.airMode),
+	ambientAirTemp(save.ambientAirTemp),
 	edgeMode(save.edgeMode),
 	signs(save.signs),
 	stkm(save.stkm),
@@ -171,6 +174,7 @@ void GameSave::InitVars()
 	paused = false;
 	gravityMode = 0;
 	airMode = 0;
+	ambientAirTemp = R_TEMP + 273.15f;
 	edgeMode = 0;
 	translated.x = translated.y = 0;
 	pmapbits = 8; // default to 8 bits for older saves
@@ -284,14 +288,14 @@ vector2d GameSave::Translate(vector2d translate)
 {
 	if (Collapsed())
 		Expand();
-	int nx, ny;
+	float nx, ny;
 	vector2d pos;
 	vector2d translateReal = translate;
 	float minx = 0, miny = 0, maxx = 0, maxy = 0;
 	// determine minimum and maximum position of all particles / signs
 	for (size_t i = 0; i < signs.size(); i++)
 	{
-		pos = v2d_new(signs[i].x, signs[i].y);
+		pos = v2d_new(float(signs[i].x), float(signs[i].y));
 		pos = v2d_add(pos,translate);
 		nx = floor(pos.x+0.5f);
 		ny = floor(pos.y+0.5f);
@@ -327,13 +331,13 @@ vector2d GameSave::Translate(vector2d translate)
 	);
 	int blockBoundsX = int(maxx / CELL) + 1, blockBoundsY = int(maxy / CELL) + 1;
 	vector2d frontCorrection = v2d_new(
-		(blockBoundsX > blockWidth) ? (blockBoundsX - blockWidth) : 0,
-		(blockBoundsY > blockHeight) ? (blockBoundsY - blockHeight) : 0
+		float((blockBoundsX > blockWidth) ? (blockBoundsX - blockWidth) : 0),
+		float((blockBoundsY > blockHeight) ? (blockBoundsY - blockHeight) : 0)
 	);
 
 	// get new width based on corrections
-	int newWidth = (blockWidth + backCorrection.x + frontCorrection.x) * CELL;
-	int newHeight = (blockHeight + backCorrection.y + frontCorrection.y) * CELL;
+	auto newWidth = int((blockWidth + backCorrection.x + frontCorrection.x) * CELL);
+	auto newHeight = int((blockHeight + backCorrection.y + frontCorrection.y) * CELL);
 	if (newWidth > XRES)
 		frontCorrection.x = backCorrection.x = 0;
 	if (newHeight > YRES)
@@ -342,8 +346,8 @@ vector2d GameSave::Translate(vector2d translate)
 	// call Transform to do the transformation we wanted when calling this function
 	translate = v2d_add(translate, v2d_multiply_float(backCorrection, CELL));
 	Transform(m2d_identity, translate, translateReal,
-	    (blockWidth + backCorrection.x + frontCorrection.x) * CELL,
-	    (blockHeight + backCorrection.y + frontCorrection.y) * CELL
+	    int((blockWidth + backCorrection.x + frontCorrection.x) * CELL),
+	    int((blockHeight + backCorrection.y + frontCorrection.y) * CELL)
 	);
 
 	// return how much we corrected. This is used to offset the position of the current stamp
@@ -362,9 +366,9 @@ void GameSave::Transform(matrix2d transform, vector2d translate)
 	vector2d translateReal = translate;
 	// undo any translation caused by rotation
 	cornerso[0] = v2d_new(0,0);
-	cornerso[1] = v2d_new(width-1,0);
-	cornerso[2] = v2d_new(0,height-1);
-	cornerso[3] = v2d_new(width-1,height-1);
+	cornerso[1] = v2d_new(float(width-1),0);
+	cornerso[2] = v2d_new(0,float(height-1));
+	cornerso[3] = v2d_new(float(width-1),float(height-1));
 	for (int i = 0; i < 4; i++)
 	{
 		tmp = m2d_multiply_v2d(transform,cornerso[i]);
@@ -377,8 +381,8 @@ void GameSave::Transform(matrix2d transform, vector2d translate)
 	// casting as int doesn't quite do what we want with negative numbers, so use floor()
 	tmp = v2d_new(floor(ctl.x+0.5f),floor(ctl.y+0.5f));
 	translate = v2d_sub(translate,tmp);
-	newWidth = floor(cbr.x+0.5f)-floor(ctl.x+0.5f)+1;
-	newHeight = floor(cbr.y+0.5f)-floor(ctl.y+0.5f)+1;
+	newWidth = int(floor(cbr.x+0.5f))-int(floor(ctl.x+0.5f))+1;
+	newHeight = int(floor(cbr.y+0.5f))-int(floor(ctl.y+0.5f))+1;
 	Transform(transform, translate, translateReal, newWidth, newHeight);
 }
 
@@ -407,13 +411,17 @@ void GameSave::Transform(matrix2d transform, vector2d translate, vector2d transl
 	velocityYNew = Allocate2DArray<float>(newBlockWidth, newBlockHeight, 0.0f);
 	ambientHeatNew = Allocate2DArray<float>(newBlockWidth, newBlockHeight, 0.0f);
 
+
+	// * Patch pipes if the transform is (looks close enough to) a 90-degree counter-clockwise rotation.
+	bool patchPipe90 = fabsf(transform.a * transform.d - transform.b * transform.c - 1) < 1e-3 && fabs(atan2f(transform.b, transform.a) - (0.5f * M_PI)) < 1e-3;
+
 	// rotate and translate signs, parts, walls
 	for (size_t i = 0; i < signs.size(); i++)
 	{
-		pos = v2d_new(signs[i].x, signs[i].y);
+		pos = v2d_new(float(signs[i].x), float(signs[i].y));
 		pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
-		nx = floor(pos.x+0.5f);
-		ny = floor(pos.y+0.5f);
+		nx = int(floor(pos.x+0.5f));
+		ny = int(floor(pos.y+0.5f));
 		if (nx<0 || nx>=newWidth || ny<0 || ny>=newHeight)
 		{
 			signs[i].text[0] = 0;
@@ -427,19 +435,24 @@ void GameSave::Transform(matrix2d transform, vector2d translate, vector2d transl
 		if (!particles[i].type) continue;
 		pos = v2d_new(particles[i].x, particles[i].y);
 		pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
-		nx = floor(pos.x+0.5f);
-		ny = floor(pos.y+0.5f);
+		nx = int(floor(pos.x+0.5f));
+		ny = int(floor(pos.y+0.5f));
 		if (nx<0 || nx>=newWidth || ny<0 || ny>=newHeight)
 		{
 			particles[i].type = PT_NONE;
 			continue;
 		}
-		particles[i].x = nx;
-		particles[i].y = ny;
+		particles[i].x = float(nx);
+		particles[i].y = float(ny);
 		vel = v2d_new(particles[i].vx, particles[i].vy);
 		vel = m2d_multiply_v2d(transform, vel);
 		particles[i].vx = vel.x;
 		particles[i].vy = vel.y;
+		if (patchPipe90 && (particles[i].type == PT_PIPE || particles[i].type == PT_PPIP))
+		{
+			void Element_PIPE_patch90(Particle &part);
+			Element_PIPE_patch90(particles[i]);
+		}
 	}
 
 	// translate walls and other grid items when the stamp is shifted more than 4 pixels in any direction
@@ -462,8 +475,8 @@ void GameSave::Transform(matrix2d transform, vector2d translate, vector2d transl
 		{
 			pos = v2d_new(x*CELL+CELL*0.4f+translateX, y*CELL+CELL*0.4f+translateY);
 			pos = v2d_add(m2d_multiply_v2d(transform,pos),translate);
-			nx = pos.x/CELL;
-			ny = pos.y/CELL;
+			nx = int(pos.x/CELL);
+			ny = int(pos.y/CELL);
 			if (pos.x<0 || nx>=newBlockWidth || pos.y<0 || ny>=newBlockHeight)
 				continue;
 			if (blockMap[y][x])
@@ -552,6 +565,21 @@ void GameSave::CheckBsonFieldInt(bson_iterator iter, const char *field, int *set
 		if (bson_iterator_type(&iter) == BSON_INT)
 		{
 			*setting = bson_iterator_int(&iter);
+		}
+		else
+		{
+			fprintf(stderr, "Wrong type for %s\n", bson_iterator_key(&iter));
+		}
+	}
+}
+
+void GameSave::CheckBsonFieldFloat(bson_iterator iter, const char *field, float *setting)
+{
+	if (!strcmp(bson_iterator_key(&iter), field))
+	{
+		if (bson_iterator_type(&iter) == BSON_DOUBLE)
+		{
+			*setting = float(bson_iterator_int(&iter));
 		}
 		else
 		{
@@ -657,6 +685,7 @@ void GameSave::readOPS(char * data, int dataLength)
 		CheckBsonFieldBool(iter, "paused", &paused);
 		CheckBsonFieldInt(iter, "gravityMode", &gravityMode);
 		CheckBsonFieldInt(iter, "airMode", &airMode);
+		CheckBsonFieldFloat(iter, "ambientAirTemp", &ambientAirTemp);
 		CheckBsonFieldInt(iter, "edgeMode", &edgeMode);
 		CheckBsonFieldInt(iter, "pmapbits", &pmapbits);
 		if (!strcmp(bson_iterator_key(&iter), "signs"))
@@ -819,7 +848,7 @@ void GameSave::readOPS(char * data, int dataLength)
 							minor = bson_iterator_int(&subiter);
 					}
 				}
-#if defined(SNAPSHOT) || defined(DEBUG)
+#if defined(SNAPSHOT) || defined(BETA) || defined(DEBUG) || MOD_ID > 0
 				if (major > FUTURE_SAVE_VERSION || (major == FUTURE_SAVE_VERSION && minor > FUTURE_MINOR_VERSION))
 #else
 				if (major > SAVE_VERSION || (major == SAVE_VERSION && minor > MINOR_VERSION))
@@ -828,7 +857,7 @@ void GameSave::readOPS(char * data, int dataLength)
 					String errorMessage = String::Build("Save from a newer version: Requires version ", major, ".", minor);
 					throw ParseException(ParseException::WrongVersion, errorMessage);
 				}
-#if defined(SNAPSHOT) || defined(DEBUG)
+#if defined(SNAPSHOT) || defined(BETA) || defined(DEBUG) || MOD_ID > 0
 				else if (major > SAVE_VERSION || (major == SAVE_VERSION && minor > MINOR_VERSION))
 					fakeNewerVersion = true;
 #endif
@@ -985,7 +1014,7 @@ void GameSave::readOPS(char * data, int dataLength)
 			{
 				tempTemp = ambientData[i++];
 				tempTemp |= (((unsigned)ambientData[i++]) << 8);
-				ambientHeat[blockY+y][blockX+x] = tempTemp;
+				ambientHeat[blockY+y][blockX+x] = float(tempTemp);
 			}
 		}
 		hasAmbientHeat = true;
@@ -1035,8 +1064,8 @@ void GameSave::readOPS(char * data, int dataLength)
 
 					//Required fields
 					particles[newIndex].type = partsData[i];
-					particles[newIndex].x = x;
-					particles[newIndex].y = y;
+					particles[newIndex].x = float(x);
+					particles[newIndex].y = float(y);
 					i+=3;
 
 					// Read type (2nd byte)
@@ -1049,7 +1078,7 @@ void GameSave::readOPS(char * data, int dataLength)
 						//Full 16bit int
 						tempTemp = partsData[i++];
 						tempTemp |= (((unsigned)partsData[i++]) << 8);
-						particles[newIndex].temp = tempTemp;
+						particles[newIndex].temp = float(tempTemp);
 					}
 					else
 					{
@@ -1176,6 +1205,8 @@ void GameSave::readOPS(char * data, int dataLength)
 						case PT_QRTZ:
 						case PT_GLAS:
 						case PT_TUNG:
+							if (particles[newIndex].pavg[0] >= 0x8000) particles[newIndex].pavg[0] -= 0x10000;
+							if (particles[newIndex].pavg[1] >= 0x8000) particles[newIndex].pavg[1] -= 0x10000;
 							particles[newIndex].pavg[0] /= 64;
 							particles[newIndex].pavg[1] /= 64;
 							break;
@@ -1209,7 +1240,7 @@ void GameSave::readOPS(char * data, int dataLength)
 					case PT_FIRW:
 						if (particles[newIndex].tmp>=2 && savedVersion < 81)
 						{
-							int caddress = restrict_flt(restrict_flt((float)(particles[newIndex].tmp-4), 0.0f, 200.0f)*3, 0.0f, (200.0f*3)-3);
+							auto caddress = int(restrict_flt(float(particles[newIndex].tmp-4), 0.0f, 199.0f)) * 3;
 							particles[newIndex].type = PT_EMBR;
 							particles[newIndex].tmp = 1;
 							particles[newIndex].ctype = (((firw_data[caddress]))<<16) | (((firw_data[caddress+1]))<<8) | ((firw_data[caddress+2]));
@@ -1219,7 +1250,7 @@ void GameSave::readOPS(char * data, int dataLength)
 						if (savedVersion < 87 && particles[newIndex].ctype)
 							particles[newIndex].life = 1;
 						if (savedVersion < 91)
-							particles[newIndex].temp = 283.15;
+							particles[newIndex].temp = 283.15f;
 						break;
 					case PT_FILT:
 						if (savedVersion < 89)
@@ -1298,6 +1329,17 @@ void GameSave::readOPS(char * data, int dataLength)
 							particles[newIndex].tmp = 0;
 						}
 						break;
+					case PT_LIFE:
+						if (savedVersion < 96 && !fakeNewerVersion)
+						{
+							if (particles[newIndex].ctype >= 0 && particles[newIndex].ctype < NGOL)
+							{
+								particles[newIndex].tmp2 = particles[newIndex].tmp;
+								if (!particles[newIndex].dcolour)
+									particles[newIndex].dcolour = builtinGol[particles[newIndex].ctype].colour;
+								particles[newIndex].tmp = builtinGol[particles[newIndex].ctype].colour2;
+							}
+						}
 					}
 					//note: PSv was used in version 77.0 and every version before, add something in PSv too if the element is that old
 					newIndex++;
@@ -1358,10 +1400,6 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 	std::vector<sign> tempSigns;
 	char tempSignText[255];
 	sign tempSign("", 0, 0, sign::Left);
-
-	//Gol data used to read older saves
-	std::vector<int> goltype = LoadGOLTypes();
-	std::vector<std::array<int, 10> > grule = LoadGOLRules();
 
 	std::vector<Element> elements = GetElements();
 
@@ -1658,9 +1696,9 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 					ttv |= (data[p++]);
 					particles[i-1].tmp = ttv;
 					if (ver<53 && !particles[i-1].tmp)
-						for (q = 1; q<=NGOL; q++) {
-							if (particles[i-1].type==goltype[q-1] && grule[q][9]==2)
-								particles[i-1].tmp = grule[q][9]-1;
+						for (q = 0; q < NGOL; q++) {
+							if (particles[i-1].type==builtinGol[q].oldtype && (builtinGol[q].ruleset >> 17)==0)
+								particles[i-1].tmp = (builtinGol[q].ruleset >> 17)+1;
 						}
 					if (ver>=51 && ver<53 && particles[i-1].type==PT_PBCN)
 					{
@@ -1782,13 +1820,13 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 							if (particles[i-1].type==PT_PUMP) {
 								particles[i-1].temp = ttv + 0.15;//fix PUMP saved at 0, so that it loads at 0.
 							} else {
-								particles[i-1].temp = ttv;
+								particles[i-1].temp = float(ttv);
 							}
 						} else {
-							particles[i-1].temp = (data[p++]*((MAX_TEMP+(-MIN_TEMP))/255))+MIN_TEMP;
+							particles[i-1].temp = float((data[p++]*((MAX_TEMP+(-MIN_TEMP))/255))+MIN_TEMP);
 						}
 					} else {
-						particles[i-1].temp = ((data[p++]*((O_MAX_TEMP+(-O_MIN_TEMP))/255))+O_MIN_TEMP)+273;
+						particles[i-1].temp = float(((data[p++]*((O_MAX_TEMP+(-O_MIN_TEMP))/255))+O_MIN_TEMP)+273);
 					}
 				}
 				else
@@ -1844,7 +1882,7 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 				//Replace old GOL
 				particles[i-1].type = PT_LIFE;
 				for (gnum = 0; gnum<NGOL; gnum++){
-					if (ty==goltype[gnum])
+					if (ty==builtinGol[gnum].oldtype)
 						particles[i-1].ctype = gnum;
 				}
 				ty = PT_LIFE;
@@ -1852,11 +1890,22 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 			if(ver<52 && (ty==PT_CLNE || ty==PT_PCLN || ty==PT_BCLN)){
 				//Replace old GOL ctypes in clone
 				for (gnum = 0; gnum<NGOL; gnum++){
-					if (particles[i-1].ctype==goltype[gnum])
+					if (particles[i-1].ctype==builtinGol[gnum].oldtype)
 					{
 						particles[i-1].ctype = PT_LIFE;
 						particles[i-1].tmp = gnum;
 					}
+				}
+			}
+			if (particles[i-1].type == PT_LIFE)
+			{
+				particles[i-1].tmp2 = particles[i-1].tmp;
+				particles[i-1].tmp = 0;
+				if (particles[i-1].ctype >= 0 && particles[i-1].ctype < NGOL)
+				{
+					if (!particles[i-1].dcolour)
+						particles[i-1].dcolour = builtinGol[particles[i-1].ctype].colour;
+					particles[i-1].tmp = builtinGol[particles[i-1].ctype].colour2;
 				}
 			}
 			if(ty==PT_LCRY){
@@ -1903,7 +1952,7 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 				}
 				if (particles[i-1].type==PT_FIRW && particles[i-1].tmp>=2)
 				{
-					int caddress = restrict_flt(restrict_flt((float)(particles[i-1].tmp-4), 0.0f, 200.0f)*3, 0.0f, (200.0f*3)-3);
+					auto caddress = int(restrict_flt(float(particles[i-1].tmp-4), 0.0f, 199.0f))*3;
 					particles[i-1].type = PT_EMBR;
 					particles[i-1].tmp = 1;
 					particles[i-1].ctype = (((firw_data[caddress]))<<16) | (((firw_data[caddress+1]))<<8) | ((firw_data[caddress+2]));
@@ -2004,12 +2053,6 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 	minimumMinorVersion = minor;\
 }
 
-// restrict the minimum version this save can be rendered with
-#define RESTRICTRENDERVERSION(major, minor) if ((major) > blameSimon_major || (((major) == blameSimon_major && (minor) > blameSimon_minor))) {\
-	blameSimon_major = major;\
-	blameSimon_minor = minor;\
-}
-
 char * GameSave::serialiseOPS(unsigned int & dataLength)
 {
 	int blockX, blockY, blockW, blockH, fullX, fullY, fullW, fullH;
@@ -2018,8 +2061,6 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 	// when building, this number may be increased depending on what elements are used
 	// or what properties are detected
 	int minimumMajorVersion = 90, minimumMinorVersion = 2;
-	// blame simon for always being slow updating the renderer
-	int blameSimon_major = 92, blameSimon_minor = 0;
 
 	//Get coords in blocks
 	blockX = 0;//orig_x0/CELL;
@@ -2201,14 +2242,13 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 					partsData[partsDataLen++] = particles[i].type >> 8;
 					fieldDesc |= 1 << 14;
 					RESTRICTVERSION(93, 0);
-					RESTRICTRENDERVERSION(93, 0);
 				}
 
 				//Extra Temperature (2nd byte optional, 1st required), 1 to 2 bytes
 				//Store temperature as an offset of 21C(294.15K) or go into a 16byte int and store the whole thing
 				if(fabs(particles[i].temp-294.15f)<127)
 				{
-					tempTemp = floor(particles[i].temp-294.15f+0.5f);
+					tempTemp = int(floor(particles[i].temp-294.15f+0.5f));
 					partsData[partsDataLen++] = tempTemp;
 				}
 				else
@@ -2269,7 +2309,7 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 				}
 
 				//Dcolour (optional), 4 bytes
-				if(particles[i].dcolour && (particles[i].dcolour & 0xFF000000))
+				if(particles[i].dcolour && (particles[i].dcolour & 0xFF000000 || particles[i].type == PT_LIFE))
 				{
 					fieldDesc |= 1 << 6;
 					partsData[partsDataLen++] = (particles[i].dcolour&0xFF000000)>>24;
@@ -2411,6 +2451,10 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 						RESTRICTVERSION(95, 0);
 					}
 				}
+				if (particles[i].type == PT_LIFE)
+				{
+					RESTRICTVERSION(96, 0);
+				}
 
 				//Get the pmap entry for the next particle in the same position
 				i = partsPosLink[i];
@@ -2478,6 +2522,12 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 		}
 	}
 
+#if defined(SNAPSHOT) || defined(BETA) || defined(DEBUG) || MOD_ID > 0
+	// Mark save as incompatible with latest release
+	if (minimumMajorVersion > SAVE_VERSION || (minimumMajorVersion == SAVE_VERSION && minimumMinorVersion > MINOR_VERSION))
+		fromNewerVersion = true;
+#endif
+
 	bson b;
 	b.data = NULL;
 	auto bson_deleter = [](bson * b) { bson_destroy(b); };
@@ -2499,8 +2549,6 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 	bson_append_start_object(&b, "minimumVersion");
 	bson_append_int(&b, "major", minimumMajorVersion);
 	bson_append_int(&b, "minor", minimumMinorVersion);
-	bson_append_int(&b, "rendermajor", blameSimon_major);
-	bson_append_int(&b, "renderminor", blameSimon_minor);
 	bson_append_finish_object(&b);
 
 
@@ -2511,6 +2559,11 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 	bson_append_bool(&b, "paused", paused);
 	bson_append_int(&b, "gravityMode", gravityMode);
 	bson_append_int(&b, "airMode", airMode);
+	if (fabsf(ambientAirTemp - (R_TEMP + 273.15f)) > 0.0001f)
+	{
+		bson_append_double(&b, "ambientAirTemp", double(ambientAirTemp));
+		RESTRICTVERSION(96, 0);
+	}
 	bson_append_int(&b, "edgeMode", edgeMode);
 
 	if (stkm.hasData())
@@ -2544,7 +2597,7 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 	bson_append_int(&b, "pmapbits", pmapbits);
 	if (partsData && partsDataLen)
 	{
-		bson_append_binary(&b, "parts", BSON_BIN_USER, (const char *)partsData.get(), partsDataLen);
+		bson_append_binary(&b, "parts", (char)BSON_BIN_USER, (const char *)partsData.get(), partsDataLen);
 
 		if (palette.size())
 		{
@@ -2557,12 +2610,12 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 		}
 
 		if (partsPosData && partsPosDataLen)
-			bson_append_binary(&b, "partsPos", BSON_BIN_USER, (const char *)partsPosData.get(), partsPosDataLen);
+			bson_append_binary(&b, "partsPos", (char)BSON_BIN_USER, (const char *)partsPosData.get(), partsPosDataLen);
 	}
 	if (wallData && hasWallData)
-		bson_append_binary(&b, "wallMap", BSON_BIN_USER, (const char *)wallData.get(), wallDataLen);
+		bson_append_binary(&b, "wallMap", (char)BSON_BIN_USER, (const char *)wallData.get(), wallDataLen);
 	if (fanData && fanDataLen)
-		bson_append_binary(&b, "fanMap", BSON_BIN_USER, (const char *)fanData.get(), fanDataLen);
+		bson_append_binary(&b, "fanMap", (char)BSON_BIN_USER, (const char *)fanData.get(), fanDataLen);
 	if (pressData && hasPressure && pressDataLen)
 		bson_append_binary(&b, "pressMap", (char)BSON_BIN_USER, (const char*)pressData.get(), pressDataLen);
 	if (vxData && hasPressure && vxDataLen)
@@ -2572,7 +2625,7 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 	if (ambientData && hasAmbientHeat && this->aheatEnable && ambientDataLen)
 		bson_append_binary(&b, "ambientMap", (char)BSON_BIN_USER, (const char*)ambientData.get(), ambientDataLen);
 	if (soapLinkData && soapLinkDataLen)
-		bson_append_binary(&b, "soapLinks", BSON_BIN_USER, (const char *)soapLinkData, soapLinkDataLen);
+		bson_append_binary(&b, "soapLinks", (char)BSON_BIN_USER, (const char *)soapLinkData, soapLinkDataLen);
 	unsigned int signsCount = 0;
 	for (size_t i = 0; i < signs.size(); i++)
 	{

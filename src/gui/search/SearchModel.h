@@ -1,5 +1,6 @@
 #ifndef SEARCHMODEL_H
 #define SEARCHMODEL_H
+#include "Config.h"
 
 #include <vector>
 #include "common/String.h"
@@ -69,6 +70,7 @@ public:
 	std::vector<int> GetSelected() { return selected; }
 	void ClearSelected() { selected.clear(); notifySelectedChanged(); }
 	void SelectSave(int saveID);
+	void SelectAllSaves();
 	void DeselectSave(int saveID);
 	void Update();
 };

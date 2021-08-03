@@ -1,5 +1,6 @@
 #ifndef GAMEMODEL_H
 #define GAMEMODEL_H
+#include "Config.h"
 
 #include <vector>
 #include <deque>
@@ -77,6 +78,7 @@ private:
 	ui::Colour colour;
 
 	int edgeMode;
+	float ambientAirTemp;
 	int decoSpace;
 
 	String infoTip;
@@ -111,6 +113,8 @@ public:
 
 	void SetEdgeMode(int edgeMode);
 	int GetEdgeMode();
+	void SetAmbientAirTemperature(float ambientAirTemp);
+	float GetAmbientAirTemperature();
 	void SetDecoSpace(int decoSpace);
 	int GetDecoSpace();
 
@@ -171,16 +175,17 @@ public:
 	void SetSaveFile(SaveFile * newSave, bool invertIncludePressure);
 	void AddObserver(GameView * observer);
 
-	bool GetPaused();
 	void SetPaused(bool pauseState);
-	bool GetDecoration();
+	bool GetPaused();
 	void SetDecoration(bool decorationState);
-	bool GetAHeatEnable();
+	bool GetDecoration();
 	void SetAHeatEnable(bool aHeat);
-	bool GetNewtonianGrvity();
+	bool GetAHeatEnable();
+	void ResetAHeat();
 	void SetNewtonianGravity(bool newtonainGravity);
-	bool GetGravityGrid();
+	bool GetNewtonianGrvity();
 	void ShowGravityGrid(bool showGrid);
+	bool GetGravityGrid();
 	void ClearSimulation();
 	std::vector<Menu*> GetMenuList();
 	std::vector<QuickOption*> GetQuickOptions();
@@ -214,10 +219,19 @@ public:
 	bool GetIncludePressure();
 	void SetIncludePressure(bool includePressure);
 	void SetPerfectCircle(bool perfectCircle);
+	inline bool GetPerfectCircle() const
+	{
+		return perfectCircle;
+	}
 
 	std::vector<Notification*> GetNotifications();
 	void AddNotification(Notification * notification);
 	void RemoveNotification(Notification * notification);
+
+	void RemoveCustomGOLType(const ByteString &identifier);
+
+	ByteString SelectNextIdentifier;
+	int SelectNextTool;
 };
 
 #endif // GAMEMODEL_H

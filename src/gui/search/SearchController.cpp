@@ -1,23 +1,19 @@
 #include "SearchController.h"
 
+#include "Controller.h"
 #include "SearchModel.h"
 #include "SearchView.h"
+
+#include "client/Client.h"
+#include "common/Platform.h"
+#include "common/tpt-minmax.h"
+#include "graphics/Graphics.h"
+#include "tasks/Task.h"
+#include "tasks/TaskWindow.h"
 
 #include "gui/dialogues/ConfirmPrompt.h"
 #include "gui/preview/PreviewController.h"
 #include "gui/preview/PreviewView.h"
-
-#include "tasks/Task.h"
-#include "tasks/TaskWindow.h"
-
-#include "Platform.h"
-#include "Controller.h"
-
-#include "graphics/Graphics.h"
-
-#include "client/Client.h"
-
-#include "common/tpt-minmax.h"
 
 SearchController::SearchController(std::function<void ()> onDone_):
 	activePreview(NULL),
@@ -177,6 +173,17 @@ void SearchController::Selected(int saveID, bool selected)
 		searchModel->DeselectSave(saveID);
 }
 
+void SearchController::SelectAllSaves() 
+{
+	if (!Client::Ref().GetAuthUser().UserID)
+		return;
+	if (searchModel->GetShowOwn() || 
+		Client::Ref().GetAuthUser().UserElevation == User::ElevationModerator || 
+		Client::Ref().GetAuthUser().UserElevation == User::ElevationAdmin)
+		searchModel->SelectAllSaves();
+
+}
+
 void SearchController::InstantOpen(bool instant)
 {
 	instantOpen = instant;
@@ -248,7 +255,7 @@ void SearchController::removeSelectedC()
 					c->Refresh();
 					return false;
 				}
-				notifyProgress((float(i+1)/float(saves.size())*100));
+				notifyProgress((i + 1) * 100 / saves.size());
 			}
 			c->Refresh();
 			return true;
@@ -317,7 +324,7 @@ void SearchController::unpublishSelectedC(bool publish)
 					c->Refresh();
 					return false;
 				}
-				notifyProgress((float(i+1)/float(saves.size())*100));
+				notifyProgress((i + 1) * 100 / saves.size());
 			}
 			c->Refresh();
 			return true;
@@ -345,7 +352,7 @@ void SearchController::FavouriteSelected()
 					notifyError(String::Build("Failed to favourite [", saves[i], "]: " + Client::Ref().GetLastError()));
 					return false;
 				}
-				notifyProgress((float(i+1)/float(saves.size())*100));
+				notifyProgress((i + 1) * 100 / saves.size());
 			}
 			return true;
 		}
@@ -366,7 +373,7 @@ void SearchController::FavouriteSelected()
 					notifyError(String::Build("Failed to unfavourite [", saves[i], "]: " + Client::Ref().GetLastError()));
 					return false;
 				}
-				notifyProgress((float(i+1)/float(saves.size())*100));
+				notifyProgress((i + 1) * 100 / saves.size());
 			}
 			return true;
 		}

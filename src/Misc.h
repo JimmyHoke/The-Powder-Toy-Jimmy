@@ -1,5 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
+#include "Config.h"
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
@@ -11,12 +13,46 @@ template <typename T> inline T LinearInterpolate(T val1, T val2, T lowerCoord, T
 	return (((val2 - val1) / (upperCoord - lowerCoord)) * (coord - lowerCoord)) + val1;
 }
 
+
 //Signum function
-int isign(float i);
+inline int isign(int i)
+{
+	if (i<0)
+		return -1;
+	if (i>0)
+		return 1;
+	return 0;
+}
 
-unsigned clamp_flt(float f, float min, float max);
+inline int isign(float i)
+{
+	if (i<0)
+		return -1;
+	if (i>0)
+		return 1;
+	return 0;
+}
 
-float restrict_flt(float f, float min, float max);
+inline unsigned clamp_flt(float f, float min, float max)
+{
+	if (f<min)
+		return 0;
+	if (f>max)
+		return 255;
+	return (int)(255.0f*(f-min)/(max-min));
+}
+
+inline float restrict_flt(float f, float min, float max)
+{
+	// Fix crash in certain cases when f is nan
+	if (!std::isfinite(f))
+		return min;
+	if (f < min)
+		return min;
+	if (f > max)
+		return max;
+	return f;
+}
 
 void save_presets(int do_update);
 

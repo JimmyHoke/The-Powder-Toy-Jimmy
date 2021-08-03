@@ -79,7 +79,7 @@ static int update(UPDATE_FUNC_ARGS)
 							sim->kill_part(ID(r));
 						}
 					}
-					else if (rt != PT_CLNE && rt != PT_PCLN && parts[i].life >= 50 && RNG::Ref().chance(sim->elements[rt].Hardness, 1000.0))
+					else if (rt != PT_CLNE && rt != PT_PCLN && parts[i].life >= 50 && RNG::Ref().chance(sim->elements[rt].Hardness, 1000))
 					{
 						if (sim->parts_avg(i, ID(r),PT_GLAS)!= PT_GLAS)//GLAS protects stuff from acid
 						{
@@ -89,7 +89,16 @@ static int update(UPDATE_FUNC_ARGS)
 							}
 							parts[i].temp += newtemp;
 							parts[i].life--;
-							sim->kill_part(ID(r));
+							switch (rt)
+							{
+							case PT_LITH:
+								sim->part_change_type(ID(r), x + rx, y + ry, PT_H2);
+								break;
+
+							default:
+								sim->kill_part(ID(r));
+								break;
+							}
 						}
 					}
 					else if (parts[i].life<=50)

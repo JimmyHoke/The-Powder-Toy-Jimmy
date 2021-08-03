@@ -66,7 +66,7 @@ static int update(UPDATE_FUNC_ARGS)
 			return 1;
 		}
 	}
-	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || !sim->elements[parts[i].ctype].Enabled || (parts[i].ctype==PT_LIFE && (parts[i].tmp<0 || parts[i].tmp>=NGOL)))
+	if (parts[i].ctype<=0 || parts[i].ctype>=PT_NUM || !sim->elements[parts[i].ctype].Enabled)
 		for (rx=-1; rx<2; rx++)
 			for (ry=-1; ry<2; ry++)
 				if (BOUNDS_CHECK)
@@ -120,8 +120,8 @@ static int update(UPDATE_FUNC_ARGS)
 							int r = sim->create_part(-1, x + rx, y + ry, PT_PHOT);
 							if (r != -1)
 							{
-								parts[r].vx = rx * 3;
-								parts[r].vy = ry * 3;
+								parts[r].vx = float(rx * 3);
+								parts[r].vy = float(ry * 3);
 								if (r>i)
 								{
 									// Make sure movement doesn't happen until next frame, to avoid gaps in the beams of photons produced
