@@ -85,7 +85,7 @@ static int update(UPDATE_FUNC_ARGS)
 						r = pmap[y+ry][x+rx];
 					if (!r || (restrictElement && TYP(r) != restrictElement))
 						continue;
-					if (TYP(r) != PT_CONV && TYP(r) != PT_DMND && TYP(r) != ctype)
+					if (TYP(r) != PT_CONV && TYP(r) != PT_DMND && TYP(r) != PT_DMND && TYP(r) != ctype)
 					{
 						sim->create_part(ID(r), x+rx, y+ry, TYP(parts[i].ctype), ID(parts[i].ctype));
 					}

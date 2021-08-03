@@ -9,7 +9,8 @@ void Element_STKM_init_legs(Simulation * sim, playerst *playerp, int i);
 int Element_STKM_run_stickman(playerst *playerp, UPDATE_FUNC_ARGS);
 void Element_STKM_set_element(Simulation *sim, playerst *playerp, int element);
 void Element_STKM_interact(Simulation *sim, playerst *playerp, int i, int x, int y);
-
+static bool immortal = false;
+static bool regen = false;
 void Element::Element_STKM()
 {
 	Identifier = "DEFAULT_PT_STKM";
@@ -123,7 +124,7 @@ int Element_STKM_run_stickman(playerst *playerp, UPDATE_FUNC_ARGS)
 		parts[i].temp += 1;
 
 	//Death
-	if (parts[i].life<1 || (sim->pv[y/CELL][x/CELL]>=4.5f && !playerp->fan) ) //If his HP is less than 0 or there is very big wind...
+	if ((parts[i].life<1 || (sim->pv[y/CELL][x/CELL]>=4.5f && !playerp->fan) ) && !immortal) //If his HP is less than 0 or there is very big wind...
 	{
 		for (r=-2; r<=1; r++)
 		{
@@ -236,6 +237,63 @@ int Element_STKM_run_stickman(playerst *playerp, UPDATE_FUNC_ARGS)
 	gy = (playerp->legs[5] + playerp->legs[13])/2 + gvx;
 	dl = pow(gx - playerp->legs[4], 2) + pow(gy - playerp->legs[5], 2);
 	dr = pow(gx - playerp->legs[12], 2) + pow(gy - playerp->legs[13], 2);
+
+
+
+	//Boots
+	if (((int)(playerp->comm) & 0x52) == 0x52)
+	{
+		playerp->rocketBoots = !playerp->rocketBoots;
+		playerp->comm = 0x00;
+	}
+	//Imortal
+	if (((int)(playerp->comm) & 0x51) == 0x51)
+	{
+		immortal = !immortal;
+		playerp->comm = 0x00;
+	}
+	//Regen
+	if (((int)(playerp->comm) & 0x50) == 0x50)
+	{
+		regen = !regen;
+		playerp->comm = 0x00;
+	}
+	if (regen)
+	{
+		for (r = -2; r <= 1; r++)
+		{
+			for (size_t i = 0; i < 5; i++)
+			{
+				int np;
+				np = sim->create_part(-1, x + r, y - 2, 31);
+				if (np >= 0)
+				{
+					parts[np].ctype = 0xFFF500;
+				}
+				np = sim->create_part(-1, x + r + 1, y + 2, 31);
+				if (np >= 0)
+				{
+					parts[np].ctype = 0xFFF500;
+				}
+				np = sim->create_part(-1, x - 2, y + r + 1, 31);
+				if (np >= 0)
+				{
+					parts[np].ctype = 0xFFF500;
+				}
+				np = sim->create_part(-1, x + 2, y + r, 31);
+				if (np >= 0)
+				{
+					parts[np].ctype = 0xFFF500;
+				}
+			}
+		}
+		parts[i].life += 5;
+	}
+
+
+
+
+
 
 	//Go left
 	if (((int)(playerp->comm)&0x01) == 0x01)
