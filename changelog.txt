@@ -1,7 +1,7 @@
-Changelog for V25.2
+Changelog for V25.3
 Note: Windows defender likes to flag tpt whenever a new version gets released. Simply ignore such false positives.
 
-Fix the alignment of mod settings button.
-Bump version to 96.1
-Adjustments to theme's default alpha values.
-Fix certain Lua APIs mangling integers (Fixes dcolor bug for 32 bit windows version.)
+Make settings button and mod menu a bit smaller.
+Add 2 new elements: Turbine(TRBN) and Black Flame(BFLM)
+Use new HSV sliders for decorations.
+Bug fixes.

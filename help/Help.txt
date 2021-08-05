@@ -57,7 +57,9 @@ src>gui>search>Searchview.cpp
 (CLRC, 221);  
 (COPR, 222); 
 (PCON, 223);                SPRK.cpp
-(STRC, 224);               
+(STRC, 224);        
+(BFLM, 225);                  VIRS.cpp (add exception!)
+(TURB, 226);             
 
 
 Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS
