@@ -54,6 +54,10 @@ void Element::Element_BFLM()
 
 int Element_BFLM_update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].tmp > 0)
+	{
+	parts[i].tmp--;
+    }
 	for (int rx = -1; rx < 2; rx++)
 		for (int ry = -1; ry < 2; ry++)
 		{
@@ -62,11 +66,12 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 				int r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (TYP(r) != PT_BFLM)
+				if (TYP(r) && TYP(r) != PT_BFLM)
 				{
-					if (RNG::Ref().chance(1, 15))
+					parts[i].tmp = 5;
+					if (RNG::Ref().chance(1, 13))
 					{
-						parts[ID(r)].life = 60;
+						parts[ID(r)].life = 55;
 						sim->part_change_type(ID(r), x + rx, y + ry, PT_BFLM);
 					}
 				}
@@ -77,13 +82,20 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
+	if (cpart->tmp > 0)
+	{
+		*colr = 120;
+		*firer = 140;
+	}
+	else {
+		*colr = 20;
+		*firer = 30;
+	}
 	*firea = 200;
-	*colr = 20;
+	*fireb = 30;
+	*fireg = 30;
 	*colg = 20;
 	*colb = 20;
-	*fireb = 30;
-	*firer = 30;
-	*fireg = 30;
 	*pixel_mode |= FIRE_BLEND;
 	*pixel_mode |= FIRE_ADD;
 	return 0;

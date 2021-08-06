@@ -6,7 +6,7 @@ void Element::Element_TURB()
 {
 	Identifier = "DEFAULT_PT_TURB";
 	Name = "TURB";
-	Colour = PIXPACK(0x0A0A6B);
+	Colour = PIXPACK(0x505050);
 	MenuVisible = 1;
 	MenuSection = SC_SPECIAL;
 	Enabled = 1;
@@ -29,9 +29,9 @@ void Element::Element_TURB()
 	Weight = 100;
 
 	HeatConduct = 40;
-	Description = "Turbine, stores energy when Pressure > 4. Faster when > 16, Releases stored energy to PSCN. Use sparingly.";
+	Description = "Turbine, Makes sprk when under pressure (Read Wiki!). Conducts to PSCN. Breaks when pressure >= 50.";
 
-	Properties = TYPE_SOLID | PROP_NEUTPASS;
+	Properties = TYPE_SOLID | PROP_LIFE_DEC;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
@@ -48,20 +48,40 @@ void Element::Element_TURB()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].life < 0)
-		parts[i].life = 0;
+	if (parts[i].life > 100)
+	{
+		parts[i].life = 100;
+	}
 	if (sim->pv[y / CELL][x / CELL] >= 4.0 && sim->pv[y / CELL][x / CELL] < 16.0)
 	{
-		parts[i].life += 0.5;
+		if (RNG::Ref().chance(1, 40))
+		{
+			parts[i].life += 2;
+		}
 		parts[i].tmp = 1;
 	}
-	else if (sim->pv[y / CELL][x / CELL] >= 16.0)
+	else if (sim->pv[y / CELL][x / CELL] >= 16.0 && sim->pv[y / CELL][x / CELL] < 30.0)
 	{
-		parts[i].life += 1;
+		if (RNG::Ref().chance(1, 15))
+		{
+			parts[i].life += 8;
+		}
 		parts[i].tmp = 2;
 	}
+
+	else if (sim->pv[y / CELL][x / CELL] >= 30.0)
+	{
+		parts[i].life += 10;
+		parts[i].tmp = 3;
+	}
+
 	else if (sim->pv[y / CELL][x / CELL] < 4.0)
 		parts[i].tmp = 0;
+
+	if (sim->pv[y / CELL][x / CELL] >= 50.0)
+	{
+		sim->part_change_type(i, x,y, PT_BRMT);
+	}
 
 	int r, rx, ry;
 	for (rx = -1; rx < 2; rx++)
@@ -73,39 +93,11 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[ID(r)].type == PT_PSCN && parts[i].life > 0)
 				{
-					sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
 					parts[ID(r)].ctype = PT_PSCN;
-					parts[i].life--;
+					parts[ID(r)].life = 4;
+					sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
 				}
 			}
-
-	for (int chargediffuse = 0; chargediffuse < 8; chargediffuse++)
-	{
-		int rx = RNG::Ref().between(-2, 2);
-		int ry = RNG::Ref().between(-2, 2);
-		if (BOUNDS_CHECK && (rx || ry))
-		{
-			int r = pmap[y + ry][x + rx];
-			if (!r || sim->parts_avg(ID(r), i, PT_INSL) == PT_INSL)
-				continue;
-			if (TYP(r) == PT_TURB && (parts[i].life > parts[ID(r)].life) && parts[i].life > 0)//diffusion
-			{
-				int charge = parts[i].life - parts[ID(r)].life;
-				if (charge == 1)
-				{
-					parts[ID(r)].life++;
-					parts[i].life--;
-					chargediffuse = 8;
-				}
-				else if (charge > 0)
-				{
-					parts[ID(r)].life += charge / 2;
-					parts[i].life -= charge / 2;
-					chargediffuse = 8;
-				}
-			}
-		}
-	}
 	return 0;
 }
 
@@ -113,25 +105,22 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp == 1)
 	{
-		*colr = 20;
-		*colg = 20;
-		*colb = 70;
-		*fireb = 100;
-		*firer = 30;
-		*fireg = 30;
-		*firea = 200;
-		*pixel_mode |= FIRE_ADD;
+		*colr = 150;
+		*colg = 150;
+		*colb = 150;
 	}
 	else if (cpart->tmp == 2)
 	{
-		*colr = 70;
-		*colg = 20;
-		*colb = 20;
-		*fireb = 30;
-		*firer = 130;
-		*fireg = 30;
-		*firea = 200;
-		*pixel_mode |= FIRE_ADD;
+
+		*colr = 255;
+		*colg = 255;
+		*colb = 255;;
+	}
+	else if (cpart->tmp == 3)
+	{
+		*colr = 255;
+		*colg = 100;
+		*colb = 100;
 	}
 	return 0;
 }
