@@ -2956,7 +2956,7 @@ end)
 --Texter script hybrid end
 
 function autohidehud()
-	if tpt.mousey < 35 then tpt.hud(0) else tpt.hud(1)
+	if tpt.mousey < 38 then tpt.hud(0) else tpt.hud(1)
 	end
 end
 
