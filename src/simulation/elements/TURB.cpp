@@ -39,7 +39,7 @@ void Element::Element_TURB()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 3275;
+	HighTemperature = 2275;
 	HighTemperatureTransition = PT_LAVA;
 
 	Update = &update;
@@ -52,7 +52,7 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		parts[i].life = 100;
 	}
-	if (sim->pv[y / CELL][x / CELL] >= 4.0 && sim->pv[y / CELL][x / CELL] < 16.0)
+	if (sim->pv[y / CELL][x / CELL] >= 1.0 && sim->pv[y / CELL][x / CELL] < 8.0)
 	{
 		if (RNG::Ref().chance(1, 40))
 		{
@@ -60,7 +60,7 @@ static int update(UPDATE_FUNC_ARGS)
 		}
 		parts[i].tmp = 1;
 	}
-	else if (sim->pv[y / CELL][x / CELL] >= 16.0 && sim->pv[y / CELL][x / CELL] < 30.0)
+	else if (sim->pv[y / CELL][x / CELL] >= 8.0 && sim->pv[y / CELL][x / CELL] < 20.0)
 	{
 		if (RNG::Ref().chance(1, 15))
 		{
@@ -69,7 +69,7 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp = 2;
 	}
 
-	else if (sim->pv[y / CELL][x / CELL] >= 30.0)
+	else if (sim->pv[y / CELL][x / CELL] >= 20.0)
 	{
 		parts[i].life += 10;
 		parts[i].tmp = 3;
