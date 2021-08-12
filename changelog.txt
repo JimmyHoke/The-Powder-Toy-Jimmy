@@ -3,4 +3,9 @@ Note: Windows defender likes to flag tpt whenever a new version gets released. S
 
 Move TURB to Force menu
 Make DMRN immune to Black flames.
+Internal bug fixes
+Use separate .lua files for manager and tptmp
+Update tptmp to v2
 
+todo:
+Fix mp button extra bright on startup (because of script loading order!)

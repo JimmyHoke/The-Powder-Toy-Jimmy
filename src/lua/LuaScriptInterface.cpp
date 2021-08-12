@@ -59,7 +59,8 @@ extern "C"
 #include <dirent.h>
 }
 #include "eventcompat.lua.h"
-#include "crackerk.lua.h"
+#include "tptmp.lua.h"
+#include "zcrackerk.lua.h"
 
 // idea from mniip, makes things much simpler
 #define SETCONST(L, NAME)\
@@ -371,8 +372,11 @@ tpt.partsdata = nil");
 	{
 		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
 	}
-
-	if (luaL_loadbuffer(l, (const char *)crackerk_lua, crackerk_lua_size, "@[built-in crackerk.lua]") || lua_pcall(l, 0, 0, 0))
+	if (luaL_loadbuffer(l, (const char *)tptmp_lua, tptmp_lua_size, "@[built-in tptmp.lua]") || lua_pcall(l, 0, 0, 0))
+	{
+		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
+	}
+	if (luaL_loadbuffer(l, (const char *)zcrackerk_lua, zcrackerk_lua_size, "@[built-in zcrackerk.lua]") || lua_pcall(l, 0, 0, 0))
 	{
 		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
 	}

@@ -2,9 +2,9 @@
 1) Icon and intro text ( just copy paste)
 
 2)Scripts:
-Copy script manager in eventcompat.lua
-Add crackerk.lua to src>lua>luascripts
-add same settings for crackerk.lua as eventcompat.lua in TPTscriptinterface. 
+Copy scripts in src> lua>scripts folder.
+
+add same settings for crackerk.lua and other scripts as eventcompat.lua in Luascriptinterface. 
 
 4) TOOLS:
 Copy RSET.cpp, AMBP and AMBM into src>simulation>simtools
