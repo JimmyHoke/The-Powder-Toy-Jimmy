@@ -88,14 +88,14 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*firer = 140;
 	}
 	else {
-		*colr = 20;
-		*firer = 30;
+		*colr = 10;
+		*firer = 10;
 	}
 	*firea = 200;
-	*fireb = 30;
-	*fireg = 30;
-	*colg = 20;
-	*colb = 20;
+	*fireb = 10;
+	*fireg = 10;
+	*colg = 10;
+	*colb = 10;
 	*pixel_mode |= FIRE_BLEND;
 	*pixel_mode |= FIRE_ADD;
 	return 0;
