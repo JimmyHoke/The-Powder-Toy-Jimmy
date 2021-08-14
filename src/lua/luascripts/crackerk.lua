@@ -1,4 +1,4 @@
---cracker1000 mod script v4.0--
+--cracker1000 mod script v4.5--
 local toggle = Button:new(414,408,55,15, "Settings", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 610, 303)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -170,8 +170,11 @@ newmenu:removeComponent(remlabel21)
 end
 
 local perfmv = "1"
+local fpsval = "1"
+
 perfm:action(function(sender)
 clearsb()
+
 if perfmv == "1" then
 tpt.setfpscap(80)
 tpt.setdrawcap(35)
@@ -179,21 +182,27 @@ tpt.unregister_step(theme)
 tpt.unregister_step(colourblender)
 tpt.display_mode(7)
 perlab:text("ON")
+if fplb:text() == "OFF" then
+
+fplb:text("ON")
+end
+
+if fpsval == "0" then
+fpsval = "1"
+end
 perfmv = "0"
 else
+
 perlab:text("OFF")
 perfmv = "1"
 tpt.setdrawcap(0)
-tpt.register_step(theme)
-tpt.display_mode(3)
-
-
-if fplb:text() == "OFF" then
-tpt.setfpscap(2)
-else
 tpt.setfpscap(60)
+if MANAGER.getsetting("CRK", "savergb") == "2" then
+tpt.register_step(theme)
+else
+tpt.register_step(colourblender)
 end
-
+tpt.display_mode(3)
 end
 end)
 
@@ -541,7 +550,6 @@ end
 brightness:action(function(sender)
 clearsb()
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
-newmenu:onDraw(cbrightness)
 end
 fs.makeDirectory("scripts")
 brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
@@ -774,7 +782,7 @@ end)
 --Texter script hybrid end
 
 function autohidehud()
-	if tpt.mousey <= 35 then tpt.hud(0) else tpt.hud(1)
+	if tpt.mousey <= 38 then tpt.hud(0) else tpt.hud(1)
 	end
 end
 
@@ -961,7 +969,6 @@ end)
 
 bg:action(function(sender)
 clearsb()
-newmenu:onDraw(backg)
 newmenu:addComponent(bg1)
 newmenu:addComponent(bg2)
 newmenu:addComponent(bg3)
@@ -993,7 +1000,6 @@ end
 
 function clearback()
 clearsb()
-newmenu:onDraw(backg)
 event.unregister(event.tick,backg)
 event.register(event.tick,backg)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -1213,8 +1219,10 @@ tpt.drawline(613,391,627,391,colourRED,colourGRN,colourBLU,al)
 end
 
 function mpnolag()
+if perlab:text() == "OFF" then
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
+end
 event.unregister(event.tick,colourblender)
 end
 
@@ -1240,7 +1248,6 @@ MANAGER.savesetting("CRK","ab",40)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
-newmenu:onDraw(theme)
 end)
 
 mp2:action(function(sender)
@@ -1251,7 +1258,6 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
-newmenu:onDraw(theme)
 end)
 
 mp3:action(function(sender)
@@ -1262,7 +1268,6 @@ MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
-newmenu:onDraw(theme)
 end)
 
 mp4:action(function(sender)
@@ -1273,7 +1278,6 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
-newmenu:onDraw(theme)
 end)
 
 mp5:action(function(sender)
@@ -1284,7 +1288,6 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
-newmenu:onDraw(theme)
 end)
 
 mp6:action(function(sender)
@@ -1295,7 +1298,6 @@ MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
-newmenu:onDraw(theme)
 end)
 
 mp7:action(function(sender)
@@ -1306,11 +1308,11 @@ MANAGER.savesetting("CRK","ab",210)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 clearsb()
-newmenu:onDraw(theme)
 end)
 
 mp8:action(function(sender)
 MANAGER.savesetting("CRK","savergb",1)
+event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
 event.unregister(event.tick,theme)
 clearsb()
@@ -1480,7 +1482,6 @@ interface.removeComponent(unhd)
 end
 end)
 
-local fpsval = "1"
 FPS:action(function(sender)
 clearsb()
 if fpsval == "1" then
@@ -1488,7 +1489,7 @@ tpt.setfpscap(2)
 fpsval = "0"
 fplb:text("OFF")
 
-elseif fpsval == "0" then
+else
 tpt.setfpscap(60)
 fpsval = "1"
 fplb:text("ON")
@@ -1560,6 +1561,17 @@ end
 function drawglitch()
 graphics.drawLine(7, 18,314,18,ar,ag,ab,255)
 graphics.drawRect(1,1, 610, 303,ar,ag,ab,255)
+if perlab:text() == "OFF" then
+if MANAGER.getsetting("CRK", "savergb") == "2" then
+theme()
+else
+colourblender()
+end
+end
+backg()
+if MANAGER.getsetting("CRK", "brightstate") == "1" then
+cbrightness()
+end
 end
 
 function open()

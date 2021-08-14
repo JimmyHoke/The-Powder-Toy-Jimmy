@@ -4,7 +4,7 @@ const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
 "\bw                                            Welcome To The Cracker1000's Mod \n"
 "\bo                                           |-----------------------------------|\n"
-"                                                   \bwVer. 25.4 \bo||\bw TPT 96.1"
+"                                                   \bwVer. 25.5 \bo||\bw TPT 96.1"
 "\bo\n\n   Instructions:                        \n"
 "\br *\bw There's a new \bl'Settings'\bw button near Tags, press it to open the Mod menu.\n"
 "\br *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"
@@ -16,4 +16,4 @@ const char *const introTextData =
 "\br *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same.\n"
 "\n"
 "\br   Press Any Key (except power) To Continue...\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-"\bg   Credits: \bw@Cracker1000, \br@Maticzpl\bw, \bt@Jacob1.";
+"\bg   Credits: \bw@Cracker1000, \boLBPHacker\bw, \br@Maticzpl\bw, \bt@Jacob1.";

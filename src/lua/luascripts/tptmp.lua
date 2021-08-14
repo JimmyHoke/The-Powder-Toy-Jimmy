@@ -1,4 +1,3 @@
-
 local env__ = setmetatable({}, { __index = function(_, key)
 	return rawget(_G, key) or error("__index on env: " .. tostring(key), 2)
 end, __newindex = function(_, key)
@@ -1958,7 +1957,8 @@ require_preload__["tptmp.client.colours"] = function()
 		common[key] = value
 		commonstr[key] = escape(value)
 	end
-	
+
+
 	local appearance = {
 		hover = {
 			background = {  20,  20,  20 },
@@ -1968,7 +1968,7 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = { 90, 90, 90 },
+			border     = { 90, 90, 90},
 		},
 		active = {
 			background = { 255, 255, 255 },
