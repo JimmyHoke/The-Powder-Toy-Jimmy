@@ -1,5 +1,5 @@
---cracker1000 mod script v4.5--
-local toggle = Button:new(414,408,55,15, "Settings", "Open Mod Settings.")
+--cracker1000 mod script v4.0--
+local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 610, 303)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
@@ -447,32 +447,32 @@ graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
 end
 
 if MANAGER.getsetting("CRK", "savergb") == "2" then
-graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,240)
-graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,240)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,210)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,210)
 
 if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,240)
-graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,240)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,210)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,210)
 end
 
-graphics.fillRect(tpt.mousex + 3 + tpt.brushx,tpt.mousey,8 ,1,ar,ag,ab,250)
-graphics.fillRect(tpt.mousex - 11 -  tpt.brushx,tpt.mousey,8,1, ar,ag,ab,250)
-graphics.fillRect(tpt.mousex,tpt.mousey-10- tpt.brushy,1 ,8,ar,ag,ab,250)
-graphics.fillRect(tpt.mousex,tpt.mousey+3+ tpt.brushy,1 ,8, ar,ag,ab,250)
+graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,ar,ag,ab,255)
+graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, ar,ag,ab,255)
+graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,ar,ag,ab,255)
+graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, ar,ag,ab,255)
 
 else
-graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex, colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex, colourRED,colourGRN,colourBLU,210)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey, colourRED,colourGRN,colourBLU,210)
 
 if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-45-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx, colourRED,colourGRN,colourBLU,250)
-graphics.drawText(tpt.mousex+20+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy, colourRED,colourGRN,colourBLU,250)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx, colourRED,colourGRN,colourBLU,210)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy, colourRED,colourGRN,colourBLU,210)
 end
 
-graphics.fillRect(tpt.mousex + 3 + tpt.brushx,tpt.mousey,8 ,1, colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex - 11 -  tpt.brushx,tpt.mousey,8,1,  colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex,tpt.mousey-10 - tpt.brushy,1 ,8, colourRED,colourGRN,colourBLU,250)
-graphics.fillRect(tpt.mousex,tpt.mousey+3 + tpt.brushy,1 ,8, colourRED,colourGRN,colourBLU,250)
+graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,colourRED,colourGRN,colourBLU,255)
+graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, colourRED,colourGRN,colourBLU,255)
+graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,colourRED,colourGRN,colourBLU,255)
+graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, colourRED,colourGRN,colourBLU,255)
 end
 end
 
@@ -1077,7 +1077,7 @@ barval = "1"
 barlb:text("OFF")
 end
 end)
-
+local barlength = "1"
 function theme()
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
@@ -1093,10 +1093,10 @@ tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 
 if barval == "0" then
 --Topbar
-tpt.fillrect(1,0, 611,3, ar, ag, ab,al)
+tpt.fillrect(1,0,611,3, ar, ag, ab,al)
 end
 
-tpt.drawline(414,408,414,421,ar,ag,ab,al)
+tpt.drawline(419,408,419,421,ar,ag,ab,al)
 
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 tpt.drawrect(613,1,14,95,ar,ag,ab,al)
@@ -1172,12 +1172,19 @@ end
 
 tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 
---topbar
 if barval == "0" then
-tpt.fillrect(1,0, 611,3,colourRED,colourGRN,colourBLU,al)
+--Topbar
+if tonumber(barlength) <= 612 then
+barlength = barlength + "2"
+end
+if barlength >= 611 then
+barlength = 0
+end
+tpt.fillrect(1,0, 611,2, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(1,0, tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 end
 
-tpt.drawline(414,408,414,421,colourRED,colourGRN,colourBLU,al)
+tpt.drawline(419,408,419,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
 tpt.drawrect(613,1,14,95,colourRED,colourGRN,colourBLU,al)

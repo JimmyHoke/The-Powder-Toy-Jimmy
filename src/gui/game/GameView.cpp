@@ -280,7 +280,7 @@ GameView::GameView():
 	downVoteButton->SetActionCallback({ [this] { c->Vote(-1); } });
 	AddComponent(downVoteButton);
 
-	tagSimulationButton = new ui::Button(ui::Point(241, Size.Y-16), ui::Point(173, 15), "[no tags set]", "Add simulation tags");
+	tagSimulationButton = new ui::Button(ui::Point(241, Size.Y-16), ui::Point(178, 15), "[no tags set]", "Add simulation tags");
 	tagSimulationButton->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 	tagSimulationButton->SetIcon(IconTag);
 	//currentX+=252;

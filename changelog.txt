@@ -1,16 +1,13 @@
 Changelog for V25.5
 Note: Windows defender likes to flag tpt whenever a new version gets released. Simply ignore such false positives.
 
+Move TURB to Force menu.
+Make DMRN immune to Black flames.
+Internal bug fixes.
+Use separate .lua files for manager, crackerk and tptmp.
+Update tptmp to v2.0
+Make crosshair slightly more compact.
+New topbar animation for pulse theme.
+Improvements to how previews for themes, brightness and filters were handeled.
 
-#Move TURB to Force menu.
-#Make DMRN immune to Black flames.
-#Internal bug fixes.
-#Use separate .lua files for manager, crackerk and tptmp.
-#Update tptmp to v2.
-
-#Improvements to how handling themes and other customisable settings used to work:
-Mod menu can now use the default theme values.
-Fix conflicts between Framelimiter and performance mode.
-You can now adjust brightness, change themes and filters all at the same time!
-Performance mode can now save the state of themes before turning them off.
 
