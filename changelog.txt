@@ -8,6 +8,6 @@ Use separate .lua files for manager, crackerk and tptmp.
 Update tptmp to v2.0
 Make crosshair slightly more compact.
 New topbar animation for pulse theme.
-Improvements to how previews for themes, brightness and filters were handeled.
+Minor cosmetic changes all over the UI.
 
 

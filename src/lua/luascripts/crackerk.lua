@@ -1,4 +1,4 @@
---cracker1000 mod script v4.0--
+--cracker1000 mod script v4.5--
 local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 610, 303)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -1174,14 +1174,13 @@ tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 
 if barval == "0" then
 --Topbar
-if tonumber(barlength) <= 612 then
+if tonumber(barlength) <= 307 then
 barlength = barlength + "2"
 end
-if barlength >= 611 then
-barlength = 0
+if barlength >= 305 then
+barlength = 2
 end
-tpt.fillrect(1,0, 611,2, colourRED,colourGRN,colourBLU,al)
-tpt.fillrect(1,0, tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, colourRED,colourGRN,colourBLU,255)
 end
 
 tpt.drawline(419,408,419,421,colourRED,colourGRN,colourBLU,al)
@@ -2671,11 +2670,11 @@ fonts['5x7']['A'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
         ['pixels']  = {
-                {0, 1, 1, 1, 0},
+                {0, 0, 1, 0, 0},
+                {0, 1, 0, 1, 0},
                 {1, 0, 0, 0, 1},
                 {1, 0, 0, 0, 1},
                 {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
                 {1, 0, 0, 0, 1},
                 {1, 0, 0, 0, 1},
                 {1, 0, 0, 0, 1},

@@ -15,5 +15,4 @@ const char *const introTextData =
 "\br *\bw New gravity modes can be switched using W key aswell.\n"
 "\br *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same.\n"
 "\n"
-"\br   Press Any Key (except power) To Continue...\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-"\bg   Credits: \bw@Cracker1000, \bo@LBPHacker\bw, \br@Maticzpl\bw, \bt@Jacob1.";
+"\br   Press Any Key (except power) To Continue...\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
