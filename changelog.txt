@@ -1,16 +1,5 @@
-Changelog for V25.5
-Note: Windows defender likes to flag tpt whenever a new version gets released. Simply ignore such false positives.
+Changelog for V25.6 
 
-Move TURB to Force menu.
-Make DMRN immune to Black flames.
-Internal bug fixes.
-Use separate files for script manager, crackerk.lua and tptmp.
-Update tptmp to v2.0
-Settings button is even smaller now.
-Fix bug where updating the TPMP script caushed the game to crash.
-Make crosshair slightly more compact.
-New topbar animation for pulse theme.
-Better performance mode.
-Minor cosmetic changes all over the UI.
-
-
+Add new options to topbar.
+Make topbar options save as settings.
+Fix Mod menu not accepting colours if theme was set to pulse mode. 

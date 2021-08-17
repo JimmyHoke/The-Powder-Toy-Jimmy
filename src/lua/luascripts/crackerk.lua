@@ -1,4 +1,4 @@
---cracker1000 mod script v4.5--
+--cracker1000 mod script v4.6--
 local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 610, 303)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
@@ -22,7 +22,11 @@ local rc1 = Button:new(90,188,80,20,"Start", "Starts recording")
 local rc2 = Button:new(90,206,80,20,"Stop","Stops recording")
 
 local bar = Button:new(10,220,75,30,"Top bar", "Toggle top bar")
-local barlb = Label:new(94, 228, 10, 15, "ON")
+local barlb = Label:new(94, 228, 10, 15, " Long")
+local baropa =  Button:new(116,222,35,20,"Short", "Short and moving")
+local baropb =  Button:new(116,242,35,20,"Long", "Long")
+local baropc =  Button:new(156,222,35,20,"Move", "Moving")
+local baropd =  Button:new(156,242,35,20,"OFF", "Turn off")
 
 local bug = Button:new(10,252,75,30,"Feedback", "Direct to Mod thread for bug report.")
 local bug1 = Button:new(90,252,50,30,"Website", "Direct to Mod thread for bug report.")
@@ -166,6 +170,10 @@ newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
 newmenu:removeComponent(remtime)
 newmenu:removeComponent(remlabel21) 
+newmenu:removeComponent(baropa)
+newmenu:removeComponent(baropb)
+newmenu:removeComponent(baropc)
+newmenu:removeComponent(baropd)
 newmenu:onDraw(drawglitch)
 end
 
@@ -1064,19 +1072,43 @@ newmenu:removeComponent(rc1)
 newmenu:removeComponent(rc2)
 end)
 
-local barval = "0"
-
+local barval = MANAGER.getsetting("CRK","barval")
 bar:action(function(sender)
 clearsb()
-if barval == "1" then
-barval = "0"
-barlb:text("ON")
+fs.makeDirectory("scripts")
+newmenu:addComponent(baropa)
+newmenu:addComponent(baropb)
+newmenu:addComponent(baropc)
+newmenu:addComponent(baropc)
+newmenu:addComponent(baropd)
 
-elseif barval == "0" then
-barval = "1"
-barlb:text("OFF")
-end
+baropa:action(function(sender)
+barlb:text(" Short")
+clearsb()
+MANAGER.savesetting("CRK","barval","1")
 end)
+
+baropb:action(function(sender)
+barlb:text(" Long")
+MANAGER.savesetting("CRK","barval","2")
+clearsb()
+end)
+
+baropc:action(function(sender)
+barlb:text(" Move")
+MANAGER.savesetting("CRK","barval","3")
+clearsb()
+end)
+
+baropd:action(function(sender)
+barlb:text("OFF")
+barlength = 1
+MANAGER.savesetting("CRK","barval","4")
+clearsb()
+end)
+
+end)
+
 local barlength = "1"
 function theme()
 ar = MANAGER.getsetting("CRK", "ar")
@@ -1091,10 +1123,37 @@ end
 
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 
-if barval == "0" then
 --Topbar
-tpt.fillrect(1,0,611,3, ar, ag, ab,al)
+barval = MANAGER.getsetting("CRK","barval")
+if barval == nil then
+tpt.fillrect(1,0,610,3, ar,ag,ab,al)
 end
+
+if barval ~= "4" then
+
+if barval == "1" then
+if tonumber(barlength) <= 202 then
+barlength = barlength + "2"
+end
+tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, ar,ag,ab,al)
+end
+
+if barval == "2" then
+tpt.fillrect(1,0,610,3, ar,ag,ab,al)
+end
+
+if barval == "3" then
+if tonumber(barlength) <= 294 then
+barlength = barlength + "2"
+end
+
+if tonumber(barlength) >= 290 then
+barlength = "1"
+end
+tpt.fillrect(tonumber(barlength),0,tonumber(barlength)+ 20,3, ar,ag,ab,al)
+end
+end
+--Topbarend
 
 tpt.drawline(419,408,419,421,ar,ag,ab,al)
 
@@ -1172,16 +1231,37 @@ end
 
 tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 
-if barval == "0" then
+
 --Topbar
-if tonumber(barlength) <= 307 then
+barval = MANAGER.getsetting("CRK","barval")
+if barval == nil then
+tpt.fillrect(1,0,610,3, colourRED,colourGRN,colourBLU,al)
+end
+
+if barval ~= "4" then
+if barval == "1" then
+if tonumber(barlength) <= 202 then
 barlength = barlength + "2"
 end
-if barlength >= 305 then
-barlength = 2
+tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 end
-tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, colourRED,colourGRN,colourBLU,255)
+
+if barval == "2" then
+tpt.fillrect(1,0,610,3, colourRED,colourGRN,colourBLU,al)
 end
+
+if barval == "3" then
+if tonumber(barlength) <= 294 then
+barlength = barlength + "2"
+end
+
+if tonumber(barlength) >= 290 then
+barlength = "1"
+end
+tpt.fillrect(tonumber(barlength),0,tonumber(barlength)+ 20,3, colourRED,colourGRN,colourBLU,al)
+end
+end
+--Topbarend
 
 tpt.drawline(419,408,419,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
@@ -1229,6 +1309,7 @@ if perlab:text() == "OFF" then
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 end
+barlength = 1
 event.unregister(event.tick,colourblender)
 end
 
@@ -1321,6 +1402,7 @@ MANAGER.savesetting("CRK","savergb",1)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
 event.unregister(event.tick,theme)
+barlength = 1
 clearsb()
 end)
 
@@ -1430,6 +1512,20 @@ else
 MANAGER.savesetting("CRK", "brightness",200)
 end
 
+if MANAGER.getsetting("CRK", "barval") == "1" then
+barlb:text(" Short")
+
+elseif MANAGER.getsetting("CRK", "barval") == "2" then
+barlb:text(" Long")
+
+elseif MANAGER.getsetting("CRK", "barval") == "3" then
+barlb:text(" Move")
+
+elseif MANAGER.getsetting("CRK", "barval") == "4" then
+barlb:text(" OFF")
+
+end
+
 end
 startupcheck()
 
@@ -1515,14 +1611,14 @@ fpsval = "1"
 uival = "1"
 rulval = "1"
 hidval = "1"
-barval = "0"
+barval = "2"
 autolb:text("OFF")
 perlab:text("OFF")
 shrtlb:text("ON")
 fplb:text("ON")
 rulb:text("OFF")
 dellb:text("Shown")
-barlb:text("ON")
+barlb:text(" Long")
 remlabe:text("OFF")
 fanlb:text("OFF")
 event.unregister(event.tick,drawcirc)
@@ -1540,6 +1636,7 @@ MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
 MANAGER.savesetting("CRK","hidestate", "0")
 MANAGER.savesetting("CRK", "fancurs","0")
+MANAGER.savesetting("CRK", "barval", "2")
 tpt.hud(1)
 ui.closeWindow(newmenu) 
 hideyes()
@@ -1565,13 +1662,16 @@ clearm()
 end
 
 function drawglitch()
-graphics.drawLine(7, 18,314,18,ar,ag,ab,250)
-graphics.drawRect(1,1, 610, 303,ar,ag,ab,200)
+
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 theme()
+graphics.drawLine(7, 18,314,18,ar,ag,ab,al)
+graphics.drawRect(1,1, 610, 303,ar,ag,ab,al-20)
 else
 colourblender()
+graphics.drawLine(7, 18,314,18,colourRED,colourGRN,colourBLU,al)
+graphics.drawRect(1,1, 610, 303,colourRED,colourGRN,colourBLU,al-20)
 end
 end
 backg()
