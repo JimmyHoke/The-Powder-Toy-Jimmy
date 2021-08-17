@@ -4,10 +4,13 @@ Note: Windows defender likes to flag tpt whenever a new version gets released. S
 Move TURB to Force menu.
 Make DMRN immune to Black flames.
 Internal bug fixes.
-Use separate .lua files for manager, crackerk and tptmp.
+Use separate files for script manager, crackerk.lua and tptmp.
 Update tptmp to v2.0
+Settings button is even smaller now.
+Fix bug where updating the TPMP script caushed the game to crash.
 Make crosshair slightly more compact.
 New topbar animation for pulse theme.
+Better performance mode.
 Minor cosmetic changes all over the UI.
 
 

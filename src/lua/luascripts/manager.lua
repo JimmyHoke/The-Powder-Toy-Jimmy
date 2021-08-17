@@ -904,9 +904,10 @@ end
 --small button on right to bring up main menu
 local WHITE = {255,255,255,255}
 local BLACK = {0,0,0,255}
-local ICON = math.random(2) --pick a random icon
+local ICON = 1 --pick a random icon
 local lua_letters= {{{2,2,2,7},{2,7,4,7},{6,7,6,11},{6,11,8,11},{8,7,8,11},{10,11,12,11},{10,11,10,15},{11,13,11,13},{12,11,12,15},},
 	{{2,3,2,13},{2,14,7,14},{4,3,4,12},{4,12,7,12},{7,3,7,12},{9,3,12,3},{9,3,9,14},{10,8,11,8},{12,3,12,14},}}
+	
 local function smallstep()
 	gfx.drawRect(sidebutton.x, sidebutton.y+1, sidebutton.w+1, sidebutton.h+1,200,200,200)
 	local color=WHITE

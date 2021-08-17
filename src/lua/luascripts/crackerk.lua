@@ -127,7 +127,6 @@ newmenu:removeComponent(perfm)
 end
 
 function clearsb()
-newmenu:onDraw(drawglitch)
 newmenu:removeComponent(rc1)
 newmenu:removeComponent(rc2)
 newmenu:removeComponent(bug1)
@@ -167,6 +166,7 @@ newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
 newmenu:removeComponent(remtime)
 newmenu:removeComponent(remlabel21) 
+newmenu:onDraw(drawglitch)
 end
 
 local perfmv = "1"
@@ -1565,8 +1565,8 @@ clearm()
 end
 
 function drawglitch()
-graphics.drawLine(7, 18,314,18,ar,ag,ab,255)
-graphics.drawRect(1,1, 610, 303,ar,ag,ab,255)
+graphics.drawLine(7, 18,314,18,ar,ag,ab,250)
+graphics.drawRect(1,1, 610, 303,ar,ag,ab,200)
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 theme()

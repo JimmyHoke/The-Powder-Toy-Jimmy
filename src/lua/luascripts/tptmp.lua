@@ -3,7 +3,10 @@ local env__ = setmetatable({}, { __index = function(_, key)
 end, __newindex = function(_, key)
 	error("__newindex on env: " .. tostring(key), 2)
 end})
-setfenv(1, env__)
+local _ENV = env__
+if setfenv then
+	setfenv(1, env__)
+end
 
 math.randomseed(os.time())
 
@@ -21,39 +24,52 @@ rawset(env__, "require", require)
 
 require_preload__["tptmp.client"] = function()
 
-	-- * TODO[opt]: maybe exit gracefully
-	assert(sim.CELL == 4, "CELL size is not 4") -- * Required by cursor snapping functions.
-	assert(sim.PMAPBITS < 13, "PMAPBITS is too large") -- * Required by how non-element tools are encoded (extended tool IDs, XIDs).
-	assert(tpt.version and tpt.version.major >= 96 and tpt.version.minor >= 1, "version not supported")
-	assert(rawget(_G, "bit"), "no bit API")
-	local http = assert(rawget(_G, "http"), "no http API")
-	local socket = assert(rawget(_G, "socket"), "no socket API")
-	assert(not socket.bind, "outdated socket API")
-	if tpt.version.jacob1s_mod then
-		assert(tpt.tab_menu, "unsupported version")
+	local loadtime_error
+	local http = rawget(_G, "http")
+	local socket = rawget(_G, "socket")
+	if sim.CELL ~= 4 then -- * Required by cursor snapping functions.
+		loadtime_error = "CELL size is not 4"
+	elseif sim.PMAPBITS >= 13 then -- * Required by how non-element tools are encoded (extended tool IDs, XIDs).
+		loadtime_error = "PMAPBITS is too large"
+	elseif not (tpt.version and tpt.version.major >= 96 and tpt.version.minor >= 1) then
+		loadtime_error = "version not supported"
+	elseif not rawget(_G, "bit") then
+		loadtime_error = "no bit API"
+	elseif not http then
+		loadtime_error = "no http API"
+	elseif not socket then
+		loadtime_error = "no socket API"
+	elseif socket.bind then
+		loadtime_error = "outdated socket API"
+	elseif tpt.version.jacob1s_mod and not tpt.tab_menu then
+		loadtime_error = "mod version not supported"
 	end
 	
-	local colours     = require("tptmp.client.colours")
-	local config      = require("tptmp.client.config")
-	local window      = require("tptmp.client.window")
-	local side_button = require("tptmp.client.side_button")
-	local localcmd    = require("tptmp.client.localcmd")
-	local client      = require("tptmp.client.client")
-	local util        = require("tptmp.client.util")
-	local profile     = require("tptmp.client.profile")
-	local format      = require("tptmp.client.format")
-	local manager     = require("tptmp.client.manager")
+	local config      =                        require("tptmp.client.config")
+	local colours     = not loadtime_error and require("tptmp.client.colours")
+	local window      = not loadtime_error and require("tptmp.client.window")
+	local side_button = not loadtime_error and require("tptmp.client.side_button")
+	local localcmd    = not loadtime_error and require("tptmp.client.localcmd")
+	local client      = not loadtime_error and require("tptmp.client.client")
+	local util        = not loadtime_error and require("tptmp.client.util")
+	local profile     = not loadtime_error and require("tptmp.client.profile")
+	local format      = not loadtime_error and require("tptmp.client.format")
+	local manager     = not loadtime_error and require("tptmp.client.manager")
 	
 	local function run()
-		local hooks_enabled = false
-	
 		if rawget(_G, "TPTMP") then
 			if TPTMP.version <= config.version then
 				TPTMP.disableMultiplayer()
 			else
-				error("newer version already running")
+				loadtime_error = "newer version already running"
 			end
 		end
+		if loadtime_error then
+			print(config.print_prefix .. "Cannot load: " .. loadtime_error)
+			return
+		end
+	
+		local hooks_enabled = false
 		local TPTMP = {
 			version = config.version,
 			versionStr = config.versionstr,
@@ -496,6 +512,9 @@ require_preload__["tptmp.client.client"] = function()
 	local format      = require("tptmp.client.format")
 	
 	local log_event = print
+	local can_yield_xpcall = coroutine.resume(coroutine.create(function()
+		assert(pcall(coroutine.yield))
+	end))
 	
 	local client_i = {}
 	local client_m = { __index = client_i }
@@ -513,8 +532,8 @@ require_preload__["tptmp.client.client"] = function()
 		[ 3 ] = "tool_x",
 	}
 	
-	local function get_auth_token(uid, sess)
-		local req = http.get(config.auth_backend .. "?Action=Get", {
+	local function get_auth_token(uid, sess, audience)
+		local req = http.get(config.auth_backend .. "?Action=Get&Audience=" .. util.urlencode(audience), {
 			[ "X-Auth-User-Id" ] = uid,
 			[ "X-Auth-Session-Key" ] = sess,
 		})
@@ -1170,6 +1189,7 @@ require_preload__["tptmp.client.client"] = function()
 	end
 	
 	function client_i:connect_()
+		self.server_probably_secure_ = nil
 		self.window_:set_subtitle("status", "Connecting")
 		self.socket_ = socket.tcp()
 		self.socket_:settimeout(0)
@@ -1181,6 +1201,10 @@ require_preload__["tptmp.client.client"] = function()
 			elseif err == "timeout" then
 				coroutine.yield()
 			else
+				local errl = err:lower()
+				if errl:find("schannel") or errl:find("ssl") then
+					self.server_probably_secure_ = true
+				end
 				self:proto_close_(err)
 			end
 		end
@@ -1193,15 +1217,15 @@ require_preload__["tptmp.client.client"] = function()
 		self:write_bytes_(tpt.version.major, tpt.version.minor, config.version)
 		self:write_nullstr_((name or tpt.get_name() or ""):sub(1, 255))
 		self:write_bytes_(0) -- * Flags, currently unused.
-		local qa_uid, qa_token = self.get_qa_func_():match("^([^:]+):([^:]+)$")
-		self:write_str8_(qa_token and qa_uid == uid and qa_token or "")
+		local qa_host, qa_port, qa_uid, qa_token = self.get_qa_func_():match("^([^:]+):([^:]+):([^:]+):([^:]+)$")
+		self:write_str8_(qa_token and qa_uid == uid and qa_host == self.host_ and qa_port == self.port_ and qa_token or "")
 		self:write_str8_(self.initial_room_ or "")
 		self:write_flush_()
 		local conn_status = self:read_bytes_(1)
 		local auth_err
 		if conn_status == 4 then -- * Quickauth failed.
 			self.window_:set_subtitle("status", "Authenticating")
-			local token, err, info = get_auth_token(uid, sess)
+			local token, err, info = get_auth_token(uid, sess, self.host_ .. ":" .. self.port_)
 			if not token then
 				if err == "non200" then
 					auth_err = "authentication failed (status code " .. info .. "); try again later or try restarting TPT"
@@ -1216,7 +1240,7 @@ require_preload__["tptmp.client.client"] = function()
 			self:write_flush_()
 			conn_status = self:read_bytes_(1)
 			if uid then
-				self.set_qa_func_((conn_status == 1) and (uid .. ":" .. token) or "")
+				self.set_qa_func_((conn_status == 1) and (self.host_ .. ":" .. self.port_ .. ":" .. uid .. ":" .. token) or "")
 			end
 		end
 		if conn_status == 1 then
@@ -1504,12 +1528,16 @@ require_preload__["tptmp.client.client"] = function()
 	function client_i:start()
 		assert(self.status_ == "ready")
 		self.status_ = "running"
-		local xpcall = rawget(_G, "jit") and xpcall or function(func)
-			func()
-			return true
-		end
 		self.proto_coro_ = coroutine.create(function()
-			local ok, err = xpcall(function()
+			local wrap_traceback = can_yield_xpcall and xpcall or function(func)
+				-- * It doesn't matter if wrap_traceback is not a real xpcall
+				--   as the error would be re-thrown later anyway, but a real
+				--   xpcall is preferable because it lets us print a stack trace
+				--   from within the coroutine.
+				func()
+				return true
+			end
+			local ok, err = wrap_traceback(function()
 				self:connect_()
 				self:handshake_()
 				while true do
@@ -1756,6 +1784,9 @@ require_preload__["tptmp.client.client"] = function()
 			disconnected = disconnected .. ": " .. message
 		end
 		self.window_:backlog_push_error(disconnected)
+		if self.server_probably_secure_ then
+			self.window_:backlog_push_error(("The server probably does not support secure connections, try /connect %s:%i"):format(self.host_, self.port_))
+		end
 	end
 	
 	function client_i:write_(data)
@@ -1957,8 +1988,7 @@ require_preload__["tptmp.client.colours"] = function()
 		common[key] = value
 		commonstr[key] = escape(value)
 	end
-
-
+	
 	local appearance = {
 		hover = {
 			background = {  20,  20,  20 },
@@ -1968,12 +1998,12 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = { 90, 90, 90},
+			border     = {90, 90, 90 },
 		},
 		active = {
 			background = { 255, 255, 255 },
 			text       = {   0,   0,   0 },
-			border     = {90, 90, 90},
+			border     = { 90, 90, 90 },
 		},
 	}
 	
@@ -2010,7 +2040,7 @@ require_preload__["tptmp.client.config"] = function()
 	
 		-- * Default window width. Overridden by the value loaded from the manager
 		--   backend, if any.
-		default_width = 210,
+		default_width = 211,
 	
 		-- * Default window height. Similar to default_width.
 		default_height = 155,
@@ -2043,8 +2073,8 @@ require_preload__["tptmp.client.config"] = function()
 		-- ***********************************************************************
 	
 		-- * Specifies whether connections made without specifying the port number
-		--   should be encrypted.
-		default_secure = false, -- * TODO[fin]: Enable.
+		--   should be encrypted. Default should match the common setting.
+		default_secure = common_config.secure,
 	
 		-- * Size of the buffer passed to the recv system call. Bigger values
 		--   consume more memory, smaller ones incur larger system call overhead.
@@ -2063,7 +2093,7 @@ require_preload__["tptmp.client.config"] = function()
 		sendq_limit = 0x2000000,
 	
 		-- * Maximum amount of time in seconds after which the connection attempt
-		--   attempt should be deemed a failure, unless it succeeds.
+		--   should be deemed a failure, unless it succeeds.
 		connect_timeout = 15,
 	
 		-- * Amount of time in seconds between pings being sent to the server.
@@ -2289,7 +2319,7 @@ require_preload__["tptmp.client.localcmd"] = function()
 				macro = function(localcmd, message, words, offsets)
 					return { "connectroom", "", unpack(words, 2) }
 				end,
-				help = "/connect [host[:port]]: connects the default TPTMP server or the specified one",
+				help = "/connect [host[:[+]port]]: connects the default TPTMP server or the specified one, add + to connect securely",
 			},
 			C = {
 				alias = "connect",
@@ -2308,7 +2338,7 @@ require_preload__["tptmp.client.localcmd"] = function()
 				func = function(localcmd, message, words, offsets)
 					local cli = localcmd.client_func_()
 					if not words[2] then
-						localcmd:print_help_("connectroom")
+						return false
 					elseif cli then
 						localcmd.window_:backlog_push_error("Already connected")
 					else
@@ -2334,7 +2364,10 @@ require_preload__["tptmp.client.localcmd"] = function()
 					end
 					return true
 				end,
-				help = "/connectroom <room> [host[:port]]: same as /connect, but skips the lobby and joins the specified room",
+				help = "/connectroom <room> [host[:[+]port]]: same as /connect, but skips the lobby and joins the specified room",
+			},
+			CR = {
+				alias = "connectroom",
 			},
 			disconnect = {
 				func = function(localcmd, message, words, offsets)
@@ -3079,6 +3112,17 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	end
 	
 	function profile_i:post_event_check_()
+		if self.placesave_postmsg_ then
+			local partcount = self.placesave_postmsg_.partcount
+			if partcount and partcount ~= sim.NUM_PARTS and self.registered_func_() then
+				-- * TODO[api]: get rid of all of this nonsense once redo-ui lands
+				if self.client then
+					self.client:send_sync()
+				end
+				-- log_event(config.print_prefix .. "If you just pasted something, you will have to use /sync")
+			end
+			self.placesave_postmsg_ = nil
+		end
 		if self.placesave_size_ then
 			local x1, y1, x2, y2 = self:end_placesave_size_()
 			if x1 then
@@ -3463,14 +3507,13 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 				pop(bx, y)
 			end
 		end
-		local partcount = self.placesave_size_.partcount -- * TODO[opt]: figure out what I wanted to do with partcount
 		if self.placesave_size_.airmode then
 			sim.airMode(self.placesave_size_.airmode)
 		end
 		self.placesave_size_ = nil
 		if lx == math.huge then
 			self.placesave_postmsg_ = {
-				message = "If you just pasted something, you will have to use /sync",
+				partcount = sim.NUM_PARTS,
 			}
 		else
 			return math.max((lx - 2) * 4, 0),
@@ -3551,9 +3594,6 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	
 	function profile_i:handle_mousedown(px, py, button)
 		self:post_event_check_()
-		if self.placesave_postmsg_ then
-			self.placesave_postmsg_.partcount = sim.NUM_PARTS
-		end
 		self:update_pos_(px, py)
 		self.last_in_zoom_window_ = in_zoom_window(px, py)
 		-- * Here the assumption is made that no Lua hook cancels the mousedown event.
@@ -3624,9 +3664,6 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	
 	function profile_i:handle_mousemove(px, py, delta_x, delta_y)
 		self:post_event_check_()
-		if self.placesave_postmsg_ then
-			self.placesave_postmsg_.partcount = sim.NUM_PARTS
-		end
 		self:update_pos_(px, py)
 		for _, btn in pairs(self.buttons_) do
 			if not util.inside_rect(btn.x, btn.y, btn.w, btn.h, tpt.mousex, tpt.mousey) then
@@ -3662,13 +3699,6 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	end
 	
 	function profile_i:handle_mouseup(px, py, button, reason)
-		if self.placesave_postmsg_ then
-			local partcount = self.placesave_postmsg_.partcount
-			if partcount and partcount ~= sim.NUM_PARTS and self.registered_func_() then
-				log_event(config.print_prefix .. self.placesave_postmsg_.message)
-			end
-			self.placesave_postmsg_ = nil
-		end
 		self:post_event_check_()
 		self:update_pos_(px, py)
 		for name, btn in pairs(self.buttons_) do
@@ -4213,7 +4243,7 @@ require_preload__["tptmp.client.side_button"] = function()
 		if manager.side_button_conflict then
 			pos_y = pos_y - 17
 		end
-		local text = "Mp"
+		local text = "M"
 		local tw, th = gfx.textSize(text)
 		local tx = pos_x + math.ceil((width - tw) / 2)
 		local ty = pos_y + math.floor((height - th) / 2)
@@ -4922,6 +4952,12 @@ require_preload__["tptmp.client.util"] = function()
 		return id, hist
 	end
 	
+	local function urlencode(str)
+		return (str:gsub("[^ !'()*%-%.0-9A-Z_a-z]", function(cap)
+			return ("%%%02x"):format(cap:byte())
+		end))
+	end
+	
 	return {
 		get_user = get_user,
 		stamp_load = stamp_load,
@@ -4952,6 +4988,7 @@ require_preload__["tptmp.client.util"] = function()
 		version_less = common_util.version_less,
 		version_equal = common_util.version_equal,
 		tpt_version = tpt_version,
+		urlencode = urlencode,
 	}
 	
 end
@@ -5076,7 +5113,7 @@ require_preload__["tptmp.client.window"] = function()
 		local formatted = str
 			:gsub("\au([A-Za-z0-9-_]+)", function(cap) return format.nick(cap, self.nick_colour_seed_) end)
 			:gsub("\ar([A-Za-z0-9-_]+)", function(cap) return format.room(cap)                         end)
-			:gsub("\a([nejl])"          , function(cap) return server_colours[cap]                      end)
+			:gsub("\a([nejl])"         , function(cap) return server_colours[cap]                      end)
 		self:backlog_push_str(formatted, true)
 	end
 	
@@ -6208,7 +6245,9 @@ require_preload__["tptmp.common.command_parser"] = function()
 		}, command_parser_m)
 		local collect = {}
 		for name, info in pairs(params.commands) do
-			table.insert(collect, "/" .. name)
+			if not info.hidden then
+				table.insert(collect, "/" .. name)
+			end
 			name = name:lower()
 			if info.role == "help" then
 				cmd.help_name_ = name
@@ -6262,7 +6301,7 @@ require_preload__["tptmp.common.config"] = function()
 		-- ***********************************************************************
 	
 		-- * Protocol version, between 0 and 254. 255 is reserved for future use.
-		version = 20, -- * TODO[fin]: Give this a bump.
+		version = 22,
 	
 		-- * Client-to-server message size limit, between 0 and 255, the latter
 		--   limit being imposted by the protocol.
@@ -6286,10 +6325,13 @@ require_preload__["tptmp.common.config"] = function()
 		uid_backend_timeout = 3,
 	
 		-- * Host to connect to by default.
-		host = "tptmp.trigraph.net", -- * TODO[fin]: Replace with tptmp.starcatcher.us
+		host = "tptmp.starcatcher.us",
 	
 		-- * Port to connect to by default.
 		port = 34403,
+	
+		-- * Encrypt traffic between player clients and the server.
+		secure = true,
 	}
 	
 end
