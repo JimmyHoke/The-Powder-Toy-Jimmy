@@ -1,6 +1,6 @@
---cracker1000 mod script v4.6--
+--cracker1000 mod script v4.7--
 local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
-local newmenu = Window:new(-15,-15, 610, 303)
+local newmenu = Window:new(-15,-15, 610, 295)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
@@ -38,31 +38,29 @@ local bare = Button:new(203,60,80,30,"Hidden Elem.", "Toggle hidden elements.")
 local remlabe = Label:new(294, 66, 10, 15, "OFF")
 
 local mp = Button:new(203,92,80,30,"Theme", "Changes game's theme")
-local mp1 = Button:new(293,92,75,20,"Dark", "Change the theme to default")
-local mp2 = Button:new(293,112,75,20,"Fire", "Change the theme to Blue")
-local mp3 = Button:new(293,132,75,20,"Aqua", "Change the theme to Red")
-local mp4 = Button:new(293,152,75,20,"Forest", "Change the theme to Green")
-local mp5 = Button:new(293,172,75,20,"Sun", "Change the theme to Yellow")
-local mp6 = Button:new(293,192,75,20,"Orange", "Change the theme to Orange")
-local mp7 = Button:new(293,212,75,20,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(293,232,75,20,"Pulse", "RBG makes everything better.")
-local mp9 = Button:new(293,252,75,20,"Custom", "Custom options.")
+local mp1 = Button:new(290,92,75,20,"Dark", "Change the theme to default")
+local mp2 = Button:new(290,112,75,20,"Fire", "Change the theme to Blue")
+local mp3 = Button:new(290,132,75,20,"Aqua", "Change the theme to Red")
+local mp4 = Button:new(290,152,75,20,"Forest", "Change the theme to Green")
+local mp7 = Button:new(290,172,75,20,"Vanilla", "Change the theme back to Plain white")
+local mp8 = Button:new(290,192,75,20,"Pulse", "RBG makes everything better.")
+local mp9 = Button:new(290,212,75,20,"Custom", "Custom options.")
 local als = Label:new(491,198, 10, 15, "Alpha")
 local rl = Label:new(486, 218, 10, 15, "Red")
 local gl = Label:new(490, 238, 10, 15, "Green")
 local bl = Label:new(488, 258, 10, 15, "Blue")
 
-local aSlider = Slider:new(373, 198, 100, 15, 255)
-local rSlider = Slider:new(373, 218, 100, 15, 255)
-local gSlider = Slider:new(373, 238, 100, 15, 255)
-local bSlider = Slider:new(373, 258, 100, 15, 255)
+local aSlider = Slider:new(373, 196, 100, 15, 255)
+local rSlider = Slider:new(373, 216, 100, 15, 255)
+local gSlider = Slider:new(373, 236, 100, 15, 255)
+local bSlider = Slider:new(373, 256, 100, 15, 255)
 
-local alb = Label:new(520,198,10, 15)
-local rlb = Label:new(520, 218, 10, 15)
-local glb = Label:new(520, 238, 10, 15)
-local blb = Label:new(520, 258, 10, 15)
+local alb = Label:new(520,196,10, 15)
+local rlb = Label:new(520, 216, 10, 15)
+local glb = Label:new(520, 236, 10, 15)
+local blb = Label:new(520, 256, 10, 15)
 
-local mpop = Button:new(385,275,75,20,"Done", "Custom options.")
+local mpop = Button:new(385,274,75,15,"Done", "Custom options.")
 
 local bg = Button:new(203,124,80,30,"Filters", "Sets different backgrounds.")
 local bg1 = Button:new(293,124,75,20,"BLACK", "Default")
@@ -88,7 +86,7 @@ local remtime = Textbox:new(293, 255, 80, 15, '', 'Time in min.')
 remtime:text("10")
 local remon2 = Button:new(333,272,40,20,"On", "Save.")
 local remoff  = Button:new(293,272,40,20,"Off", "Cancel.")
-local remlabel = Label:new(63, 287, 10, 15, "Reminder is on 10 mins")
+local remlabel = Label:new(373, 2, 10, 15, "Reminder is on 10 mins")
 local remlabel21 = Label:new(413, 255, 20, 15, "Time in min. (0-60)")
 
 local fancur = Button:new(396,28,80,30, "Crosshair", "Draws graphics around cursor.")
@@ -103,7 +101,7 @@ local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
 local perfm = Button:new(396,156,80,30, "Performance", "For lower spec systems.")
 local perlab = Label:new(485, 162, 10, 15, "OFF")
 
-local hide= Button:new(528,281,80,20, "Close Menu", "Hide.")
+local hide= Button:new(528,273,80,20, "Close Menu", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -144,8 +142,6 @@ newmenu:removeComponent(mp1)
 newmenu:removeComponent(mp2)
 newmenu:removeComponent(mp3)
 newmenu:removeComponent(mp4)
-newmenu:removeComponent(mp5)
-newmenu:removeComponent(mp6)
 newmenu:removeComponent(mp7)
 newmenu:removeComponent(mp8)
 newmenu:removeComponent(mp9)
@@ -1132,21 +1128,19 @@ end
 if barval ~= "4" then
 
 if barval == "1" then
+
 if tonumber(barlength) <= 202 then
 barlength = barlength + "2"
 end
 tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, ar,ag,ab,al)
-end
 
-if barval == "2" then
+elseif barval == "2" then
 tpt.fillrect(1,0,610,3, ar,ag,ab,al)
-end
 
-if barval == "3" then
+elseif barval == "3" then
 if tonumber(barlength) <= 294 then
 barlength = barlength + "2"
 end
-
 if tonumber(barlength) >= 290 then
 barlength = "1"
 end
@@ -1239,22 +1233,21 @@ tpt.fillrect(1,0,610,3, colourRED,colourGRN,colourBLU,al)
 end
 
 if barval ~= "4" then
+
 if barval == "1" then
+
 if tonumber(barlength) <= 202 then
 barlength = barlength + "2"
 end
 tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
-end
 
-if barval == "2" then
-tpt.fillrect(1,0,610,3, colourRED,colourGRN,colourBLU,al)
-end
+elseif barval == "2" then
+tpt.fillrect(1,0,610,3,colourRED,colourGRN,colourBLU,al)
 
-if barval == "3" then
+elseif barval == "3" then
 if tonumber(barlength) <= 294 then
 barlength = barlength + "2"
 end
-
 if tonumber(barlength) >= 290 then
 barlength = "1"
 end
@@ -1320,8 +1313,6 @@ newmenu:addComponent(mp1)
 newmenu:addComponent(mp2)
 newmenu:addComponent(mp3)
 newmenu:addComponent(mp4)
-newmenu:addComponent(mp5)
-newmenu:addComponent(mp6)
 newmenu:addComponent(mp7)
 newmenu:addComponent(mp8)
 newmenu:addComponent(mp9)
@@ -1361,26 +1352,6 @@ mp4:action(function(sender)
 MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",0)
 MANAGER.savesetting("CRK","ag",255)
-MANAGER.savesetting("CRK","ab",0)
-MANAGER.savesetting("CRK","al",200)
-mpnolag()
-clearsb()
-end)
-
-mp5:action(function(sender)
-MANAGER.savesetting("CRK","savergb",2)
-MANAGER.savesetting("CRK","ar",250)
-MANAGER.savesetting("CRK","ag",250)
-MANAGER.savesetting("CRK","ab",0)
-MANAGER.savesetting("CRK","al",200)
-mpnolag()
-clearsb()
-end)
-
-mp6:action(function(sender)
-MANAGER.savesetting("CRK","savergb",2)
-MANAGER.savesetting("CRK","ar",255)
-MANAGER.savesetting("CRK","ag",150)
 MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
@@ -1523,12 +1494,10 @@ barlb:text(" Move")
 
 elseif MANAGER.getsetting("CRK", "barval") == "4" then
 barlb:text(" OFF")
-
 end
 
 end
 startupcheck()
-
 
 local rulval = "1"
 
@@ -1659,6 +1628,7 @@ function close()
 ui.closeWindow(newmenu) 
 clearsb()
 clearm()
+barlength = 1
 end
 
 function drawglitch()
@@ -1667,11 +1637,11 @@ if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 theme()
 graphics.drawLine(7, 18,314,18,ar,ag,ab,al)
-graphics.drawRect(1,1, 610, 303,ar,ag,ab,al-20)
+graphics.drawRect(1,1, 610, 295,ar,ag,ab,120)
 else
 colourblender()
 graphics.drawLine(7, 18,314,18,colourRED,colourGRN,colourBLU,al)
-graphics.drawRect(1,1, 610, 303,colourRED,colourGRN,colourBLU,al-20)
+graphics.drawRect(1,1, 610, 295,colourRED,colourGRN,colourBLU,120)
 end
 end
 backg()

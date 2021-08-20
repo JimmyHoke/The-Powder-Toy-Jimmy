@@ -375,15 +375,15 @@ tpt.partsdata = nil");
 	}
 	if (luaL_loadbuffer(l, (const char *)manager_lua, manager_lua_size, "@[built-in manager.lua]") || lua_pcall(l, 0, 0, 0))
 	{
-		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
+		//Ignore;
 	}
 	if (luaL_loadbuffer(l, (const char *)tptmp_lua, tptmp_lua_size, "@[built-in tptmp.lua]") || lua_pcall(l, 0, 0, 0))
 	{
-		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
+		//Ignore;
 	}
 	if (luaL_loadbuffer(l, (const char *)crackerk_lua, crackerk_lua_size, "@[built-in crackerk.lua]") || lua_pcall(l, 0, 0, 0))
 	{
-		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
+		//Ignore;
 	}
 }
 

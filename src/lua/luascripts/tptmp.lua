@@ -1045,12 +1045,7 @@ require_preload__["tptmp.client.client"] = function()
 	function client_i:handle_heatclear_64_()
 		-- * TODO[api]: add an api for this to tpt
 		local member = self:member_prefix_()
-		local temp = sim.ambientAirTemp()
-		for x = 0, sim.XRES / sim.CELL - 1 do
-			for y = 0, sim.YRES / sim.CELL - 1 do
-				sim.ambientHeat(x, y, temp)
-			end
-		end
+		util.heat_clear()
 		log_event(config.print_prefix .. colours.commonstr.event .. "Ambient heat reset by " .. member.formatted_nick)
 	end
 	
@@ -1218,7 +1213,7 @@ require_preload__["tptmp.client.client"] = function()
 		self:write_nullstr_((name or tpt.get_name() or ""):sub(1, 255))
 		self:write_bytes_(0) -- * Flags, currently unused.
 		local qa_host, qa_port, qa_uid, qa_token = self.get_qa_func_():match("^([^:]+):([^:]+):([^:]+):([^:]+)$")
-		self:write_str8_(qa_token and qa_uid == uid and qa_host == self.host_ and qa_port == self.port_ and qa_token or "")
+		self:write_str8_(qa_token and qa_uid == uid and qa_host == self.host_ and tonumber(qa_port) == self.port_ and qa_token or "")
 		self:write_str8_(self.initial_room_ or "")
 		self:write_flush_()
 		local conn_status = self:read_bytes_(1)
@@ -1998,7 +1993,7 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = {90, 90, 90 },
+			border     = { 90,  90, 90 },
 		},
 		active = {
 			background = { 255, 255, 255 },
@@ -3433,7 +3428,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		return 0, 0
 	end
 	
-	function profile_i:begin_placesave_size_(x, y, lazy_button_check)
+	function profile_i:begin_placesave_size_(x, y, aux_button)
 		local id = sim.partCreate(-3, 0, 0, preshack_elem)
 		if id == -1 then
 			preshack_zero = save_and_kill_zero()
@@ -3468,9 +3463,10 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 			pres = pres,
 			bx = bx,
 			by = by,
-			airmode = not lazy_button_check and sim.airMode(),
+			aux_button = aux_button,
+			airmode = sim.airMode(),
 		}
-		if lazy_button_check then
+		if aux_button then
 			-- * This means that begin_placesave_size_ was called from a button
 			--   callback, i.e. not really in response to pasting, but reloading /
 			--   clearing / opening a save. In this case, the air mode should
@@ -3507,7 +3503,12 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 				pop(bx, y)
 			end
 		end
-		if self.placesave_size_.airmode then
+		-- * Unlike normal stamp pastes, auxiliary button events (open, save, clear)
+		--   are guaranteed to have been cancelled if no air change is detected.
+		--   The following block roughly translates to resetting the air mode to
+		--   the sampled value if the change in the simulation occurred due to
+		--   a paste event, otherwise only if we actually detected a change in air.
+		if not self.placesave_size_.aux_button or lx == math.huge then
 			sim.airMode(self.placesave_size_.airmode)
 		end
 		self.placesave_size_ = nil
@@ -3720,8 +3721,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 					local y = sim.signs[i].screenY
 					local w = sim.signs[i].width + 1
 					local h = sim.signs[i].height
-					if util.inside_rect(x, y, w, h, self.pos_x_, self.pos_y_) and t:match("^{b|.*}$") then
-						self:report_sparksign_(sim.signs[i].x, sim.signs[i].y)
+					if util.inside_rect(x, y, w, h, self.pos_x_, self.pos_y_) then
+						if t:match("^{b|.*}$") then
+							self:report_sparksign_(sim.signs[i].x, sim.signs[i].y)
+						end
+						if t:match("^{c:[0-9]+|.*}$") then
+							self.placesave_open_ = true
+							self:begin_placesave_size_(100, 100, true)
+						end
 					end
 				end
 			end
@@ -4564,6 +4571,15 @@ require_preload__["tptmp.client.util"] = function()
 		[ from_tool.DEFAULT_UI_WIND ] = true,
 	}
 	
+	local function heat_clear()
+		local temp = sim.ambientAirTemp()
+		for x = 0, sim.XRES / sim.CELL - 1 do
+			for y = 0, sim.YRES / sim.CELL - 1 do
+				sim.ambientHeat(x, y, temp)
+			end
+		end
+	end
+	
 	local function stamp_load(x, y, data, reset)
 		if data == "" then -- * Is this check needed at all?
 			return nil, "no stamp data"
@@ -4575,7 +4591,10 @@ require_preload__["tptmp.client.util"] = function()
 		handle:write(data)
 		handle:close()
 		if reset then
-			sim.clearSim()
+			sim.clearRect(0, 0, sim.XRES, sim.YRES)
+			heat_clear()
+			tpt.reset_velocity()
+			tpt.set_pressure()
 		end
 		local ok, err = sim.loadStamp(config.stamp_temp, x, y)
 		if not ok then
@@ -4989,6 +5008,7 @@ require_preload__["tptmp.client.util"] = function()
 		version_equal = common_util.version_equal,
 		tpt_version = tpt_version,
 		urlencode = urlencode,
+		heat_clear = heat_clear,
 	}
 	
 end
@@ -6301,7 +6321,7 @@ require_preload__["tptmp.common.config"] = function()
 		-- ***********************************************************************
 	
 		-- * Protocol version, between 0 and 254. 255 is reserved for future use.
-		version = 22,
+		version = 23,
 	
 		-- * Client-to-server message size limit, between 0 and 255, the latter
 		--   limit being imposted by the protocol.

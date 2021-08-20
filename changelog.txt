@@ -1,5 +1,5 @@
-Changelog for V25.6 
+Changelog for V25.7
 
-Add new options to topbar.
-Make topbar options save as settings.
-Fix Mod menu not accepting colours if theme was set to pulse mode. 
+Update the TPTMP script
+Internal optimisations.
+Make TPTMP and Script Manager startup errors non fatal.
