@@ -1,6 +1,37 @@
---cracker1000 mod script v4.7--
+--cracker1000 mod script v5.0--
+
+local passvalue = "0"
+local passreal = "12345678"
+
+if MANAGER.getsetting("CRK", "pass") == "1" then
+local passmenu = Window:new(200,150, 200, 100)
+local passok = Button:new(110,75,80,20,"Enter", "Hide.")
+local passtime = Textbox:new(70, 30, 55, 20, '', 'Password..')
+
+function passglit()
+graphics.drawText(220,160,"Please Enter Password to continue", 2,255,0,255)
+graphics.drawText(200,260,"Message in Mod thread if you forget password.", 255,2,0,255)
+ui.showWindow(passmenu)
+end
+
+passmenu:onDraw(passglit)
+passmenu:addComponent(passok)
+passmenu:addComponent(passtime)
+tpt.register_step(passglit)
+
+passok:action(function(sender)
+if passtime:text() == MANAGER.getsetting("CRK", "passreal") then
+tpt.unregister_step(passglit)
+ui.closeWindow(passmenu)
+else 
+passtime:text("  Wrong!")
+end
+end)
+
+end
+
 local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
-local newmenu = Window:new(-15,-15, 610, 295)
+local newmenu = Window:new(-15,-15, 595, 295)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
@@ -45,20 +76,21 @@ local mp4 = Button:new(290,152,75,20,"Forest", "Change the theme to Green")
 local mp7 = Button:new(290,172,75,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(290,192,75,20,"Pulse", "RBG makes everything better.")
 local mp9 = Button:new(290,212,75,20,"Custom", "Custom options.")
-local als = Label:new(491,198, 10, 15, "Alpha")
-local rl = Label:new(486, 218, 10, 15, "Red")
-local gl = Label:new(490, 238, 10, 15, "Green")
+
+local als = Label:new(491,225, 10, 15, "Alpha")
+local rl = Label:new(486, 236, 10, 15, "Red")
+local gl = Label:new(490, 247, 10, 15, "Green")
 local bl = Label:new(488, 258, 10, 15, "Blue")
 
-local aSlider = Slider:new(373, 196, 100, 15, 255)
-local rSlider = Slider:new(373, 216, 100, 15, 255)
-local gSlider = Slider:new(373, 236, 100, 15, 255)
-local bSlider = Slider:new(373, 256, 100, 15, 255)
+local aSlider = Slider:new(373, 225, 100, 15, 255)
+local rSlider = Slider:new(373, 236, 100, 15, 255)
+local gSlider = Slider:new(373, 247, 100, 15, 255)
+local bSlider = Slider:new(373, 258, 100, 15, 255)
 
-local alb = Label:new(520,196,10, 15)
-local rlb = Label:new(520, 216, 10, 15)
-local glb = Label:new(520, 236, 10, 15)
-local blb = Label:new(520, 256, 10, 15)
+local alb = Label:new(520,225,10, 15)
+local rlb = Label:new(520, 236, 10, 15)
+local glb = Label:new(520, 247, 10, 15)
+local blb = Label:new(520, 258, 10, 15)
 
 local mpop = Button:new(385,274,75,15,"Done", "Custom options.")
 
@@ -86,7 +118,7 @@ local remtime = Textbox:new(293, 255, 80, 15, '', 'Time in min.')
 remtime:text("10")
 local remon2 = Button:new(333,272,40,20,"On", "Save.")
 local remoff  = Button:new(293,272,40,20,"Off", "Cancel.")
-local remlabel = Label:new(373, 2, 10, 15, "Reminder is on 10 mins")
+local remlabel = Label:new(375, 2, 10, 15, "Reminder set for10 mins")
 local remlabel21 = Label:new(413, 255, 20, 15, "Time in min. (0-60)")
 
 local fancur = Button:new(396,28,80,30, "Crosshair", "Draws graphics around cursor.")
@@ -96,12 +128,16 @@ local Help = Button:new(396,60,80,30, "Random save", "Opens random save.")
 
 local shrt = Button:new(396,92,80,30, "Toggle J Key", "Turns off the J key shortcut")
 local shrtlb = Label:new(485, 98, 10, 15, "ON")
+
 local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
 
 local perfm = Button:new(396,156,80,30, "Performance", "For lower spec systems.")
 local perlab = Label:new(485, 162, 10, 15, "OFF")
 
-local hide= Button:new(528,273,80,20, "Close Menu", "Hide.")
+local passbut = Button:new(396,188,80,30, "Password", "Secure password protection.")
+local passbutlab = Label:new(485, 195, 10, 15, "OFF")
+
+local hide= Button:new(573,273,20,20, "X", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -126,6 +162,7 @@ newmenu:removeComponent(Help)
 newmenu:removeComponent(shrt)
 newmenu:removeComponent(edito)
 newmenu:removeComponent(perfm)
+newmenu:removeComponent(passbut)
 end
 
 function clearsb()
@@ -175,6 +212,53 @@ end
 
 local perfmv = "1"
 local fpsval = "1"
+
+passbut:action(function(sender)
+fs.makeDirectory("scripts")
+
+clearsb()
+if MANAGER.getsetting("CRK", "passreal") == nil then
+MANAGER.savesetting("CRK","passreal","12345678")
+end
+
+local passmen = Window:new(-15,-15, 610, 300)
+local pasmenmsg = Label:new(173,5,120, 10," Welcome to the Password Manager. Note: Password can be 08 character long, choose it carefully!")
+local pasmenmsg2 = Label:new(35,100,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
+local pasmenmsg3 = Label:new(80,285,120, 10,"Do not use your account password as game password!")
+local doned2 = Button:new(110,31,80,30, "Set password", "Save")
+local doned3 = Button:new(290,280,80,15, "Close", "Close")
+local doned4 = Button:new(40,125,80,30, "Pass ON", "Save ON")
+local doned5 = Button:new(40,165,80,30, "Pass OFF", "Save OFF")
+local passtime2 = Textbox:new(40, 30, 55, 30, '', 'Password..')
+
+ui.showWindow(passmen)
+passmen:addComponent(pasmenmsg)
+passmen:addComponent(pasmenmsg2)
+passmen:addComponent(pasmenmsg3)
+passmen:addComponent(doned2)
+passmen:addComponent(doned3)
+passmen:addComponent(doned4)
+passmen:addComponent(doned5)
+passmen:addComponent(passtime2)
+
+doned2 :action(function(sender)
+MANAGER.savesetting("CRK", "passreal",passtime2:text())
+pasmenmsg2:text("Current Password: "..MANAGER.getsetting("CRK","passreal"))
+end)
+doned3 :action(function(sender)
+ui.closeWindow(passmen)
+end)
+
+doned4 :action(function(sender)
+MANAGER.savesetting("CRK", "pass","1")
+passbutlab:text("ON")
+end)
+
+doned5 :action(function(sender)
+MANAGER.savesetting("CRK", "pass","0")
+passbutlab:text("OFF")
+end)
+end)
 
 perfm:action(function(sender)
 clearsb()
@@ -438,7 +522,7 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2731295)
+randsav = math.random(1,2661203)
 sim.loadSave(randsav, 0) 
 end)
 
@@ -534,7 +618,7 @@ event.register(event.tick,remindme)
 newmenu:addComponent(remlabel)
 newmenu:removeComponent(remoff)
 newmenu:removeComponent(remlabel21)
-remlabel:text("Reminder is on "..entimey.." mins.")
+remlabel:text("Reminder set for "..entimey.." mins.")
 end)
 
 
@@ -1106,7 +1190,10 @@ end)
 end)
 
 local barlength = "1"
+local uival = "1"
+
 function theme()
+if uival == "1" then
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
 ab = MANAGER.getsetting("CRK", "ab")
@@ -1125,12 +1212,12 @@ if barval == nil then
 tpt.fillrect(1,0,610,3, ar,ag,ab,al)
 end
 
-if barval ~= "4" then
+if barval ~= "4" and uival == "1" then
 
 if barval == "1" then
 
 if tonumber(barlength) <= 202 then
-barlength = barlength + "2"
+barlength = barlength + "5"
 end
 tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, ar,ag,ab,al)
 
@@ -1138,10 +1225,10 @@ elseif barval == "2" then
 tpt.fillrect(1,0,610,3, ar,ag,ab,al)
 
 elseif barval == "3" then
-if tonumber(barlength) <= 294 then
-barlength = barlength + "2"
+if tonumber(barlength) <= 297 then
+barlength = barlength + "1"
 end
-if tonumber(barlength) >= 290 then
+if tonumber(barlength) >= 296 then
 barlength = "1"
 end
 tpt.fillrect(tonumber(barlength),0,tonumber(barlength)+ 20,3, ar,ag,ab,al)
@@ -1185,11 +1272,12 @@ tpt.drawline(613,343,627,343,ar,ag,ab,al)
 tpt.drawline(613,359,627,359,ar,ag,ab,al)
 tpt.drawline(613,375,627,375,ar,ag,ab,al)
 tpt.drawline(613,391,627,391,ar,ag,ab,al)
-
+end
 end
 
 frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function colourblender()
+ if uival == "1" then 
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 al = 220
 else
@@ -1237,7 +1325,7 @@ if barval ~= "4" then
 if barval == "1" then
 
 if tonumber(barlength) <= 202 then
-barlength = barlength + "2"
+barlength = barlength + "5"
 end
 tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
@@ -1245,10 +1333,10 @@ elseif barval == "2" then
 tpt.fillrect(1,0,610,3,colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "3" then
-if tonumber(barlength) <= 294 then
-barlength = barlength + "2"
+if tonumber(barlength) <= 297 then
+barlength = barlength + "1"
 end
-if tonumber(barlength) >= 290 then
+if tonumber(barlength) >= 296 then
 barlength = "1"
 end
 tpt.fillrect(tonumber(barlength),0,tonumber(barlength)+ 20,3, colourRED,colourGRN,colourBLU,al)
@@ -1296,13 +1384,13 @@ tpt.drawline(613,359,627,359,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(613,375,627,375,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(613,391,627,391,colourRED,colourGRN,colourBLU,al)
 end
+end
 
 function mpnolag()
 if perlab:text() == "OFF" then
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 end
-barlength = 1
 event.unregister(event.tick,colourblender)
 end
 
@@ -1373,7 +1461,6 @@ MANAGER.savesetting("CRK","savergb",1)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
 event.unregister(event.tick,theme)
-barlength = 1
 clearsb()
 end)
 
@@ -1395,8 +1482,8 @@ end
 
 function drawprev()
 
-graphics.drawRect(558,218,24,24,255,255,255,255)
-graphics.fillRect(560,220,20,20,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+graphics.drawRect(558,238,24,24,255,255,255,255)
+graphics.fillRect(560,240,20,20,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
 end
 newmenu:onDraw(drawprev)
 
@@ -1457,6 +1544,12 @@ end)
 
 function startupcheck()
 interface.addComponent(toggle)
+
+if MANAGER.getsetting("CRK", "pass") == "1" then
+passbutlab:text("ON")
+passvalue = "1"
+end
+
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 event.register(event.tick,theme)
 else
@@ -1520,13 +1613,12 @@ tpt.fillrect(-1,382,616,42,0,0,0,255)
 tpt.fillrect(612,0,17,424,0,0,0,255)
 end
 
-local uival = "1"
-local unhd = Button:new(315,1,40,20, "Unhide", "Unhides The Interface.")
+local unhd = Button:new(315,1,40,20, "Show", "Unhides the interface.")
+
 unhd:action(function(sender)
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
 uival = "1"
-barval = "0"
 dellb:text("Shown")
 interface.removeComponent(unhd)
 end)
@@ -1538,7 +1630,6 @@ event.unregister(event.tick,UIhide)
 event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
-barval = "1"
 interface.removeComponent(unhd)
 interface.addComponent(unhd)
 dellb:text("Hidden")
@@ -1637,11 +1728,11 @@ if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 theme()
 graphics.drawLine(7, 18,314,18,ar,ag,ab,al)
-graphics.drawRect(1,1, 610, 295,ar,ag,ab,120)
+graphics.drawRect(1,1, 595, 295,ar,ag,ab,110)
 else
 colourblender()
 graphics.drawLine(7, 18,314,18,colourRED,colourGRN,colourBLU,al)
-graphics.drawRect(1,1, 610, 295,colourRED,colourGRN,colourBLU,120)
+graphics.drawRect(1,1, 595, 295,colourRED,colourGRN,colourBLU,110)
 end
 end
 backg()
@@ -1685,6 +1776,8 @@ newmenu:addComponent(autolb)
 newmenu:addComponent(edito)
 newmenu:addComponent(perfm)
 newmenu:addComponent(perlab)
+newmenu:addComponent(passbut)
+newmenu:addComponent(passbutlab)
 end
 
 hide:action(function(sender)

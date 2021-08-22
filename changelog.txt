@@ -1,5 +1,9 @@
-Changelog for V25.7
+Changelog for V25.8
+Add password protection:
+Note: Please set the password very carefully! Do not use the account password as your game password.
+Contact me via PM or in mod thread if you are unable to enter game.
 
-Update the TPTMP script
-Internal optimisations.
-Make TPTMP and Script Manager startup errors non fatal.
+Fix ui hide option not hiding the top bar.
+Optimise top bar animations.
+Make custom theme options and close menu button a bit more compact.
+Update tpt libraries.
