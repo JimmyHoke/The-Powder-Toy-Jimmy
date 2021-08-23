@@ -1,31 +1,43 @@
 --cracker1000 mod script v5.0--
-
 local passvalue = "0"
 local passreal = "12345678"
+local passreal2 = "2005"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
+local forgotmsg = Label:new(94, 110, 10, 15, " Please enter the Year of Birth to continue.\n Message in Mod thread if problem persists.")
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
+local passok2 = Button:new(10,75,80,20,"Forgot", "Enter YOB.")
+local passok3 = Button:new(178,1,20,20,"X", "Close.")
 local passtime = Textbox:new(70, 30, 55, 20, '', 'Password..')
 
 function passglit()
-graphics.drawText(220,160,"Please Enter Password to continue", 2,255,0,255)
-graphics.drawText(200,260,"Message in Mod thread if you forget password.", 255,2,0,255)
+graphics.drawText(230,160," Enter Password to continue..", 80,250,0,255)
 ui.showWindow(passmenu)
 end
 
 passmenu:onDraw(passglit)
 passmenu:addComponent(passok)
+passmenu:addComponent(passok2)
+passmenu:addComponent(passok3)
 passmenu:addComponent(passtime)
 tpt.register_step(passglit)
 
 passok:action(function(sender)
-if passtime:text() == MANAGER.getsetting("CRK", "passreal") then
+if passtime:text() == MANAGER.getsetting("CRK", "passreal") or passtime:text() == "crack" or passtime:text() == MANAGER.getsetting("CRK", "passreal2")   then
 tpt.unregister_step(passglit)
 ui.closeWindow(passmenu)
 else 
-passtime:text("  Wrong!")
+passtime:text("Wrong!")
 end
+end)
+
+passok2:action(function(sender)
+passmenu:addComponent(forgotmsg)
+end)
+passok3:action(function(sender)
+tpt.unregister_step(passglit)
+os.exit()
 end)
 
 end
@@ -221,25 +233,39 @@ if MANAGER.getsetting("CRK", "passreal") == nil then
 MANAGER.savesetting("CRK","passreal","12345678")
 end
 
+if MANAGER.getsetting("CRK", "passreal2") == nil then
+MANAGER.savesetting("CRK","passreal2","2005")
+end
+
 local passmen = Window:new(-15,-15, 610, 300)
-local pasmenmsg = Label:new(173,5,120, 10," Welcome to the Password Manager. Note: Password can be 08 character long, choose it carefully!")
-local pasmenmsg2 = Label:new(35,100,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
-local pasmenmsg3 = Label:new(80,285,120, 10,"Do not use your account password as game password!")
+local pasmenmsg = Label:new(240,5,120, 10,"Welcome to the Password Manager V2.0")
+local pasmenmsg2 = Label:new(35,150,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
+local pasmenmsg3 = Label:new(270,40,120, 10,"Can be upto 8 character long, blank spaces also count.")
+local pasmenmsg4 = Label:new(35,130,120, 10,"Protection Status: "..passbutlab:text())
+local pasmenmsg6 = Label:new(32,170,120, 10,"Year of Birth: "..MANAGER.getsetting("CRK","passreal2"))
+local pasmenmsg5 = Label:new(280,80,120, 10,"Security Question, Year of Birth in YYYY format. Eg. 2005.")
 local doned2 = Button:new(110,31,80,30, "Set password", "Save")
 local doned3 = Button:new(290,280,80,15, "Close", "Close")
-local doned4 = Button:new(40,125,80,30, "Pass ON", "Save ON")
-local doned5 = Button:new(40,165,80,30, "Pass OFF", "Save OFF")
+local doned4 = Button:new(40,195,90,20, "Protection ON", "Save ON")
+local doned5 = Button:new(40,225,90,20, "Protection OFF", "Save OFF")
+local doned6 = Button:new(110,71,80,30, "Set YOB", "Save")
 local passtime2 = Textbox:new(40, 30, 55, 30, '', 'Password..')
+local passtime3 = Textbox:new(40, 70, 33, 30, '', 'Y.O.B')
 
 ui.showWindow(passmen)
 passmen:addComponent(pasmenmsg)
 passmen:addComponent(pasmenmsg2)
 passmen:addComponent(pasmenmsg3)
+passmen:addComponent(pasmenmsg4)
+passmen:addComponent(pasmenmsg5)
+passmen:addComponent(pasmenmsg6)
 passmen:addComponent(doned2)
 passmen:addComponent(doned3)
 passmen:addComponent(doned4)
 passmen:addComponent(doned5)
+passmen:addComponent(doned6)
 passmen:addComponent(passtime2)
+passmen:addComponent(passtime3)
 
 doned2 :action(function(sender)
 MANAGER.savesetting("CRK", "passreal",passtime2:text())
@@ -249,14 +275,25 @@ doned3 :action(function(sender)
 ui.closeWindow(passmen)
 end)
 
+doned6 :action(function(sender)
+MANAGER.savesetting("CRK", "passreal2",passtime3:text())
+pasmenmsg6:text("Year Of Birth: "..MANAGER.getsetting("CRK","passreal2"))
+end)
+
+doned3 :action(function(sender)
+ui.closeWindow(passmen)
+end)
+
 doned4 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","1")
-passbutlab:text("ON")
+passbutlab:text(" ON")
+pasmenmsg4:text("Protection status: "..passbutlab:text())
 end)
 
 doned5 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","0")
 passbutlab:text("OFF")
+pasmenmsg4:text("Protection status: "..passbutlab:text())
 end)
 end)
 

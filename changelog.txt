@@ -1,9 +1,6 @@
-Changelog for V25.8
-Add password protection:
-Note: Please set the password very carefully! Do not use the account password as your game password.
-Contact me via PM or in mod thread if you are unable to enter game.
+Changelog for V25.9
 
-Fix ui hide option not hiding the top bar.
-Optimise top bar animations.
-Make custom theme options and close menu button a bit more compact.
-Update tpt libraries.
+Improved password protection:
+It now asks for a security question if you forget the password.
+Adds an option to quit game if fast quit was disabled. Fixes bug where tpt wont close if password was wrong
+This is it for now, going to take a break from development for sometime. Keep suggesting new ideas tho :P
