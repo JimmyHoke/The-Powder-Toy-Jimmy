@@ -2,7 +2,7 @@
 #include "Config.h"
 const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
-"\bw                                            Welcome To The Cracker1000's Mod \n"
+"\bw                                            Welcome To The Jimmy's Mod \n"
 "\bo                                           |-----------------------------------|\n"
 "                                                   \bwVer. 25.4 \bo||\bw TPT 96.1"
 "\bo\n\n   Instructions:                        \n"
@@ -16,4 +16,4 @@ const char *const introTextData =
 "\br *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same.\n"
 "\n"
 "\br   Press Any Key (except power) To Continue...\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-"\bg   Credits: \bw@Cracker1000, \br@Maticzpl\bw, \bt@Jacob1.";
+"\bg   Credits: \bw@Jimmy Hoke.  Uses Cracker1000 \bw@Cracker1000, \br@Maticzpl\bw, \bt@Jacob1.";

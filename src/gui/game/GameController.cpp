@@ -638,6 +638,21 @@ bool GameController::KeyPress(int key, int scan, bool repeat, bool shift, bool c
 			{
 				sim->player.comm = (int)(sim->player.comm)|0x04;
 			}
+			// Regenerate Command
+			else if (key == SDLK_r && ((int)(sim->player.comm) & 0x50) != 0x50)
+			{
+				sim->player.comm = (int)(sim->player.comm) | 0x50;
+			}
+			// Immortal Command
+			else if (key == SDLK_i && ((int)(sim->player.comm) & 0x51) != 0x51)
+			{
+				sim->player.comm = (int)(sim->player.comm) | 0x51;
+			}
+			// Boots Command
+			else if (key == SDLK_t && ((int)(sim->player.comm) & 0x52) != 0x52)
+			{
+				sim->player.comm = (int)(sim->player.comm) | 0x52;
+			}
 		}
 
 		// Go right command
