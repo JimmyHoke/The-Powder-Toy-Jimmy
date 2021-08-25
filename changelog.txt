@@ -1,6 +1,6 @@
-Changelog for V25.4
-Note: Windows defender likes to flag tpt whenever a new version gets released. Simply ignore such false positives.
+Changelog for V25.9
 
-Fix TURB
-Merge with master
-Add New graphics to BFLM
+Improved password protection:
+It now asks for a security question if you forget the password.
+Adds an option to quit game if fast quit was disabled. Fixes bug where tpt wont close if password was wrong
+This is it for now, going to take a break from development for sometime. Keep suggesting new ideas tho :P

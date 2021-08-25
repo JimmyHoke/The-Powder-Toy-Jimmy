@@ -34,7 +34,7 @@ void Element::Element_BFLM()
 
 	DefaultProperties.temp = R_TEMP + 400.0f + 273.15f;
 	HeatConduct = 88;
-	Description = "Black Flames, unstoppable flames that eat everything in its way including VIRS!";
+	Description = "Black Flames, unstoppable flames that eat everything in its way (except DMRN).";
 
 	Properties = TYPE_GAS | PROP_LIFE_DEC | PROP_LIFE_KILL;
 
@@ -66,7 +66,7 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 				int r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (TYP(r) && TYP(r) != PT_BFLM)
+				if (TYP(r) && TYP(r) != PT_BFLM && TYP(r) != PT_DMRN)
 				{
 					parts[i].tmp = 5;
 					if (RNG::Ref().chance(1, 13))
@@ -88,14 +88,14 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*firer = 140;
 	}
 	else {
-		*colr = 20;
-		*firer = 30;
+		*colr = 10;
+		*firer = 10;
 	}
 	*firea = 200;
-	*fireb = 30;
-	*fireg = 30;
-	*colg = 20;
-	*colb = 20;
+	*fireb = 10;
+	*fireg = 10;
+	*colg = 10;
+	*colb = 10;
 	*pixel_mode |= FIRE_BLEND;
 	*pixel_mode |= FIRE_ADD;
 	return 0;

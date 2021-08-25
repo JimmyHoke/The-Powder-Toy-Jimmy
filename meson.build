@@ -53,7 +53,7 @@ endif
 
 uopt_static = get_option('static')
 use_tpt_libs = 'no'
-tpt_libs_vtag = 'v20210712201911'
+tpt_libs_vtag = 'v20210822114001'
 if uopt_static == 'system'
 	if copt_platform == 'win'
 		error('no way to find static system libraries on windows')
@@ -233,6 +233,10 @@ if copt_platform == 'win'
 		foreach input_and_output : tpt_libs.get_variable('config_dlls')
 			configure_file(input: input_and_output[0], output: input_and_output[1], copy: true)
 		endforeach
+	endif
+elif copt_platform == 'lin'
+	if uopt_static != 'none'
+		project_link_args = [ '-static-libgcc', '-static-libstdc++' ]
 	endif
 endif
 

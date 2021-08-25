@@ -8,7 +8,7 @@ void Element::Element_TURB()
 	Name = "TURB";
 	Colour = PIXPACK(0x505050);
 	MenuVisible = 1;
-	MenuSection = SC_SPECIAL;
+	MenuSection = SC_FORCE;
 	Enabled = 1;
 
 	Advection = 0.0f;
