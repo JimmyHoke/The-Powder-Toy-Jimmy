@@ -1597,17 +1597,14 @@ else
 MANAGER.savesetting("CRK", "brightness",200)
 end
 
-if MANAGER.getsetting("CRK", "barval") == "1" then
+if MANAGER.getsetting("CRK", "barval") == "4" then
+barlb:text(" OFF")
+
+elseif MANAGER.getsetting("CRK", "barval") == "1" then
 barlb:text(" Short")
 
 elseif MANAGER.getsetting("CRK", "barval") == "2" then
 barlb:text(" Long")
-
-elseif MANAGER.getsetting("CRK", "barval") == "3" then
-barlb:text(" Move")
-
-elseif MANAGER.getsetting("CRK", "barval") == "4" then
-barlb:text(" OFF")
 end
 
 end
@@ -1693,6 +1690,8 @@ uival = "1"
 rulval = "1"
 hidval = "1"
 barval = "2"
+passvalue = "0"
+passbutlab:text("OFF")
 autolb:text("OFF")
 perlab:text("OFF")
 shrtlb:text("ON")
@@ -1713,11 +1712,14 @@ newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabe)
 brlabel:text("Turned: off")
 brightSlider:value("200")
+MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
 MANAGER.savesetting("CRK","hidestate", "0")
 MANAGER.savesetting("CRK", "fancurs","0")
 MANAGER.savesetting("CRK", "barval", "2")
+MANAGER.savesetting("CRK", "passreal","12345678")
+MANAGER.savesetting("CRK", "passreal2","DMND")
 tpt.hud(1)
 ui.closeWindow(newmenu) 
 hideyes()

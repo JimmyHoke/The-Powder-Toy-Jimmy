@@ -8,7 +8,7 @@ const char *const introTextData =
 "\bo\n\n   Instructions:                        \n"
 "\br *\bw There's a new \bl'Settings'\bw button near Tags, press it to open the Mod menu.\n"
 "\br *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"
-"\br *\bw Please use the passwords carefully. Don't forget to set YOB.\n"
+"\br *\bw Please set the password carefully. Don't forget to set security question.\n"
 "\br *\bw The Mod features an in-built 'Texter' and an Element editor.\n"
 "\br *\bw There's also an offline WIKI for mod elements, make sure to check it out.\n"
 "\br *\bw You can unhide all the hidden elements using 'Hidden elements' option.\n"

@@ -4,7 +4,7 @@ end, __newindex = function(_, key)
 	error("__newindex on env: " .. tostring(key), 2)
 end})
 local _ENV = env__
-if setfenv then
+if rawget(_G, "setfenv") then
 	setfenv(1, env__)
 end
 
@@ -43,6 +43,8 @@ require_preload__["tptmp.client"] = function()
 		loadtime_error = "outdated socket API"
 	elseif tpt.version.jacob1s_mod and not tpt.tab_menu then
 		loadtime_error = "mod version not supported"
+	elseif tpt.version.mobilemajor then
+		loadtime_error = "platform not supported"
 	end
 	
 	local config      =                        require("tptmp.client.config")
@@ -65,16 +67,40 @@ require_preload__["tptmp.client"] = function()
 			end
 		end
 		if loadtime_error then
-			print(config.print_prefix .. "Cannot load: " .. loadtime_error)
+			print("TPTMP " .. config.versionstr .. ": Cannot load: " .. loadtime_error)
 			return
 		end
 	
 		local hooks_enabled = false
+		local window_status = "hidden"
+		local window_hide_mode = "hidden"
+		local function set_floating(floating)
+			window_hide_mode = floating and "floating" or "hidden"
+		end
+		local function get_window_status()
+			return window_status
+		end
 		local TPTMP = {
 			version = config.version,
 			versionStr = config.versionstr,
-			chatHidden = true,
 		}
+		local hide_window, show_window, begin_chat
+		setmetatable(TPTMP, { __newindex = function(tbl, key, value)
+			if key == "chatHidden" then
+				if value then
+					hide_window()
+				else
+					show_window()
+				end
+				return
+			end
+			rawset(tbl, key, value)
+		end, __index = function(tbl, key)
+			if key == "chatHidden" then
+				return window_status ~= "shown"
+			end
+			return rawset(tbl, key)
+		end })
 		rawset(_G, "TPTMP", TPTMP)
 	
 		local current_id, current_hist = util.get_save_id()
@@ -84,6 +110,7 @@ require_preload__["tptmp.client"] = function()
 		local function get_id()
 			return current_id, current_hist
 		end
+	
 		local quickauth = manager.get("quickauthToken", "")
 		local function set_qa(qa)
 			quickauth = qa
@@ -92,11 +119,17 @@ require_preload__["tptmp.client"] = function()
 		local function get_qa()
 			return quickauth
 		end
+	
+		local function log_event(text)
+			print(text)
+		end
+	
 		local should_reconnect_at
 		local cli
 		local prof = profile.new({
 			set_id_func = set_id,
 			get_id_func = get_id,
+			log_event_func = log_event,
 			registered_func = function()
 				return cli and cli:registered()
 			end
@@ -105,6 +138,7 @@ require_preload__["tptmp.client"] = function()
 		local should_reconnect = false
 		local function kill_client()
 			win:set_subtitle("status", "Not connected")
+			cli:fps_sync(false)
 			cli:stop()
 			if should_reconnect then
 				should_reconnect = false
@@ -113,35 +147,39 @@ require_preload__["tptmp.client"] = function()
 			end
 			cli = nil
 		end
-		local function hide_window()
-			TPTMP.chatHidden = true
+		function begin_chat()
+			show_window()
+			win.hide_when_chat_done = true
+		end
+		function hide_window()
+			window_status = window_hide_mode
 			win.in_focus = false
 		end
-		local function window_hidden()
-			return TPTMP.chatHidden
-		end
-		local function show_window()
+		function show_window()
 			if not hooks_enabled then
 				TPTMP.enableMultiplayer()
 			end
-			TPTMP.chatHidden = false
+			window_status = "shown"
 			win:backlog_bump_marker()
 			win.in_focus = true
 		end
 		win = window.new({
 			hide_window_func = hide_window,
-			window_hidden_func = window_hidden,
+			window_status_func = get_window_status,
+			log_event_func = log_event,
 			client_func = function()
 				return cli and cli:registered() and cli
 			end,
 			localcmd_parse_func = function(str)
 				return cmd:parse(str)
 			end,
-			placing_zoom_func = function(str)
-				return prof:placing_zoom()
+			should_ignore_mouse_func = function(str)
+				return prof:should_ignore_mouse()
 			end,
 		})
 		local cmd = localcmd.new({
+			window_status_func = get_window_status,
+			window_set_floating_func = set_floating,
 			client_func = function()
 				return cli and cli:registered() and cli
 			end,
@@ -153,6 +191,7 @@ require_preload__["tptmp.client"] = function()
 				params.get_id_func = get_id
 				params.set_qa_func = set_qa
 				params.get_qa_func = get_qa
+				params.log_event_func = log_event
 				params.should_reconnect_func = function()
 					should_reconnect = true
 				end
@@ -178,7 +217,8 @@ require_preload__["tptmp.client"] = function()
 			end,
 			show_window_func = show_window,
 			hide_window_func = hide_window,
-			window_hidden_func = window_hidden,
+			begin_chat_func = begin_chat,
+			window_status_func = get_window_status,
 			sync_func = function()
 				cmd:parse("/sync")
 			end,
@@ -218,7 +258,7 @@ require_preload__["tptmp.client"] = function()
 				cmd:parse("/reconnect")
 			end
 			if grab_drop_text_input then
-				grab_drop_text_input(not TPTMP.chatHidden)
+				grab_drop_text_input(window_status == "shown")
 			end
 			if cli then
 				cli:tick()
@@ -240,7 +280,7 @@ require_preload__["tptmp.client"] = function()
 						local tool = member.last_tool or member.tool_l
 						local tool_name = util.to_tool[tool] or decode_rulestring(tool) or "TPTMP_PT_UNKNOWN"
 						local tool_class = util.xid_class[tool]
-						if elem[tool_name] and tool ~= 0 then
+						if elem[tool_name] and tool ~= 0 and tool_name ~= "TPTMP_PT_UNKNOWN" then
 							local real_name = elem.property(elem[tool_name], "Name")
 							if real_name ~= "" then
 								tool_name = real_name
@@ -259,7 +299,7 @@ require_preload__["tptmp.client"] = function()
 							local repl_tool = member.tool_x
 							repl_tool_name = util.to_tool[repl_tool] or "TPTMP_PT_UNKNOWN"
 							local repl_tool_class = util.xid_class[repl_tool]
-							if elem[repl_tool_name] and repl_tool ~= 0 then
+							if elem[repl_tool_name] and repl_tool ~= 0 and repl_tool_name ~= "TPTMP_PT_UNKNOWN" then
 								local real_name = elem.property(elem[repl_tool_name], "Name")
 								if real_name ~= "" then
 									repl_tool_name = real_name
@@ -343,7 +383,7 @@ require_preload__["tptmp.client"] = function()
 					end
 				end
 			end
-			if not TPTMP.chatHidden and win:handle_tick() then
+			if window_status ~= "hidden" and win:handle_tick() then
 				return false
 			end
 			if sbtn:handle_tick() then
@@ -359,7 +399,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_mousedown(px, py, button)
-			if not TPTMP.chatHidden and win:handle_mousedown(px, py, button) then
+			if window_status == "shown" and win:handle_mousedown(px, py, button) then
 				return false
 			end
 			if sbtn:handle_mousedown(px, py, button) then
@@ -371,7 +411,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_mouseup(px, py, button, reason)
-			if not TPTMP.chatHidden and win:handle_mouseup(px, py, button, reason) then
+			if window_status == "shown" and win:handle_mouseup(px, py, button, reason) then
 				return false
 			end
 			if sbtn:handle_mouseup(px, py, button, reason) then
@@ -383,7 +423,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_mousewheel(px, py, dir)
-			if not TPTMP.chatHidden and win:handle_mousewheel(px, py, dir) then
+			if window_status == "shown" and win:handle_mousewheel(px, py, dir) then
 				return false
 			end
 			if sbtn:handle_mousewheel(px, py, dir) then
@@ -395,7 +435,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_keypress(key, scan, rep, shift, ctrl, alt)
-			if not TPTMP.chatHidden and win:handle_keypress(key, scan, rep, shift, ctrl, alt) then
+			if window_status == "shown" and win:handle_keypress(key, scan, rep, shift, ctrl, alt) then
 				return false
 			end
 			if sbtn:handle_keypress(key, scan, rep, shift, ctrl, alt) then
@@ -407,7 +447,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_keyrelease(key, scan, rep, shift, ctrl, alt)
-			if not TPTMP.chatHidden and win:handle_keyrelease(key, scan, rep, shift, ctrl, alt) then
+			if window_status == "shown" and win:handle_keyrelease(key, scan, rep, shift, ctrl, alt) then
 				return false
 			end
 			if sbtn:handle_keyrelease(key, scan, rep, shift, ctrl, alt) then
@@ -419,7 +459,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_textinput(text)
-			if not TPTMP.chatHidden and win:handle_textinput(text) then
+			if window_status == "shown" and win:handle_textinput(text) then
 				return false
 			end
 			if sbtn:handle_textinput(text) then
@@ -431,7 +471,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_textediting(text)
-			if not TPTMP.chatHidden and win:handle_textediting(text) then
+			if window_status == "shown" and win:handle_textediting(text) then
 				return false
 			end
 			if sbtn:handle_textediting(text) then
@@ -443,7 +483,7 @@ require_preload__["tptmp.client"] = function()
 		end
 	
 		local function handle_blur()
-			if not TPTMP.chatHidden and win:handle_blur() then
+			if window_status == "shown" and win:handle_blur() then
 				return false
 			end
 			if sbtn:handle_blur() then
@@ -511,7 +551,6 @@ require_preload__["tptmp.client.client"] = function()
 	local util        = require("tptmp.client.util")
 	local format      = require("tptmp.client.format")
 	
-	local log_event = print
 	local can_yield_xpcall = coroutine.resume(coroutine.create(function()
 		assert(pcall(coroutine.yield))
 	end))
@@ -742,9 +781,9 @@ require_preload__["tptmp.client.client"] = function()
 		local data = self:read_str24_()
 		local ok, err = util.stamp_load(0, 0, data, true)
 		if ok then
-			log_event(config.print_prefix .. colours.commonstr.event .. "Sync from " .. member.formatted_nick)
+			self.log_event_func_(colours.commonstr.event .. "Sync from " .. member.formatted_nick)
 		else
-			log_event(config.print_prefix .. colours.commonstr.error .. "Failed to sync from " .. member.formatted_nick .. colours.commonstr.error .. ": " .. err)
+			self.log_event_func_(colours.commonstr.error .. "Failed to sync from " .. member.formatted_nick .. colours.commonstr.error .. ": " .. err)
 		end
 	end
 	
@@ -754,9 +793,9 @@ require_preload__["tptmp.client.client"] = function()
 		local data = self:read_str24_()
 		local ok, err = util.stamp_load(x, y, data, false)
 		if ok then
-			log_event(config.print_prefix .. colours.commonstr.event .. "Stamp from " .. member.formatted_nick) -- * Not really needed thanks to the stamp intent displays in init.lua.
+			self.log_event_func_(colours.commonstr.event .. "Stamp from " .. member.formatted_nick) -- * Not really needed thanks to the stamp intent displays in init.lua.
 		else
-			log_event(config.print_prefix .. colours.commonstr.error .. "Failed to paste stamp from " .. member.formatted_nick .. colours.commonstr.error .. ": " .. err)
+			self.log_event_func_(colours.commonstr.error .. "Failed to paste stamp from " .. member.formatted_nick .. colours.commonstr.error .. ": " .. err)
 		end
 	end
 	
@@ -884,12 +923,12 @@ require_preload__["tptmp.client.client"] = function()
 			end
 			if desc.func() ~= value then
 				desc.func(value)
-				log_event(config.print_prefix .. colours.commonstr.event .. desc.format:format(desc.states[value + 1], member.formatted_nick))
+				self.log_event_func_(colours.commonstr.event .. desc.format:format(desc.states[value + 1], member.formatted_nick))
 			end
 		end
 		if util.ambient_air_temp() ~= temp then
 			local set = util.ambient_air_temp(temp)
-			log_event(config.print_prefix .. colours.commonstr.event .. ("Ambient air temperature set to %.2f by %s"):format(set, member.formatted_nick))
+			self.log_event_func_(colours.commonstr.event .. ("Ambient air temperature set to %.2f by %s"):format(set, member.formatted_nick))
 		end
 		self.profile_:sample_simstate()
 	end
@@ -1008,20 +1047,20 @@ require_preload__["tptmp.client.client"] = function()
 		local member = self:member_prefix_()
 		tpt.set_pause(1)
 		sim.framerender(1)
-		log_event(config.print_prefix .. colours.commonstr.event .. "Single-frame step from " .. member.formatted_nick)
+		self.log_event_func_(colours.commonstr.event .. "Single-frame step from " .. member.formatted_nick)
 	end
 	
 	function client_i:handle_sparkclear_60_()
 		local member = self:member_prefix_()
 		tpt.reset_spark()
-		log_event(config.print_prefix .. colours.commonstr.event .. "Sparks cleared by " .. member.formatted_nick)
+		self.log_event_func_(colours.commonstr.event .. "Sparks cleared by " .. member.formatted_nick)
 	end
 	
 	function client_i:handle_airclear_61_()
 		local member = self:member_prefix_()
 		tpt.reset_velocity()
 		tpt.set_pressure()
-		log_event(config.print_prefix .. colours.commonstr.event .. "Pressure cleared by " .. member.formatted_nick)
+		self.log_event_func_(colours.commonstr.event .. "Pressure cleared by " .. member.formatted_nick)
 	end
 	
 	function client_i:handle_airinv_62_()
@@ -1032,21 +1071,21 @@ require_preload__["tptmp.client.client"] = function()
 				sim.pressure(x, y, -sim.pressure(x, y))
 			end
 		end
-		log_event(config.print_prefix .. colours.commonstr.event .. "Pressure inverted by " .. member.formatted_nick)
+		self.log_event_func_(colours.commonstr.event .. "Pressure inverted by " .. member.formatted_nick)
 	end
 	
 	function client_i:handle_clearsim_63_()
 		local member = self:member_prefix_()
 		sim.clearSim()
 		self.set_id_func_(nil, nil)
-		log_event(config.print_prefix .. colours.commonstr.event .. "Simulation cleared by " .. member.formatted_nick)
+		self.log_event_func_(colours.commonstr.event .. "Simulation cleared by " .. member.formatted_nick)
 	end
 	
 	function client_i:handle_heatclear_64_()
 		-- * TODO[api]: add an api for this to tpt
 		local member = self:member_prefix_()
 		util.heat_clear()
-		log_event(config.print_prefix .. colours.commonstr.event .. "Ambient heat reset by " .. member.formatted_nick)
+		self.log_event_func_(colours.commonstr.event .. "Ambient heat reset by " .. member.formatted_nick)
 	end
 	
 	function client_i:handle_brushdeco_65_()
@@ -1079,7 +1118,7 @@ require_preload__["tptmp.client.client"] = function()
 			sim.loadSave(id, 1, hist)
 			coroutine.yield() -- * sim.loadSave seems to take effect one frame late.
 			self.set_id_func_(id, hist)
-			log_event(config.print_prefix .. colours.commonstr.event .. "Online save " .. (hist == 0 and "id" or "history") .. ":" .. id .. " loaded by " .. member.formatted_nick)
+			self.log_event_func_(colours.commonstr.event .. "Online save " .. (hist == 0 and "id" or "history") .. ":" .. id .. " loaded by " .. member.formatted_nick)
 		end
 	end
 	
@@ -1088,7 +1127,7 @@ require_preload__["tptmp.client.client"] = function()
 		if self.get_id_func_() then
 			sim.reloadSave()
 		end
-		log_event(config.print_prefix .. colours.commonstr.event .. "Simulation reloaded by " .. member.formatted_nick)
+		self.log_event_func_(colours.commonstr.event .. "Simulation reloaded by " .. member.formatted_nick)
 	end
 	
 	function client_i:handle_placestatus_71_()
@@ -1162,7 +1201,9 @@ require_preload__["tptmp.client.client"] = function()
 			if self.fps_sync_count_ then
 				member.fps_sync_count_offset = count - self.fps_sync_count_
 			end
-			self.window_:backlog_push_fpssync_enable(member.formatted_nick)
+			if self.fps_sync_ then
+				self.window_:backlog_push_fpssync_enable(member.formatted_nick)
+			end
 		end
 		member.fps_sync_last = now_msec
 		member.fps_sync_elapsed = elapsed
@@ -1251,7 +1292,7 @@ require_preload__["tptmp.client.client"] = function()
 				self.window_:backlog_push_error("Warning: " .. auth_err)
 			end
 			self.window_:backlog_push_registered(self.formatted_nick_)
-			self.profile_.client = self
+			self.profile_:set_client(self)
 		elseif conn_status == 0 then
 			local reason = self:read_nullstr_(255)
 			self:proto_close_(auth_err or reason)
@@ -1458,14 +1499,14 @@ require_preload__["tptmp.client.client"] = function()
 	function client_i:send_pastestamp(x, y, w, h)
 		local ok, err = self:send_pastestamp_data_("\31", x, y, w, h)
 		if not ok then
-			log_event(config.print_prefix .. colours.commonstr.error .. "Failed to send stamp: " .. err)
+			self.log_event_func_(colours.commonstr.error .. "Failed to send stamp: " .. err)
 		end
 	end
 	
 	function client_i:send_sync()
 		local ok, err = self:send_pastestamp_data_("\30", 0, 0, sim.XRES, sim.YRES)
 		if not ok then
-			log_event(config.print_prefix .. colours.commonstr.error .. "Failed to send screen: " .. err)
+			self.log_event_func_(colours.commonstr.error .. "Failed to send screen: " .. err)
 		end
 	end
 	
@@ -1575,7 +1616,7 @@ require_preload__["tptmp.client.client"] = function()
 				end
 				if closed then
 					self:tick_resume_()
-					self:stop("connection closed")
+					self:stop("connection closed: receive failed: " .. tostring(self.socket_:lasterror()))
 					break
 				end
 				if #data < config.read_size then
@@ -1625,7 +1666,7 @@ require_preload__["tptmp.client.client"] = function()
 				local written = written_up_to - first + 1
 				self.tx_:pop(written)
 				if closed then
-					self:stop("connection closed")
+					self:stop("connection closed: send failed: " .. tostring(self.socket_:lasterror()))
 					break
 				end
 				if written < count then
@@ -1672,7 +1713,9 @@ require_preload__["tptmp.client.client"] = function()
 	end
 	
 	function client_i:fps_sync_end_(member)
-		self.window_:backlog_push_fpssync_disable(member.formatted_nick)
+		if self.fps_sync_ then
+			self.window_:backlog_push_fpssync_disable(member.formatted_nick)
+		end
 		member.fps_sync = false
 	end
 	
@@ -1762,7 +1805,7 @@ require_preload__["tptmp.client.client"] = function()
 		if self.status_ == "dead" then
 			return
 		end
-		self.profile_.client = nil
+		self.profile_:clear_client()
 		if self.socket_ then
 			if self.connected_ then
 				self.socket_:shutdown()
@@ -1914,6 +1957,7 @@ require_preload__["tptmp.client.client"] = function()
 			get_id_func_ = params.get_id_func,
 			set_qa_func_ = params.set_qa_func,
 			get_qa_func_ = params.get_qa_func,
+			log_event_func_ = params.log_event_func,
 			should_reconnect_func_ = params.should_reconnect_func,
 			should_not_reconnect_func_ = params.should_not_reconnect_func,
 			id_to_member = {},
@@ -1993,7 +2037,7 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = { 90,  90, 90 },
+			border     = { 90, 90, 90 },
 		},
 		active = {
 			background = { 255, 255, 255 },
@@ -2016,6 +2060,8 @@ require_preload__["tptmp.client.config"] = function()
 
 	local common_config = require("tptmp.common.config")
 	
+	local versionstr = "v2.0.20"
+	
 	local config = {
 		-- ***********************************************************************
 		-- *** The following options are purely cosmetic and should be         ***
@@ -2023,7 +2069,7 @@ require_preload__["tptmp.client.config"] = function()
 		-- ***********************************************************************
 	
 		-- * Version string to display in the window title.
-		versionstr = "2.0",
+		versionstr = versionstr,
 	
 		-- * Amount of incoming messages to remember, counted from the
 		--   last one received.
@@ -2035,7 +2081,7 @@ require_preload__["tptmp.client.config"] = function()
 	
 		-- * Default window width. Overridden by the value loaded from the manager
 		--   backend, if any.
-		default_width = 211,
+		default_width = 230,
 	
 		-- * Default window height. Similar to default_width.
 		default_height = 155,
@@ -2044,7 +2090,7 @@ require_preload__["tptmp.client.config"] = function()
 		default_alpha = 150,
 	
 		-- * Minimum window width.
-		min_width = 150,
+		min_width = 160,
 	
 		-- * Minimum window height.
 		min_height = 107,
@@ -2057,8 +2103,13 @@ require_preload__["tptmp.client.config"] = function()
 		--   and the position where it settles.
 		notif_fly_distance = 3,
 	
-		-- * Prefix for messages logged.
-		print_prefix = "\bt[TPTMP]\bw ",
+		-- * Amount of time in seconds that elapses between a message arriving and
+		--   it beginning to fade out if the window is floating.
+		floating_linger_time = 3,
+	
+		-- * Amount of time in seconds that elapses between a message beginning to
+		--   fade out and disappearing completely if the window is floating.
+		floating_fade_time = 1,
 	
 	
 		-- ***********************************************************************
@@ -2254,9 +2305,13 @@ require_preload__["tptmp.client.localcmd"] = function()
 					local cli = localcmd.client_func_()
 					if cli then
 						cli:send_sync()
-						localcmd.window_:backlog_push_neutral("* Simulation synchronized")
+						if localcmd.window_status_func_() ~= "hidden" then
+							localcmd.window_:backlog_push_neutral("* Simulation synchronized")
+						end
 					else
-						localcmd.window_:backlog_push_error("Not connected, cannot sync")
+						if localcmd.window_status_func_() ~= "hidden" then
+							localcmd.window_:backlog_push_error("Not connected, cannot sync")
+						end
 					end
 					return true
 				end,
@@ -2309,6 +2364,33 @@ require_preload__["tptmp.client.localcmd"] = function()
 					return false
 				end,
 				help = "/fpssync on [targetfps]\\check\\off: enables or disables FPS synchronization with those in the room who also have it enabled; targetfps defaults to the current FPS cap",
+			},
+			floating = {
+				func = function(localcmd, message, words, offsets)
+					local cli = localcmd.client_func_()
+					if words[2] == "on" then
+						localcmd.floating_ = true
+						localcmd.window_set_floating_func_(true)
+						manager.set("floating", "on")
+						localcmd.window_:backlog_push_neutral("* Floating mode enabled")
+						return true
+					elseif words[2] == "check" or not words[2] then
+						if localcmd.floating_ then
+							localcmd.window_:backlog_push_neutral("* Floating mode currenly enabled")
+						else
+							localcmd.window_:backlog_push_neutral("* Floating mode currenly disabled")
+						end
+						return true
+					elseif words[2] == "off" then
+						localcmd.floating_ = false
+						localcmd.window_set_floating_func_(false)
+						manager.set("floating", "false")
+						localcmd.window_:backlog_push_neutral("* Floating mode disabled")
+						return true
+					end
+					return false
+				end,
+				help = "/floating on\\check\\off: enables or disables floating mode: messages are drawn even when the window is hidden; chat shortcut is T",
 			},
 			connect = {
 				macro = function(localcmd, message, words, offsets)
@@ -2504,9 +2586,13 @@ require_preload__["tptmp.client.localcmd"] = function()
 			reconnect = nil
 		end
 		local fps_sync = parse_fps_sync(manager.get("fpsSync", "0"))
+		local floating = manager.get("floating", "off") == "on"
 		local cmd = setmetatable({
 			fps_sync_ = fps_sync,
+			floating_ = floating,
 			reconnect_ = reconnect,
+			window_status_func_ = params.window_status_func,
+			window_set_floating_func_ = params.window_set_floating_func,
 			client_func_ = params.client_func,
 			new_client_func_ = params.new_client_func,
 			kill_client_func_ = params.kill_client_func,
@@ -2514,6 +2600,7 @@ require_preload__["tptmp.client.localcmd"] = function()
 			window_ = params.window,
 		}, localcmd_m)
 		cmd.window_:nick_colour_seed(cmd.nick_colour_seed_)
+		cmd.window_set_floating_func_(floating)
 		return cmd
 	end
 	
@@ -2620,7 +2707,7 @@ require_preload__["tptmp.client.profile.jacobs"] = function()
 	
 	function profile_i:handle_mousedown(px, py, button)
 		if self.client and (tpt.tab_menu() == 1 or self.kmod_c_) and px >= sim.XRES and py < 116 and not self.kmod_a_ then
-			vanilla.log_event(config.print_prefix .. "The tab menu is disabled because it does not sync (press the Alt key to override)")
+			self.log_event_func_(config.print_prefix .. "The tab menu is disabled because it does not sync (press the Alt key to override)")
 			return true
 		end
 		return vanilla.profile_i.handle_mousedown(self, px, py, button)
@@ -2683,8 +2770,6 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		cgol      = "This custom GOL type is not supported, please avoid using it while connected",
 		cgolcolor =  "Custom GOL currently syncs without colours, use /sync to get colours across",
 	}
-	
-	local log_event = print
 	
 	local BRUSH_COUNT = 3
 	local MOUSEUP_REASON_MOUSEUP = 0
@@ -2761,54 +2846,60 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		end
 	end
 	
-	local function save_and_kill_zero()
-		local zero = { [ sim.FIELD_TYPE ] = sim.partProperty(0, "type") }
-		for _, v in ipairs(props) do
-			zero[v] = sim.partProperty(0, v)
+	local function stash_part()
+		local id = sim.parts()()
+		local x, y, info
+		if id then
+			x, y = sim.partPosition(id)
+			x, y = math.floor(x + 0.5), math.floor(y + 0.5)
+			id = sim.partID(x, y)
+			local ty = sim.partProperty(id, "type")
+			if ty then
+				info = { [ sim.FIELD_TYPE ] = ty }
+				for _, v in ipairs(props) do
+					info[v] = sim.partProperty(id, v)
+				end
+			else
+				info = false
+			end
+			sim.partProperty(id, "type", elem.DEFAULT_PT_ELEC)
+		else
+			x, y = 0, 0
+			id = sim.partCreate(-3, x, y, elem.DEFAULT_PT_ELEC)
 		end
-		sim.partKill(0)
-		return zero
+		return id, info, x, y
 	end
 	
-	local function restore_zero(zero)
-		if sim.partCreate(-3, 0, 0, 1) ~= 0 then
-			error("something is very wrong")
+	local function unstash_part(id, info)
+		if info == nil then
+			return
 		end
-		sim.partProperty(0, "type", zero[sim.FIELD_TYPE])
+		if not info then
+			sim.partKill(id)
+			return
+		end
+		sim.partProperty(id, "type", info[sim.FIELD_TYPE])
 		for _, v in ipairs(props) do
-			sim.partProperty(0, v, zero[v])
+			sim.partProperty(id, v, info[v])
 		end
 	end
 	
 	local function brush_mode()
 		-- * TODO[api]: add an api for this to tpt
-		local id = sim.partCreate(-3, 0, 0, elem.DEFAULT_PT_ELEC)
-		local zero
+		local id, stashed, x, y = stash_part()
 		local bmode = 0
-		if id == -1 then
-			zero = save_and_kill_zero()
-			id = sim.partCreate(-3, 0, 0, elem.DEFAULT_PT_ELEC)
-			if id ~= 0 then
-				restore_zero(zero)
-				error("something is very wrong")
-			end
-		end
 		local selectedreplace = tpt.selectedreplace
 		tpt.selectedreplace = "DEFAULT_PT_ELEC"
-		sim.createParts(0, 0, 0, 0, elem.DEFAULT_PT_PROT, 0)
+		sim.createParts(x, y, 0, 0, elem.DEFAULT_PT_PROT, 0)
 		local new_type = sim.partProperty(id, "type")
 		if not new_type then
+			assert(sim.partCreate(-3, x, y, elem.DEFAULT_PT_DMND) == id)
 			bmode = 2
 		elseif new_type == elem.DEFAULT_PT_PROT then
 			bmode = 1
 		end
 		tpt.selectedreplace = selectedreplace
-		if new_type then
-			sim.partKill(id)
-		end
-		if zero then
-			restore_zero(zero)
-		end
+		unstash_part(id, stashed)
 		return bmode
 	end
 	
@@ -2818,74 +2909,74 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	end
 	
 	function profile_i:report_loadonline_(id, hist)
-		if self.client then
-			self.client:send_loadonline(id, hist)
+		if self.client_ then
+			self.client_:send_loadonline(id, hist)
 		end
 	end
 	
 	function profile_i:report_pos_()
-		if self.client then
-			self.client:send_mousepos(self.pos_x_, self.pos_y_)
+		if self.client_ then
+			self.client_:send_mousepos(self.pos_x_, self.pos_y_)
 		end
 	end
 	
 	function profile_i:report_size_()
-		if self.client then
-			self.client:send_brushsize(self.size_x_, self.size_y_)
+		if self.client_ then
+			self.client_:send_brushsize(self.size_x_, self.size_y_)
 		end
 	end
 	
 	function profile_i:report_zoom_()
-		if self.client then
+		if self.client_ then
 			if self.zenabled_ then
-				self.client:send_zoomstart(self.zcx_, self.zcy_, self.zsize_)
+				self.client_:send_zoomstart(self.zcx_, self.zcy_, self.zsize_)
 			else
-				self.client:send_zoomend()
+				self.client_:send_zoomend()
 			end
 		end
 	end
 	
 	function profile_i:report_bmode_()
-		if self.client then
-			self.client:send_brushmode(self.bmode_)
+		if self.client_ then
+			self.client_:send_brushmode(self.bmode_)
 		end
 	end
 	
 	function profile_i:report_shape_()
-		if self.client then
-			self.client:send_brushshape(self.shape_ < BRUSH_COUNT and self.shape_ or 0)
+		if self.client_ then
+			self.client_:send_brushshape(self.shape_ < BRUSH_COUNT and self.shape_ or 0)
 		end
 	end
 	
 	function profile_i:report_sparksign_(x, y)
-		if self.client then
-			self.client:send_sparksign(x, y)
+		if self.client_ then
+			self.client_:send_sparksign(x, y)
 		end
 	end
 	
 	function profile_i:report_flood_(i, x, y)
-		if self.client then
-			self.client:send_flood(i, x, y)
+		if self.client_ then
+			self.client_:send_flood(i, x, y)
 		end
 	end
 	
 	function profile_i:report_lineend_(x, y)
 		self.lss_i_ = nil
-		if self.client then
-			self.client:send_lineend(x, y)
+		if self.client_ then
+			self.client_:send_lineend(x, y)
 		end
 	end
 	
 	function profile_i:report_rectend_(x, y)
 		self.rss_i_ = nil
-		if self.client then
-			self.client:send_rectend(x, y)
+		if self.client_ then
+			self.client_:send_rectend(x, y)
 		end
 	end
 	
 	function profile_i:sync_linestart_(i, x, y)
-		if self.client and self.lss_i_ then
-			self.client:send_linestart(self.lss_i_, self.lss_x_, self.lss_y_)
+		if self.client_ and self.lss_i_ then
+			self.client_:send_linestart(self.lss_i_, self.lss_x_, self.lss_y_)
 		end
 	end
 	
@@ -2893,14 +2984,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		self.lss_i_ = i
 		self.lss_x_ = x
 		self.lss_y_ = y
-		if self.client then
-			self.client:send_linestart(i, x, y)
+		if self.client_ then
+			self.client_:send_linestart(i, x, y)
 		end
 	end
 	
 	function profile_i:sync_rectstart_(i, x, y)
-		if self.client and self.rss_i_ then
-			self.client:send_rectstart(self.rss_i_, self.rss_x_, self.rss_y_)
+		if self.client_ and self.rss_i_ then
+			self.client_:send_rectstart(self.rss_i_, self.rss_x_, self.rss_y_)
 		end
 	end
 	
@@ -2908,14 +2999,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		self.rss_i_ = i
 		self.rss_x_ = x
 		self.rss_y_ = y
-		if self.client then
-			self.client:send_rectstart(i, x, y)
+		if self.client_ then
+			self.client_:send_rectstart(i, x, y)
 		end
 	end
 	
 	function profile_i:sync_pointsstart_()
-		if self.client and self.pts_i_ then
-			self.client:send_pointsstart(self.pts_i_, self.pts_x_, self.pts_y_)
+		if self.client_ and self.pts_i_ then
+			self.client_:send_pointsstart(self.pts_i_, self.pts_x_, self.pts_y_)
 		end
 	end
 	
@@ -2923,14 +3014,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		self.pts_i_ = i
 		self.pts_x_ = x
 		self.pts_y_ = y
-		if self.client then
-			self.client:send_pointsstart(i, x, y)
+		if self.client_ then
+			self.client_:send_pointsstart(i, x, y)
 		end
 	end
 	
 	function profile_i:report_pointscont_(x, y, done)
-		if self.client then
-			self.client:send_pointscont(x, y)
+		if self.client_ then
+			self.client_:send_pointscont(x, y)
 		end
 		self.pts_x_ = x
 		self.pts_y_ = y
@@ -2940,73 +3031,73 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	end
 	
 	function profile_i:report_kmod_()
-		if self.client then
-			self.client:send_keybdmod(self.kmod_c_, self.kmod_s_, self.kmod_a_)
+		if self.client_ then
+			self.client_:send_keybdmod(self.kmod_c_, self.kmod_s_, self.kmod_a_)
 		end
 	end
 	
 	function profile_i:report_framestep_()
-		if self.client then
-			self.client:send_stepsim()
+		if self.client_ then
+			self.client_:send_stepsim()
 		end
 	end
 	
 	function profile_i:report_airinvert_()
-		if self.client then
-			self.client:send_airinv()
+		if self.client_ then
+			self.client_:send_airinv()
 		end
 	end
 	
 	function profile_i:report_reset_spark_()
-		if self.client then
-			self.client:send_sparkclear()
+		if self.client_ then
+			self.client_:send_sparkclear()
 		end
 	end
 	
 	function profile_i:report_reset_air_()
-		if self.client then
-			self.client:send_airclear()
+		if self.client_ then
+			self.client_:send_airclear()
 		end
 	end
 	
 	function profile_i:report_reset_airtemp_()
-		if self.client then
-			self.client:send_heatclear()
+		if self.client_ then
+			self.client_:send_heatclear()
 		end
 	end
 	
 	function profile_i:report_clearrect_(x, y, w, h)
-		if self.client then
-			self.client:send_clearrect(x, y, w, h)
+		if self.client_ then
+			self.client_:send_clearrect(x, y, w, h)
 		end
 	end
 	
 	function profile_i:report_clearsim_()
-		if self.client then
-			self.client:send_clearsim()
+		if self.client_ then
+			self.client_:send_clearsim()
 		end
 	end
 	
 	function profile_i:report_reloadsim_()
-		if self.client then
-			self.client:send_reloadsim()
+		if self.client_ then
+			self.client_:send_reloadsim()
 		end
 	end
 	
 	function profile_i:simstate_sync()
-		if self.client then
-			self.client:send_simstate(self.ss_p_, self.ss_h_, self.ss_u_, self.ss_n_, self.ss_w_, self.ss_g_, self.ss_a_, self.ss_e_, self.ss_y_, self.ss_t_)
+		if self.client_ then
+			self.client_:send_simstate(self.ss_p_, self.ss_h_, self.ss_u_, self.ss_n_, self.ss_w_, self.ss_g_, self.ss_a_, self.ss_e_, self.ss_y_, self.ss_t_)
 		end
 	end
 	
 	function profile_i:report_tool_(index)
-		if self.client then
-			self.client:send_selecttool(index, self[index_to_lrax[index]])
+		if self.client_ then
+			self.client_:send_selecttool(index, self[index_to_lrax[index]])
 			local identifier = self[index_to_lraxid[index]]
 			if identifier:find("^DEFAULT_PT_LIFECUST_") then
 				local ruleset, primary, secondary = get_custgolinfo(identifier)
 				if ruleset then
-					self.client:send_custgolinfo(ruleset, primary, secondary)
+					self.client_:send_custgolinfo(ruleset, primary, secondary)
 					-- * TODO[api]: add an api for setting gol colour
 					self.display_toolwarn_["cgolcolor"] = true
 				else
@@ -3017,14 +3108,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	end
 	
 	function profile_i:report_deco_()
-		if self.client then
-			self.client:send_brushdeco(self.deco_)
+		if self.client_ then
+			self.client_:send_brushdeco(self.deco_)
 		end
 	end
 	
 	function profile_i:sync_placestatus_()
-		if self.client and self.pes_k_ ~= 0 then
-			self.client:send_placestatus(self.pes_k_, self.pes_w_, self.pes_h_)
+		if self.client_ and self.pes_k_ ~= 0 then
+			self.client_:send_placestatus(self.pes_k_, self.pes_w_, self.pes_h_)
 		end
 	end
 	
@@ -3032,14 +3123,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		self.pes_k_ = k
 		self.pes_w_ = w
 		self.pes_h_ = h
-		if self.client then
-			self.client:send_placestatus(k, w, h)
+		if self.client_ then
+			self.client_:send_placestatus(k, w, h)
 		end
 	end
 	
 	function profile_i:sync_selectstatus_()
-		if self.client and self.sts_k_ ~= 0 then
-			self.client:send_selectstatus(self.sts_k_, self.sts_x_, self.sts_y_)
+		if self.client_ and self.sts_k_ ~= 0 then
+			self.client_:send_selectstatus(self.sts_k_, self.sts_x_, self.sts_y_)
 		end
 	end
 	
@@ -3047,20 +3138,20 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		self.sts_k_ = k
 		self.sts_x_ = x
 		self.sts_y_ = y
-		if self.client then
-			self.client:send_selectstatus(k, x, y)
+		if self.client_ then
+			self.client_:send_selectstatus(k, x, y)
 		end
 	end
 	
 	function profile_i:report_pastestamp_(x, y, w, h)
-		if self.client then
-			self.client:send_pastestamp(x, y, w, h)
+		if self.client_ then
+			self.client_:send_pastestamp(x, y, w, h)
 		end
 	end
 	
 	function profile_i:report_canceldraw_()
-		if self.client then
-			self.client:send_canceldraw()
+		if self.client_ then
+			self.client_:send_canceldraw()
 		end
 	end
 	
@@ -3109,12 +3200,12 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	function profile_i:post_event_check_()
 		if self.placesave_postmsg_ then
 			local partcount = self.placesave_postmsg_.partcount
-			if partcount and partcount ~= sim.NUM_PARTS and self.registered_func_() then
+			if partcount and (partcount ~= sim.NUM_PARTS or sim.NUM_PARTS == sim.XRES * sim.YRES) and self.registered_func_() then
 				-- * TODO[api]: get rid of all of this nonsense once redo-ui lands
-				if self.client then
-					self.client:send_sync()
+				if self.client_ then
+					self.client_:send_sync()
 				end
-				-- log_event(config.print_prefix .. "If you just pasted something, you will have to use /sync")
+				-- self.log_event_func_("If you just pasted something, you will have to use /sync")
 			end
 			self.placesave_postmsg_ = nil
 		end
@@ -3417,27 +3508,18 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	
 	local preshack_prof
 	local preshack_elem
-	local preshack_zero
-	local function preshack_graphics(i)
+	local preshack_stashed
+	local function preshack_graphics(id)
 		preshack_prof:post_event_check_()
-		sim.partKill(i)
-		if preshack_zero then
-			restore_zero(preshack_zero)
-			preshack_zero = nil
-		end
+		unstash_part(id, preshack_stashed)
+		preshack_stashed = nil
 		return 0, 0
 	end
 	
 	function profile_i:begin_placesave_size_(x, y, aux_button)
-		local id = sim.partCreate(-3, 0, 0, preshack_elem)
-		if id == -1 then
-			preshack_zero = save_and_kill_zero()
-			id = sim.partCreate(-3, 0, 0, preshack_elem)
-			if id ~= 0 then
-				restore_zero(preshack_zero)
-				error("something is very wrong")
-			end
-		end
+		local id, x, y
+		id, preshack_stashed, x, y = stash_part()
+		sim.partProperty(id, "type", preshack_elem)
 		local bx, by = math.floor(x / 4), math.floor(y / 4)
 		local p = 0
 		local pres = {}
@@ -3630,7 +3712,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 				if next(self.display_toolwarn_) then
 					if self.registered_func_() then
 						for key in pairs(self.display_toolwarn_) do
-							log_event(config.print_prefix .. toolwarn_messages[key])
+							self.log_event_func_(toolwarn_messages[key])
 						end
 					end
 					self.display_toolwarn_ = {}
@@ -3645,7 +3727,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 				end
 				if self.draw_mode_ == "flood" then
 					if util.xid_class[self[index_to_lrax[self.last_toolslot_]]] == "DECOR" and self.registered_func_() then
-						log_event(config.print_prefix .. "Decoration flooding does not sync, you will have to use /sync")
+						self.log_event_func_("Decoration flooding does not sync, you will have to use /sync")
 					end
 					self:report_flood_(self.last_toolslot_, self.pos_x_, self.pos_y_)
 				end
@@ -3726,8 +3808,10 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 							self:report_sparksign_(sim.signs[i].x, sim.signs[i].y)
 						end
 						if t:match("^{c:[0-9]+|.*}$") then
-							self.placesave_open_ = true
-							self:begin_placesave_size_(100, 100, true)
+							if self.client_ then
+								self.placesave_open_ = true
+								self:begin_placesave_size_(100, 100, true)
+							end
 						end
 					end
 				end
@@ -3742,7 +3826,9 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 				if reason == MOUSEUP_REASON_MOUSEUP then
 					local x, y, w, h = util.corners_to_rect(self.sel_x1_, self.sel_y1_, self.sel_x2_, self.sel_y2_)
 					if self.select_mode_ == "place" then
-						self:begin_placesave_size_(x, y)
+						if self.client_ then
+							self:begin_placesave_size_(x, y)
+						end
 					elseif self.select_mode_ == "copy" then
 						self.clipsize_x_ = w
 						self.clipsize_y_ = h
@@ -3849,14 +3935,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 			self.simstate_invalid_ = true
 		elseif scan == sdl.SDL_SCANCODE_GRAVE then
 			if self.registered_func_() and not alt then
-				log_event(config.print_prefix .. "The console is disabled because it does not sync (press the Alt key to override)")
+				self.log_event_func_("The console is disabled because it does not sync (press the Alt key to override)")
 				return true
 			end
 		elseif scan == sdl.SDL_SCANCODE_Z then
 			if self.select_mode_ == "none" or not self.dragging_mouse_ then
 				if ctrl and not self.dragging_mouse_ then
 					if self.registered_func_() and not alt then
-						log_event(config.print_prefix .. "Undo is disabled because it does not sync (press the Alt key to override)")
+						self.log_event_func_("Undo is disabled because it does not sync (press the Alt key to override)")
 						return true
 					end
 				else
@@ -3870,7 +3956,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		elseif scan == sdl.SDL_SCANCODE_F and not ctrl then
 			if ren.debugHUD() == 1 and (shift or alt) then
 				if self.registered_func_() and not alt then
-					log_event(config.print_prefix .. "Partial framesteps do not sync, you will have to use /sync")
+					self.log_event_func_("Partial framesteps do not sync, you will have to use /sync")
 				end
 			end
 			self:report_framestep_()
@@ -3880,7 +3966,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		elseif scan == sdl.SDL_SCANCODE_Y then
 			if ctrl then
 				if self.registered_func_() and not alt then
-					log_event(config.print_prefix .. "Redo is disabled because it does not sync (press the Alt key to override)")
+					self.log_event_func_("Redo is disabled because it does not sync (press the Alt key to override)")
 					return true
 				end
 			else
@@ -3931,10 +4017,14 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		elseif scan == sdl.SDL_SCANCODE_I and not ctrl then
 			self:report_airinvert_()
 		elseif scan == sdl.SDL_SCANCODE_SEMICOLON then
-			self.bmode_invalid_ = true
+			if self.client_ then
+				self.bmode_invalid_ = true
+			end
 		end
 		if key == sdl.SDLK_INSERT or key == sdl.SDLK_DELETE then
-			self.bmode_invalid_ = true
+			if self.client_ then
+				self.bmode_invalid_ = true
+			end
 		end
 	end
 	
@@ -3987,23 +4077,39 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		self.draw_mode_ = "points"
 	end
 	
-	function profile_i:placing_zoom()
-		return self.placing_zoom_
+	function profile_i:should_ignore_mouse()
+		return self.placing_zoom_ or self.select_mode_ ~= "none"
 	end
 	
 	function profile_i:button_open_()
-		self.placesave_open_ = true
-		self:begin_placesave_size_(100, 100, true)
+		if self.client_ then
+			self.placesave_open_ = true
+			self:begin_placesave_size_(100, 100, true)
+		end
 	end
 	
 	function profile_i:button_reload_()
-		self.placesave_reload_ = true
-		self:begin_placesave_size_(100, 100, true)
+		if self.client_ then
+			self.placesave_reload_ = true
+			self:begin_placesave_size_(100, 100, true)
+		end
 	end
 	
 	function profile_i:button_clear_()
-		self.placesave_clear_ = true
-		self:begin_placesave_size_(100, 100, true)
+		if self.client_ then
+			self.placesave_clear_ = true
+			self:begin_placesave_size_(100, 100, true)
+		end
+	end
+	
+	function profile_i:set_client(client)
+		self.client_ = client
+		self.bmode_invalid_ = true
+		self.set_id_func_(util.get_save_id())
+	end
+	
+	function profile_i:clear_client()
+		self.client_ = nil
 	end
 	
 	local function new(params)
@@ -4023,6 +4129,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 			stk2_out_ = false,
 			perfect_circle_invalid_ = true,
 			registered_func_ = params.registered_func,
+			log_event_func_ = params.log_event_func,
 			set_id_func_ = params.set_id_func,
 			get_id_func_ = params.get_id_func,
 			display_toolwarn_ = {},
@@ -4048,10 +4155,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		prof:update_shape_()
 		prof:update_zoom_()
 		prof:check_signs({})
-		if not elem.TPTMP_PT_VANILLAPRESHACK then
-			assert(elem.allocate("TPTMP", "VANILLAPRESHACK") ~= -1, "out of element IDs")
-		end
-		preshack_elem = elem.TPTMP_PT_VANILLAPRESHACK
+		preshack_elem = util.alloc_utility_element("VANILLAPRESHACK")
 		elem.property(preshack_elem, "Graphics", preshack_graphics)
 		preshack_prof = prof
 		return prof
@@ -4061,7 +4165,6 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		new = new,
 		brand = "vanilla",
 		profile_i = profile_i,
-		log_event = log_event,
 	}
 	
 end
@@ -4080,6 +4183,7 @@ require_preload__["tptmp.client.sdl"] = function()
 	    SDL_SCANCODE_N            =  17,
 	    SDL_SCANCODE_R            =  21,
 	    SDL_SCANCODE_S            =  22,
+	    SDL_SCANCODE_T            =  23,
 	    SDL_SCANCODE_U            =  24,
 	    SDL_SCANCODE_V            =  25,
 	    SDL_SCANCODE_W            =  26,
@@ -4141,7 +4245,7 @@ require_preload__["tptmp.client.side_button"] = function()
 			self.active_ = false
 		end
 		local state
-		if self.active_ or not self.window_hidden_func_() then
+		if self.active_ or self.window_status_func_() == "shown" then
 			state = "active"
 		elseif inside then
 			state = "hover"
@@ -4203,10 +4307,10 @@ require_preload__["tptmp.client.side_button"] = function()
 				if manager.minimize_conflict and not manager.hidden() then
 					manager.print("minimize the manager before opening TPTMP")
 				else
-					if self.window_hidden_func_() then
-						self.show_window_func_()
-					else
+					if self.window_status_func_() == "shown" then
 						self.hide_window_func_()
+					else
+						self.show_window_func_()
 					end
 				end
 				self.active_ = false
@@ -4218,11 +4322,14 @@ require_preload__["tptmp.client.side_button"] = function()
 	end
 	
 	function side_button_i:handle_keypress(key, scan, rep, shift, ctrl, alt)
-		if shift and scan == sdl.SDL_SCANCODE_ESCAPE then
+		if shift and not ctrl and not alt and scan == sdl.SDL_SCANCODE_ESCAPE then
 			self.show_window_func_()
 			return true
-		elseif alt and scan == sdl.SDL_SCANCODE_S then
+		elseif alt and not ctrl and not shift and scan == sdl.SDL_SCANCODE_S then
 			self.sync_func_()
+			return true
+		elseif not alt and not ctrl and not shift and scan == sdl.SDL_SCANCODE_T and self.window_status_func_() == "floating" then
+			self.begin_chat_func_()
 			return true
 		end
 	end
@@ -4270,7 +4377,8 @@ require_preload__["tptmp.client.side_button"] = function()
 			notif_important_func_ = params.notif_important_func,
 			show_window_func_ = params.show_window_func,
 			hide_window_func_ = params.hide_window_func,
-			window_hidden_func_ = params.window_hidden_func,
+			begin_chat_func_ = params.begin_chat_func,
+			window_status_func_ = params.window_status_func,
 			sync_func_ = params.sync_func,
 		}, side_button_m)
 	end
@@ -4400,10 +4508,15 @@ require_preload__["tptmp.client.util"] = function()
 	local config      = require("tptmp.client.config")
 	local common_util = require("tptmp.common.util")
 	
-	if not elem.TPTMP_PT_UNKNOWN then
-		assert(elem.allocate("TPTMP", "UNKNOWN") ~= -1, "out of element IDs")
-		elem.property(elem.TPTMP_PT_UNKNOWN, "MenuSection", 17) -- * TODO[req]: hack, remove
+	local function alloc_utility_element(name)
+		if not elem["TPTMP_PT_" .. name] then
+			assert(elem.allocate("TPTMP", name) ~= -1, "out of element IDs")
+			elem.property(elem["TPTMP_PT_" .. name], "MenuSection", 17) -- * TODO[req]: hack, remove
+			elem.property(elem["TPTMP_PT_" .. name], "Name", "\238\128\163")
+		end
+		return elem["TPTMP_PT_" .. name]
 	end
+	alloc_utility_element("UNKNOWN")
 	
 	local jacobsmod = rawget(_G, "jacobsmod")
 	local from_tool = {}
@@ -5009,6 +5122,7 @@ require_preload__["tptmp.client.util"] = function()
 		tpt_version = tpt_version,
 		urlencode = urlencode,
 		heat_clear = heat_clear,
+		alloc_utility_element = alloc_utility_element,
 	}
 	
 end
@@ -5288,9 +5402,14 @@ require_preload__["tptmp.client.window"] = function()
 		self.backlog_text_ = {}
 		local marker_after
 		for i = 1, #lines do
+			local text_width = gfx.textSize(lines[i].wrapped)
+			local padding = lines[i].needs_padding and wrap_padding or 0
+			local box_width = lines[i].extend_box and self.width_ or (padding + text_width + 10)
 			table.insert(self.backlog_text_, {
-				padding = lines[i].needs_padding and wrap_padding or 0,
+				padding = padding,
+				pushed_at = lines[i].msg.pushed_at,
 				text = lines[i].wrapped,
+				box_width = box_width,
 			})
 			if lines[i].marker then
 				marker_after = i
@@ -5309,6 +5428,7 @@ require_preload__["tptmp.client.window"] = function()
 			prev = self.backlog_last_.prev,
 			next = self.backlog_last_,
 			important = important,
+			pushed_at = socket.gettime(),
 		}
 		self.backlog_last_.prev.next = msg
 		self.backlog_last_.prev = msg
@@ -5431,47 +5551,72 @@ require_preload__["tptmp.client.window"] = function()
 			self:save_window_rect_()
 		end
 	
+		local floating = self.window_status_func_() == "floating"
+		local now = socket.gettime()
+	
 		local border_colour = colours.appearance[self.in_focus and "active" or "inactive"].border
 		local background_colour = colours.appearance.inactive.background
-		gfx.fillRect(self.pos_x_ + 1, self.pos_y_ + 1, self.width_ - 2, self.height_ - 2, background_colour[1], background_colour[2], background_colour[3], self.alpha_)
-		gfx.drawRect(self.pos_x_, self.pos_y_, self.width_, self.height_, unpack(border_colour))
+		if not floating then
+			gfx.fillRect(self.pos_x_ + 1, self.pos_y_ + 1, self.width_ - 2, self.height_ - 2, background_colour[1], background_colour[2], background_colour[3], self.alpha_)
+			gfx.drawRect(self.pos_x_, self.pos_y_, self.width_, self.height_, unpack(border_colour))
 	
-		self:tick_close_()
+			self:tick_close_()
 	
-		local subtitle_blue = 255
-		if #self.input_collect_ > 0 and self.input_last_say_ + config.message_interval >= socket.gettime() then
-			subtitle_blue = 0
+			local subtitle_blue = 255
+			if #self.input_collect_ > 0 and self.input_last_say_ + config.message_interval >= now then
+				subtitle_blue = 0
+			end
+			gfx.drawText(self.pos_x_ + 18, self.pos_y_ + 4, self.subtitle_text_, 255, 255, subtitle_blue)
+	
+			gfx.drawText(self.pos_x_ + self.width_ - self.title_width_ - 17, self.pos_y_ + 4, self.title_)
+			for i = 1, 3 do
+				gfx.drawLine(self.pos_x_ + i * 3 + 1, self.pos_y_ + 3, self.pos_x_ + 3, self.pos_y_ + i * 3 + 1, unpack(border_colour))
+			end
+			gfx.drawLine(self.pos_x_ + 1, self.pos_y_ + 14, self.pos_x_ + self.width_ - 2, self.pos_y_ + 14, unpack(border_colour))
+			gfx.drawLine(self.pos_x_ + 14, self.pos_y_ + 1, self.pos_x_ + 14, self.pos_y_ + 13, unpack(border_colour))
 		end
-		gfx.drawText(self.pos_x_ + 18, self.pos_y_ + 4, self.subtitle_text_, 255, 255, subtitle_blue)
-	
-		gfx.drawText(self.pos_x_ + self.width_ - self.title_width_ - 17, self.pos_y_ + 4, self.title_)
-		for i = 1, 3 do
-			gfx.drawLine(self.pos_x_ + i * 3 + 1, self.pos_y_ + 3, self.pos_x_ + 3, self.pos_y_ + i * 3 + 1, unpack(border_colour))
-		end
-		gfx.drawLine(self.pos_x_ + 1, self.pos_y_ + 14, self.pos_x_ + self.width_ - 2, self.pos_y_ + 14, unpack(border_colour))
-		gfx.drawLine(self.pos_x_ + 14, self.pos_y_ + 1, self.pos_x_ + 14, self.pos_y_ + 13, unpack(border_colour))
 	
 		for i = 1, #self.backlog_text_ do
-			gfx.drawText(self.pos_x_ + 4 + self.backlog_text_[i].padding, self.pos_y_ + self.backlog_text_y_ + i * 12 - 12, self.backlog_text_[i].text)
+			local fades_at = self.backlog_text_[i].pushed_at + config.floating_linger_time + config.floating_fade_time
+			if floating and fades_at > now then
+				local alpha = math.min(1, (fades_at - now) / config.floating_fade_time)
+				gfx.fillRect(self.pos_x_ - 1, self.pos_y_ + self.backlog_text_y_ + i * 12 - 15, self.backlog_text_[i].box_width, self.backlog_text_[i + 1] and 12 or 14, 0, 0, 0, alpha * self.alpha_)
+				if self.backlog_text_[i + 1] and self.backlog_text_[i + 1].box_width < self.backlog_text_[i].box_width then
+					gfx.fillRect(self.pos_x_ - 1 + self.backlog_text_[i + 1].box_width, self.pos_y_ + self.backlog_text_y_ + i * 12 - 3, self.backlog_text_[i].box_width - self.backlog_text_[i + 1].box_width, 2, 0, 0, 0, alpha * self.alpha_)
+				end
+			end
 		end
-		if self.backlog_marker_y_ then
-			gfx.drawLine(self.pos_x_ + 1, self.pos_y_ + self.backlog_marker_y_, self.pos_x_ + self.width_ - 2, self.pos_y_ + self.backlog_marker_y_, 255, 50, 50)
+		for i = 1, #self.backlog_text_ do
+			local fades_at = self.backlog_text_[i].pushed_at + config.floating_linger_time + config.floating_fade_time
+			if not floating or fades_at > now then
+				local alpha = 1
+				if floating then
+					alpha = math.min(1, (fades_at - now) / config.floating_fade_time)
+				end
+				gfx.drawText(self.pos_x_ + 4 + self.backlog_text_[i].padding, self.pos_y_ + self.backlog_text_y_ + i * 12 - 12, self.backlog_text_[i].text, 255, 255, 255, alpha * 255)
+			end
 		end
 	
-		gfx.drawLine(self.pos_x_ + 1, self.pos_y_ + self.height_ - 15, self.pos_x_ + self.width_ - 2, self.pos_y_ + self.height_ - 15, unpack(border_colour))
-		if self.input_has_selection_ then
-			gfx.fillRect(self.pos_x_ + self.input_sel_low_x_ + self.input_scroll_x_, self.pos_y_ + self.height_ - 13, self.input_sel_high_x_ - self.input_sel_low_x_, 11)
-		end
-		gfx.drawText(self.pos_x_ + 4 + self.input_text_1x_, self.pos_y_ + self.height_ - 11, self.input_text_1_)
-		gfx.drawText(self.pos_x_ + 4 + self.input_text_2x_, self.pos_y_ + self.height_ - 11, self.input_text_2_, 0, 0, 0)
-		gfx.drawText(self.pos_x_ + 4 + self.input_text_3x_, self.pos_y_ + self.height_ - 11, self.input_text_3_)
-		if self.in_focus and socket.gettime() % 1 < 0.5 then
-			gfx.drawLine(self.pos_x_ + self.input_cursor_x_ + self.input_scroll_x_, self.pos_y_ + self.height_ - 13, self.pos_x_ + self.input_cursor_x_ + self.input_scroll_x_, self.pos_y_ + self.height_ - 3)
+		if not floating then
+			if self.backlog_marker_y_ then
+				gfx.drawLine(self.pos_x_ + 1, self.pos_y_ + self.backlog_marker_y_, self.pos_x_ + self.width_ - 2, self.pos_y_ + self.backlog_marker_y_, 255, 50, 50)
+			end
+	
+			gfx.drawLine(self.pos_x_ + 1, self.pos_y_ + self.height_ - 15, self.pos_x_ + self.width_ - 2, self.pos_y_ + self.height_ - 15, unpack(border_colour))
+			if self.input_has_selection_ then
+				gfx.fillRect(self.pos_x_ + self.input_sel_low_x_ + self.input_scroll_x_, self.pos_y_ + self.height_ - 13, self.input_sel_high_x_ - self.input_sel_low_x_, 11)
+			end
+			gfx.drawText(self.pos_x_ + 4 + self.input_text_1x_, self.pos_y_ + self.height_ - 11, self.input_text_1_)
+			gfx.drawText(self.pos_x_ + 4 + self.input_text_2x_, self.pos_y_ + self.height_ - 11, self.input_text_2_, 0, 0, 0)
+			gfx.drawText(self.pos_x_ + 4 + self.input_text_3x_, self.pos_y_ + self.height_ - 11, self.input_text_3_)
+			if self.in_focus and now % 1 < 0.5 then
+				gfx.drawLine(self.pos_x_ + self.input_cursor_x_ + self.input_scroll_x_, self.pos_y_ + self.height_ - 13, self.pos_x_ + self.input_cursor_x_ + self.input_scroll_x_, self.pos_y_ + self.height_ - 3)
+			end
 		end
 	end
 	
 	function window_i:handle_mousedown(px, py, button)
-		if self.placing_zoom_func_() then
+		if self.should_ignore_mouse_func_() then
 			return
 		end
 		-- * TODO[opt]: mouse selection
@@ -5510,7 +5655,7 @@ require_preload__["tptmp.client.window"] = function()
 						end
 					end
 					plat.clipboardPaste(table.concat(collect_sane))
-					print(config.print_prefix .. "Message copied to clipboard")
+					self.log_event_func_("Message copied to clipboard")
 				end
 				return true
 			end
@@ -5575,22 +5720,28 @@ require_preload__["tptmp.client.window"] = function()
 		[ sdl.SDL_SCANCODE_RALT   ] = true,
 	}
 	function window_i:handle_keypress(key, scan, rep, shift, ctrl, alt)
-		if not self.in_focus and not self.window_hidden_func_() and scan == sdl.SDL_SCANCODE_RETURN then
+		if not self.in_focus and self.window_status_func_() == "shown" and scan == sdl.SDL_SCANCODE_RETURN then
 			self.in_focus = true
 			return true
 		end
 		if self.in_focus then
-			if scan == sdl.SDL_SCANCODE_ESCAPE then
+			if not ctrl and not alt and scan == sdl.SDL_SCANCODE_ESCAPE then
 				if self.in_focus then
 					self.in_focus = false
 					self.input_autocomplete_ = nil
-					if shift then
+					local force_hide = false
+					if self.hide_when_chat_done then
+						self.hide_when_chat_done = false
+						force_hide = true
+						self:input_reset_()
+					end
+					if shift or force_hide then
 						self.hide_window_func_()
 					end
 				else
 					self.in_focus = true
 				end
-			elseif scan == sdl.SDL_SCANCODE_TAB then
+			elseif not ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_TAB then
 				local left_word_first, left_word
 				local cursor = self.input_cursor_
 				local check_offset = 0
@@ -5636,7 +5787,7 @@ require_preload__["tptmp.client.window"] = function()
 				else
 					self.input_autocomplete_ = nil
 				end
-			elseif scan == sdl.SDL_SCANCODE_BACKSPACE or scan == sdl.SDL_SCANCODE_DELETE then
+			elseif not shift and not alt and (scan == sdl.SDL_SCANCODE_BACKSPACE or scan == sdl.SDL_SCANCODE_DELETE) then
 				local start, length
 				if self.input_has_selection_ then
 					start = self.input_sel_low_
@@ -5676,7 +5827,7 @@ require_preload__["tptmp.client.window"] = function()
 					self:input_update_()
 				end
 				self.input_autocomplete_ = nil
-			elseif scan == sdl.SDL_SCANCODE_RETURN then
+			elseif not ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_RETURN then
 				if #self.input_collect_ > 0 then
 					local str = self:input_text_to_send_()
 					local sent = str ~= "" and not self.message_overlong_
@@ -5713,24 +5864,29 @@ require_preload__["tptmp.client.window"] = function()
 						self.input_history_[self.input_history_next_] = {}
 						self.input_history_[self.input_history_next_ - config.history_size] = nil
 						self:input_reset_()
+						if self.hide_when_chat_done then
+							self.hide_when_chat_done = false
+							self.in_focus = false
+							self.hide_window_func_()
+						end
 					end
 				else
 					self.in_focus = false
 				end
 				self.input_autocomplete_ = nil
-			elseif scan == sdl.SDL_SCANCODE_UP then
+			elseif not ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_UP then
 				local to_select = self.input_history_select_ - 1
 				if self.input_history_[to_select] then
 					self:input_select_(to_select)
 				end
 				self.input_autocomplete_ = nil
-			elseif scan == sdl.SDL_SCANCODE_DOWN then
+			elseif not ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_DOWN then
 				local to_select = self.input_history_select_ + 1
 				if self.input_history_[to_select] then
 					self:input_select_(to_select)
 				end
 				self.input_autocomplete_ = nil
-			elseif scan == sdl.SDL_SCANCODE_HOME or scan == sdl.SDL_SCANCODE_END or scan == sdl.SDL_SCANCODE_RIGHT or scan == sdl.SDL_SCANCODE_LEFT then
+			elseif not alt and (scan == sdl.SDL_SCANCODE_HOME or scan == sdl.SDL_SCANCODE_END or scan == sdl.SDL_SCANCODE_RIGHT or scan == sdl.SDL_SCANCODE_LEFT) then
 				self.input_cursor_prev_ = self.input_cursor_
 				if scan == sdl.SDL_SCANCODE_HOME then
 					self.input_cursor_ = 0
@@ -5767,24 +5923,24 @@ require_preload__["tptmp.client.window"] = function()
 				self.input_sel_second_ = self.input_cursor_
 				self:input_update_()
 				self.input_autocomplete_ = nil
-			elseif ctrl and scan == sdl.SDL_SCANCODE_A then
+			elseif ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_A then
 				self.input_cursor_ = #self.input_collect_
 				self.input_sel_first_ = 0
 				self.input_sel_second_ = self.input_cursor_
 				self:input_update_()
 				self.input_autocomplete_ = nil
-			elseif ctrl and scan == sdl.SDL_SCANCODE_C then
+			elseif ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_C then
 				if self.input_has_selection_ then
 					plat.clipboardPaste(self:input_collect_range_(self.input_sel_low_ + 1, self.input_sel_high_))
 				end
 				self.input_autocomplete_ = nil
-			elseif ctrl and scan == sdl.SDL_SCANCODE_V then
+			elseif ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_V then
 				local text = plat.clipboardCopy()
 				if text then
 					self:input_insert_(text)
 				end
 				self.input_autocomplete_ = nil
-			elseif ctrl and scan == sdl.SDL_SCANCODE_X then
+			elseif ctrl and not shift and not alt and scan == sdl.SDL_SCANCODE_X then
 				if self.input_has_selection_ then
 					local start = self.input_sel_low_
 					local length = self.input_sel_high_ - self.input_sel_low_
@@ -5797,7 +5953,7 @@ require_preload__["tptmp.client.window"] = function()
 			end
 			return not modkey_scan[scan]
 		else
-			if scan == sdl.SDL_SCANCODE_ESCAPE then
+			if not ctrl and not alt and scan == sdl.SDL_SCANCODE_ESCAPE then
 				self.hide_window_func_()
 				return true
 			end
@@ -5839,6 +5995,7 @@ require_preload__["tptmp.client.window"] = function()
 		table.insert(tbl, {
 			wrapped = msg.wrapped[line],
 			needs_padding = line > 1,
+			extend_box = line < #msg.wrapped,
 			msg = msg,
 			marker = self.backlog_marker_at_ == msg.unique and #msg.wrapped == line,
 		})
@@ -6036,7 +6193,7 @@ require_preload__["tptmp.client.window"] = function()
 		local width = tonumber(manager.get("windowWidth", "")) or config.default_width
 		local height = tonumber(manager.get("windowHeight", "")) or config.default_height
 		local alpha = tonumber(manager.get("windowAlpha", "")) or config.default_alpha
-		local title = "TPT Multiplayer v" .. config.versionstr
+		local title = "TPT Multiplayer " .. config.versionstr
 		local title_width = gfx.textSize(title)
 		local win = setmetatable({
 			in_focus = false,
@@ -6051,15 +6208,17 @@ require_preload__["tptmp.client.window"] = function()
 			resizer_active_ = false,
 			dragger_active_ = false,
 			close_active_ = false,
-			window_hidden_func_ = params.window_hidden_func,
+			window_status_func_ = params.window_status_func,
+			log_event_func_ = params.log_event_func,
 			client_func_ = params.client_func,
 			hide_window_func_ = params.hide_window_func,
-			placing_zoom_func_ = params.placing_zoom_func,
+			should_ignore_mouse_func_ = params.should_ignore_mouse_func,
 			input_history_ = { {} },
 			input_history_next_ = 1,
 			input_editing_ = {},
 			input_last_say_ = 0,
 			nick_colour_seed_ = 0,
+			hide_when_chat_done = false,
 		}, window_m)
 		win:input_reset_()
 		win:backlog_reset()

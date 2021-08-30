@@ -1,9 +1,12 @@
 Changelog for V26.0
 
+Update tptmp to v2.0.20
 Use new block design for themes (looks more like vanilla tpt now).
 Simplify the top bar options.
 Improvements to password manger UI, adds an option to open mod thread.
 Change security question from YOB to TPT ELEM.
-Update to TPT 96.2
 
-
+Changes from TPT 96.2:
+Add a few more Lua functions: sim.replaceModeFlags, sim.listCustomGol, sim.addCustomGol, sim.removeCustomGol, sim.floodDeco, tpt.perfectCircleBrush
+LIGH now lasts longer and expands frame-by-frame
+Fix issue where stamping LIGH at the right moment caused every LIGH to strike at once
