@@ -2336,7 +2336,7 @@ void GameView::OnDraw()
 				ab = 0;
 			}
 
-		fpsInfo << Format::Precision(2) << "FPS: " << ui::Engine::Ref().GetFps();
+		fpsInfo << Format::Precision(0) << "FPS: " << ui::Engine::Ref().GetFps();
 		if (showDebug)
 		{
 			if (ren->findingElement)

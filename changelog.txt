@@ -1,6 +1,9 @@
-Changelog for V25.9
+Changelog for V26.0
 
-Improved password protection:
-It now asks for a security question if you forget the password.
-Adds an option to quit game if fast quit was disabled. Fixes bug where tpt wont close if password was wrong
-This is it for now, going to take a break from development for sometime. Keep suggesting new ideas tho :P
+Use new block design for themes (looks more like vanilla tpt now).
+Simplify the top bar options.
+Improvements to password manger UI, adds an option to open mod thread.
+Change security question from YOB to TPT ELEM.
+Update to TPT 96.2
+
+
