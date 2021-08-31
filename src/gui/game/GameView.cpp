@@ -2188,7 +2188,16 @@ void GameView::OnDraw()
 					else if (ctype)
 						sampleInfo << " (" << ctype << ")";
 				}
-				sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C";
+				if (showDebug)
+				{
+					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C/ ";
+					sampleInfo << sample.particle.temp << " K" << "/ ";
+					sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F";
+				}
+				else
+				{
+					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C";
+				}
 				sampleInfo << ", Life: " << sample.particle.life;
 				if (sample.particle.type != PT_RFRG && sample.particle.type != PT_RFGL && sample.particle.type != PT_LIFE)
 				{
@@ -2232,11 +2241,9 @@ void GameView::OnDraw()
 		{
 			sampleInfo << "Empty";
 		}
-
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
 		g->fillrect(XRES - 20 - textWidth, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
 		g->drawtext(XRES - 16 - textWidth, 16, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
-
 
 #ifndef OGLI
 		if (wavelengthGfx)
@@ -2285,10 +2292,7 @@ void GameView::OnDraw()
 
 			if (type)
 			{
-				sampleInfo << "Temp2: " << sample.particle.temp << " K" << " / ";
-				sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F";
-				sampleInfo << ", #" << sample.ParticleID << ", ";
-
+				sampleInfo << "#" << sample.ParticleID << ", ";
 				sampleInfo23 << "Pavg0: " << sample.particle.pavg[0];
 				sampleInfo23 << ", Pavg1: " << sample.particle.pavg[1];
 				sampleInfo23 << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
@@ -2336,43 +2340,46 @@ void GameView::OnDraw()
 				ab = 0;
 			}
 
-		fpsInfo << Format::Precision(0) << "FPS: " << ui::Engine::Ref().GetFps();
-		if (showDebug)
-		{
-			if (ren->findingElement)
-				fpsInfo << " Parts: " << ren->foundElements << "/" << sample.NumParts;
-			else
-				fpsInfo << " Parts: " << sample.NumParts;
-		}
-		if (c->GetReplaceModeFlags()&REPLACE_MODE)
-			fpsInfo << " [REPLACE MODE]";
-		if (c->GetReplaceModeFlags()&SPECIFIC_DELETE)
-			fpsInfo << " [SPECIFIC DELETE]";
-		if (ren && ren->GetGridSize())
-			fpsInfo << " [GRID: " << ren->GetGridSize() << "]";
-		if (ren && ren->findingElement)
-			fpsInfo << " [FIND]";
-
-		int textWidth = Graphics::textwidth(fpsInfo.Build());
-		int alpha = 255 - introText * 5;
-		g->fillrect(12, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5);
-		g->drawtext(16, 16, fpsInfo.Build(), ar, ag, ab, alpha*0.95);
-		// Second line
-		StringBuilder fpsInfo2;
-
+		fpsInfo << Format::Precision(0) <<"FPS: "<<ui::Engine::Ref().GetFps()<<", ";
+		
 		time_t rawtime;
 		struct tm * timeinfo;
 		char buffer[80];
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
 		strftime(buffer, 80, showDebug ?
-			"%Y-%m-%d %I:%M:%S %p" :
+			"%Y-%m-%d, %I:%M:%S %p" :
 			"%I:%M %p", timeinfo);
-		fpsInfo2 << buffer << " ";
+		fpsInfo << buffer << " ";
 
-		int textWidth2 = Graphics::textwidth(fpsInfo2.Build());
-		g->fillrect(12, 27, textWidth2 + 8, 15, 0, 0, 0, alpha * 0.5);
-		g->drawtext(16, 30, fpsInfo2.Build(), 32, 216, 255, alpha * 0.95);
+		int textWidth = Graphics::textwidth(fpsInfo.Build());
+		int alpha = 255 - introText * 5;
+		g->fillrect(12, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5);
+		g->drawtext(16, 16, fpsInfo.Build(), ar, ag, ab, alpha*0.95);
+
+		// Second line
+		StringBuilder fpsInfo2;
+		if (showDebug)
+		{
+			if (ren->findingElement)
+				fpsInfo2 << " Parts: " << ren->foundElements << "/" << sample.NumParts;
+			else
+				fpsInfo2 << " Parts: " << sample.NumParts;
+		}
+		if (c->GetReplaceModeFlags()&REPLACE_MODE)
+			fpsInfo2 << " [REPLACE MODE]";
+		if (c->GetReplaceModeFlags()&SPECIFIC_DELETE)
+			fpsInfo2 << " [SPECIFIC DELETE]";
+		if (ren && ren->GetGridSize())
+			fpsInfo2 << " [GRID: " << ren->GetGridSize() << "]";
+		if (ren && ren->findingElement)
+			fpsInfo2 << " [FIND]";
+		if (showDebug)
+		{
+			int textWidth2 = Graphics::textwidth(fpsInfo2.Build());
+			g->fillrect(12, 27, textWidth2 + 8, 15, 0, 0, 0, alpha * 0.5);
+			g->drawtext(11, 30, fpsInfo2.Build(), 32, 216, 255, alpha * 0.95);
+		}
 	}
 
 	//Tooltips
