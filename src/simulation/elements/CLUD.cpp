@@ -58,9 +58,9 @@ static int update(UPDATE_FUNC_ARGS)
 	 if (parts[i].tmp == 1000)
 	{
 		parts[i].tmp2 = 1;
-		if (RNG::Ref().chance(1, 1000))
+		if (RNG::Ref().chance(1, 1500))
 		{
-			sim->create_part(-1, x, y + 30, PT_LIGH);
+			sim->create_part(-1, x, y + 25, PT_LIGH);
 		}
 	}
 	else if (parts[i].tmp == 995)
@@ -73,7 +73,7 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp2 == 1 && parts[i].tmp > -5)
 	{
 		parts[i].tmp --;
-		sim->pv[(y / CELL)][(x / CELL)] = 1.0f;
+		sim->pv[(y / CELL)][(x / CELL)] = parts[i].tmp/150;
 		if (RNG::Ref().chance(1, 50))
 		{
 			if (parts[i].temp >= 273.15f)
@@ -101,11 +101,11 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colr = 100;
 		*colg = 100;
 	}
-		if (cpart->tmp > 995 && cpart->tmp < 998)
+		if (cpart->tmp > 995 && cpart->tmp < 997)
 		{
-			*colb = 255;
-			*colr = 235;
-			*colg = 235;
+			*colb = 170;
+			*colr = 255;
+			*colg = 170;
 			*pixel_mode |= PMODE_LFLARE;
 		}
 		else
