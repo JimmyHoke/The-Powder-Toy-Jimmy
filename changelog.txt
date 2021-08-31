@@ -2,6 +2,7 @@ Changelog for V26.0
 
 Update tptmp to v2.0.20
 New rearranged HUD (More compact)
+Update CLUD (Now rains with varying pressure and add slight red tint to graphics when lightning).
 Use new block design for themes (looks more like vanilla tpt now).
 Simplify the top bar options.
 Improvements to password manger UI, adds an option to open mod thread.
