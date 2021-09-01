@@ -1,14 +1,14 @@
---cracker1000 mod script v5.1--
+--cracker1000 mod script v5.2--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
-local forgotmsg = Label:new(100, 120, 10, 15, " Please enter your favorite TPT element.\n\n Message here     if problem persists.")
+local forgotmsg = Label:new(100, 120, 10, 15, " Please enter your favorite TPT element.\n\n                 if problem persists.")
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
 local passok2 = Button:new(10,75,80,20,"Forgot", "Enter Elem.")
-local passok4 = Button:new(82,130,15,15,">>", "Open Mod thread")
+local passok4 = Button:new(12,132,75,15,"Message here", "Open Mod thread")
 local passok3 = Button:new(178,1,20,20,"X", "Close.")
 local passtime = Textbox:new(70, 30, 55, 20, '', 'Password..')
 
@@ -1240,7 +1240,7 @@ tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(10,0,590,3, ar,ag,ab,al)
+tpt.fillrect(10,-1,590,3, ar,ag,ab,al)
 end
 
 if uival == "1" then
@@ -1249,10 +1249,10 @@ if barval == "1" then
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
 end
-tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, ar,ag,ab,al)
+tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(10,0,590,3, ar,ag,ab,al)
+tpt.fillrect(10,-1,590,3, ar,ag,ab,al)
 end
 end
 
@@ -1345,7 +1345,7 @@ tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(10,0,590,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(10,-1,590,3, colourRED,colourGRN,colourBLU,al)
 end
 
 if uival == "1" then
@@ -1354,10 +1354,10 @@ if barval == "1" then
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
 end
-tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "2" then
-tpt.fillrect(10,0,590,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(10,-1,590,3, colourRED,colourGRN,colourBLU,al)
 end
 end
 
