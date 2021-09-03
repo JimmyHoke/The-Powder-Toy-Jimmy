@@ -2242,13 +2242,17 @@ void GameView::OnDraw()
 			sampleInfo << "Empty";
 		}
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(10,17, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(12,21, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
+		g->fillrect(10, 17, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
+		g->drawtext(12, 21, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
 
 #ifndef OGLI
 		if (wavelengthGfx)
 		{
-			int i, cr, cg, cb, j, h = 3, x = XRES - 19 - textWidth, y = 10;
+			int i, cr, cg, cb, j, h = 3, x = 12, y = 35;
+			if (showDebug)
+			{
+				y = 50;
+			}
 			int tmp;
 			g->fillrect(x, y, 30, h, 64, 64, 64, alpha); // coords -1 size +1 to work around bug in fillrect - TODO: fix fillrect
 			for (i = 0; i < 30; i++)
@@ -2281,37 +2285,39 @@ void GameView::OnDraw()
 			}
 		}
 #endif
-
-		if (showDebug)
-		{
-			StringBuilder sampleInfo;
-			sampleInfo << Format::Precision(2);
-
 			if (showDebug)
 			{
-				sampleInfo << "Pavg0: " << sample.particle.pavg[0];
-				sampleInfo << ", Pavg1: " << sample.particle.pavg[1];
-				sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
-				sampleInfo << Format::Dec();
-				sampleInfo << ", Vx: " << sample.particle.vx;
-				sampleInfo << ", Vy: " << sample.particle.vy;
+				StringBuilder sampleInfo;
+				sampleInfo << Format::Precision(2);
+
+				if (showDebug)
+				{
+					if (type)
+					{
+						sampleInfo << "Pavg0: " << sample.particle.pavg[0];
+						sampleInfo << ", Pavg1: " << sample.particle.pavg[1];
+						sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
+						sampleInfo << Format::Dec();
+						sampleInfo << ", Vx: " << sample.particle.vx;
+						sampleInfo << ", Vy: " << sample.particle.vy;
+					}
+				}
+				if (type)
+				{
+					sampleInfo << ", #" << sample.ParticleID<<", ";
+				}
+				sampleInfo << "X:" << sample.PositionX << " Y:" << sample.PositionY;
+
+				if (sample.Gravity)
+					sampleInfo << ", GX: " << sample.GravityVelocityX << " GY: " << sample.GravityVelocityY;
+
+				if (c->GetAHeatEnable())
+					sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
+
+				textWidth = Graphics::textwidth(sampleInfo.Build());
+				g->fillrect(10, 32, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
+				g->drawtext(12, 36, sampleInfo.Build(), 32, 216, 255, alpha*0.95f);
 			}
-			if (type)
-			{
-				sampleInfo << ", #" << sample.ParticleID;
-			}
-			sampleInfo << ", X:" << sample.PositionX << " Y:" << sample.PositionY;
-
-			if (sample.Gravity)
-				sampleInfo << ", GX: " << sample.GravityVelocityX << " GY: " << sample.GravityVelocityY;
-
-			if (c->GetAHeatEnable())
-				sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
-
-			textWidth = Graphics::textwidth(sampleInfo.Build());
-			g->fillrect(10, 32,textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-			g->drawtext(12, 36,sampleInfo.Build(), 32,216,255, alpha*0.95f);
-		}
 	}
 	if(showHud && introText < 51)
 	{
@@ -2336,8 +2342,11 @@ void GameView::OnDraw()
 				ab = 0;
 			}
 
-		fpsInfo << Format::Precision(0)<<(ui::Engine::Ref().GetFps())/60*100<<"%, ";
-		
+			fpsInfo << Format::Precision(0) << "FPS: " << ui::Engine::Ref().GetFps();
+		if (showDebug)
+		{
+		 fpsInfo <<" ("<<(ui::Engine::Ref().GetFps()) / 60 * 100 << "%), ";
+		}
 		time_t rawtime;
 		struct tm * timeinfo;
 		char buffer[80];
@@ -2345,7 +2354,7 @@ void GameView::OnDraw()
 		timeinfo = localtime(&rawtime);
 		strftime(buffer, 80, showDebug ?
 			"%Y-%m-%d, %I:%M:%S %p" :
-			"%I:%M %p", timeinfo);
+			", %I:%M %p", timeinfo);
 		fpsInfo << buffer << " ";
 		if (showDebug)
 		{

@@ -1,5 +1,9 @@
-Changelog for V26.5
+Changelog for V27.0 ID(39)
 
-Fix HUD not showing certain particle info if debug mode was disabled
-New Revamped HUD.
-Show FPS as % performance.
+Fix colour spectrum shown in hud at wrong place.
+Make FPS show in normal hud again. %performance now shows up in debug mode only.
+Make degub mode show additional particle info only when there's a particle under cursor.
+New element: PET is back, and is now  more intelligen. STKM's new AI friend. (First attempt at such thing.)
+
+
+
