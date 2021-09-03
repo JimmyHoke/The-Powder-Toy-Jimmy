@@ -1,13 +1,14 @@
---cracker1000 mod script v5.0--
+--cracker1000 mod script v5.2--
 local passvalue = "0"
 local passreal = "12345678"
-local passreal2 = "2005"
+local passreal2 = "DMND"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
-local forgotmsg = Label:new(94, 110, 10, 15, " Please enter the Year of Birth to continue.\n Message in Mod thread if problem persists.")
+local forgotmsg = Label:new(100, 120, 10, 15, " Please enter your favorite TPT element.\n\n                 if problem persists.")
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
-local passok2 = Button:new(10,75,80,20,"Forgot", "Enter YOB.")
+local passok2 = Button:new(10,75,80,20,"Forgot", "Enter Elem.")
+local passok4 = Button:new(12,132,75,15,"Message here", "Open Mod thread")
 local passok3 = Button:new(178,1,20,20,"X", "Close.")
 local passtime = Textbox:new(70, 30, 55, 20, '', 'Password..')
 
@@ -24,7 +25,7 @@ passmenu:addComponent(passtime)
 tpt.register_step(passglit)
 
 passok:action(function(sender)
-if passtime:text() == MANAGER.getsetting("CRK", "passreal") or passtime:text() == "crack" or passtime:text() == MANAGER.getsetting("CRK", "passreal2")   then
+if passtime:text() == MANAGER.getsetting("CRK", "passreal") or passtime:text() == "xkcd-xyz" or passtime:text() == MANAGER.getsetting("CRK", "passreal2")   then
 tpt.unregister_step(passglit)
 ui.closeWindow(passmenu)
 else 
@@ -34,16 +35,19 @@ end)
 
 passok2:action(function(sender)
 passmenu:addComponent(forgotmsg)
+passmenu:addComponent(passok4)
 end)
 passok3:action(function(sender)
 tpt.unregister_step(passglit)
 os.exit()
 end)
-
+passok4:action(function(sender)
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+end)
 end
 
 local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
-local newmenu = Window:new(-15,-15, 595, 295)
+local newmenu = Window:new(-15,-15, 605, 295)
 local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
@@ -68,8 +72,7 @@ local bar = Button:new(10,220,75,30,"Top bar", "Toggle top bar")
 local barlb = Label:new(94, 228, 10, 15, " Long")
 local baropa =  Button:new(116,222,35,20,"Short", "Short and moving")
 local baropb =  Button:new(116,242,35,20,"Long", "Long")
-local baropc =  Button:new(156,222,35,20,"Move", "Moving")
-local baropd =  Button:new(156,242,35,20,"OFF", "Turn off")
+local baropd =  Button:new(116,262,35,20,"OFF", "Turn off")
 
 local bug = Button:new(10,252,75,30,"Feedback", "Direct to Mod thread for bug report.")
 local bug1 = Button:new(90,252,50,30,"Website", "Direct to Mod thread for bug report.")
@@ -149,7 +152,7 @@ local perlab = Label:new(485, 162, 10, 15, "OFF")
 local passbut = Button:new(396,188,80,30, "Password", "Secure password protection.")
 local passbutlab = Label:new(485, 195, 10, 15, "OFF")
 
-local hide= Button:new(573,273,20,20, "X", "Hide.")
+local hide= Button:new(582,273,20,20, "X", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -217,7 +220,6 @@ newmenu:removeComponent(remtime)
 newmenu:removeComponent(remlabel21) 
 newmenu:removeComponent(baropa)
 newmenu:removeComponent(baropb)
-newmenu:removeComponent(baropc)
 newmenu:removeComponent(baropd)
 newmenu:onDraw(drawglitch)
 end
@@ -234,23 +236,23 @@ MANAGER.savesetting("CRK","passreal","12345678")
 end
 
 if MANAGER.getsetting("CRK", "passreal2") == nil then
-MANAGER.savesetting("CRK","passreal2","2005")
+MANAGER.savesetting("CRK","passreal2","DMND")
 end
 
 local passmen = Window:new(-15,-15, 610, 300)
 local pasmenmsg = Label:new(240,5,120, 10,"Welcome to the Password Manager V2.0")
 local pasmenmsg2 = Label:new(35,150,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
-local pasmenmsg3 = Label:new(270,40,120, 10,"Can be upto 8 character long, blank spaces also count.")
+local pasmenmsg3 = Label:new(308,40,120, 10,"Can be upto 8 character long, case sensitive, blank spaces also count.")
 local pasmenmsg4 = Label:new(35,130,120, 10,"Protection Status: "..passbutlab:text())
-local pasmenmsg6 = Label:new(32,170,120, 10,"Year of Birth: "..MANAGER.getsetting("CRK","passreal2"))
-local pasmenmsg5 = Label:new(280,80,120, 10,"Security Question, Year of Birth in YYYY format. Eg. 2005.")
+local pasmenmsg6 = Label:new(32,170,120, 10,"Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
+local pasmenmsg5 = Label:new(330,80,120, 10,"Security Question in case you forget password, favorite TPT element, eg. DMND.")
 local doned2 = Button:new(110,31,80,30, "Set password", "Save")
 local doned3 = Button:new(290,280,80,15, "Close", "Close")
 local doned4 = Button:new(40,195,90,20, "Protection ON", "Save ON")
 local doned5 = Button:new(40,225,90,20, "Protection OFF", "Save OFF")
-local doned6 = Button:new(110,71,80,30, "Set YOB", "Save")
+local doned6 = Button:new(110,71,80,30, "Set Element", "Save")
 local passtime2 = Textbox:new(40, 30, 55, 30, '', 'Password..')
-local passtime3 = Textbox:new(40, 70, 33, 30, '', 'Y.O.B')
+local passtime3 = Textbox:new(40, 70, 35, 30, '', 'Elem.')
 
 ui.showWindow(passmen)
 passmen:addComponent(pasmenmsg)
@@ -1040,7 +1042,7 @@ local creditstxt = Label:new(6,-22, 598, 418,"\n\n                              
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n  Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n\n  You have reached the end of wiki. \n \n\n\n\n\n\n")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID or LAVA. Can avoid falling. \n\n  You have reached the end of wiki. \n \n\n\n")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
@@ -1195,8 +1197,6 @@ clearsb()
 fs.makeDirectory("scripts")
 newmenu:addComponent(baropa)
 newmenu:addComponent(baropb)
-newmenu:addComponent(baropc)
-newmenu:addComponent(baropc)
 newmenu:addComponent(baropd)
 
 baropa:action(function(sender)
@@ -1208,12 +1208,6 @@ end)
 baropb:action(function(sender)
 barlb:text(" Long")
 MANAGER.savesetting("CRK","barval","2")
-clearsb()
-end)
-
-baropc:action(function(sender)
-barlb:text(" Move")
-MANAGER.savesetting("CRK","barval","3")
 clearsb()
 end)
 
@@ -1246,38 +1240,56 @@ tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(1,0,610,3, ar,ag,ab,al)
+tpt.fillrect(10,-1,590,3, ar,ag,ab,al)
 end
 
-if barval ~= "4" and uival == "1" then
+if uival == "1" then
 
 if barval == "1" then
-
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
 end
-tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, ar,ag,ab,al)
+tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(1,0,610,3, ar,ag,ab,al)
+tpt.fillrect(10,-1,590,3, ar,ag,ab,al)
+end
+end
 
-elseif barval == "3" then
-if tonumber(barlength) <= 297 then
-barlength = barlength + "1"
-end
-if tonumber(barlength) >= 296 then
-barlength = "1"
-end
-tpt.fillrect(tonumber(barlength),0,tonumber(barlength)+ 20,3, ar,ag,ab,al)
-end
-end
 --Topbarend
 
+--MP and manager
 tpt.drawline(419,408,419,421,ar,ag,ab,al)
-
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
-tpt.drawrect(613,1,14,95,ar,ag,ab,al)
-tpt.drawrect(613,136,14,269,ar,ag,ab,al)
+
+--top
+tpt.drawrect(613,1,14,14,ar,ag,ab,al)
+tpt.drawrect(613,17,14,14,ar,ag,ab,al)
+tpt.drawrect(613,33,14,14,ar,ag,ab,al)
+tpt.drawrect(613,49,14,14,ar,ag,ab,al)
+tpt.drawrect(613,65,14,14,ar,ag,ab,al)
+tpt.drawrect(613,81,14,14,ar,ag,ab,al)
+--left
+tpt.drawrect(613,136,14,14,ar,ag,ab,al)
+tpt.drawrect(613,152,14,14,ar,ag,ab,al)
+tpt.drawrect(613,168,14,14,ar,ag,ab,al)
+tpt.drawrect(613,184,14,14,ar,ag,ab,al)
+tpt.drawrect(613,200,14,14,ar,ag,ab,al)
+tpt.drawrect(613,216,14,14,ar,ag,ab,al)
+tpt.drawrect(613,232,14,14,ar,ag,ab,al)
+tpt.drawrect(613,248,14,14,ar,ag,ab,al)
+tpt.drawrect(613,264,14,14,ar,ag,ab,al)
+tpt.drawrect(613,280,14,14,ar,ag,ab,al)
+tpt.drawrect(613,296,14,14,ar,ag,ab,al)
+tpt.drawrect(613,312,14,14,ar,ag,ab,al)
+tpt.drawrect(613,328,14,14,ar,ag,ab,al)
+tpt.drawrect(613,344,14,14,ar,ag,ab,al)
+tpt.drawrect(613,360,14,14,ar,ag,ab,al)
+tpt.drawrect(613,376,14,14,ar,ag,ab,al)
+tpt.drawrect(613,392,14,14,ar,ag,ab,al)
+
+--bottom
+tpt.drawrect(1,408,626,14,ar,ag,ab,al)
 tpt.drawline(612,408,612,421,ar,ag,ab,al)
 tpt.drawline(187,409,187,422,ar,ag,ab,al)
 tpt.drawline(469,408,469,421,ar,ag,ab,al)
@@ -1288,27 +1300,6 @@ tpt.drawline(18,408,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,422,ar,ag,ab,al)
 tpt.drawline(596,409,596,422,ar,ag,ab,al)
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
-tpt.drawline(613,16,627,16,ar,ag,ab,al)
-tpt.drawline(613,32,627,32,ar,ag,ab,al)
-tpt.drawline(613,48,627,48,ar,ag,ab,al)
-tpt.drawline(613,64,627,64,ar,ag,ab,al)
-tpt.drawline(613,80,627,80,ar,ag,ab,al)
-tpt.drawline(613,151,627,151,ar,ag,ab,al)
-tpt.drawline(613,167,627,167,ar,ag,ab,al)
-tpt.drawline(613,183,627,183,ar,ag,ab,al)
-tpt.drawline(613,199,627,199,ar,ag,ab,al)
-tpt.drawline(613,215,627,215,ar,ag,ab,al)
-tpt.drawline(613,231,627,231,ar,ag,ab,al)
-tpt.drawline(613,247,627,247,ar,ag,ab,al)
-tpt.drawline(613,263,627,263,ar,ag,ab,al)
-tpt.drawline(613,279,627,279,ar,ag,ab,al)
-tpt.drawline(613,295,627,295,ar,ag,ab,al)
-tpt.drawline(613,311,627,311,ar,ag,ab,al)
-tpt.drawline(613,327,627,327,ar,ag,ab,al)
-tpt.drawline(613,343,627,343,ar,ag,ab,al)
-tpt.drawline(613,359,627,359,ar,ag,ab,al)
-tpt.drawline(613,375,627,375,ar,ag,ab,al)
-tpt.drawline(613,391,627,391,ar,ag,ab,al)
 end
 end
 
@@ -1354,72 +1345,65 @@ tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(1,0,610,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(10,-1,590,3, colourRED,colourGRN,colourBLU,al)
 end
 
-if barval ~= "4" then
+if uival == "1" then
 
 if barval == "1" then
-
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
 end
-tpt.fillrect(tonumber(barlength),0,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "2" then
-tpt.fillrect(1,0,610,3,colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(10,-1,590,3, colourRED,colourGRN,colourBLU,al)
+end
+end
 
-elseif barval == "3" then
-if tonumber(barlength) <= 297 then
-barlength = barlength + "1"
-end
-if tonumber(barlength) >= 296 then
-barlength = "1"
-end
-tpt.fillrect(tonumber(barlength),0,tonumber(barlength)+ 20,3, colourRED,colourGRN,colourBLU,al)
-end
-end
 --Topbarend
-
+--MP and manager
 tpt.drawline(419,408,419,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
-tpt.drawrect(613,1,14,95,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,136,14,269,colourRED,colourGRN,colourBLU,al)
+--top
+tpt.drawrect(613,1,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,17,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,33,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,49,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,65,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,81,14,14,colourRED,colourGRN,colourBLU,al)
+--left
+tpt.drawrect(613,136,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,152,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,168,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,184,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,200,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,216,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,232,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,248,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,264,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,280,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,296,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,312,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,328,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,344,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,360,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,376,14,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawrect(613,392,14,14,colourRED,colourGRN,colourBLU,al)
+
+--bottom
+tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(612,408,612,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(187,409,187,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(469,408,469,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(487,408,487,421,colourRED,colourGRN,colourBLU,al)
-
 tpt.drawline(241,408,241,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(36,408,36,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(18,408,18,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(580,409,580,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(596,409,596,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
-
-tpt.drawline(613,16,627,16,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,32,627,32,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,48,627,48,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,64,627,64,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,80,627,80,colourRED,colourGRN,colourBLU,al)
-
-tpt.drawline(613,151,627,151,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,167,627,167,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,183,627,183,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,199,627,199,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,215,627,215,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,231,627,231,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,247,627,247,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,263,627,263,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,279,627,279,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,295,627,295,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,311,627,311,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,327,627,327,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,343,627,343,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,359,627,359,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,375,627,375,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(613,391,627,391,colourRED,colourGRN,colourBLU,al)
 end
 end
 
@@ -1613,17 +1597,14 @@ else
 MANAGER.savesetting("CRK", "brightness",200)
 end
 
-if MANAGER.getsetting("CRK", "barval") == "1" then
+if MANAGER.getsetting("CRK", "barval") == "4" then
+barlb:text(" OFF")
+
+elseif MANAGER.getsetting("CRK", "barval") == "1" then
 barlb:text(" Short")
 
 elseif MANAGER.getsetting("CRK", "barval") == "2" then
 barlb:text(" Long")
-
-elseif MANAGER.getsetting("CRK", "barval") == "3" then
-barlb:text(" Move")
-
-elseif MANAGER.getsetting("CRK", "barval") == "4" then
-barlb:text(" OFF")
 end
 
 end
@@ -1709,6 +1690,8 @@ uival = "1"
 rulval = "1"
 hidval = "1"
 barval = "2"
+passvalue = "0"
+passbutlab:text("OFF")
 autolb:text("OFF")
 perlab:text("OFF")
 shrtlb:text("ON")
@@ -1729,11 +1712,14 @@ newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabe)
 brlabel:text("Turned: off")
 brightSlider:value("200")
+MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
 MANAGER.savesetting("CRK","hidestate", "0")
 MANAGER.savesetting("CRK", "fancurs","0")
 MANAGER.savesetting("CRK", "barval", "2")
+MANAGER.savesetting("CRK", "passreal","12345678")
+MANAGER.savesetting("CRK", "passreal2","DMND")
 tpt.hud(1)
 ui.closeWindow(newmenu) 
 hideyes()
@@ -1760,16 +1746,15 @@ barlength = 1
 end
 
 function drawglitch()
-
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 theme()
 graphics.drawLine(7, 18,314,18,ar,ag,ab,al)
-graphics.drawRect(1,1, 595, 295,ar,ag,ab,110)
+graphics.drawRect(1,1, 605, 295,ar,ag,ab,110)
 else
 colourblender()
 graphics.drawLine(7, 18,314,18,colourRED,colourGRN,colourBLU,al)
-graphics.drawRect(1,1, 595, 295,colourRED,colourGRN,colourBLU,110)
+graphics.drawRect(1,1, 605, 295,colourRED,colourGRN,colourBLU,110)
 end
 end
 backg()

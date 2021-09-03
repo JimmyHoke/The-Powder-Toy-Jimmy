@@ -1,6 +1,9 @@
-Changelog for V25.9
+Changelog for V27.0 ID(39)
 
-Improved password protection:
-It now asks for a security question if you forget the password.
-Adds an option to quit game if fast quit was disabled. Fixes bug where tpt wont close if password was wrong
-This is it for now, going to take a break from development for sometime. Keep suggesting new ideas tho :P
+Fix colour spectrum shown in hud at wrong place.
+Make FPS show in normal hud again. %performance now shows up in debug mode only.
+Make degub mode show additional particle info only when there's a particle under cursor.
+New element: PET is back, and is now  more intelligen. STKM's new AI friend. (First attempt at such thing.)
+
+
+

@@ -2188,7 +2188,16 @@ void GameView::OnDraw()
 					else if (ctype)
 						sampleInfo << " (" << ctype << ")";
 				}
-				sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C";
+				if (showDebug)
+				{
+					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C/ ";
+					sampleInfo << sample.particle.temp << " K" << "/ ";
+					sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F";
+				}
+				else
+				{
+					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C";
+				}
 				sampleInfo << ", Life: " << sample.particle.life;
 				if (sample.particle.type != PT_RFRG && sample.particle.type != PT_RFGL && sample.particle.type != PT_LIFE)
 				{
@@ -2232,16 +2241,18 @@ void GameView::OnDraw()
 		{
 			sampleInfo << "Empty";
 		}
-
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(XRES - 20 - textWidth, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(XRES - 16 - textWidth, 16, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
-
+		g->fillrect(10, 17, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
+		g->drawtext(12, 21, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
 
 #ifndef OGLI
 		if (wavelengthGfx)
 		{
-			int i, cr, cg, cb, j, h = 3, x = XRES - 19 - textWidth, y = 10;
+			int i, cr, cg, cb, j, h = 3, x = 12, y = 35;
+			if (showDebug)
+			{
+				y = 50;
+			}
 			int tmp;
 			g->fillrect(x, y, 30, h, 64, 64, 64, alpha); // coords -1 size +1 to work around bug in fillrect - TODO: fix fillrect
 			for (i = 0; i < 30; i++)
@@ -2274,44 +2285,39 @@ void GameView::OnDraw()
 			}
 		}
 #endif
-
-		if (showDebug)
-		{
-			StringBuilder sampleInfo;
-			sampleInfo << Format::Precision(2);
-
-			StringBuilder sampleInfo23;
-			sampleInfo23 << Format::Precision(1);
-
-			if (type)
+			if (showDebug)
 			{
-				sampleInfo << "Temp2: " << sample.particle.temp << " K" << " / ";
-				sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F";
-				sampleInfo << ", #" << sample.ParticleID << ", ";
+				StringBuilder sampleInfo;
+				sampleInfo << Format::Precision(2);
 
-				sampleInfo23 << "Pavg0: " << sample.particle.pavg[0];
-				sampleInfo23 << ", Pavg1: " << sample.particle.pavg[1];
-				sampleInfo23 << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
-				sampleInfo23 << Format::Dec();
-				sampleInfo23 << ", Vx: " << sample.particle.vx;
-				sampleInfo23 << ", Vy: " << sample.particle.vy;
+				if (showDebug)
+				{
+					if (type)
+					{
+						sampleInfo << "Pavg0: " << sample.particle.pavg[0];
+						sampleInfo << ", Pavg1: " << sample.particle.pavg[1];
+						sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
+						sampleInfo << Format::Dec();
+						sampleInfo << ", Vx: " << sample.particle.vx;
+						sampleInfo << ", Vy: " << sample.particle.vy;
+					}
+				}
+				if (type)
+				{
+					sampleInfo << ", #" << sample.ParticleID<<", ";
+				}
+				sampleInfo << "X:" << sample.PositionX << " Y:" << sample.PositionY;
 
-				int textWidth23 = Graphics::textwidth(sampleInfo23.Build());
-				g->fillrect(XRES - 20 - textWidth23, 41, textWidth23 + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(XRES - 16 - textWidth23, 45, sampleInfo23.Build(), 32, 216, 255, alpha*0.95f);
+				if (sample.Gravity)
+					sampleInfo << ", GX: " << sample.GravityVelocityX << " GY: " << sample.GravityVelocityY;
+
+				if (c->GetAHeatEnable())
+					sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
+
+				textWidth = Graphics::textwidth(sampleInfo.Build());
+				g->fillrect(10, 32, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
+				g->drawtext(12, 36, sampleInfo.Build(), 32, 216, 255, alpha*0.95f);
 			}
-			sampleInfo << "X:" << sample.PositionX << " Y:" << sample.PositionY;
-
-			if (sample.Gravity)
-				sampleInfo << ", GX: " << sample.GravityVelocityX << " GY: " << sample.GravityVelocityY;
-
-			if (c->GetAHeatEnable())
-				sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
-
-			textWidth = Graphics::textwidth(sampleInfo.Build());
-			g->fillrect(XRES - 20 - textWidth, 27, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-			g->drawtext(XRES - 16 - textWidth, 30, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
-		}
 	}
 	if(showHud && introText < 51)
 	{
@@ -2323,20 +2329,33 @@ void GameView::OnDraw()
 		int ag = 255;
 		int ab = 255;
 
-			if (fpsfake <= 20)
+			if (fpsfake <= 14)
 			{
 				ar = 255;
 				ag = 0;
 				ab = 0;
 			}
-			else if (fpsfake < 45 && fpsfake > 20)
+			else if (fpsfake < 30 && fpsfake > 14)
 			{
 				ar = 255;
 				ag = 150;
 				ab = 0;
 			}
 
-		fpsInfo << Format::Precision(2) << "FPS: " << ui::Engine::Ref().GetFps();
+			fpsInfo << Format::Precision(0) << "FPS: " << ui::Engine::Ref().GetFps();
+		if (showDebug)
+		{
+		 fpsInfo <<" ("<<(ui::Engine::Ref().GetFps()) / 60 * 100 << "%), ";
+		}
+		time_t rawtime;
+		struct tm * timeinfo;
+		char buffer[80];
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+		strftime(buffer, 80, showDebug ?
+			"%Y-%m-%d, %I:%M:%S %p" :
+			", %I:%M %p", timeinfo);
+		fpsInfo << buffer << " ";
 		if (showDebug)
 		{
 			if (ren->findingElement)
@@ -2344,35 +2363,19 @@ void GameView::OnDraw()
 			else
 				fpsInfo << " Parts: " << sample.NumParts;
 		}
+		if (ren && ren->findingElement)
+			fpsInfo << " [FIND]";
 		if (c->GetReplaceModeFlags()&REPLACE_MODE)
 			fpsInfo << " [REPLACE MODE]";
 		if (c->GetReplaceModeFlags()&SPECIFIC_DELETE)
 			fpsInfo << " [SPECIFIC DELETE]";
 		if (ren && ren->GetGridSize())
 			fpsInfo << " [GRID: " << ren->GetGridSize() << "]";
-		if (ren && ren->findingElement)
-			fpsInfo << " [FIND]";
-
+	
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
-		g->fillrect(12, 12, textWidth + 8, 15, 0, 0, 0, alpha*0.5);
-		g->drawtext(16, 16, fpsInfo.Build(), ar, ag, ab, alpha*0.95);
-		// Second line
-		StringBuilder fpsInfo2;
-
-		time_t rawtime;
-		struct tm * timeinfo;
-		char buffer[80];
-		time(&rawtime);
-		timeinfo = localtime(&rawtime);
-		strftime(buffer, 80, showDebug ?
-			"%Y-%m-%d %I:%M:%S %p" :
-			"%I:%M %p", timeinfo);
-		fpsInfo2 << buffer << " ";
-
-		int textWidth2 = Graphics::textwidth(fpsInfo2.Build());
-		g->fillrect(12, 27, textWidth2 + 8, 15, 0, 0, 0, alpha * 0.5);
-		g->drawtext(16, 30, fpsInfo2.Build(), 32, 216, 255, alpha * 0.95);
+		g->fillrect(10, 2, textWidth + 6, 15, 0, 0, 0, alpha*0.5);
+		g->drawtext(12, 6, fpsInfo.Build(), ar, ag, ab, alpha*0.95);
 	}
 
 	//Tooltips

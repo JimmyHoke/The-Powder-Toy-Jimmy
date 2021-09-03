@@ -226,6 +226,7 @@ simulation_elem_ids = [
 	['STRC', 224],
 	['TURB', 225],
 	['BFLM', 226],
+	['PET', 227],
 	['JRAY',	500 ],
 ]
 
