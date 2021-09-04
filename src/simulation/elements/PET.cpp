@@ -175,7 +175,7 @@ static int update(UPDATE_FUNC_ARGS)
 					}
 				}
 
-	for (int rx = -4; rx < 5; rx++)
+	for (int rx = -15; rx < 15; rx++)
 		for (int ry = -10; ry < 5; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
@@ -267,6 +267,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	if (cpart->tmp2 > 0) 
 	{
 		ren->drawtext(cpart->x - 10, cpart->y - 25, "Stkm", 55, 255, 55, 250);
+	}
+	else if (cpart->tmp2 == 0)
+	{
+		ren->drawtext(cpart->x - 5, cpart->y - 25, "?", 50, 50, 255, 250);
 	}
 
 	if (cpart->vy > 0)
