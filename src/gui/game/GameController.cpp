@@ -156,6 +156,7 @@ GameController::~GameController()
 	{
 		delete *iter;
 	}
+	delete commandInterface;
 	delete gameModel;
 	if (gameView->CloseActiveWindow())
 	{
