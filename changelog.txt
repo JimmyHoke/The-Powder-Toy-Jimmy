@@ -1,9 +1,9 @@
-Changelog for V27.0 ID(39)
+Changelog for V28.0 ID(40)
 
-Fix colour spectrum shown in hud at wrong place.
-Make FPS show in normal hud again. %performance now shows up in debug mode only.
-Make degub mode show additional particle info only when there's a particle under cursor.
-New element: PET is back, and is now  more intelligen. STKM's new AI friend. (First attempt at such thing.)
+Improvements to PET: Can now express stuff via text. 
+Fix random pet spawns when killing FIGH.
+Minor fixes to password UI text.
+Merge commits from master.
 
 
 

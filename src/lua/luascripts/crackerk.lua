@@ -279,7 +279,7 @@ end)
 
 doned6 :action(function(sender)
 MANAGER.savesetting("CRK", "passreal2",passtime3:text())
-pasmenmsg6:text("Year Of Birth: "..MANAGER.getsetting("CRK","passreal2"))
+pasmenmsg6:text("Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
 end)
 
 doned3 :action(function(sender)
