@@ -83,7 +83,7 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp = 10;
 		parts[i].temp++;
 		if (RNG::Ref().chance(1, 10))
-		parts[i].life--;
+			parts[i].life--;
 	}
 
 	if (parts[i].temp > 50 + 273.15f)
@@ -91,27 +91,30 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp = 10;
 		parts[i].temp--;
 		if (RNG::Ref().chance(1, 10))
-		parts[i].life--;
+			parts[i].life--;
 	}
-	if (parts[i].tmp2 > 0)   
+	if (parts[i].tmp2 > 0)
 		parts[i].tmp2--;
-	if (parts[i].tmp > 0)  
+	if (parts[i].tmp > 0)
 		parts[i].tmp--;
 
 	//Life check, god sees everything.
 
-	if (parts[i].life >= 100)   
+	if (parts[i].life >= 100)
 		parts[i].life = 100;
 
 	else if (parts[i].life <= 0)
+	{
+	sim->part_change_type(i, x, y, PT_DUST);
+	sim->pv[(y / CELL)][(x / CELL)] = 270;
+	sim->kill_part(i);
+    }
 
-		sim->kill_part(i);
-	//Vel.check
-
+	//Velocity check.
 	if (parts[i].vx > 5)   
 		parts[i].vx = 5;
 
-	else if (parts[i].vx < -4)   //Vel.check
+	else if (parts[i].vx < -4)  
 		parts[i].vx = -4;
 
 	if (parts[i].vy > 5)
@@ -119,6 +122,21 @@ static int update(UPDATE_FUNC_ARGS)
 
 	else if (parts[i].vy < -4)   //Vel.check
 		parts[i].vy = -4;
+
+	//Expansion jutsu
+	if (parts[i].life < 10 && parts[i].ctype < 4)
+	{
+		parts[i].ctype = 5;
+	}
+	if (parts[i].life > 10 && parts[i].ctype > 4)
+	{
+		parts[i].ctype = 3;
+	}
+		if (parts[i].ctype < 35 && parts[i].ctype > 4)
+		{
+			if (RNG::Ref().chance(1, 25))
+			parts[i].ctype++;
+		}
 
 	for (int rx = -70; rx < 70; rx++)
 		for (int ry = -30; ry < 5; ry++)
@@ -238,7 +256,7 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_PLNT:
 				case PT_WATR:
 				{
-					if (RNG::Ref().chance(1, 30))
+					if (RNG::Ref().chance(1, 200))
 				{
 					parts[i].life += 1;
 					sim->kill_part(ID(r));
@@ -275,6 +293,7 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[ID(r)].temp > 373.15f || parts[ID(r)].temp < 273.15f)
 				{
+					parts[i].tmp = 10;
 					if (parts[i].x < parts[ID(r)].x)
 					{
 						parts[i].x--;
@@ -300,6 +319,7 @@ static int update(UPDATE_FUNC_ARGS)
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
 	sim->parts[i].life = 100;
+	sim->parts[i].ctype = 3;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
@@ -319,12 +339,12 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		mg = 150;
 		mb = 20;
 	}
-    if (cpart->tmp > 0)
+    if (cpart->tmp > 0|| cpart->life < 30)
 	{
 		    mr = 250;
 			mg = 50;
 			mb = 50;
-			ren->drawtext(cpart->x+7, cpart->y - 17,"!",255, 0, 0, 255);
+			ren->drawtext(cpart->x+9, cpart->y - 17,"!",255, 0, 0, 255);
 	}
 	if (cpart->tmp2 > 0) 
 	{
@@ -336,8 +356,8 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		ren->drawtext(cpart->x-2, cpart->y + 3, "*", 255, 255, 0, 255); 
 	}
 	//draw body
-	ren->fillcircle(cpart->x, cpart->y - 10, 3, 3, mr, mg, mb, 255);
-	ren->fillcircle(cpart->x, cpart->y - 2, 4, 4, 255, 255, 255, 205);
+	ren->fillcircle(cpart->x, cpart->y - 10, cpart->ctype, cpart->ctype, mr, mg, mb, 255);
+	ren->fillcircle(cpart->x, cpart->y - 2, cpart->ctype +1, cpart->ctype +1, 255, 255, 255, 205);
 	ren->drawrect(cpart->x-1, cpart->y-11, 3, 1, 0, 0, 0, 255);
 	//health bar
 	ren->fillrect(cpart->x-4, cpart->y - 17, cpart->life/10, 1, mr, mg, mb, 255);

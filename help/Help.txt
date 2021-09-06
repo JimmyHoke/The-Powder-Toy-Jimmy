@@ -90,13 +90,13 @@ for debug, just run debug compile.bat
 manual:
 Note: Always name the main mod folder as "newmod" in order to make the script work.
 Debug
-cd /d C:\Newmod 
+cd /d C:\newmod 
 meson build-debug 
 cd build-debug 
 ninja
 
 for static
-cd /d C:\Newmod 
+cd /d C:\newmod 
 meson -Dbuildtype=release -Dstatic=prebuilt -Db_vscrt=static_from_buildtype build-release-static
 cd build-release-static
 ninja
