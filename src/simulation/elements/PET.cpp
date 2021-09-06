@@ -18,7 +18,7 @@ void Element::Element_PET()
 	AirLoss = 0.94f;
 	Loss = 0.95f;
 	Collision = -0.1f;
-	Gravity = 0.3f;
+	Gravity = 0.1f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
 	Falldown = 1;
@@ -35,7 +35,7 @@ void Element::Element_PET()
 	Properties = TYPE_PART;
 	DefaultProperties.temp = R_TEMP + 14.6f + 273.15f;
 	HeatConduct = 150;
-	Description = "AI Pet, follows STKM/ STKM2, fights with FIGH and eats/drinks PLNT or WATR (Read wiki for more info.) Use sparingly.";
+	Description = "Robot Pet, follows STKM/ STKM2, fights with FIGH, uses PLNT and WATR to stay alive (Read wiki for more info.)";
 
 	Properties = PROP_NOCTYPEDRAW| TYPE_PART;
 	LowPressure = IPL;
@@ -44,7 +44,7 @@ void Element::Element_PET()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 620.0f;
+	HighTemperature = 720.0f;
 	HighTemperatureTransition = PT_FIRE;
 
 	Update = &update;
@@ -82,6 +82,7 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		parts[i].tmp = 10;
 		parts[i].temp++;
+		if (RNG::Ref().chance(1, 10))
 		parts[i].life--;
 	}
 
@@ -89,6 +90,7 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		parts[i].tmp = 10;
 		parts[i].temp--;
+		if (RNG::Ref().chance(1, 10))
 		parts[i].life--;
 	}
 	if (parts[i].tmp2 > 0)   
@@ -96,26 +98,46 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp > 0)  
 		parts[i].tmp--;
 
-	if (parts[i].life >= 100)   //Life check, god sees everything.
+	//Life check, god sees everything.
+
+	if (parts[i].life >= 100)   
 		parts[i].life = 100;
 
-	else if (parts[i].life <= 0)  //Everyone has to die one day.
-		sim->kill_part(i);
+	else if (parts[i].life <= 0)
 
-		for (int rx = -70; rx < 70; rx++)
-			for (int ry = -30; ry < 5; ry++)
-				if (BOUNDS_CHECK && (rx || ry))
+		sim->kill_part(i);
+	//Vel.check
+
+	if (parts[i].vx > 5)   
+		parts[i].vx = 5;
+
+	else if (parts[i].vx < -4)   //Vel.check
+		parts[i].vx = -4;
+
+	if (parts[i].vy > 5)
+		parts[i].vy = 5;
+
+	else if (parts[i].vy < -4)   //Vel.check
+		parts[i].vy = -4;
+
+	for (int rx = -70; rx < 70; rx++)
+		for (int ry = -30; ry < 5; ry++)
+			if (BOUNDS_CHECK && (rx || ry))
+			{
+				int r = pmap[y + ry][x + rx];
+				if (!r)
+					continue;
+				r = pmap[y + ry][x + rx];
+				switch (TYP(r))
 				{
-					int r = pmap[y + ry][x + rx];
-					if (!r)
-						continue;
-					r = pmap[y + ry][x + rx];
-					switch (TYP(r))
-					{
-						// Follow STKM and STKM2
-					case PT_STKM:
-					case PT_STKM2:
-					{
+				// Follow STKM and STKM2
+				case PT_STKM:
+				case PT_STKM2:
+				{
+						if (parts[ID(r)].ctype == PT_PET)
+						{
+							parts[ID(r)].ctype = PT_DUST;
+						}
 						parts[i].tmp2 = 10;
 						if (parts[ID(r)].life < 100)
 						{
@@ -138,11 +160,11 @@ static int update(UPDATE_FUNC_ARGS)
 						{
 							parts[i].y--;
 						}
-					}
+				}
 					break;
 
-					case PT_FIGH:
-					{
+				case PT_FIGH:
+				{
 						parts[i].tmp = 10;
 						if (parts[ID(r)].life >= 10)
 						{
@@ -170,6 +192,12 @@ static int update(UPDATE_FUNC_ARGS)
 								parts[i].y--;
 							}
 
+				}
+					break;
+					//Prevent multiple pets.
+					case PT_PET:
+					{
+							sim->kill_part(ID(r));
 					}
 					break;
 					}
@@ -183,6 +211,8 @@ static int update(UPDATE_FUNC_ARGS)
 				if (!r)
 					continue;
 				r = pmap[y + ry][x + rx];
+
+				if(parts)
 				switch (TYP(r))
 				{
 					// Avoid these particles.
@@ -195,6 +225,8 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_VIRS:
 				case PT_LAVA:
 				case PT_CFLM:
+				case PT_BFLM:
+				case PT_THDR:
 				{
 				parts[i].tmp = 10;
 				parts[i].pavg[0] = -rx;
@@ -232,6 +264,36 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				}
 			}
+
+	int r, rx, ry;
+	for (rx = -4; rx < 4; rx++)
+		for (ry = -6; ry < 6; ry++)
+			if (BOUNDS_CHECK && (rx || ry))
+			{
+				r = pmap[y + ry][x + rx];
+				if (!r)
+					continue;
+				if (parts[ID(r)].temp > 373.15f || parts[ID(r)].temp < 273.15f)
+				{
+					if (parts[i].x < parts[ID(r)].x)
+					{
+						parts[i].x--;
+					}
+					else if (parts[i].x > parts[ID(r)].x)
+					{
+						parts[i].x++;
+					}
+
+					if (parts[i].y < parts[ID(r)].y)
+					{
+						parts[i].y--;
+					}
+					else if (parts[i].y > parts[ID(r)].y)
+					{
+						parts[i].y++;
+					}
+				}
+			}
 	return 0;
 }
 
@@ -262,15 +324,11 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		    mr = 250;
 			mg = 50;
 			mb = 50;
-			ren->drawtext(cpart->x+3, cpart->y - 25,"!",255, 0, 0, 255);
+			ren->drawtext(cpart->x+7, cpart->y - 17,"!",255, 0, 0, 255);
 	}
 	if (cpart->tmp2 > 0) 
 	{
-		ren->drawtext(cpart->x - 10, cpart->y - 25, "Stkm", 55, 255, 55, 250);
-	}
-	else if (cpart->tmp2 == 0)
-	{
-		ren->drawtext(cpart->x - 5, cpart->y - 25, "?", 50, 50, 255, 250);
+		ren->drawtext(cpart->x - 10, cpart->y - 27, "Stkm", 55, 255, 55, 250);
 	}
 
 	if (cpart->vy > 0)
@@ -281,10 +339,13 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	ren->fillcircle(cpart->x, cpart->y - 10, 3, 3, mr, mg, mb, 255);
 	ren->fillcircle(cpart->x, cpart->y - 2, 4, 4, 255, 255, 255, 205);
 	ren->drawrect(cpart->x-1, cpart->y-11, 3, 1, 0, 0, 0, 255);
-
+	//health bar
+	ren->fillrect(cpart->x-4, cpart->y - 17, cpart->life/10, 1, mr, mg, mb, 255);
+	ren->drawrect(cpart->x-5, cpart->y - 18, 11, 3, 255, 255, 255, 100);
+	//hands
 	ren->drawrect(cpart->x-4, cpart->y - 13, 1, 3,mr,mg, mb, 255);
 	ren->drawrect(cpart->x + 4, cpart->y - 13, 1, 3, mr, mg, mb, 255);
-
+	//head
 	ren->drawrect(cpart->x - 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
 	ren->drawrect(cpart->x + 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
 	return 0;

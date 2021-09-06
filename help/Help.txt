@@ -3,11 +3,14 @@
 
 2)Scripts:
 Copy scripts in src> lua>scripts folder.
-
 add same settings for crackerk.lua and other scripts as eventcompat.lua in Luascriptinterface. 
+Load order:
+Manager
+TPTMP
+Crackerk
 
 4) TOOLS:
-Copy RSET.cpp, AMBP and AMBM into src>simulation>simtools
+Copy RSET.cpp
 Add ID in meson.build
 
 5) Dark theme:
@@ -45,22 +48,22 @@ src>gui>search>Searchview.cpp
 (PRMT, 209);
 (CLUD, 210);
 (BEE, 211);
-(ECLR, 212);               SPRK.cpp
+(ECLR, 212);              SPRK.cpp
 (CEXP, 213);                
-(LITH2,214),                SPRK.cpp
+(LITH2,214),               SPRK.cpp
 (PROJ, 215); 
-(PPTI, 216);                 SPRK.cpp
-(PPTO, 217);                SPRK.cpp
+(PPTI, 216);                SPRK.cpp
+(PPTO, 217);              SPRK.cpp
 (SEED, 218);    
 (CSNS, 219);    
 (CWIR, 220);
 (CLRC, 221);  
 (COPR, 222); 
-(PCON, 223);                SPRK.cpp
+(PCON, 223);             SPRK.cpp
 (STRC, 224);        
-(BFLM, 225);                  VIRS.cpp (add exception!)
-(TURB, 226);             
-
+(TURB, 225);              VIRS.cpp (add exception!)
+(BFLM, 226);             
+(PET, 227);             
 
 Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS
 
