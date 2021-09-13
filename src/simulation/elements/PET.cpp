@@ -18,7 +18,7 @@ void Element::Element_PET()
 	AirLoss = 0.94f;
 	Loss = 0.95f;
 	Collision = -0.1f;
-	Gravity = 0.3f;
+	Gravity = 0.1f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
 	Falldown = 1;
@@ -35,7 +35,7 @@ void Element::Element_PET()
 	Properties = TYPE_PART;
 	DefaultProperties.temp = R_TEMP + 14.6f + 273.15f;
 	HeatConduct = 150;
-	Description = "AI Pet, follows STKM/ STKM2, fights with FIGH and eats/drinks PLNT or WATR (Read wiki for more info.) Use sparingly.";
+	Description = "Robot Pet, follows STKM/ STKM2, fights with FIGH, uses PLNT and WATR to stay alive (Read wiki for more info.)";
 
 	Properties = PROP_NOCTYPEDRAW| TYPE_PART;
 	LowPressure = IPL;
@@ -44,7 +44,7 @@ void Element::Element_PET()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 620.0f;
+	HighTemperature = 720.0f;
 	HighTemperatureTransition = PT_FIRE;
 
 	Update = &update;
@@ -73,45 +73,90 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy = -0.6;
 	}
 	//Slowly loses life if there's nothing to eat.
-	if (RNG::Ref().chance(1, 75))
+	if (RNG::Ref().chance(1, 80))
 	{
 		parts[i].life -= 1;
 	}
 	//Temp. regulation.
 	if (parts[i].temp <= 10 + 273.15f)
 	{
+		parts[i].tmp = 10;
 		parts[i].temp++;
-		parts[i].life--;
+		if (RNG::Ref().chance(1, 10))
+			parts[i].life--;
 	}
 
 	if (parts[i].temp > 50 + 273.15f)
 	{
+		parts[i].tmp = 10;
 		parts[i].temp--;
-		parts[i].life--;
+		if (RNG::Ref().chance(1, 10))
+			parts[i].life--;
 	}
+	if (parts[i].tmp2 > 0)
+		parts[i].tmp2--;
+	if (parts[i].tmp > 0)
+		parts[i].tmp--;
 
-	if (parts[i].life >= 100)   //Life check, god sees everything.
+	//Life check, god sees everything.
+
+	if (parts[i].life >= 100)
 		parts[i].life = 100;
 
-	else if (parts[i].life <= 0)  //Everyone has to die one day.
-		sim->kill_part(i);
-
-	if (RNG::Ref().chance(1, 2))
+	else if (parts[i].life <= 0)
 	{
-		for (int rx = -40; rx < 40; rx++)
-			for (int ry = -15; ry < 4; ry++)
-				if (BOUNDS_CHECK && (rx || ry))
+	sim->part_change_type(i, x, y, PT_DUST);
+	sim->pv[(y / CELL)][(x / CELL)] = 270;
+	sim->kill_part(i);
+    }
+
+	//Velocity check.
+	if (parts[i].vx > 5)   
+		parts[i].vx = 5;
+
+	else if (parts[i].vx < -4)  
+		parts[i].vx = -4;
+
+	if (parts[i].vy > 5)
+		parts[i].vy = 5;
+
+	else if (parts[i].vy < -4)   //Vel.check
+		parts[i].vy = -4;
+
+	//Expansion jutsu
+	if (parts[i].life < 10 && parts[i].ctype < 4)
+	{
+		parts[i].ctype = 5;
+	}
+	if (parts[i].life > 10 && parts[i].ctype > 4)
+	{
+		parts[i].ctype = 3;
+	}
+		if (parts[i].ctype < 35 && parts[i].ctype > 4)
+		{
+			if (RNG::Ref().chance(1, 25))
+			parts[i].ctype++;
+		}
+
+	for (int rx = -70; rx < 70; rx++)
+		for (int ry = -30; ry < 5; ry++)
+			if (BOUNDS_CHECK && (rx || ry))
+			{
+				int r = pmap[y + ry][x + rx];
+				if (!r)
+					continue;
+				r = pmap[y + ry][x + rx];
+				switch (TYP(r))
 				{
-					int r = pmap[y + ry][x + rx];
-					if (!r)
-						continue;
-					r = pmap[y + ry][x + rx];
-					switch (TYP(r))
-					{
-						// Follow STKM and STKM2
-					case PT_STKM:
-					case PT_STKM2:
-					{
+				// Follow STKM and STKM2
+				case PT_STKM:
+				case PT_STKM2:
+				{
+						if (parts[ID(r)].ctype == PT_PET)
+						{
+							parts[ID(r)].ctype = PT_DUST;
+						}
+						parts[i].tmp2 = 10;
 						if (parts[ID(r)].life < 100)
 						{
 							parts[ID(r)].life += 1;
@@ -123,13 +168,30 @@ static int update(UPDATE_FUNC_ARGS)
 						else if (parts[i].x > parts[ID(r)].x)
 						{
 							parts[i].x--;
-						}					
-					}
+						}		
+
+						if (parts[i].y < parts[ID(r)].y)
+						{
+							parts[i].y++;
+						}
+						else if (parts[i].y > parts[ID(r)].y)
+						{
+							parts[i].y--;
+						}
+				}
 					break;
 
-					case PT_FIGH:
-					{
-							parts[ID(r)].life -= 2;
+				case PT_FIGH:
+				{
+						parts[i].tmp = 10;
+						if (parts[ID(r)].life >= 10)
+						{
+							parts[ID(r)].life -= 1;
+						}
+						else if (parts[ID(r)].life < 10)
+						{
+							sim->part_change_type(ID(r), x + rx, y + ry, PT_DUST);
+						}
 							if (parts[i].x < parts[ID(r)].x)
 							{
 								parts[i].x++;
@@ -138,20 +200,37 @@ static int update(UPDATE_FUNC_ARGS)
 							{
 								parts[i].x--;
 							}
+
+							if (parts[i].y < parts[ID(r)].y)
+							{
+								parts[i].y++;
+							}
+							else if (parts[i].y > parts[ID(r)].y)
+							{
+								parts[i].y--;
+							}
+
+				}
+					break;
+					//Prevent multiple pets.
+					case PT_PET:
+					{
+							sim->kill_part(ID(r));
 					}
 					break;
 					}
 				}
-	}
 
-	for (int rx = -3; rx < 4; rx++)
-		for (int ry = -3; ry < 4; ry++)
+	for (int rx = -15; rx < 15; rx++)
+		for (int ry = -10; ry < 5; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				int r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
 				r = pmap[y + ry][x + rx];
+
+				if(parts)
 				switch (TYP(r))
 				{
 					// Avoid these particles.
@@ -164,7 +243,10 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_VIRS:
 				case PT_LAVA:
 				case PT_CFLM:
+				case PT_BFLM:
+				case PT_THDR:
 				{
+				parts[i].tmp = 10;
 				parts[i].pavg[0] = -rx;
 				parts[i].pavg[1] = -ry;
 				parts[i].vx = parts[i].pavg[0] * 2;
@@ -174,7 +256,7 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_PLNT:
 				case PT_WATR:
 				{
-					if (RNG::Ref().chance(1, 30))
+					if (RNG::Ref().chance(1, 200))
 				{
 					parts[i].life += 1;
 					sim->kill_part(ID(r));
@@ -187,8 +269,48 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 						parts[i].x--;
 					}
+
+					if (parts[i].y < parts[ID(r)].y)
+					{
+						parts[i].y++;
+					}
+					else if (parts[i].y > parts[ID(r)].y)
+					{
+						parts[i].y--;
+					}
 				}
 				break;
+				}
+			}
+
+	int r, rx, ry;
+	for (rx = -4; rx < 4; rx++)
+		for (ry = -6; ry < 6; ry++)
+			if (BOUNDS_CHECK && (rx || ry))
+			{
+				r = pmap[y + ry][x + rx];
+				if (!r)
+					continue;
+				if (parts[ID(r)].temp > 373.15f || parts[ID(r)].temp < 273.15f)
+				{
+					parts[i].tmp = 10;
+					if (parts[i].x < parts[ID(r)].x)
+					{
+						parts[i].x--;
+					}
+					else if (parts[i].x > parts[ID(r)].x)
+					{
+						parts[i].x++;
+					}
+
+					if (parts[i].y < parts[ID(r)].y)
+					{
+						parts[i].y--;
+					}
+					else if (parts[i].y > parts[ID(r)].y)
+					{
+						parts[i].y++;
+					}
 				}
 			}
 	return 0;
@@ -197,6 +319,7 @@ static int update(UPDATE_FUNC_ARGS)
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
 	sim->parts[i].life = 100;
+	sim->parts[i].ctype = 3;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
@@ -204,29 +327,46 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	int mr = 255;
 	int mg = 0;
 	int mb = 0;
-	if (cpart->life > 80)
+	if (cpart->life >= 80)
 	{
 		mr = 50;
 		mg = 255;
 		mb = 50;
 	}
-	else if (cpart->life < 30)
-	{
-		    mr = 250;
-			mg = 50;
-			mb = 50;
-	}
-    if (cpart->life > 30 && cpart->life < 80)
+	else if (cpart->life > 30 && cpart->life < 80)
 	{
 		mr = 20;
 		mg = 150;
 		mb = 20;
 	}
+    if (cpart->tmp > 0|| cpart->life < 30)
+	{
+		    mr = 250;
+			mg = 50;
+			mb = 50;
+			ren->drawtext(cpart->x+9, cpart->y - 17,"!",255, 0, 0, 255);
+	}
+	if (cpart->tmp2 > 0) 
+	{
+		ren->drawtext(cpart->x - 10, cpart->y - 27, "Stkm", 55, 255, 55, 250);
+	}
+
+	if (cpart->vy > 0)
+	{
+		ren->drawtext(cpart->x-2, cpart->y + 3, "*", 255, 255, 0, 255); 
+	}
 	//draw body
-	ren->fillcircle(cpart->x, cpart->y - 10, 3, 3, mr, mg, mb, 255);
-	ren->fillcircle(cpart->x, cpart->y - 2, 4, 4, 255, 255, 255, 125);
-	ren->drawrect(cpart->x-1, cpart->y-10, 3, 1, 0, 0, 0, 255);
-	ren->drawrect(cpart->x-4, cpart->y - 14, 1, 4,mr,mg, mb, 255);
-	ren->drawrect(cpart->x + 4, cpart->y - 14, 1, 4, mr, mg, mb, 255);
+	ren->fillcircle(cpart->x, cpart->y - 10, cpart->ctype, cpart->ctype, mr, mg, mb, 255);
+	ren->fillcircle(cpart->x, cpart->y - 2, cpart->ctype +1, cpart->ctype +1, 255, 255, 255, 205);
+	ren->drawrect(cpart->x-1, cpart->y-11, 3, 1, 0, 0, 0, 255);
+	//health bar
+	ren->fillrect(cpart->x-4, cpart->y - 17, cpart->life/10, 1, mr, mg, mb, 255);
+	ren->drawrect(cpart->x-5, cpart->y - 18, 11, 3, 255, 255, 255, 100);
+	//hands
+	ren->drawrect(cpart->x-4, cpart->y - 13, 1, 3,mr,mg, mb, 255);
+	ren->drawrect(cpart->x + 4, cpart->y - 13, 1, 3, mr, mg, mb, 255);
+	//head
+	ren->drawrect(cpart->x - 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
+	ren->drawrect(cpart->x + 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
 	return 0;
 }
