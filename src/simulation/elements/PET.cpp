@@ -93,14 +93,16 @@ static int update(UPDATE_FUNC_ARGS)
 		if (RNG::Ref().chance(1, 10))
 			parts[i].life--;
 	}
-	if (parts[i].tmp2 > 0)
-		parts[i].tmp2--;
+
 	if (parts[i].tmp > 0)
-		parts[i].tmp--;
+	{
+		if (RNG::Ref().chance(1, 30))
+			parts[i].tmp = 0;
+	}
 
 	//Life check, god sees everything.
 
-	if (parts[i].life >= 100)
+	if (parts[i].life > 100)
 		parts[i].life = 100;
 
 	else if (parts[i].life <= 0)
@@ -124,19 +126,15 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy = -4;
 
 	//Expansion jutsu
-	if (parts[i].life < 10 && parts[i].ctype < 4)
+	if (parts[i].life < 10 && parts[i].ctype <35)
 	{
-		parts[i].ctype = 5;
+		if (RNG::Ref().chance(1, 25))
+		parts[i].ctype += 1;
 	}
-	if (parts[i].life > 10 && parts[i].ctype > 4)
+	else if (parts[i].life > 10)
 	{
 		parts[i].ctype = 3;
 	}
-		if (parts[i].ctype < 35 && parts[i].ctype > 4)
-		{
-			if (RNG::Ref().chance(1, 25))
-			parts[i].ctype++;
-		}
 
 	for (int rx = -70; rx < 70; rx++)
 		for (int ry = -30; ry < 5; ry++)
@@ -152,11 +150,13 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_STKM:
 				case PT_STKM2:
 				{
+					    parts[i].tmp = 4;
+
 						if (parts[ID(r)].ctype == PT_PET)
 						{
 							parts[ID(r)].ctype = PT_DUST;
 						}
-						parts[i].tmp2 = 10;
+
 						if (parts[ID(r)].life < 100)
 						{
 							parts[ID(r)].life += 1;
@@ -247,10 +247,8 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_THDR:
 				{
 				parts[i].tmp = 10;
-				parts[i].pavg[0] = -rx;
-				parts[i].pavg[1] = -ry;
-				parts[i].vx = parts[i].pavg[0] * 2;
-				parts[i].vy = parts[i].pavg[1] * 2;
+				parts[i].vx = -rx * 2;
+				parts[i].vy = -ry * 2;
 				}
 				break;
 				case PT_PLNT:
@@ -327,6 +325,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	int mr = 255;
 	int mg = 0;
 	int mb = 0;
+
 	if (cpart->life >= 80)
 	{
 		mr = 50;
@@ -339,14 +338,14 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		mg = 150;
 		mb = 20;
 	}
-    if (cpart->tmp > 0|| cpart->life < 30)
+    if (cpart->tmp > 5 || cpart->life < 30)
 	{
 		    mr = 250;
 			mg = 50;
 			mb = 50;
 			ren->drawtext(cpart->x+9, cpart->y - 17,"!",255, 0, 0, 255);
 	}
-	if (cpart->tmp2 > 0) 
+	if (cpart->tmp > 0 && cpart->tmp <5) 
 	{
 		ren->drawtext(cpart->x - 10, cpart->y - 27, "Stkm", 55, 255, 55, 250);
 	}
@@ -359,14 +358,17 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	ren->fillcircle(cpart->x, cpart->y - 10, cpart->ctype, cpart->ctype, mr, mg, mb, 255);
 	ren->fillcircle(cpart->x, cpart->y - 2, cpart->ctype +1, cpart->ctype +1, 255, 255, 255, 205);
 	ren->drawrect(cpart->x-1, cpart->y-11, 3, 1, 0, 0, 0, 255);
+
 	//health bar
 	ren->fillrect(cpart->x-4, cpart->y - 17, cpart->life/10, 1, mr, mg, mb, 255);
 	ren->drawrect(cpart->x-5, cpart->y - 18, 11, 3, 255, 255, 255, 100);
-	//hands
-	ren->drawrect(cpart->x-4, cpart->y - 13, 1, 3,mr,mg, mb, 255);
-	ren->drawrect(cpart->x + 4, cpart->y - 13, 1, 3, mr, mg, mb, 255);
-	//head
+
+	//Hand
 	ren->drawrect(cpart->x - 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
 	ren->drawrect(cpart->x + 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
+
+	//anteena
+	ren->drawrect(cpart->x - 4, cpart->y - 13, 1, 3, mr, mg, mb, 255);
+	ren->drawrect(cpart->x + 4, cpart->y - 13, 1, 3, mr, mg, mb, 255);
 	return 0;
 }

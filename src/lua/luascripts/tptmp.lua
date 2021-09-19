@@ -1616,7 +1616,7 @@ require_preload__["tptmp.client.client"] = function()
 				end
 				if closed then
 					self:tick_resume_()
-					self:stop("connection closed: receive failed: " .. tostring(self.socket_:lasterror()))
+					self:stop("connection closed: receive failed: " .. tostring(self.socket_lasterror_))
 					break
 				end
 				if #data < config.read_size then
@@ -1666,7 +1666,8 @@ require_preload__["tptmp.client.client"] = function()
 				local written = written_up_to - first + 1
 				self.tx_:pop(written)
 				if closed then
-					self:stop("connection closed: send failed: " .. tostring(self.socket_:lasterror()))
+					self.socket_lasterror_ = self.socket_:lasterror()
+					self:stop("connection closed: send failed: " .. tostring(self.socket_lasterror_))
 					break
 				end
 				if written < count then
@@ -1811,6 +1812,7 @@ require_preload__["tptmp.client.client"] = function()
 				self.socket_:shutdown()
 			end
 			self.socket_:close()
+			self.socket_lasterror_ = self.socket_:lasterror()
 			self.socket_ = nil
 			self.connected_ = nil
 			self.registered_ = nil
@@ -2037,12 +2039,12 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = { 90, 90, 90 },
+			border     = { 70, 70, 70},
 		},
 		active = {
 			background = { 255, 255, 255 },
 			text       = {   0,   0,   0 },
-			border     = { 90, 90, 90 },
+			border     = { 70, 70, 70 },
 		},
 	}
 	
@@ -2060,7 +2062,7 @@ require_preload__["tptmp.client.config"] = function()
 
 	local common_config = require("tptmp.common.config")
 	
-	local versionstr = "v2.0.20"
+	local versionstr = "v2.0.21"
 	
 	local config = {
 		-- ***********************************************************************
@@ -2110,6 +2112,10 @@ require_preload__["tptmp.client.config"] = function()
 		-- * Amount of time in seconds that elapses between a message beginning to
 		--   fade out and disappearing completely if the window is floating.
 		floating_fade_time = 1,
+	
+		-- * Path to tptmp.client.manager.null configuration file relative to
+		--   current directory. Only relevant if the null manager is active.
+		null_manager_path = "tptmpsettings.txt",
 	
 	
 		-- ***********************************************************************
@@ -2547,6 +2553,8 @@ require_preload__["tptmp.client.localcmd"] = function()
 			local cli = localcmd.client_func_()
 			if cli then
 				cli:send_say("/slist")
+			else
+				localcmd.window_:backlog_push_neutral("* Server commands are not currently available (connect to a server first)")
 			end
 		end,
 		help_format = colours.commonstr.neutral .. "* %s",
@@ -2660,11 +2668,52 @@ end
 
 require_preload__["tptmp.client.manager.null"] = function()
 
-	local function get(_, default)
-		return default
+	local config = require("tptmp.client.config")
+	
+	local data
+	
+	local function load_data()
+		if data then
+			return
+		end
+		data = {}
+		local handle = io.open(config.null_manager_path, "r")
+		if not handle then
+			return
+		end
+		for line in handle:read("*a"):gmatch("[^\r\n]+") do
+			local key, value = line:match("^([^=]+)=(.*)$")
+			if key then
+				data[key] = value
+			end
+		end
+		handle:close()
 	end
 	
-	local function set()
+	local function save_data()
+		local handle = io.open(config.null_manager_path, "w")
+		if not handle then
+			return
+		end
+		local collect = {}
+		for key, value in pairs(data) do
+			table.insert(collect, tostring(key))
+			table.insert(collect, "=")
+			table.insert(collect, tostring(value))
+			table.insert(collect, "\n")
+		end
+		handle:write(table.concat(collect))
+		handle:close()
+	end
+	
+	local function get(key, default)
+		load_data()
+		return data[key] or default
+	end
+	
+	local function set(key, value)
+		data[key] = value
+		save_data()
 	end
 	
 	local function print(msg)
@@ -4513,6 +4562,7 @@ require_preload__["tptmp.client.util"] = function()
 			assert(elem.allocate("TPTMP", name) ~= -1, "out of element IDs")
 			elem.property(elem["TPTMP_PT_" .. name], "MenuSection", 17) -- * TODO[req]: hack, remove
 			elem.property(elem["TPTMP_PT_" .. name], "Name", "\238\128\163")
+			elem.property(elem["TPTMP_PT_" .. name], "Description", "\238\128\163")
 		end
 		return elem["TPTMP_PT_" .. name]
 	end

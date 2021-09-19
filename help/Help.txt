@@ -64,8 +64,9 @@ src>gui>search>Searchview.cpp
 (TURB, 225);              VIRS.cpp (add exception!)
 (BFLM, 226);             
 (PET, 227);             
+(MISL 228);           
 
-Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS
+Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 
 For BTRY, replace this
  "if ((sim->elements[rt].Properties&PROP_CONDUCTS) && !(rt==PT_WATR||rt==PT_SLTW||rt==PT_NTCT||rt==PT_PTCT||rt==PT_INWR||rt == PT_FNTC||rt == PT_FPTC) && parts[ID(r)].life==0)"

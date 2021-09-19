@@ -1,10 +1,10 @@
-Changelog for V28.0 ID(40)
+Changelog for V29.0 ID(42)
 
-Improvements to PET: Can now express stuff via text, Smoother movements, add a life bar and also new environment detection. 
-Fix pet randomly spawning when killing FIGH.
-Minor fixes to password UI text.
-Merge commits from master.
+New element: Missile/MISL (Blasts after flying to target coordinates)
+Optimise code for PET.
+Update tptmp to V.2.0.2
+Fix unknown elements showing up in element search menu.
+Update PROJ graphics.
+Minor cosmetic changes to hud.
 
-
-
-                                           
+                                 
