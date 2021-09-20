@@ -1,10 +1,9 @@
-Changelog for V29.0 ID(42)
+Changelog for V29.5 ID(44) date: 5 OCT 21
 
-New element: Missile/MISL (Blasts after flying to target coordinates)
-Optimise code for PET.
-Update tptmp to V.2.0.2
-Fix unknown elements showing up in element search menu.
-Update PROJ graphics.
-Minor cosmetic changes to hud.
+Fix MISL going through elements and walls.
+Polish MISL and also Move it to FORCE menu.
 
+todo:
+Rewrite CLUD.
+New, compact mod settings menu.
                                  

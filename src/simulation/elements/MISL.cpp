@@ -9,7 +9,7 @@ void Element::Element_MISL()
 	Name = "MISL";
 	Colour = PIXPACK(0xFFFFFF);
 	MenuVisible = 1;
-	MenuSection = SC_SPECIAL;
+	MenuSection = SC_FORCE;
 	Enabled = 1;
 
 	Advection = 0.0f;
@@ -59,51 +59,50 @@ static int update(UPDATE_FUNC_ARGS)
 
 	if (parts[i].life == 20)
 	{
+		parts[i].pavg[1]++;
 		if (parts[i].y > parts[i].tmp2)
 		{
-			parts[i].y--;
+			parts[i].vy = -1;
 		}
 		else if (parts[i].y <= parts[i].tmp2)
 		{
 			parts[i].life = 10;
 		}
-		sim->create_part(-1, x, y + 2, PT_EMBR); //Trail Up
+		sim->create_part(-1, x, y + 1, PT_FIRE); //Trail Up
 	}
 	// Motion path
 	//pavg[0] 1 = Left , 2 = Right, 3 = Down.
 	else if (parts[i].life == 10) //For motion
 	{
-		if (parts[i].pavg[1] < 700)
-		{
-			parts[i].pavg[1]++;
-		}
+		parts[i].pavg[1]++;
 		if (parts[i].x < parts[i].tmp)
 		{
 			parts[i].pavg[0] = 2;
-			parts[i].x++;
-			sim->create_part(-1, x-2, y, PT_EMBR); //Trail Left
+			parts[i].vx = 2.0;
+			sim->create_part(-1, x-1, y, PT_FIRE); //Trail Left
 		}
 		else if (parts[i].x > parts[i].tmp)
 		{
 			parts[i].pavg[0] = 1;
-			parts[i].x--;
-			sim->create_part(-1, x+2, y, PT_EMBR); //Trail Right
+			parts[i].vx = -2.0;
+			sim->create_part(-1, x+1, y, PT_FIRE); //Trail Right
 		}
 		if (parts[i].x == parts[i].tmp)
 		{
 			if (parts[i].y < parts[i].tmp2)
 			{
 				parts[i].pavg[0] = 3;
-				parts[i].y++;
-				sim->create_part(-1, x, y-3, PT_EMBR); //Trail Down
+				parts[i].vy = 1.0;
+				sim->create_part(-1, x, y - 2, PT_FIRE); //Trail Down
 			}
 		}
 		//Explosion
-		if ((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2) || parts[i].pavg[1] == 700)
+		if ((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2) || parts[i].pavg[1] >= 700)
 		{
 			sim->pv[(y / CELL)][(x / CELL)] = 270;
-			sim->create_part(-1, x, y+1, PT_THDR);
-			sim->part_change_type(i, x, y, PT_BOMB);
+			parts[i].life = 1;
+			parts[i].tmp = 100;
+			sim->part_change_type(i,x,y,PT_SING);
 		}
 	}
 	for (int rx = -2; rx <= 2; rx++)
