@@ -7,7 +7,7 @@ void Element::Element_MISL()
 {
 	Identifier = "DEFAULT_PT_MISL";
 	Name = "MISL";
-	Colour = PIXPACK(0xFFFFFF);
+	Colour = PIXPACK(0xFFA500);
 	MenuVisible = 1;
 	MenuSection = SC_FORCE;
 	Enabled = 1;
@@ -78,13 +78,13 @@ static int update(UPDATE_FUNC_ARGS)
 		if (parts[i].x < parts[i].tmp)
 		{
 			parts[i].pavg[0] = 2;
-			parts[i].vx = 2.0;
+			parts[i].vx = 1.0;
 			sim->create_part(-1, x-1, y, PT_FIRE); //Trail Left
 		}
 		else if (parts[i].x > parts[i].tmp)
 		{
 			parts[i].pavg[0] = 1;
-			parts[i].vx = -2.0;
+			parts[i].vx = -1.0;
 			sim->create_part(-1, x+1, y, PT_FIRE); //Trail Right
 		}
 		if (parts[i].x == parts[i].tmp)
@@ -97,14 +97,22 @@ static int update(UPDATE_FUNC_ARGS)
 			}
 		}
 		//Explosion
-		if ((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2) || parts[i].pavg[1] >= 700)
+		if ((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2))
 		{
 			sim->pv[(y / CELL)][(x / CELL)] = 270;
 			parts[i].life = 1;
-			parts[i].tmp = 100;
-			sim->part_change_type(i,x,y,PT_SING);
+			parts[i].tmp = 200;
+			sim->part_change_type(i, x, y, PT_SING);
+		}
+		if (parts[i].pavg[1] > 700)
+		{
+			sim->pv[(y / CELL)][(x / CELL)] = 270;
+			parts[i].life = 1;
+			parts[i].tmp = 200;
+			sim->part_change_type(i, x, y, PT_SING);
 		}
 	}
+
 	for (int rx = -2; rx <= 2; rx++)
 		for (int ry = -2; ry <= 2; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
@@ -124,27 +132,27 @@ static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 {
 	if (cpart->pavg[0] == 0)//Up
 	{
-		ren->drawrect(cpart->x - 1, cpart->y - 4, 3, 1, 0, 255, 0, 255);
+		ren->drawrect(cpart->x - 1, cpart->y - 4, 3, 1, 255, 65, 0, 255);
 		ren->drawrect(cpart->x, cpart->y - 5, 1, 5, 255, 255, 255, 255);
-		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, 255, 0, 0, 255);
+		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, 255, 65, 0, 255);
 	}
 	else if (cpart->pavg[0] == 1)//Left
 	{
-		ren->drawrect(cpart->x - 4, cpart->y - 1, 1, 3, 0, 255, 0, 255);
+		ren->drawrect(cpart->x - 4, cpart->y - 1, 1, 3, 255, 65, 0, 255);
 		ren->drawrect(cpart->x-5, cpart->y, 5, 1, 255, 255, 255, 255);
-		ren->drawrect(cpart->x, cpart->y-2, 1, 5, 255, 0, 0, 255);
+		ren->drawrect(cpart->x, cpart->y-2, 1, 5, 255, 65, 0, 255);
 	}
 	else if (cpart->pavg[0] == 2)//Right
 	{
-		ren->drawrect(cpart->x + 4, cpart->y - 1, 1, 3, 0, 255, 0, 255);
+		ren->drawrect(cpart->x + 4, cpart->y - 1, 1, 3, 255, 65, 0, 255);
 		ren->drawrect(cpart->x+1, cpart->y, 5, 1, 255, 255, 255, 255);
-		ren->drawrect(cpart->x, cpart->y-2, 1, 5, 255, 0, 0, 255);
+		ren->drawrect(cpart->x, cpart->y-2, 1, 5, 255, 65, 0, 255);
 	}
 	else if (cpart->pavg[0] == 3)//Down
 	{
-		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, 255, 0, 0, 255);
+		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, 255, 65, 0, 255);
 		ren->drawrect(cpart->x, cpart->y+1, 1, 5, 255, 255, 255, 255);
-		ren->drawrect(cpart->x - 1, cpart->y + 4, 3, 1, 0, 255, 0, 255);
+		ren->drawrect(cpart->x - 1, cpart->y + 4, 3, 1, 255, 65, 0, 255);
 	}
 	return 0;
 }

@@ -1,4 +1,4 @@
---cracker1000 mod script v5.5--
+--cracker1000 mod script v5.3--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
@@ -1363,10 +1363,12 @@ local blb = Label:new(240, 218, 10, 15)
 
 
 local newmenuth = Window:new(-15,-15, 609, 255)
-local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control center.")
+local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control centre.")
 local presetlb = Label:new(-10,68,100, 50,"Presets:")
 local previewlb = Label:new(-10,10,100, 60,"Preview:")
 local custlb = Label:new(-10,118,100, 60,"Custom:")
+local pulselb = Label:new(370,83,100, 60,"Pulse theme on, preview not available.")
+local alphalb = Label:new(87,134,100, 60,"Brightness turned on, alpha slider not available.")
 
 if MANAGER.getsetting("CRK","ar") == nil then
 MANAGER.savesetting("CRK","ar",70)
@@ -1382,6 +1384,7 @@ MANAGER.savesetting("CRK","al",255)
 end
 
 function mpnolag()
+newmenuth:removeComponent(pulselb)
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
@@ -1404,10 +1407,17 @@ end
 
 function drawprev()
 graphics.drawRect(20,48,573,26,255,255,255,255)
-graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+if MANAGER.getsetting("CRK", "savergb") == "1" then
+newmenuth:addComponent(pulselb)
+end
 
+if MANAGER.getsetting("CRK", "brightstate") == "1" then 
+newmenuth:addComponent(alphalb)
+end
+graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
 graphics.drawRect(1,1, 609, 255,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
 graphics.fillRect(1,1, 609, 255,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),20)
+
 end
 newmenuth:onDraw(drawprev)
 

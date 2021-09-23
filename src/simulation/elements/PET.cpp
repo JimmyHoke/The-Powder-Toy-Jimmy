@@ -8,7 +8,7 @@ void Element::Element_PET()
 {
 	Identifier = "DEFAULT_PT_PET";
 	Name = "PET";
-	Colour = PIXPACK(0xFFE0A0);
+	Colour = PIXPACK(0x8A8AFF);
 	MenuVisible = 1;
 	MenuSection = SC_SPECIAL;
 	Enabled = 1;
@@ -334,7 +334,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	else if (cpart->life > 30 && cpart->life < 80)
 	{
-		mr = 20;
+		mr = 250;
 		mg = 150;
 		mb = 20;
 	}
@@ -356,12 +356,12 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	//draw body
 	ren->fillcircle(cpart->x, cpart->y - 10, cpart->ctype, cpart->ctype, mr, mg, mb, 255);
-	ren->fillcircle(cpart->x, cpart->y - 2, cpart->ctype +1, cpart->ctype +1, 255, 255, 255, 205);
+	ren->fillcircle(cpart->x, cpart->y - 2, cpart->ctype +1, cpart->ctype +1, 138, 138, 255, 205);
 	ren->drawrect(cpart->x-1, cpart->y-11, 3, 1, 0, 0, 0, 255);
 
 	//health bar
 	ren->fillrect(cpart->x-4, cpart->y - 17, cpart->life/10, 1, mr, mg, mb, 255);
-	ren->drawrect(cpart->x-5, cpart->y - 18, 11, 3, 255, 255, 255, 100);
+	ren->drawrect(cpart->x-5, cpart->y - 18, 12, 3, 138, 138, 255, 150);
 
 	//Hand
 	ren->drawrect(cpart->x - 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);

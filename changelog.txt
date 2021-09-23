@@ -1,9 +1,12 @@
 Changelog for V29.5 ID(44)
 
-Fix MISL going through elements and walls.
-Polish MISL and also Move it to FORCE menu.
+Fix bug where MISL could go through walls and elements. Also make it blast if it gets stuck.
+Move MISL to FORCE menu (Also better explosion).
+Themes now also apply all over mod menu.
+Adjust hud colour change threshold.
+Remove some outdated options like recording.
 Redesigned mod settings menu (With proper spacings and bigger sliders).
-New theme control center, a much better way to customise themes.
-
-todo:
-Rewrite CLUD.                                
+Make BFLM eat energy particles too.
+New theme control centre, a much better way to customise themes (looks cool too).
+Slightly better CLUD lightning and PET graphics.  
+                   

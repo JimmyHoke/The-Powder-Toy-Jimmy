@@ -65,6 +65,8 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 			{
 				int r = pmap[y + ry][x + rx];
 				if (!r)
+					r = sim->photons[y + ry][x + rx];
+				if (!r)
 					continue;
 				if (TYP(r) && TYP(r) != PT_BFLM && TYP(r) != PT_DMRN)
 				{

@@ -2329,13 +2329,13 @@ void GameView::OnDraw()
 		int ag = 255;
 		int ab = 255;
 
-			if (fpsfake <= 14)
+			if (fpsfake <= 15)
 			{
 				ar = 255;
 				ag = 0;
 				ab = 0;
 			}
-			else if (fpsfake < 30 && fpsfake > 14)
+			else if (fpsfake < 35 && fpsfake > 15)
 			{
 				ar = 255;
 				ag = 150;
