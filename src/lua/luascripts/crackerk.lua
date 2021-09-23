@@ -1,4 +1,4 @@
---cracker1000 mod script v5.3--
+--cracker1000 mod script v5.5--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
@@ -47,112 +47,84 @@ end)
 end
 
 local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
-local newmenu = Window:new(-15,-15, 605, 295)
-local creditstxt1 = Label:new(110,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
+local newmenu = Window:new(-15,-15, 609, 255)
+local creditstxt1 = Label:new(115,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
-local deletesparkButton =  Button:new(10,28,75,30,"Interface", "shows UI related stuff.")
-local dellb = Label:new(101, 34, 10, 15, "Shown")
+local deletesparkButton =  Button:new(10,28,80,25,"Interface", "shows UI related stuff.")
+local dellb = Label:new(106, 34, 10, 15, "Shown")
 
-local FPS = Button:new(10,60,75,30, "Frame limiter", "Turns the frame limiter on/off.")
-local fplb = Label:new(94, 68, 10, 15, "ON")
+local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
+local fplb = Label:new(101, 66, 10, 15, "ON")
 
-local reset= Button:new(10,92,75,30,"Reset", "Reset everything.")
+local reset= Button:new(10,92,80,25,"Reset", "Reset everything.")
 
-local info= Button:new(10,124,75,30,"Stack tools", "Usefull for subframe.")
+local info= Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
-local Ruler = Button:new(10,156,75,30, "Ruler", "Toggles in game ruler.")
-local rulb = Label:new(94, 162, 10, 15, "OFF")
+local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
+local rulb = Label:new(101, 162, 10, 15, "OFF")
 
-local rc = Button:new(10,188,75,30,"Record", "Options for recording frames")
-local rc1 = Button:new(90,188,80,20,"Start", "Starts recording")
-local rc2 = Button:new(90,206,80,20,"Stop","Stops recording")
+local bar = Button:new(10,188,80,25,"Top bar", "Toggle top bar")
+local barlb = Label:new(101, 194, 10, 15, " Long")
+local baropa =  Button:new(124,188,35,20,"Short", "Short and moving")
+local baropb =  Button:new(124,208,35,20,"Long", "Long")
+local baropd =  Button:new(124,228,35,20,"OFF", "Turn off")
 
-local bar = Button:new(10,220,75,30,"Top bar", "Toggle top bar")
-local barlb = Label:new(94, 228, 10, 15, " Long")
-local baropa =  Button:new(116,222,35,20,"Short", "Short and moving")
-local baropb =  Button:new(116,242,35,20,"Long", "Long")
-local baropd =  Button:new(116,262,35,20,"OFF", "Turn off")
+local bug = Button:new(10,220,80,25,"Feedback", "Direct to Mod thread for bug report.")
+local bug1 = Button:new(100,220,45,25,"Website", "Direct to Mod thread for bug report.")
+local bug2 = Button:new(148,220,45,25,"In game", "Direct to Mod thread for bug report.")
 
-local bug = Button:new(10,252,75,30,"Feedback", "Direct to Mod thread for bug report.")
-local bug1 = Button:new(90,252,50,30,"Website", "Direct to Mod thread for bug report.")
-local bug2 = Button:new(145,252,50,30,"In game", "Direct to Mod thread for bug report.")
+local wiki  =  Button:new(203,28,80,25,"Wiki", "Element wiki!")
 
-local wiki  =  Button:new(203,28,80,30,"Wiki", "Element wiki!")
-
-local bare = Button:new(203,60,80,30,"Hidden Elem.", "Toggle hidden elements.")
+local bare = Button:new(203,60,80,25,"Hidden Elem.", "Toggle hidden elements.")
 local remlabe = Label:new(294, 66, 10, 15, "OFF")
 
-local mp = Button:new(203,92,80,30,"Theme", "Changes game's theme")
-local mp1 = Button:new(290,92,75,20,"Dark", "Change the theme to default")
-local mp2 = Button:new(290,112,75,20,"Fire", "Change the theme to Blue")
-local mp3 = Button:new(290,132,75,20,"Aqua", "Change the theme to Red")
-local mp4 = Button:new(290,152,75,20,"Forest", "Change the theme to Green")
-local mp7 = Button:new(290,172,75,20,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(290,192,75,20,"Pulse", "RBG makes everything better.")
-local mp9 = Button:new(290,212,75,20,"Custom", "Custom options.")
+local mp = Button:new(203,92,80,25,"Theme", "Changes game's theme")
 
-local als = Label:new(491,225, 10, 15, "Alpha")
-local rl = Label:new(486, 236, 10, 15, "Red")
-local gl = Label:new(490, 247, 10, 15, "Green")
-local bl = Label:new(488, 258, 10, 15, "Blue")
+local bg = Button:new(203,124,80,25,"Filters", "Sets different backgrounds.")
+local bg1 = Button:new(290,124,75,20,"BLACK", "Default")
+local bg2 = Button:new(290,146,75,20,"BLUE", "Blue background")
+local bg3 = Button:new(290,166,75,20,"RED", "Red background")
+local bg4 = Button:new(290,186,75,20,"GREEN", "Green background")
+local bg5 = Button:new(290,206,75,20,"YELLOW", "Yellow background")
 
-local aSlider = Slider:new(373, 225, 100, 15, 255)
-local rSlider = Slider:new(373, 236, 100, 15, 255)
-local gSlider = Slider:new(373, 247, 100, 15, 255)
-local bSlider = Slider:new(373, 258, 100, 15, 255)
-
-local alb = Label:new(520,225,10, 15)
-local rlb = Label:new(520, 236, 10, 15)
-local glb = Label:new(520, 247, 10, 15)
-local blb = Label:new(520, 258, 10, 15)
-
-local mpop = Button:new(385,274,75,15,"Done", "Custom options.")
-
-local bg = Button:new(203,124,80,30,"Filters", "Sets different backgrounds.")
-local bg1 = Button:new(293,124,75,20,"BLACK", "Default")
-local bg2 = Button:new(293,146,75,20,"BLUE", "Blue background")
-local bg3 = Button:new(293,166,75,20,"RED", "Red background")
-local bg4 = Button:new(293,186,75,20,"GREEN", "Green background")
-local bg5 = Button:new(293,206,75,20,"YELLOW", "Yellow background")
-
-local autohide= Button:new(203,156,80,30, "Auto Hide HUD", "Hide.")
+local autohide= Button:new(203,156,80,25, "Auto Hide HUD", "Hide.")
 local autolb = Label:new(294, 162, 10, 15, "OFF")
 
-local chud = Button:new(203,188,80,30, "Texter", "for text.")
+local chud = Button:new(203,188,80,25, "Texter", "for text.")
 
-local brightness = Button:new(203,220,80,30, "Brightness", "Adjust brightness.")
-local brightSlider = Slider:new(293,220, 100, 15, 255)
+local brightness = Button:new(203,220,80,25, "Brightness", "Adjust brightness.")
+local brightSlider = Slider:new(290,219, 100, 17, 255)
+local brop = Button:new(293,237,45,15,"On", "Save.")
+local bropc = Button:new(342,237,45,15,"Off", "Cancel.")
+local brlabel = Label:new(340, 208, 10, 15, "Turned: Off")
 
-local brop = Button:new(293,235,45,20,"On", "Save.")
-local bropc = Button:new(342,235,45,20,"Off", "Cancel.")
-local brlabel = Label:new(340, 210, 10, 15, "Turned: Off")
-
-local reminder = Button:new(203,252,80,30, "Reminder", "reminds after 30 mins.")
-local remtime = Textbox:new(293, 255, 80, 15, '', 'Time in min.')
-remtime:text("10")
-local remon2 = Button:new(333,272,40,20,"On", "Save.")
-local remoff  = Button:new(293,272,40,20,"Off", "Cancel.")
-local remlabel = Label:new(375, 2, 10, 15, "Reminder set for10 mins")
-local remlabel21 = Label:new(413, 255, 20, 15, "Time in min. (0-60)")
-
-local fancur = Button:new(396,28,80,30, "Crosshair", "Draws graphics around cursor.")
+local fancur = Button:new(396,28,80,25, "Crosshair", "Draws graphics around cursor.")
 local fanlb = Label:new(487, 34, 10, 15, "OFF")
+ 
+local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
-local Help = Button:new(396,60,80,30, "Random save", "Opens random save.")
+local shrt = Button:new(396,92,80,25, "Toggle J Key", "Turns off the J key shortcut")
+local shrtlb = Label:new(487, 98, 10, 15, "ON")
 
-local shrt = Button:new(396,92,80,30, "Toggle J Key", "Turns off the J key shortcut")
-local shrtlb = Label:new(485, 98, 10, 15, "ON")
+local edito = Button:new(396,124,80,25, "Editor", "Basic element editor.")
 
-local edito = Button:new(396,124,80,30, "Editor", "Basic element editor.")
+local perfm = Button:new(396,156,80,25, "Performance", "For lower spec systems.")
+local perlab = Label:new(487, 162, 10, 15, "OFF")
 
-local perfm = Button:new(396,156,80,30, "Performance", "For lower spec systems.")
-local perlab = Label:new(485, 162, 10, 15, "OFF")
+local passbut = Button:new(396,188,80,25, "Password", "Secure password protection.")
+local passbutlab = Label:new(487, 194, 10, 15, "OFF")
 
-local passbut = Button:new(396,188,80,30, "Password", "Secure password protection.")
-local passbutlab = Label:new(485, 195, 10, 15, "OFF")
 
-local hide= Button:new(582,273,20,20, "X", "Hide.")
+local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
+local remtime = Textbox:new(486, 223, 20, 20, '', 'Time in min.')
+local remlabel = Label:new(378, 2, 10, 15, "Reminder set for10 mins")
+local remlabel21 = Label:new(538, 205, 20, 15, "0-60 Mins.")
+remtime:text("10")
+local remon2 = Button:new(516,223,30,20,"Set", "Save.")
+local remoff  = Button:new(546,223,30,20,"Off", "Cancel.")
+
+local hide= Button:new(582,2,25,25, "X", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -162,7 +134,6 @@ newmenu:removeComponent(hide)
 newmenu:removeComponent(info)
 newmenu:removeComponent(Ruler)
 newmenu:removeComponent(mp)
-newmenu:removeComponent(rc)
 newmenu:removeComponent(bg)
 newmenu:removeComponent(bug)
 newmenu:removeComponent(bar)
@@ -181,8 +152,6 @@ newmenu:removeComponent(passbut)
 end
 
 function clearsb()
-newmenu:removeComponent(rc1)
-newmenu:removeComponent(rc2)
 newmenu:removeComponent(bug1)
 newmenu:removeComponent(bug2)
 newmenu:removeComponent(bg1)
@@ -190,26 +159,6 @@ newmenu:removeComponent(bg2)
 newmenu:removeComponent(bg3)
 newmenu:removeComponent(bg4)
 newmenu:removeComponent(bg5)
-newmenu:removeComponent(mp1)
-newmenu:removeComponent(mp2)
-newmenu:removeComponent(mp3)
-newmenu:removeComponent(mp4)
-newmenu:removeComponent(mp7)
-newmenu:removeComponent(mp8)
-newmenu:removeComponent(mp9)
-newmenu:removeComponent(rSlider)
-newmenu:removeComponent(gSlider)
-newmenu:removeComponent(bSlider)
-newmenu:removeComponent(aSlider)
-newmenu:removeComponent(als)
-newmenu:removeComponent(rl)
-newmenu:removeComponent(gl)
-newmenu:removeComponent(bl)
-newmenu:removeComponent(rlb)
-newmenu:removeComponent(glb)
-newmenu:removeComponent(blb)
-newmenu:removeComponent(alb)
-newmenu:removeComponent(mpop)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel)
@@ -288,7 +237,7 @@ end)
 
 doned4 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","1")
-passbutlab:text(" ON")
+passbutlab:text("ON")
 pasmenmsg4:text("Protection status: "..passbutlab:text())
 end)
 
@@ -1170,27 +1119,6 @@ backvb = 0
 clearback()
 end)
 
-rc:action(function(sender)
-clearsb()
-newmenu:addComponent(rc1)
-newmenu:addComponent(rc2)
-end)
-
-rc1:action(function(sender)
-tpt.record(true)
-ui.closeWindow(newmenu) 
-newmenu:removeComponent(rc1)
-newmenu:removeComponent(rc2)
-end)
-
-rc2:action(function(sender)
-ui.closeWindow(newmenu) 
-tpt.record(false)
-ui.closeWindow(newmenu) 
-newmenu:removeComponent(rc1)
-newmenu:removeComponent(rc2)
-end)
-
 local barval = MANAGER.getsetting("CRK","barval")
 bar:action(function(sender)
 clearsb()
@@ -1240,7 +1168,7 @@ tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(10,-1,590,3, ar,ag,ab,al)
+tpt.fillrect(1,-1,609,3, ar,ag,ab,al)
 end
 
 if uival == "1" then
@@ -1252,7 +1180,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(10,-1,590,3, ar,ag,ab,al)
+tpt.fillrect(1,-1,609,3, ar,ag,ab,al)
 end
 end
 
@@ -1341,11 +1269,10 @@ end
 
 tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 
-
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(10,-1,590,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(1,-1,609,3, colourRED,colourGRN,colourBLU,al)
 end
 
 if uival == "1" then
@@ -1357,7 +1284,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "2" then
-tpt.fillrect(10,-1,590,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(1,-1,609,3, colourRED,colourGRN,colourBLU,al)
 end
 end
 
@@ -1407,7 +1334,67 @@ tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
 end
 end
 
+mp:action(function(sender)
+clearsb()
+fs.makeDirectory("scripts")
+
+local mp1 = Button:new(20,102,45,20,"Dark", "Change the theme to default")
+local mp2 = Button:new(70,102,45,20,"Fire", "Change the theme to Blue")
+local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
+local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
+local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
+local mp8 = Button:new(270,102,45,20,"Pulse", "RBG makes everything better.")
+local mpop = Button:new(530,232,75,20,"Save", "Custom options.")
+
+local als = Label:new(280,155, 10, 15, "Alpha")
+local rl = Label:new(275, 176, 10, 15, "Red")
+local gl = Label:new(280,197, 10, 15, "Green")
+local bl = Label:new(278, 218, 10, 15, "Blue")
+
+local aSlider = Slider:new(20, 155, 200, 15, 255)
+local rSlider = Slider:new(20, 176, 200, 15, 255)
+local gSlider = Slider:new(20, 197, 200, 15, 255)
+local bSlider = Slider:new(20, 218, 200, 15, 255)
+
+local alb = Label:new(240,155,10, 15)
+local rlb = Label:new(240, 176, 10, 15)
+local glb = Label:new(240, 197, 10, 15)
+local blb = Label:new(240, 218, 10, 15)
+
+
+local newmenuth = Window:new(-15,-15, 609, 255)
+local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control center.")
+local presetlb = Label:new(-10,68,100, 50,"Presets:")
+local previewlb = Label:new(-10,10,100, 60,"Preview:")
+local custlb = Label:new(-10,118,100, 60,"Custom:")
+
+if MANAGER.getsetting("CRK","ar") == nil then
+MANAGER.savesetting("CRK","ar",70)
+end
+if MANAGER.getsetting("CRK","ag") == nil then
+MANAGER.savesetting("CRK","ag",70)
+end
+if MANAGER.getsetting("CRK","ab") == nil then
+MANAGER.savesetting("CRK","ab",70)
+end
+if MANAGER.getsetting("CRK","al") == nil then
+MANAGER.savesetting("CRK","al",255)
+end
+
 function mpnolag()
+rSlider:value(MANAGER.getsetting("CRK", "ar"))
+gSlider:value(MANAGER.getsetting("CRK", "ag"))
+bSlider:value(MANAGER.getsetting("CRK", "ab"))
+
+rclr = rSlider:value() 
+rlb:text(rclr)
+
+gclr = gSlider:value() 
+glb:text(gclr)
+
+bclr = bSlider:value() 
+blb:text(bclr)
+
 if perlab:text() == "OFF" then
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
@@ -1415,16 +1402,77 @@ end
 event.unregister(event.tick,colourblender)
 end
 
-mp:action(function(sender)
-clearsb()
-fs.makeDirectory("scripts")
-newmenu:addComponent(mp1)
-newmenu:addComponent(mp2)
-newmenu:addComponent(mp3)
-newmenu:addComponent(mp4)
-newmenu:addComponent(mp7)
-newmenu:addComponent(mp8)
-newmenu:addComponent(mp9)
+function drawprev()
+graphics.drawRect(20,48,573,26,255,255,255,255)
+graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+
+graphics.drawRect(1,1, 609, 255,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
+graphics.fillRect(1,1, 609, 255,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),20)
+end
+newmenuth:onDraw(drawprev)
+
+function closewindow()
+ui.closeWindow(newmenuth)
+ui.closeWindow(newmenu)
+end
+
+newmenuth:onTryExit(closewindow)
+
+ui.showWindow(newmenuth)
+
+newmenuth:addComponent(creditsth)
+newmenuth:addComponent(presetlb)
+newmenuth:addComponent(previewlb)
+newmenuth:addComponent(custlb)
+newmenuth:addComponent(mp1)
+newmenuth:addComponent(mp2)
+newmenuth:addComponent(mp3)
+newmenuth:addComponent(mp4)
+newmenuth:addComponent(mp7)
+newmenuth:addComponent(mp8)
+newmenuth:addComponent(rSlider)
+newmenuth:addComponent(gSlider)
+newmenuth:addComponent(bSlider)
+newmenuth:addComponent(rl)
+newmenuth:addComponent(gl)
+newmenuth:addComponent(bl)
+newmenuth:addComponent(rlb)
+newmenuth:addComponent(glb)
+newmenuth:addComponent(blb)
+newmenuth:addComponent(mpop)
+
+if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
+newmenuth:addComponent(aSlider)
+newmenuth:addComponent(als)
+newmenuth:addComponent(alb)
+end
+rlb:text(MANAGER.getsetting("CRK", "ar"))
+glb:text(MANAGER.getsetting("CRK", "ag"))
+blb:text(MANAGER.getsetting("CRK", "ab"))
+alb:text(MANAGER.getsetting("CRK", "al"))
+
+rSlider:onValueChanged(function() rclr = rSlider:value() rlb:text(rclr) MANAGER.savesetting("CRK","ar", rSlider:value()) end)
+gSlider:onValueChanged(function() gclr = gSlider:value() glb:text(gclr) MANAGER.savesetting("CRK","ag",gSlider:value()) end)
+bSlider:onValueChanged(function() bclr = bSlider:value() blb:text(bclr) MANAGER.savesetting("CRK","ab",bSlider:value())  end)
+
+aSlider:onValueChanged(function()
+if aSlider:value() < 100 then
+aSlider:value("100")
+end
+aclr = aSlider:value() 
+alb:text(aclr) 
+MANAGER.savesetting("CRK","al",aSlider:value()) 
+end)
+
+aSlider:value(MANAGER.getsetting("CRK", "al"))
+rSlider:value(MANAGER.getsetting("CRK", "ar"))
+gSlider:value(MANAGER.getsetting("CRK", "ag"))
+bSlider:value(MANAGER.getsetting("CRK", "ab"))
+
+
+mpop:action(function(sender)
+ui.closeWindow(newmenuth)
+ui.closeWindow(newmenu)
 end)
 
 mp1:action(function(sender)
@@ -1485,82 +1533,6 @@ event.unregister(event.tick,theme)
 clearsb()
 end)
 
-mp9:action(function(sender)
-mpnolag()
-MANAGER.savesetting("CRK","savergb",2)
-if MANAGER.getsetting("CRK","ar") == nil then
-MANAGER.savesetting("CRK","ar",70)
-end
-if MANAGER.getsetting("CRK","ag") == nil then
-MANAGER.savesetting("CRK","ag",70)
-end
-if MANAGER.getsetting("CRK","ab") == nil then
-MANAGER.savesetting("CRK","ab",70)
-end
-if MANAGER.getsetting("CRK","al") == nil then
-MANAGER.savesetting("CRK","al",255)
-end
-
-function drawprev()
-
-graphics.drawRect(558,238,24,24,255,255,255,255)
-graphics.fillRect(560,240,20,20,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
-end
-newmenu:onDraw(drawprev)
-
-rlb:text(MANAGER.getsetting("CRK", "ar"))
-glb:text(MANAGER.getsetting("CRK", "ag"))
-blb:text(MANAGER.getsetting("CRK", "ab"))
-alb:text(MANAGER.getsetting("CRK", "al"))
-
-rSlider:onValueChanged(function() rclr = rSlider:value() rlb:text(rclr) MANAGER.savesetting("CRK","ar", rSlider:value()) end)
-gSlider:onValueChanged(function() gclr = gSlider:value() glb:text(gclr) MANAGER.savesetting("CRK","ag",gSlider:value()) end)
-bSlider:onValueChanged(function() bclr = bSlider:value() blb:text(bclr) MANAGER.savesetting("CRK","ab",bSlider:value())  end)
-
-aSlider:onValueChanged(function()
-if aSlider:value() < 100 then
-aSlider:value("100")
-end
-aclr = aSlider:value() 
-alb:text(aclr) 
-MANAGER.savesetting("CRK","al",aSlider:value()) 
-end)
-
-aSlider:value(MANAGER.getsetting("CRK", "al"))
-rSlider:value(MANAGER.getsetting("CRK", "ar"))
-gSlider:value(MANAGER.getsetting("CRK", "ag"))
-bSlider:value(MANAGER.getsetting("CRK", "ab"))
-
-if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
-newmenu:addComponent(aSlider)
-newmenu:addComponent(als)
-newmenu:addComponent(alb)
-end
-
-newmenu:addComponent(rSlider)
-newmenu:addComponent(gSlider)
-newmenu:addComponent(bSlider)
-newmenu:addComponent(rl)
-newmenu:addComponent(gl)
-newmenu:addComponent(bl)
-newmenu:addComponent(rlb)
-newmenu:addComponent(glb)
-newmenu:addComponent(blb)
-newmenu:addComponent(mpop)
-
-mpop:action(function(sender)
-newmenu:removeComponent(rSlider)
-newmenu:removeComponent(gSlider)
-newmenu:removeComponent(bSlider)
-newmenu:removeComponent(rl)
-newmenu:removeComponent(gl)
-newmenu:removeComponent(bl)
-newmenu:removeComponent(rlb)
-newmenu:removeComponent(glb)
-newmenu:removeComponent(blb)
-newmenu:removeComponent(mpop)
-clearsb()
-end)
 end)
 
 function startupcheck()
@@ -1598,7 +1570,7 @@ MANAGER.savesetting("CRK", "brightness",200)
 end
 
 if MANAGER.getsetting("CRK", "barval") == "4" then
-barlb:text(" OFF")
+barlb:text("OFF")
 
 elseif MANAGER.getsetting("CRK", "barval") == "1" then
 barlb:text(" Short")
@@ -1749,12 +1721,14 @@ function drawglitch()
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 theme()
-graphics.drawLine(7, 18,314,18,ar,ag,ab,al)
-graphics.drawRect(1,1, 605, 295,ar,ag,ab,110)
+graphics.drawLine(12, 18,319,18,ar,ag,ab,al)
+graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
+graphics.fillRect(1,1, 609, 255,ar,ag,ab,20)
 else
 colourblender()
-graphics.drawLine(7, 18,314,18,colourRED,colourGRN,colourBLU,al)
-graphics.drawRect(1,1, 605, 295,colourRED,colourGRN,colourBLU,110)
+graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
+graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
+graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,20)
 end
 end
 backg()
@@ -1773,7 +1747,6 @@ newmenu:addComponent(info)
 newmenu:addComponent(reset)
 newmenu:addComponent(hide)
 newmenu:addComponent(Ruler)
-newmenu:addComponent(rc)
 newmenu:addComponent(bg)
 newmenu:addComponent(mp)
 newmenu:addComponent(bug)

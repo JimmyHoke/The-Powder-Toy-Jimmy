@@ -1,9 +1,9 @@
-Changelog for V29.5 ID(44) date: 5 OCT 21
+Changelog for V29.5 ID(44)
 
 Fix MISL going through elements and walls.
 Polish MISL and also Move it to FORCE menu.
+Redesigned mod settings menu (With proper spacings and bigger sliders).
+New theme control center, a much better way to customise themes.
 
 todo:
-Rewrite CLUD.
-New, compact mod settings menu.
-                                 
+Rewrite CLUD.                                
