@@ -4,7 +4,7 @@ const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
 "\bw                                            Welcome To The Jimmy's Mod \n"
 "\bo                                           |-----------------------------------|\n"
-"                                                \br<< \bwVer. 28.0 \bo||\bw TPT 96.2 \br>>"
+"                                                \br<< \bwVer. 29.5 \bo||\bw TPT 96.2 \br>>"
 "\bo\n\n   Instructions:                        \n"
 "\br *\bw There's a new \bl'Settings'\bw button near Tags, press it to open the Mod menu.\n"
 "\br *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"

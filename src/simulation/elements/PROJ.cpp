@@ -99,7 +99,10 @@ static int update(UPDATE_FUNC_ARGS)
 static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 {
 	if (cpart->life == 10)
-	*pixel_mode |= PMODE_LFLARE;
+	{
+		ren->drawcircle(cpart->x, cpart->y, 4, 4, 255, 100, 0, 255);
+		*pixel_mode |= PMODE_LFLARE;
+	}
 	return 0;
 }
 

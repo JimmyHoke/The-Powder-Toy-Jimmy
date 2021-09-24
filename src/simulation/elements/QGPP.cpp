@@ -66,7 +66,7 @@ static int update(UPDATE_FUNC_ARGS)
 				}
 				if (parts[i].tmp <= 170 && parts[i].temp >= 474.15f)
 					{
-								sim->pv[(y / CELL)][(x / CELL)] = -4.0f;
+					 sim->pv[(y / CELL)][(x / CELL)] = -4.0f;
 				    }
 	return 0;
 }

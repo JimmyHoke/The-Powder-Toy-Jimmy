@@ -2216,7 +2216,7 @@ void GameView::OnDraw()
 				}
 
 				// only elements that use .tmp2 show it in the debug HUD
-				if (type == PT_CRAY || type == PT_DRAY || type == PT_EXOT || type == PT_LIGH || type == PT_SOAP || type == PT_TRON || type == PT_VIBR || type == PT_VIRS || type == PT_WARP || type == PT_LCRY || type == PT_CBNW || type == PT_TSNS || type == PT_DTEC || type == PT_LSNS || type == PT_PSTN || type == PT_LDTC || type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_STRC || type == PT_LITH)
+				if (type == PT_CRAY || type == PT_DRAY || type == PT_EXOT || type == PT_LIGH || type == PT_SOAP || type == PT_TRON || type == PT_VIBR || type == PT_VIRS || type == PT_WARP || type == PT_LCRY || type == PT_CBNW || type == PT_TSNS || type == PT_DTEC || type == PT_LSNS || type == PT_PSTN || type == PT_LDTC || type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_STRC || type == PT_LITH||type == PT_MISL)
 					sampleInfo << ", Tmp2: " << sample.particle.tmp2;
 
 				sampleInfo << ", Pressure: " << sample.AirPressure;
@@ -2235,7 +2235,7 @@ void GameView::OnDraw()
 		}
 		else if (sample.isMouseInSim)
 		{
-			sampleInfo << "Empty, Pressure: " << sample.AirPressure;
+			sampleInfo << "Pressure: " << sample.AirPressure;
 		}
 		else
 		{
@@ -2329,20 +2329,20 @@ void GameView::OnDraw()
 		int ag = 255;
 		int ab = 255;
 
-			if (fpsfake <= 14)
+			if (fpsfake <= 15)
 			{
 				ar = 255;
 				ag = 0;
 				ab = 0;
 			}
-			else if (fpsfake < 30 && fpsfake > 14)
+			else if (fpsfake < 35 && fpsfake > 15)
 			{
 				ar = 255;
 				ag = 150;
 				ab = 0;
 			}
 
-			fpsInfo << Format::Precision(0) << "FPS: " << ui::Engine::Ref().GetFps();
+			fpsInfo << Format::Precision(0)<< ui::Engine::Ref().GetFps();
 		if (showDebug)
 		{
 		 fpsInfo <<" ("<<(ui::Engine::Ref().GetFps()) / 60 * 100 << "%), ";
@@ -2355,13 +2355,13 @@ void GameView::OnDraw()
 		strftime(buffer, 80, showDebug ?
 			"%Y-%m-%d, %I:%M:%S %p" :
 			", %I:%M %p", timeinfo);
-		fpsInfo << buffer << " ";
+		fpsInfo << buffer << "";
 		if (showDebug)
 		{
 			if (ren->findingElement)
-				fpsInfo << " Parts: " << ren->foundElements << "/" << sample.NumParts;
+				fpsInfo << ", Parts: " << ren->foundElements << "/" << sample.NumParts;
 			else
-				fpsInfo << " Parts: " << sample.NumParts;
+				fpsInfo << ", Parts: " << sample.NumParts;
 		}
 		if (ren && ren->findingElement)
 			fpsInfo << " [FIND]";

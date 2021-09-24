@@ -1,10 +1,13 @@
-Changelog for V28.0 ID(40)
+Changelog for V29.5 ID(44)
 
-Improvements to PET: Can now express stuff via text, Smoother movements, add a life bar and also new environment detection. 
-Fix pet randomly spawning when killing FIGH.
-Minor fixes to password UI text.
-Merge commits from master.
-
-
-
-                                           
+There might some bugs, although I tried my best to solve all errors. Feel free to test this version and report any bug.
+Fix bug where MISL could go through walls and elements. Also make it blast if it gets stuck.
+Move MISL to FORCE menu (Also better explosion).
+Themes now also apply all over mod menu.
+Adjust hud colour change threshold.
+Remove some outdated options like recording.
+Redesigned mod settings menu (With proper spacings and bigger sliders).
+Make BFLM eat energy particles too.
+New theme control centre, a much better way to customise themes (looks cool too).
+Slightly better CLUD lightning and PET graphics.
+                   

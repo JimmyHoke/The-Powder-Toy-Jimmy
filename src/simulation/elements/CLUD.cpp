@@ -101,11 +101,11 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colr = 100;
 		*colg = 100;
 	}
-		if (cpart->tmp > 995 && cpart->tmp < 997)
+		if (cpart->tmp > 994 && cpart->tmp < 999)
 		{
-			*colb = 170;
-			*colr = 255;
-			*colg = 170;
+			*colb = 200;
+			*colr = 200;
+			*colg = 200;
 			*pixel_mode |= PMODE_LFLARE;
 		}
 		else
