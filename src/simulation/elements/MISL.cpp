@@ -104,7 +104,7 @@ static int update(UPDATE_FUNC_ARGS)
 			parts[i].tmp = 200;
 			sim->part_change_type(i, x, y, PT_SING);
 		}
-		if (parts[i].pavg[1] > 700)
+		if (parts[i].pavg[1] > 800)
 		{
 			sim->pv[(y / CELL)][(x / CELL)] = 270;
 			parts[i].life = 1;

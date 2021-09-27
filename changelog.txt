@@ -1,13 +1,11 @@
-Changelog for V29.5 ID(44)
+Changelog for V30.0 ID(45)
 
-There might some bugs, although I tried my best to solve all errors. Feel free to test this version and report any bug.
-Fix bug where MISL could go through walls and elements. Also make it blast if it gets stuck.
-Move MISL to FORCE menu (Also better explosion).
-Themes now also apply all over mod menu.
-Adjust hud colour change threshold.
-Remove some outdated options like recording.
-Redesigned mod settings menu (With proper spacings and bigger sliders).
-Make BFLM eat energy particles too.
-New theme control centre, a much better way to customise themes (looks cool too).
-Slightly better CLUD lightning and PET graphics.
-                   
+Fix MISL exploding early.
+Fix custom theme sliders not turning off PULSE theme automatically.
+Pulse theme can now use the values from alpha slider.
+Move top bar options into new theme control centre.
+
+todo:
+Fix/ change PINV activation mechanism.
+New CWIR mode that makes it behave as INST (tmp = 9).
+Complete auto stamp.

@@ -1,4 +1,4 @@
---cracker1000 mod script v5.3--
+--cracker1000 mod script v5.5--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
@@ -64,11 +64,7 @@ local info= Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
 local rulb = Label:new(101, 162, 10, 15, "OFF")
 
-local bar = Button:new(10,188,80,25,"Top bar", "Toggle top bar")
-local barlb = Label:new(101, 194, 10, 15, " Long")
-local baropa =  Button:new(124,188,35,20,"Short", "Short and moving")
-local baropb =  Button:new(124,208,35,20,"Long", "Long")
-local baropd =  Button:new(124,228,35,20,"OFF", "Turn off")
+local bar = Button:new(10,188,80,25,"Auto Save", "Toggle Auto stamp.")
 
 local bug = Button:new(10,220,80,25,"Feedback", "Direct to Mod thread for bug report.")
 local bug1 = Button:new(100,220,45,25,"Website", "Direct to Mod thread for bug report.")
@@ -167,9 +163,6 @@ newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
 newmenu:removeComponent(remtime)
 newmenu:removeComponent(remlabel21) 
-newmenu:removeComponent(baropa)
-newmenu:removeComponent(baropb)
-newmenu:removeComponent(baropd)
 newmenu:onDraw(drawglitch)
 end
 
@@ -280,6 +273,32 @@ tpt.register_step(colourblender)
 end
 tpt.display_mode(3)
 end
+end)
+
+local autosavetimer = 0
+
+function autosave()
+
+if autosavetimer < 500 then
+autosavetimer = autosavetimer + 1
+end
+
+if autosavetimer == 480 then
+sim.saveStamp(0,0,610,380)
+end
+
+if autosavetimer == 500 then
+autosavetimer = 0 
+end
+
+if autosavetimer > 480 and autosavetimer < 500 then
+graphics.drawRect(4,367,68,14, 255,255,0,255)
+graphics.drawText(10,370,"Stamp Taken.", 255,255,0,255)
+end
+end
+
+bar:action(function(sender)
+tpt.register_step(autosave)
 end)
 
 local timerad = Button:new(10,356,20,15, "S", "Stacks the elements present on screen.")
@@ -1120,34 +1139,6 @@ clearback()
 end)
 
 local barval = MANAGER.getsetting("CRK","barval")
-bar:action(function(sender)
-clearsb()
-fs.makeDirectory("scripts")
-newmenu:addComponent(baropa)
-newmenu:addComponent(baropb)
-newmenu:addComponent(baropd)
-
-baropa:action(function(sender)
-barlb:text(" Short")
-clearsb()
-MANAGER.savesetting("CRK","barval","1")
-end)
-
-baropb:action(function(sender)
-barlb:text(" Long")
-MANAGER.savesetting("CRK","barval","2")
-clearsb()
-end)
-
-baropd:action(function(sender)
-barlb:text("OFF")
-barlength = 1
-MANAGER.savesetting("CRK","barval","4")
-clearsb()
-end)
-
-end)
-
 local barlength = "1"
 local uival = "1"
 
@@ -1197,7 +1188,7 @@ tpt.drawrect(613,33,14,14,ar,ag,ab,al)
 tpt.drawrect(613,49,14,14,ar,ag,ab,al)
 tpt.drawrect(613,65,14,14,ar,ag,ab,al)
 tpt.drawrect(613,81,14,14,ar,ag,ab,al)
---left
+--right
 tpt.drawrect(613,136,14,14,ar,ag,ab,al)
 tpt.drawrect(613,152,14,14,ar,ag,ab,al)
 tpt.drawrect(613,168,14,14,ar,ag,ab,al)
@@ -1235,7 +1226,7 @@ frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function colourblender()
  if uival == "1" then 
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
-al = 220
+al = MANAGER.getsetting("CRK", "al")
 else
 al = brightSlider:value()
 end
@@ -1300,7 +1291,7 @@ tpt.drawrect(613,33,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,49,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,65,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,81,14,14,colourRED,colourGRN,colourBLU,al)
---left
+--right
 tpt.drawrect(613,136,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,152,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,168,14,14,colourRED,colourGRN,colourBLU,al)
@@ -1344,7 +1335,13 @@ local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
 local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(270,102,45,20,"Pulse", "RBG makes everything better.")
-local mpop = Button:new(530,232,75,20,"Save", "Custom options.")
+local mpop = Button:new(530,272,75,20,"Done", "Custom options.")
+
+--topbar
+local barlb = Label:new(70, 244, 5, 5, " Long")
+local baropa =  Button:new(24,260,35,20,"Short", "Short and moving")
+local baropb =  Button:new(64,260,35,20,"Long", "Long")
+local baropd =  Button:new(104,260,35,20,"OFF", "Turn off")
 
 local als = Label:new(280,155, 10, 15, "Alpha")
 local rl = Label:new(275, 176, 10, 15, "Red")
@@ -1362,12 +1359,13 @@ local glb = Label:new(240, 197, 10, 15)
 local blb = Label:new(240, 218, 10, 15)
 
 
-local newmenuth = Window:new(-15,-15, 609, 255)
+local newmenuth = Window:new(-15,-15, 609, 295)
 local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control centre.")
 local presetlb = Label:new(-10,68,100, 50,"Presets:")
 local previewlb = Label:new(-10,10,100, 60,"Preview:")
 local custlb = Label:new(-10,118,100, 60,"Custom:")
-local pulselb = Label:new(370,83,100, 60,"Pulse theme on, preview not available.")
+local bartlb = Label:new(35,242,10, 10,"Topbar:")
+local pulselb = Label:new(70,30,100, 60,"Pulse theme on, preview not available.")
 local alphalb = Label:new(87,134,100, 60,"Brightness turned on, alpha slider not available.")
 
 if MANAGER.getsetting("CRK","ar") == nil then
@@ -1385,6 +1383,7 @@ end
 
 function mpnolag()
 newmenuth:removeComponent(pulselb)
+MANAGER.savesetting("CRK","savergb",2)
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
@@ -1407,19 +1406,31 @@ end
 
 function drawprev()
 graphics.drawRect(20,48,573,26,255,255,255,255)
-if MANAGER.getsetting("CRK", "savergb") == "1" then
+if MANAGER.getsetting("CRK", "savergb") ~= "2" then
 newmenuth:addComponent(pulselb)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then 
 newmenuth:addComponent(alphalb)
 end
-graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
-graphics.drawRect(1,1, 609, 255,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
-graphics.fillRect(1,1, 609, 255,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),20)
 
+if MANAGER.getsetting("CRK", "savergb") == "2" or  MANAGER.getsetting("CRK", "savergb") == "nil" then
+graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+graphics.drawRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
+graphics.fillRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),20)
+end
 end
 newmenuth:onDraw(drawprev)
+
+if MANAGER.getsetting("CRK", "barval") == "4" then
+barlb:text("OFF")
+
+elseif MANAGER.getsetting("CRK", "barval") == "1" then
+barlb:text(" Short")
+
+elseif MANAGER.getsetting("CRK", "barval") == "2" then
+barlb:text(" Long")
+end
 
 function closewindow()
 ui.closeWindow(newmenuth)
@@ -1450,20 +1461,26 @@ newmenuth:addComponent(rlb)
 newmenuth:addComponent(glb)
 newmenuth:addComponent(blb)
 newmenuth:addComponent(mpop)
+newmenuth:addComponent(baropa)
+newmenuth:addComponent(baropb)
+newmenuth:addComponent(baropd)
+newmenuth:addComponent(barlb)
+newmenuth:addComponent(bartlb)
 
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 newmenuth:addComponent(aSlider)
 newmenuth:addComponent(als)
 newmenuth:addComponent(alb)
 end
+
 rlb:text(MANAGER.getsetting("CRK", "ar"))
 glb:text(MANAGER.getsetting("CRK", "ag"))
 blb:text(MANAGER.getsetting("CRK", "ab"))
 alb:text(MANAGER.getsetting("CRK", "al"))
 
-rSlider:onValueChanged(function() rclr = rSlider:value() rlb:text(rclr) MANAGER.savesetting("CRK","ar", rSlider:value()) end)
-gSlider:onValueChanged(function() gclr = gSlider:value() glb:text(gclr) MANAGER.savesetting("CRK","ag",gSlider:value()) end)
-bSlider:onValueChanged(function() bclr = bSlider:value() blb:text(bclr) MANAGER.savesetting("CRK","ab",bSlider:value())  end)
+rSlider:onValueChanged(function()   rclr = rSlider:value() rlb:text(rclr) MANAGER.savesetting("CRK","ar", rSlider:value()) mpnolag() end)
+gSlider:onValueChanged(function()  gclr = gSlider:value() glb:text(gclr) MANAGER.savesetting("CRK","ag",gSlider:value()) mpnolag() end)
+bSlider:onValueChanged(function()  bclr = bSlider:value() blb:text(bclr) MANAGER.savesetting("CRK","ab",bSlider:value())  mpnolag() end)
 
 aSlider:onValueChanged(function()
 if aSlider:value() < 100 then
@@ -1486,53 +1503,43 @@ ui.closeWindow(newmenu)
 end)
 
 mp1:action(function(sender)
-MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",40)
 MANAGER.savesetting("CRK","ag",40)
 MANAGER.savesetting("CRK","ab",40)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
-clearsb()
 end)
 
 mp2:action(function(sender)
-MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",255)
 MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
-clearsb()
 end)
 
 mp3:action(function(sender)
-MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",0)
 MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
-clearsb()
 end)
 
 mp4:action(function(sender)
-MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",0)
 MANAGER.savesetting("CRK","ag",255)
 MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
-clearsb()
 end)
 
 mp7:action(function(sender)
-MANAGER.savesetting("CRK","savergb",2)
 MANAGER.savesetting("CRK","ar",210)
 MANAGER.savesetting("CRK","ag",210)
 MANAGER.savesetting("CRK","ab",210)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
-clearsb()
 end)
 
 mp8:action(function(sender)
@@ -1540,7 +1547,21 @@ MANAGER.savesetting("CRK","savergb",1)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
 event.unregister(event.tick,theme)
-clearsb()
+end)
+
+baropa:action(function(sender)
+barlb:text(" Short")
+MANAGER.savesetting("CRK","barval","1")
+end)
+
+baropb:action(function(sender)
+barlb:text(" Long")
+MANAGER.savesetting("CRK","barval","2")
+end)
+
+baropd:action(function(sender)
+barlb:text("OFF")
+MANAGER.savesetting("CRK","barval","4")
 end)
 
 end)
@@ -1577,16 +1598,6 @@ event.register(event.tick,cbrightness)
 brlabel:text("Turned: on")
 else
 MANAGER.savesetting("CRK", "brightness",200)
-end
-
-if MANAGER.getsetting("CRK", "barval") == "4" then
-barlb:text("OFF")
-
-elseif MANAGER.getsetting("CRK", "barval") == "1" then
-barlb:text(" Short")
-
-elseif MANAGER.getsetting("CRK", "barval") == "2" then
-barlb:text(" Long")
 end
 
 end
@@ -1773,7 +1784,6 @@ newmenu:addComponent(shrt)
 newmenu:addComponent(shrtlb)
 newmenu:addComponent(remlabe)
 newmenu:addComponent(fanlb)
-newmenu:addComponent(barlb)
 newmenu:addComponent(dellb)
 newmenu:addComponent(fplb)
 newmenu:addComponent(rulb)
