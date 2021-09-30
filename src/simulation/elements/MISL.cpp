@@ -57,9 +57,17 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp2 <= 0 || parts[i].tmp2 > 380)
 		parts[i].tmp2 = 100;
 
+	//Explosion
+	if (((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2)) || parts[i].pavg[1] > 300)
+	{
+		sim->pv[(y / CELL)][(x / CELL)] = 270;
+		parts[i].life = 1;
+		parts[i].tmp = 200;
+		sim->part_change_type(i, x, y, PT_SING);
+	}
+	
 	if (parts[i].life == 20)
 	{
-		parts[i].pavg[1]++;
 		if (parts[i].y > parts[i].tmp2)
 		{
 			parts[i].vy = -1;
@@ -68,24 +76,23 @@ static int update(UPDATE_FUNC_ARGS)
 		{
 			parts[i].life = 10;
 		}
-		sim->create_part(-1, x, y + 1, PT_FIRE); //Trail Up
+		sim->create_part(-1, x, y + 1, PT_BRAY); //Trail Up
 	}
 	// Motion path
 	//pavg[0] 1 = Left , 2 = Right, 3 = Down.
 	else if (parts[i].life == 10) //For motion
 	{
-		parts[i].pavg[1]++;
 		if (parts[i].x < parts[i].tmp)
 		{
 			parts[i].pavg[0] = 2;
 			parts[i].vx = 1.0;
-			sim->create_part(-1, x-1, y, PT_FIRE); //Trail Left
+			sim->create_part(-1, x-1, y, PT_BRAY); //Trail Left
 		}
 		else if (parts[i].x > parts[i].tmp)
 		{
 			parts[i].pavg[0] = 1;
 			parts[i].vx = -1.0;
-			sim->create_part(-1, x+1, y, PT_FIRE); //Trail Right
+			sim->create_part(-1, x+1, y, PT_BRAY); //Trail Right
 		}
 		if (parts[i].x == parts[i].tmp)
 		{
@@ -93,23 +100,8 @@ static int update(UPDATE_FUNC_ARGS)
 			{
 				parts[i].pavg[0] = 3;
 				parts[i].vy = 1.0;
-				sim->create_part(-1, x, y - 2, PT_FIRE); //Trail Down
+				sim->create_part(-1, x, y - 2, PT_BRAY); //Trail Down
 			}
-		}
-		//Explosion
-		if ((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2))
-		{
-			sim->pv[(y / CELL)][(x / CELL)] = 270;
-			parts[i].life = 1;
-			parts[i].tmp = 200;
-			sim->part_change_type(i, x, y, PT_SING);
-		}
-		if (parts[i].pavg[1] > 800)
-		{
-			sim->pv[(y / CELL)][(x / CELL)] = 270;
-			parts[i].life = 1;
-			parts[i].tmp = 200;
-			sim->part_change_type(i, x, y, PT_SING);
 		}
 	}
 
@@ -123,6 +115,11 @@ static int update(UPDATE_FUNC_ARGS)
 				if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_PSCN && parts[ID(r)].life == 3) //Check for a sprk with ctype PSCN to activate and store the direction.
 				{
 					parts[i].life = 20;
+				}
+				if (parts[i].life > 0)
+				{
+					if (TYP(r) && TYP(r) != PT_BRAY)
+						parts[i].pavg[1]++;
 				}
 			}
 	return 0;

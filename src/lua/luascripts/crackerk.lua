@@ -66,6 +66,13 @@ local rulb = Label:new(101, 162, 10, 15, "OFF")
 
 local bar = Button:new(10,188,80,25,"Auto Save", "Toggle Auto stamp.")
 
+local barktext = Textbox:new(126, 185, 27, 15, '10')
+local barklab = Label:new(162, 185, 20, 15, "1-15")
+local savelabs = Label:new(101, 191, 10, 15, "OFF")
+barktext:text("5")
+local barkon = Button:new(126,203,30,20,"Set", "Save.")
+local barkoff = Button:new(156,203,30,20,"Off", "Cancel.")
+
 local bug = Button:new(10,220,80,25,"Feedback", "Direct to Mod thread for bug report.")
 local bug1 = Button:new(100,220,45,25,"Website", "Direct to Mod thread for bug report.")
 local bug2 = Button:new(148,220,45,25,"In game", "Direct to Mod thread for bug report.")
@@ -113,8 +120,8 @@ local passbutlab = Label:new(487, 194, 10, 15, "OFF")
 
 
 local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
-local remtime = Textbox:new(486, 223, 20, 20, '', 'Time in min.')
-local remlabel = Label:new(378, 2, 10, 15, "Reminder set for10 mins")
+local remtime = Textbox:new(486, 223, 20, 20, '', '10')
+local remlabel = Label:new(380, 2, 10, 15, "Reminder set for10 mins")
 local remlabel21 = Label:new(538, 205, 20, 15, "0-60 Mins.")
 remtime:text("10")
 local remon2 = Button:new(516,223,30,20,"Set", "Save.")
@@ -163,6 +170,11 @@ newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
 newmenu:removeComponent(remtime)
 newmenu:removeComponent(remlabel21) 
+newmenu:removeComponent(barkon)
+newmenu:removeComponent( barkoff)
+newmenu:removeComponent( barktext)
+newmenu:removeComponent(barklab)
+
 newmenu:onDraw(drawglitch)
 end
 
@@ -275,30 +287,51 @@ tpt.display_mode(3)
 end
 end)
 
-local autosavetimer = 0
+local savetime = 0
+local saveend = 0
 
 function autosave()
-
-if autosavetimer < 500 then
-autosavetimer = autosavetimer + 1
+if savetime < saveend then
+savetime = savetime + 1
 end
 
-if autosavetimer == 480 then
-sim.saveStamp(0,0,610,380)
+if saveend - savetime < 18 then
+graphics.drawRect(4,367,33,14, 255,255,0,255)
+graphics.drawText(8,370,"Stamp", 255,255,0,255)
 end
 
-if autosavetimer == 500 then
-autosavetimer = 0 
+if savetime >= saveend then
+sim.saveStamp(4,4,607,379)
+savetime = 0
 end
 
-if autosavetimer > 480 and autosavetimer < 500 then
-graphics.drawRect(4,367,68,14, 255,255,0,255)
-graphics.drawText(10,370,"Stamp Taken.", 255,255,0,255)
-end
 end
 
 bar:action(function(sender)
-tpt.register_step(autosave)
+clearsb()
+newmenu:addComponent(barkon)
+newmenu:addComponent( barkoff)
+newmenu:addComponent( barktext)
+newmenu:addComponent(barklab)
+end)
+
+barkon:action(function(sender)
+if tonumber(barktext:text()) < 1 or tonumber(barktext:text()) > 15 then
+saveend = "5"
+barktext:text("5")
+end
+savetime = 0
+saveend = tonumber(barktext:text())*100
+event.unregister(event.tick,autosave)
+event.register(event.tick,autosave)
+savelabs:text("ON")
+clearsb()
+end)
+
+barkoff:action(function(sender)
+event.unregister(event.tick,autosave)
+savelabs:text("OFF")
+clearsb()
 end)
 
 local timerad = Button:new(10,356,20,15, "S", "Stacks the elements present on screen.")
@@ -1673,6 +1706,7 @@ reset:action(function(sender)
 clearsb()
 interface.removeComponent(unhd)
 timerremo()
+frameCount = 0
 tpt.setdrawcap(0)
 perfmv = "1"
 autoval = "1"
@@ -1691,9 +1725,12 @@ shrtlb:text("ON")
 fplb:text("ON")
 rulb:text("OFF")
 dellb:text("Shown")
-barlb:text(" Long")
 remlabe:text("OFF")
 fanlb:text("OFF")
+savetime = 0
+barktext:text("5")
+remtime:text("10")
+event.unregister(event.tick,autosave)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
@@ -1703,6 +1740,7 @@ event.unregister(event.tick,autohidehud)
 event.register(event.tick,colourblender)
 newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabe)
+savelabs:text("OFF")
 brlabel:text("Turned: off")
 brightSlider:value("200")
 MANAGER.savesetting("CRK", "pass","0")
@@ -1793,6 +1831,7 @@ newmenu:addComponent(perfm)
 newmenu:addComponent(perlab)
 newmenu:addComponent(passbut)
 newmenu:addComponent(passbutlab)
+newmenu:addComponent(savelabs)
 end
 
 hide:action(function(sender)

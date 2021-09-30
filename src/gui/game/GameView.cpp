@@ -2316,7 +2316,7 @@ void GameView::OnDraw()
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
 				g->fillrect(10, 32, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(12, 36, sampleInfo.Build(), 32, 216, 255, alpha*0.95f);
+				g->drawtext(12, 36, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
 			}
 	}
 	if(showHud && introText < 51)
@@ -2325,8 +2325,8 @@ void GameView::OnDraw()
 		StringBuilder fpsInfo;
 
 		int fpsfake = ui::Engine::Ref().GetFps();
-		int ar = 255;
-		int ag = 255;
+		int ar = 32;
+		int ag = 216;
 		int ab = 255;
 
 			if (fpsfake <= 15)
