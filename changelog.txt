@@ -7,4 +7,4 @@ Pulse theme can now use the values from alpha slider.
 Merge top bar options into new theme control centre.
 Make reset button also reset the default reminder and autosave timer values.
 Fix Pulse theme becoming too "flashy" when reset.
-Slight changes to HUD.
+Slight changes to the HUD.
