@@ -2242,16 +2242,16 @@ void GameView::OnDraw()
 			sampleInfo << "Empty";
 		}
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(10, 17, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(12, 21, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
+		g->fillrect(4, 18, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
+		g->drawtext(6, 22, sampleInfo.Build(), 225, 225, 225, alpha*0.95f);
 
 #ifndef OGLI
 		if (wavelengthGfx)
 		{
-			int i, cr, cg, cb, j, h = 3, x = 12, y = 35;
+			int i, cr, cg, cb, j, h = 3, x = 6, y = 35;
 			if (showDebug)
 			{
-				y = 50;
+				y = 52;
 			}
 			int tmp;
 			g->fillrect(x, y, 30, h, 64, 64, 64, alpha); // coords -1 size +1 to work around bug in fillrect - TODO: fix fillrect
@@ -2292,6 +2292,7 @@ void GameView::OnDraw()
 
 				if (showDebug)
 				{
+					sampleInfo << Format::Precision(1);
 					if (type)
 					{
 						sampleInfo << "Pavg0: " << sample.particle.pavg[0];
@@ -2306,7 +2307,7 @@ void GameView::OnDraw()
 				{
 					sampleInfo << ", #" << sample.ParticleID<<", ";
 				}
-				sampleInfo << "X:" << sample.PositionX << " Y:" << sample.PositionY;
+				sampleInfo << "X:" << sample.PositionX << ", Y:" << sample.PositionY;
 
 				if (sample.Gravity)
 					sampleInfo << ", GX: " << sample.GravityVelocityX << " GY: " << sample.GravityVelocityY;
@@ -2315,8 +2316,8 @@ void GameView::OnDraw()
 					sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
-				g->fillrect(10, 32, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(12, 36, sampleInfo.Build(), 255, 255, 255, alpha*0.95f);
+				g->fillrect(4, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
+				g->drawtext(6, 37, sampleInfo.Build(), 205, 205, 255, alpha*0.95f);
 			}
 	}
 	if(showHud && introText < 51)
@@ -2325,8 +2326,8 @@ void GameView::OnDraw()
 		StringBuilder fpsInfo;
 
 		int fpsfake = ui::Engine::Ref().GetFps();
-		int ar = 32;
-		int ag = 216;
+		int ar = 255;
+		int ag = 255;
 		int ab = 255;
 
 			if (fpsfake <= 15)
@@ -2374,8 +2375,8 @@ void GameView::OnDraw()
 	
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
-		g->fillrect(10, 2, textWidth + 6, 15, 0, 0, 0, alpha*0.5);
-		g->drawtext(12, 6, fpsInfo.Build(), ar, ag, ab, alpha*0.95);
+		g->fillrect(4, 3, textWidth + 6, 15, 0, 0, 0, alpha*0.5);
+		g->drawtext(6, 7, fpsInfo.Build(), ar, ag, ab, alpha*0.95);
 	}
 
 	//Tooltips

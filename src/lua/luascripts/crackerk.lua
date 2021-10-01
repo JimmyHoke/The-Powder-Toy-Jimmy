@@ -1417,6 +1417,7 @@ end
 function mpnolag()
 newmenuth:removeComponent(pulselb)
 MANAGER.savesetting("CRK","savergb",2)
+aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
@@ -1429,6 +1430,9 @@ glb:text(gclr)
 
 bclr = bSlider:value() 
 blb:text(bclr)
+
+aclr = aSlider:value() 
+alb:text(aclr)
 
 if perlab:text() == "OFF" then
 event.unregister(event.tick,theme)
@@ -1450,7 +1454,7 @@ end
 if MANAGER.getsetting("CRK", "savergb") == "2" or  MANAGER.getsetting("CRK", "savergb") == "nil" then
 graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
 graphics.drawRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
-graphics.fillRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),20)
+graphics.fillRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 end
 end
 newmenuth:onDraw(drawprev)
@@ -1782,12 +1786,12 @@ if MANAGER.getsetting("CRK", "savergb") == "2" then
 theme()
 graphics.drawLine(12, 18,319,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
-graphics.fillRect(1,1, 609, 255,ar,ag,ab,20)
+graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
 else
 colourblender()
 graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
 graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
-graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,20)
+graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
 end
 backg()
