@@ -280,7 +280,7 @@ GameView::GameView():
 	downVoteButton->SetActionCallback({ [this] { c->Vote(-1); } });
 	AddComponent(downVoteButton);
 
-	tagSimulationButton = new ui::Button(ui::Point(241, Size.Y-16), ui::Point(178, 15), "[no tags set]", "Add simulation tags");
+	tagSimulationButton = new ui::Button(ui::Point(242, Size.Y-16), ui::Point(176, 15), "[no tags set]", "Add simulation tags");
 	tagSimulationButton->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 	tagSimulationButton->SetIcon(IconTag);
 	//currentX+=252;
@@ -2297,7 +2297,10 @@ void GameView::OnDraw()
 					{
 						sampleInfo << "Pavg0: " << sample.particle.pavg[0];
 						sampleInfo << ", Pavg1: " << sample.particle.pavg[1];
-						sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
+						if (sample.particle.dcolour)
+						{
+							sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
+						}
 						sampleInfo << Format::Dec();
 						sampleInfo << ", Vx: " << sample.particle.vx;
 						sampleInfo << ", Vy: " << sample.particle.vy;
@@ -2317,7 +2320,7 @@ void GameView::OnDraw()
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
 				g->fillrect(4, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(6, 37, sampleInfo.Build(), 205, 205, 255, alpha*0.95f);
+				g->drawtext(6, 37, sampleInfo.Build(), 255, 32, 32, alpha*0.95f);
 			}
 	}
 	if(showHud && introText < 51)
@@ -2326,24 +2329,24 @@ void GameView::OnDraw()
 		StringBuilder fpsInfo;
 
 		int fpsfake = ui::Engine::Ref().GetFps();
-		int ar = 255;
-		int ag = 255;
-		int ab = 255;
+		int ar = 0;
+		int ag = 0;
+		int ab = 0;
 
-			if (fpsfake <= 15)
-			{
-				ar = 255;
-				ag = 0;
-				ab = 0;
-			}
-			else if (fpsfake < 35 && fpsfake > 15)
-			{
-				ar = 255;
-				ag = 150;
-				ab = 0;
-			}
+		if (fpsfake <= 15)
+		{
+			ar = 255;
+			ag = 0;
+			ab = 0;
+		}
+		else if (fpsfake < 35 && fpsfake > 15)
+		{
+			ar = 255;
+			ag = 150;
+			ab = 0;
+		}
 
-			fpsInfo << Format::Precision(0)<< ui::Engine::Ref().GetFps();
+		fpsInfo << Format::Precision(0)<< ui::Engine::Ref().GetFps();
 		if (showDebug)
 		{
 		 fpsInfo <<" ("<<(ui::Engine::Ref().GetFps()) / 60 * 100 << "%), ";
@@ -2375,8 +2378,8 @@ void GameView::OnDraw()
 	
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
-		g->fillrect(4, 3, textWidth + 6, 15, 0, 0, 0, alpha*0.5);
-		g->drawtext(6, 7, fpsInfo.Build(), ar, ag, ab, alpha*0.95);
+		g->fillrect(4, 3, textWidth + 6, 15, ar, ag, ab, alpha*0.65);
+		g->drawtext(6, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
 	}
 
 	//Tooltips

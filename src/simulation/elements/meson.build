@@ -227,7 +227,8 @@ simulation_elem_ids = [
 	['TURB', 225],
 	['BFLM', 226],
 	['PET', 227],
-	['MISL', 228]
+	['MISL', 228],
+	['AMBE', 229]
 ]
 
 simulation_elem_src = []

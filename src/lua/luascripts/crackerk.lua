@@ -1,4 +1,4 @@
---cracker1000 mod script v5.5--
+--cracker1000 mod script v5.6--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
@@ -46,7 +46,7 @@ platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=2
 end)
 end
 
-local toggle = Button:new(420,408,50,15, "Settings", "Open Mod Settings.")
+local toggle = Button:new(419,408,50,15, "Settings", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 609, 255)
 local creditstxt1 = Label:new(115,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
@@ -67,7 +67,7 @@ local rulb = Label:new(101, 162, 10, 15, "OFF")
 local bar = Button:new(10,188,80,25,"Auto Save", "Toggle Auto stamp.")
 
 local barktext = Textbox:new(126, 185, 27, 15, '10')
-local barklab = Label:new(162, 185, 20, 15, "1-15")
+local barklab = Label:new(162, 185, 20, 15, "1-30")
 local savelabs = Label:new(101, 191, 10, 15, "OFF")
 barktext:text("5")
 local barkon = Button:new(126,203,30,20,"Set", "Save.")
@@ -182,7 +182,6 @@ local perfmv = "1"
 local fpsval = "1"
 
 passbut:action(function(sender)
-fs.makeDirectory("scripts")
 
 clearsb()
 if MANAGER.getsetting("CRK", "passreal") == nil then
@@ -258,7 +257,7 @@ clearsb()
 
 if perfmv == "1" then
 tpt.setfpscap(80)
-tpt.setdrawcap(35)
+tpt.setdrawcap(25)
 tpt.unregister_step(theme)
 tpt.unregister_step(colourblender)
 tpt.display_mode(7)
@@ -316,7 +315,7 @@ newmenu:addComponent(barklab)
 end)
 
 barkon:action(function(sender)
-if tonumber(barktext:text()) < 1 or tonumber(barktext:text()) > 15 then
+if tonumber(barktext:text()) < 1 or tonumber(barktext:text()) > 30 then
 saveend = "5"
 barktext:text("5")
 end
@@ -679,7 +678,6 @@ brightness:action(function(sender)
 clearsb()
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 end
-fs.makeDirectory("scripts")
 brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
 brightSlider:onValueChanged(function() 
 if brightSlider:value() < 60 then
@@ -1043,7 +1041,7 @@ local creditstxt = Label:new(6,-22, 598, 418,"\n\n                              
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n  Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  You have reached the end of wiki. \n\n")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element.  You have reached the end of wiki.")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
@@ -1192,7 +1190,7 @@ tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(1,-1,609,3, ar,ag,ab,al)
+tpt.fillrect(4,-1,603,3, ar,ag,ab,al)
 end
 
 if uival == "1" then
@@ -1204,14 +1202,13 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(1,-1,609,3, ar,ag,ab,al)
+tpt.fillrect(4,-1,603,3, ar,ag,ab,al)
 end
 end
 
 --Topbarend
 
 --MP and manager
-tpt.drawline(419,408,419,421,ar,ag,ab,al)
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 
 --top
@@ -1244,14 +1241,15 @@ tpt.drawrect(613,392,14,14,ar,ag,ab,al)
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
 tpt.drawline(612,408,612,421,ar,ag,ab,al)
 tpt.drawline(187,409,187,422,ar,ag,ab,al)
-tpt.drawline(469,408,469,421,ar,ag,ab,al)
 tpt.drawline(487,408,487,421,ar,ag,ab,al)
 tpt.drawline(241,408,241,421,ar,ag,ab,al)
+tpt.drawline(469,408,469,421,ar,ag,ab,al)
 tpt.drawline(36,408,36,421,ar,ag,ab,al)
 tpt.drawline(18,408,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,422,ar,ag,ab,al)
 tpt.drawline(596,409,596,422,ar,ag,ab,al)
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
+tpt.drawline(418,408,418,421,ar,ag,ab,al)
 end
 end
 
@@ -1296,7 +1294,7 @@ tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(1,-1,609,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(4,-1,603,3, colourRED,colourGRN,colourBLU,al)
 end
 
 if uival == "1" then
@@ -1314,7 +1312,6 @@ end
 
 --Topbarend
 --MP and manager
-tpt.drawline(419,408,419,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
 --top
@@ -1347,27 +1344,29 @@ tpt.drawrect(613,392,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(612,408,612,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(187,409,187,422,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(469,408,469,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(487,408,487,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(241,408,241,421,colourRED,colourGRN,colourBLU,al)
+tpt.drawline(469,408,469,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(36,408,36,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(18,408,18,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(580,409,580,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(596,409,596,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
+tpt.drawline(418,408,418,421,colourRED,colourGRN,colourBLU,al)
 end
 end
 
 mp:action(function(sender)
 clearsb()
-fs.makeDirectory("scripts")
+
 
 local mp1 = Button:new(20,102,45,20,"Dark", "Change the theme to default")
 local mp2 = Button:new(70,102,45,20,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
 local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,102,45,20,"Pulse", "RBG makes everything better.")
+local mp8 = Button:new(270,102,45,20,"Magenta", "Magenta/Default")
+local mp9 = Button:new(320,102,45,20,"Pulse", "RBG makes everything better.")
 local mpop = Button:new(530,272,75,20,"Done", "Custom options.")
 
 --topbar
@@ -1401,19 +1400,6 @@ local bartlb = Label:new(35,242,10, 10,"Topbar:")
 local pulselb = Label:new(70,30,100, 60,"Pulse theme on, preview not available.")
 local alphalb = Label:new(87,134,100, 60,"Brightness turned on, alpha slider not available.")
 
-if MANAGER.getsetting("CRK","ar") == nil then
-MANAGER.savesetting("CRK","ar",70)
-end
-if MANAGER.getsetting("CRK","ag") == nil then
-MANAGER.savesetting("CRK","ag",70)
-end
-if MANAGER.getsetting("CRK","ab") == nil then
-MANAGER.savesetting("CRK","ab",70)
-end
-if MANAGER.getsetting("CRK","al") == nil then
-MANAGER.savesetting("CRK","al",255)
-end
-
 function mpnolag()
 newmenuth:removeComponent(pulselb)
 MANAGER.savesetting("CRK","savergb",2)
@@ -1443,7 +1429,7 @@ end
 
 function drawprev()
 graphics.drawRect(20,48,573,26,255,255,255,255)
-if MANAGER.getsetting("CRK", "savergb") ~= "2" then
+if MANAGER.getsetting("CRK", "savergb") == "1" then
 newmenuth:addComponent(pulselb)
 end
 
@@ -1451,7 +1437,7 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenuth:addComponent(alphalb)
 end
 
-if MANAGER.getsetting("CRK", "savergb") == "2" or  MANAGER.getsetting("CRK", "savergb") == "nil" then
+if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
 graphics.drawRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
 graphics.fillRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
@@ -1472,6 +1458,7 @@ end
 function closewindow()
 ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
+barlength = 1
 end
 
 newmenuth:onTryExit(closewindow)
@@ -1488,6 +1475,7 @@ newmenuth:addComponent(mp3)
 newmenuth:addComponent(mp4)
 newmenuth:addComponent(mp7)
 newmenuth:addComponent(mp8)
+newmenuth:addComponent(mp9)
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
 newmenuth:addComponent(bSlider)
@@ -1533,16 +1521,15 @@ rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
 
-
 mpop:action(function(sender)
 ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
 end)
 
 mp1:action(function(sender)
-MANAGER.savesetting("CRK","ar",40)
-MANAGER.savesetting("CRK","ag",40)
-MANAGER.savesetting("CRK","ab",40)
+MANAGER.savesetting("CRK","ar",60)
+MANAGER.savesetting("CRK","ag",60)
+MANAGER.savesetting("CRK","ab",60)
 MANAGER.savesetting("CRK","al",200)
 mpnolag()
 end)
@@ -1580,6 +1567,14 @@ mpnolag()
 end)
 
 mp8:action(function(sender)
+MANAGER.savesetting("CRK","ar",131)
+MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ab",255)
+MANAGER.savesetting("CRK","al",255)
+mpnolag()
+end)
+
+mp9:action(function(sender)
 MANAGER.savesetting("CRK","savergb",1)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
@@ -1605,16 +1600,34 @@ end)
 
 function startupcheck()
 interface.addComponent(toggle)
+fs.makeDirectory("scripts")
+
+if MANAGER.getsetting("CRK","ar") == nil then
+MANAGER.savesetting("CRK","ar",131)
+end
+if MANAGER.getsetting("CRK","ag") == nil then
+MANAGER.savesetting("CRK","ag",0)
+end
+if MANAGER.getsetting("CRK","ab") == nil then
+MANAGER.savesetting("CRK","ab",255)
+end
+if MANAGER.getsetting("CRK","al") == nil then
+MANAGER.savesetting("CRK","al",255)
+end
+
+if MANAGER.getsetting("CRK", "savergb") == nil then
+MANAGER.savesetting("CRK", "savergb",2)
+end 
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 passbutlab:text("ON")
 passvalue = "1"
 end
 
-if MANAGER.getsetting("CRK", "savergb") == "2" then
-event.register(event.tick,theme)
-else
+if MANAGER.getsetting("CRK", "savergb") == "1" then
 event.register(event.tick,colourblender)
+else
+event.register(event.tick,theme)
 end
 
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
@@ -1741,7 +1754,8 @@ event.unregister(event.tick,backg)
 event.unregister(event.tick,cbrightness)
 event.unregister(event.tick,UIhide)
 event.unregister(event.tick,autohidehud)
-event.register(event.tick,colourblender)
+event.unregister(event.tick,colourblender)
+event.register(event.tick,theme)
 newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabe)
 savelabs:text("OFF")
@@ -1755,6 +1769,11 @@ MANAGER.savesetting("CRK", "fancurs","0")
 MANAGER.savesetting("CRK", "barval", "2")
 MANAGER.savesetting("CRK", "passreal","12345678")
 MANAGER.savesetting("CRK", "passreal2","DMND")
+MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","ar",131)
+MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ab",255)
+MANAGER.savesetting("CRK", "savergb",2)
 tpt.hud(1)
 ui.closeWindow(newmenu) 
 hideyes()
@@ -1783,12 +1802,10 @@ end
 function drawglitch()
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
-theme()
 graphics.drawLine(12, 18,319,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
 graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
 else
-colourblender()
 graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
 graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
 graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
