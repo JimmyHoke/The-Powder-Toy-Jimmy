@@ -64,7 +64,7 @@ local info= Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
 local rulb = Label:new(101, 162, 10, 15, "OFF")
 
-local bar = Button:new(10,188,80,25,"Auto Save", "Toggle Auto stamp.")
+local bar = Button:new(10,188,80,25,"Auto Stamp", "Toggle Auto stamp.")
 
 local barktext = Textbox:new(126, 185, 27, 15, '10')
 local barklab = Label:new(162, 185, 20, 15, "1-30")
@@ -84,12 +84,8 @@ local remlabe = Label:new(294, 66, 10, 15, "OFF")
 
 local mp = Button:new(203,92,80,25,"Theme", "Changes game's theme")
 
-local bg = Button:new(203,124,80,25,"Filters", "Sets different backgrounds.")
-local bg1 = Button:new(290,124,75,20,"BLACK", "Default")
-local bg2 = Button:new(290,146,75,20,"BLUE", "Blue background")
-local bg3 = Button:new(290,166,75,20,"RED", "Red background")
-local bg4 = Button:new(290,186,75,20,"GREEN", "Green background")
-local bg5 = Button:new(290,206,75,20,"YELLOW", "Yellow background")
+local bg = Button:new(203,124,80,25,"Mod Elem.", "")
+local bglab = Label:new(294, 130, 10, 15, "ON")
 
 local autohide= Button:new(203,156,80,25, "Auto Hide HUD", "Hide.")
 local autolb = Label:new(294, 162, 10, 15, "OFF")
@@ -157,11 +153,6 @@ end
 function clearsb()
 newmenu:removeComponent(bug1)
 newmenu:removeComponent(bug2)
-newmenu:removeComponent(bg1)
-newmenu:removeComponent(bg2)
-newmenu:removeComponent(bg3)
-newmenu:removeComponent(bg4)
-newmenu:removeComponent(bg5)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel)
@@ -288,6 +279,21 @@ end)
 
 local savetime = 0
 local saveend = 0
+local maxpart1 = 0
+local maxpart2 = 0
+local maxpart3 = 0
+local maxpart4 = 0
+
+function getmax()
+maxpart1 = math.huge
+maxpart2 = math.huge
+maxpart3 = -math.huge
+maxpart4 = -math.huge
+for i in sim.parts() do maxpart1 = math.min(sim.partProperty(i,"x"),maxpart1)end
+for i in sim.parts() do maxpart2 = math.min(sim.partProperty(i,"y"),maxpart2)end
+for i in sim.parts() do maxpart3 = math.max(sim.partProperty(i,"x"),maxpart3)end
+for i in sim.parts() do maxpart4 = math.max(sim.partProperty(i,"y"),maxpart4)end
+end
 
 function autosave()
 if savetime < saveend then
@@ -295,15 +301,18 @@ savetime = savetime + 1
 end
 
 if saveend - savetime < 18 then
-graphics.drawRect(4,367,33,14, 255,255,0,255)
+graphics.drawRect(4,367,33,14, 255,255,0,200)
 graphics.drawText(8,370,"Stamp", 255,255,0,255)
 end
 
-if savetime >= saveend then
-sim.saveStamp(4,4,607,379)
-savetime = 0
+if saveend - savetime < 1 then
+getmax()
+sim.saveStamp(maxpart1,maxpart2,maxpart3-maxpart1,maxpart4-maxpart2)
 end
 
+if savetime >= saveend then
+savetime = 0
+end
 end
 
 bar:action(function(sender)
@@ -1093,39 +1102,127 @@ clearsb()
 ui.showWindow(creditw) 
 end)
 
+function hidemodelem()
+tpt.el.fntc.menu=0
+tpt.el.fptc.menu=0
+tpt.el.cwir.menu=0
+tpt.el.copr.menu=0
+tpt.el.lith2.menu=0
+tpt.el.led.menu=0
+tpt.el.timc.menu=0
+tpt.el.pinv.menu=0
+tpt.el.ppti.menu=0
+tpt.el.ppto.menu=0
+tpt.el.pcon.menu=0
+tpt.el.ambe.menu=0
+tpt.el.tmps.menu=0
+tpt.el.csns.menu=0
+tpt.el.thmo.menu=0
+tpt.el.eclr.menu=0
+tpt.el.proj.menu=0
+tpt.el.turb.menu=0
+tpt.el.misl.menu=0
+tpt.el.cexp.menu=0
+tpt.el.bflm.menu=0
+tpt.el.qgp.menu=0
+tpt.el.ntrg.menu=0
+tpt.el.clud.menu=0
+tpt.el.clnt.menu=0
+tpt.el.fuel.menu=0
+tpt.el.clrc.menu=0
+tpt.el.phos.menu=0
+tpt.el.cmnt.menu=0
+tpt.el.seed.menu=0
+tpt.el.dmrn.menu=0
+tpt.el.strc.menu=0
+tpt.el.prmt.menu=0
+tpt.el.uv.menu=0
+tpt.el.strc.menu=0
+tpt.el.wall.menu=0
+tpt.el.sun.menu=0
+tpt.el.bee.menu=0
+tpt.el.pet.menu=0
+end
+
+function showmodelem()
+tpt.el.fntc.menu=1
+tpt.el.fptc.menu=1
+tpt.el.cwir.menu=1
+tpt.el.copr.menu=1
+tpt.el.lith2.menu=1
+tpt.el.led.menu=1
+tpt.el.timc.menu=1
+tpt.el.pinv.menu=1
+tpt.el.ppti.menu=1
+tpt.el.ppto.menu=1
+tpt.el.pcon.menu=1
+tpt.el.ambe.menu=1
+tpt.el.tmps.menu=1
+tpt.el.csns.menu=1
+tpt.el.thmo.menu=1
+tpt.el.eclr.menu=1
+tpt.el.proj.menu=1
+tpt.el.turb.menu=1
+tpt.el.misl.menu=1
+tpt.el.cexp.menu=1
+tpt.el.bflm.menu=1
+tpt.el.qgp.menu=1
+tpt.el.ntrg.menu=1
+tpt.el.clud.menu=1
+tpt.el.clnt.menu=1
+tpt.el.fuel.menu=1
+tpt.el.clrc.menu=1
+tpt.el.phos.menu=1
+tpt.el.cmnt.menu=1
+tpt.el.seed.menu=1
+tpt.el.dmrn.menu=1
+tpt.el.strc.menu=1
+tpt.el.prmt.menu=1
+tpt.el.uv.menu=1
+tpt.el.strc.menu=1
+tpt.el.wall.menu=1
+tpt.el.sun.menu=1
+tpt.el.bee.menu=1
+tpt.el.pet.menu=1
+end
+local modelemval = 0
 bg:action(function(sender)
+
+if modelemval == 0 then
+hidemodelem()
+modelemval = 1
+bglab:text("OFF")
+elseif modelemval == 1 then
+showmodelem()
+modelemval = 0
+bglab:text("ON")
+end
 clearsb()
-newmenu:addComponent(bg1)
-newmenu:addComponent(bg2)
-newmenu:addComponent(bg3)
-newmenu:addComponent(bg4)
-newmenu:addComponent(bg5)
 end)
 
-backvr = 0
-backvg = 0
-backvb = 0
+local barval = MANAGER.getsetting("CRK","barval")
+local barlength = "1"
+local uival = "1"
+local backvr = 0
+local backvg = 0
+local backvb = 0
 
 function backg()
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 as = brightSlider:value()
 else
-as = 60
+as = 50
 end
 
-if(as<30)then
-as = 30
+if as > 50 then
+as = 50
 end
 
-if(as>110)then
-as = 110
-end
-
-tpt.fillrect(0,-1,610,385,backvr,backvg,backvb,as)
+tpt.drawrect(3,3,606,377,backvr,backvg,backvb,as + 150)
+tpt.fillrect(3,3,606,377,backvr,backvg,backvb,as)
 end
 
 function clearback()
-clearsb()
 event.unregister(event.tick,backg)
 event.register(event.tick,backg)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -1133,45 +1230,6 @@ event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
 end
 end
-
-bg1:action(function(sender)
-clearsb()
-backvr = 0
-backvg = 0
-backvb = 0
-event.unregister(event.tick,backg)
-end)
-bg2:action(function(sender)
-backvr = 0
-backvg = 0
-backvb = 200
-clearback()
-end)
-
-bg3:action(function(sender)
-backvr = 200
-backvg = 0
-backvb = 0
-clearback()
-end)
-
-bg4:action(function(sender)
-backvr = 0
-backvg = 200
-backvb = 0
-clearback()
-end)
-
-bg5:action(function(sender)
-backvr = 200
-backvg = 200
-backvb = 0
-clearback()
-end)
-
-local barval = MANAGER.getsetting("CRK","barval")
-local barlength = "1"
-local uival = "1"
 
 function theme()
 if uival == "1" then
@@ -1190,7 +1248,7 @@ tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(4,-1,603,3, ar,ag,ab,al)
+tpt.fillrect(3,-1,605,3, ar,ag,ab,al)
 end
 
 if uival == "1" then
@@ -1202,7 +1260,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(4,-1,603,3, ar,ag,ab,al)
+tpt.fillrect(3,-1,605,3, ar,ag,ab,al)
 end
 end
 
@@ -1294,9 +1352,8 @@ tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(4,-1,603,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(3,-1,605,3, colourRED,colourGRN,colourBLU,al)
 end
-
 if uival == "1" then
 
 if barval == "1" then
@@ -1306,7 +1363,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "2" then
-tpt.fillrect(1,-1,609,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(3,-1,605,3, colourRED,colourGRN,colourBLU,al)
 end
 end
 
@@ -1359,7 +1416,6 @@ end
 mp:action(function(sender)
 clearsb()
 
-
 local mp1 = Button:new(20,102,45,20,"Dark", "Change the theme to default")
 local mp2 = Button:new(70,102,45,20,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
@@ -1367,7 +1423,13 @@ local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(270,102,45,20,"Magenta", "Magenta/Default")
 local mp9 = Button:new(320,102,45,20,"Pulse", "RBG makes everything better.")
-local mpop = Button:new(530,272,75,20,"Done", "Custom options.")
+local mpop = Button:new(530,307,75,20,"Done", "Custom options.")
+
+local bg1 = Button:new(24,310,45,15,"Off", "Default")
+local bg2 = Button:new(74,310,45,15,"Blue", "Blue background")
+local bg3 = Button:new(124,310,45,15,"Red", "Red background")
+local bg4 = Button:new(174,310,45,15,"Green", "Green background")
+local bg5 = Button:new(224,310,45,15,"Orange", "Yellow background")
 
 --topbar
 local barlb = Label:new(70, 244, 5, 5, " Long")
@@ -1390,13 +1452,13 @@ local rlb = Label:new(240, 176, 10, 15)
 local glb = Label:new(240, 197, 10, 15)
 local blb = Label:new(240, 218, 10, 15)
 
-
-local newmenuth = Window:new(-15,-15, 609, 295)
+local newmenuth = Window:new(-15,-15, 609, 330)
 local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control centre.")
 local presetlb = Label:new(-10,68,100, 50,"Presets:")
 local previewlb = Label:new(-10,10,100, 60,"Preview:")
 local custlb = Label:new(-10,118,100, 60,"Custom:")
 local bartlb = Label:new(35,242,10, 10,"Topbar:")
+local filtlb = Label:new(37,292,10, 10,"Filters:")
 local pulselb = Label:new(70,30,100, 60,"Pulse theme on, preview not available.")
 local alphalb = Label:new(87,134,100, 60,"Brightness turned on, alpha slider not available.")
 
@@ -1437,10 +1499,12 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenuth:addComponent(alphalb)
 end
 
+tpt.fillrect(65,292,10,10,backvr,backvg,backvb,255)
+
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
-graphics.drawRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
-graphics.fillRect(1,1, 609, 295, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
+graphics.drawRect(1,1, 609, 330, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
+graphics.fillRect(1,1, 609, 330, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 end
 end
 newmenuth:onDraw(drawprev)
@@ -1467,6 +1531,7 @@ ui.showWindow(newmenuth)
 
 newmenuth:addComponent(creditsth)
 newmenuth:addComponent(presetlb)
+newmenuth:addComponent(filtlb)
 newmenuth:addComponent(previewlb)
 newmenuth:addComponent(custlb)
 newmenuth:addComponent(mp1)
@@ -1476,6 +1541,13 @@ newmenuth:addComponent(mp4)
 newmenuth:addComponent(mp7)
 newmenuth:addComponent(mp8)
 newmenuth:addComponent(mp9)
+
+newmenuth:addComponent(bg1)
+newmenuth:addComponent(bg2)
+newmenuth:addComponent(bg3)
+newmenuth:addComponent(bg4)
+newmenuth:addComponent(bg5)
+
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
 newmenuth:addComponent(bSlider)
@@ -1579,6 +1651,41 @@ MANAGER.savesetting("CRK","savergb",1)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
 event.unregister(event.tick,theme)
+end)
+
+bg1:action(function(sender)
+backvr = 0
+backvg = 0
+backvb = 0
+event.unregister(event.tick,backg)
+end)
+
+bg2:action(function(sender)
+backvr = 0
+backvg = 0
+backvb = 200
+clearback()
+end)
+
+bg3:action(function(sender)
+backvr = 200
+backvg = 0
+backvb = 0
+clearback()
+end)
+
+bg4:action(function(sender)
+backvr = 0
+backvg = 200
+backvb = 0
+clearback()
+end)
+
+bg5:action(function(sender)
+backvr = 250
+backvg = 111
+backvb = 0
+clearback()
 end)
 
 baropa:action(function(sender)
@@ -1725,6 +1832,9 @@ interface.removeComponent(unhd)
 timerremo()
 frameCount = 0
 tpt.setdrawcap(0)
+backvr = 0
+backvg = 0
+backvb = 0
 perfmv = "1"
 autoval = "1"
 fanval = "1"
@@ -1735,6 +1845,7 @@ rulval = "1"
 hidval = "1"
 barval = "2"
 passvalue = "0"
+bglab:text("ON")
 passbutlab:text("OFF")
 autolb:text("OFF")
 perlab:text("OFF")
@@ -1747,6 +1858,7 @@ fanlb:text("OFF")
 savetime = 0
 barktext:text("5")
 remtime:text("10")
+showmodelem()
 event.unregister(event.tick,autosave)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
@@ -1811,7 +1923,7 @@ graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
 graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
 end
-backg()
+
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
 end
@@ -1853,6 +1965,7 @@ newmenu:addComponent(perlab)
 newmenu:addComponent(passbut)
 newmenu:addComponent(passbutlab)
 newmenu:addComponent(savelabs)
+newmenu:addComponent(bglab)
 end
 
 hide:action(function(sender)

@@ -1,14 +1,17 @@
-Changelog for Edition X (49)
+Changelog for Edition X (49) (DEC)
 
+Auto save is now Smart Auto Stamp (Calculates the area for stamp selection based on the number of particels present, also more optimised now).
 New elements: AMBE (element for setting Ambient heat temperature).
-Turn off themes when mod menu is open.
 New Magenta theme (Also default now).
+Improve & Merge Filter into control center, also add a little preview for it.
+Turn off themes when mod menu is open.
 Make Debug mode show Dcolour only when particles use it.
 More elegant HUD, fix tags overlapping with votes button.
 Raise Autostamp upper limit.
+New Hide Mod elements option.
+More aggressive performance mode.
 
 todo:
-Merge Filter
-Add sulphur/ plut from suggestion list.
-Update MP/snapshot
+Add some new elements from suggestion list.
+Merge!
  
