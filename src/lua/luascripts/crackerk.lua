@@ -118,7 +118,7 @@ local passbutlab = Label:new(487, 194, 10, 15, "OFF")
 local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
 local remtime = Textbox:new(486, 223, 20, 20, '', '10')
 local remlabel = Label:new(380, 2, 10, 15, "Reminder set for10 mins")
-local remlabel21 = Label:new(538, 205, 20, 15, "0-60 Mins.")
+local remlabel21 = Label:new(538, 205, 20, 15, "1-60 Mins.")
 remtime:text("10")
 local remon2 = Button:new(516,223,30,20,"Set", "Save.")
 local remoff  = Button:new(546,223,30,20,"Off", "Cancel.")
@@ -656,7 +656,7 @@ end)
 remon2:action(function(sender)
 clearsb()
 startTime = os.time()
-if tonumber(remtime:text()) <= 0 or tonumber(remtime:text()) > 60 then
+if tonumber(remtime:text()) < 1 or tonumber(remtime:text()) > 60 then
 entimey = "10"
 else
 entimey = tonumber(remtime:text())
@@ -1050,7 +1050,7 @@ local creditstxt = Label:new(6,-22, 598, 418,"\n\n                              
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n  Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element.  You have reached the end of wiki.")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element.\n\n  37) CHRL: Chlorine gas, settels down fast. Photochemical reaction with H2. CHLR+H2 = ACID, Distills WATR at room temp.\n  Turns WATR into ACID at higher temp. Kills stkm. Slows down when cooled.")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
@@ -1142,6 +1142,7 @@ tpt.el.wall.menu=0
 tpt.el.sun.menu=0
 tpt.el.bee.menu=0
 tpt.el.pet.menu=0
+tpt.el.chlr.menu=0
 end
 
 function showmodelem()
@@ -1184,6 +1185,7 @@ tpt.el.wall.menu=1
 tpt.el.sun.menu=1
 tpt.el.bee.menu=1
 tpt.el.pet.menu=1
+tpt.el.chlr.menu=1
 end
 local modelemval = 0
 bg:action(function(sender)
@@ -1218,7 +1220,7 @@ if as > 50 then
 as = 50
 end
 
-tpt.drawrect(3,3,606,377,backvr,backvg,backvb,as + 150)
+tpt.drawrect(3,3,605,377,backvr,backvg,backvb,as + 200)
 tpt.fillrect(3,3,606,377,backvr,backvg,backvb,as)
 end
 
