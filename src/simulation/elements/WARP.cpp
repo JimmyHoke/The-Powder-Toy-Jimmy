@@ -89,7 +89,7 @@ static int update(UPDATE_FUNC_ARGS)
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	*colr = *colg = *colb = *cola = 0;
-	*pixel_mode &= ~NO_DECO;
+	*pixel_mode |= NO_DECO;
 	return 0;
 }
 
