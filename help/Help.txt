@@ -66,6 +66,7 @@ src>gui>search>Searchview.cpp
 (PET, 227);             
 (MISL 228);     
 (AMBE 229);                 SPRK.cpp
+(CHLR 230);                
 
 Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 
@@ -81,7 +82,8 @@ b) FIlter branch to upstream> cherrypick and commit.
 c) Done. 
 
 12) To make a new Pull Request:
-a) Run new branch.bat
+0)Copy New pr.bat to newmod main folder (or else it will fail to delete the help folder).
+a) Run new PR.bat
 b) Open gitbash> git checkout -b vanilla (in case it fails to checkout)
 c) git checkout -b <branch name here>
 d) Push commits> push to origin> Done. 

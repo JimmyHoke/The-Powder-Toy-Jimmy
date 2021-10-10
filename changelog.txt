@@ -1,7 +1,7 @@
 Changelog for Edition X (49) (DEC)
 
 #New elements:
-1) AMBE (element for setting Ambient heat temperature).
+1) AMBE: Element for setting ambient heat temperature.
 2) CHLR: Chlorine Gas. A heavy gas that settles down fast, reacts with watr, photochemical reaction with H2 and distills watr (More details in wiki.)
 
 #New Auto stamp:
@@ -10,12 +10,16 @@ Raise Autostamp upper limit.
 
 #Theme Control Center:
 New Filter controls with previews.
-New Magenta theme (Also default now).
+New Magnita theme.
+Switching to pulse theme updates the alpha slider values.
+Adjust all the default themes to be a bit less flashy.
+Change default theme to new one instead of super flashy pulse theme.
 
 #Misc:
 New option to show or hide Mod elements.
+Fix WARP particles not getting detected in find mode.
 Turn off themes when mod menu is open.
-Make Debug mode show Dcolour only when particles use it.
+Make Debug mode show Dcolour only for particles that actually use it.
 More elegant HUD
 Fix tags overlapping with votes button.
 More aggressive performance mode.

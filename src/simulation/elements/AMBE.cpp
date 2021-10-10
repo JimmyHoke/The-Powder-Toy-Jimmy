@@ -29,7 +29,7 @@ void Element::Element_AMBE()
 	Weight = 100;
 
 	HeatConduct = 0;
-	Description = "Element that sets the nearby ambient air temperature to its own temperature. Use with PSCN & NSCN.)";
+	Description = "Element that sets the nearby ambient air temperature to its own temperature. tmp = effective area. Use with PSCN & NSCN.";
 
 	Properties = TYPE_SOLID;
 
@@ -41,14 +41,16 @@ void Element::Element_AMBE()
 	LowTemperatureTransition = NT;
 	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
-	DefaultProperties.tmp = 10;
+	DefaultProperties.tmp = 4;
 	Update = &update;
 	Graphics = &graphics;
 }
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	int r, rx, ry;
+	if (parts[i].tmp < 1 || parts[i].tmp > 25)
+		parts[i].tmp = 25;
+	int r, rx, ry, ar = parts[i].tmp;
 	if (parts[i].life != 10)
 	{
 		if (parts[i].life > 0)
@@ -56,8 +58,8 @@ static int update(UPDATE_FUNC_ARGS)
 	}
 	else
 	{
-		for (rx = -1; rx <= 1; rx++)
-			for (ry = -1; ry <= 1; ry++)
+		for (rx = -ar; rx <= ar; rx++)
+			for (ry = -ar; ry <= ar; ry++)
 			{
 				sim->hv[(y / CELL) + ry][(x / CELL) + rx] += 0.1f*((parts[i].temp - 273.15) - sim->hv[(y / CELL) + ry][(x / CELL) + rx]);
 			}
