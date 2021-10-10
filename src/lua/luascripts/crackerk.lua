@@ -298,22 +298,21 @@ end
 function autosave()
 if savetime < saveend then
 savetime = savetime + 1
-end
 
+elseif savetime >= saveend then
+savetime = 0
+end
 
 if saveend - savetime < 18 then
 graphics.drawRect(4,367,33,14, 255,255,0,200)
 graphics.drawText(8,370,"Stamp", 255,255,0,255)
 end
 
-if saveend - savetime < 1 then
+if saveend - savetime == 0 then
 getmax()
 sim.saveStamp(maxpart1,maxpart2,maxpart3-maxpart1,maxpart4-maxpart2)
 end
 
-if savetime >= saveend then
-savetime = 0
-end
 end
 
 bar:action(function(sender)
@@ -1424,7 +1423,7 @@ local mp2 = Button:new(70,102,45,20,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
 local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,102,45,20,"Magnita", "Magnita/Default")
+local mp8 = Button:new(270,102,45,20,"Twilight", "Magnita/Default")
 local mp9 = Button:new(320,102,45,20,"Pulse", "RBG makes everything better.")
 local mpop = Button:new(530,307,75,20,"Done", "Custom options.")
 

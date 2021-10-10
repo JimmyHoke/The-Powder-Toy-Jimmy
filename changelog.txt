@@ -1,4 +1,4 @@
-Changelog for Edition X (49) (DEC)
+Changelog for Edition X (49) (Release: 2022!)
 
 #New elements:
 1) AMBE: Element for setting ambient heat temperature.
@@ -10,7 +10,7 @@ Raise Autostamp upper limit.
 
 #Theme Control Center:
 New Filter controls with previews.
-New Magnita theme.
+New Twilight theme.
 Switching to pulse theme updates the alpha slider values.
 Adjust all the default themes to be a bit less flashy.
 Change default theme to new one instead of super flashy pulse theme.
@@ -26,6 +26,7 @@ More aggressive performance mode.
 Fix lower limit for reminder settings.
 
 todo:
+Add WARP fix from vanilla
+Known issues: None :)
 Add some new elements from suggestion list.
 Merge!
- 

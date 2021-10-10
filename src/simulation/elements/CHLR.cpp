@@ -32,7 +32,7 @@ void Element::Element_CHLR()
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine gas (heavy), liquifies under pressure and low temp. reacts with WATR, H2.";
+	Description = "Chlorine gas (heavy), reacts with WATR/ H2 (photochemical rxn) to form ACID. Distills WATR. Harms STKM.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
