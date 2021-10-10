@@ -228,8 +228,9 @@ simulation_elem_ids = [
 	['BFLM', 226],
 	['PET', 227],
 	['MISL', 228],
+	['AMBE', 229],
+	['CHLR', 230],
 	['JRAY', 500],
-]
 
 simulation_elem_src = []
 foreach elem_name_id : simulation_elem_ids

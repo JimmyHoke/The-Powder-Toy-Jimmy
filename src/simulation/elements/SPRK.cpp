@@ -219,7 +219,7 @@ static int update(UPDATE_FUNC_ARGS)
 							}
 					}
 					continue;
-				case PT_PUMP: case PT_GPMP: case PT_HSWC: case PT_PBCN: case PT_PINV:
+				case PT_PUMP: case PT_GPMP: case PT_HSWC: case PT_PBCN: case PT_PINV: case PT_AMBE:
 					if (parts[i].life<4)// PROP_PTOGGLE, Maybe? We seem to use 2 different methods for handling actived elements, this one seems better. Yes, use this one for new elements, PCLN is different for compatibility with existing saves
 					{
 						if (sender==PT_PSCN) parts[ID(r)].life = 10;
