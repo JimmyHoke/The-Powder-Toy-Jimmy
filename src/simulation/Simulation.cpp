@@ -43,15 +43,17 @@ extern int Element_LOVE_RuleTable[9][9];
 extern int Element_LOVE_love[XRES/9][YRES/9];
 extern int Element_WALL_RuleTable[9][9];
 extern int Element_WALL_wall[XRES / 9][YRES / 9];
-int Simulation::Load(GameSave * save, bool includePressure)
+
+int Simulation::Load(const GameSave * save, bool includePressure)
 {
 	return Load(save, includePressure, 0, 0);
 }
 
-int Simulation::Load(GameSave * save, bool includePressure, int fullX, int fullY)
+int Simulation::Load(const GameSave * originalSave, bool includePressure, int fullX, int fullY)
 {
-	if (!save)
+	if (!originalSave)
 		return 1;
+	auto save = std::unique_ptr<GameSave>(new GameSave(*originalSave));
 	try
 	{
 		save->Expand();
@@ -78,9 +80,8 @@ int Simulation::Load(GameSave * save, bool includePressure, int fullX, int fullY
 	}
 	if(save->palette.size())
 	{
-		for(std::vector<GameSave::PaletteItem>::iterator iter = save->palette.begin(), end = save->palette.end(); iter != end; ++iter)
+		for(auto &pi : save->palette)
 		{
-			GameSave::PaletteItem pi = *iter;
 			if (pi.second > 0 && pi.second < PT_NUM)
 			{
 				int myId = 0;
@@ -5429,7 +5430,7 @@ void Simulation::SetCustomGOL(std::vector<CustomGOLData> newCustomGol)
 	customGol = newCustomGol;
 }
 
-String Simulation::ElementResolve(int type, int ctype)
+String Simulation::ElementResolve(int type, int ctype) const
 {
 	if (type == PT_LIFE)
 	{
@@ -5449,7 +5450,7 @@ String Simulation::ElementResolve(int type, int ctype)
 	return "Empty";
 }
 
-String Simulation::BasicParticleInfo(Particle const &sample_part)
+String Simulation::BasicParticleInfo(Particle const &sample_part) const
 {
 	StringBuilder sampleInfo;
 	int type = sample_part.type;

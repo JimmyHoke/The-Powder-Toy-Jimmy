@@ -18,7 +18,7 @@
 #include "common/tpt-minmax.h"
 #include "common/tpt-compat.h"
 
-GameSave::GameSave(GameSave & save):
+GameSave::GameSave(const GameSave & save):
     majorVersion(save.majorVersion),
 	waterEEnabled(save.waterEEnabled),
 	legacyEnable(save.legacyEnable),
