@@ -183,17 +183,17 @@ if MANAGER.getsetting("CRK", "passreal2") == nil then
 MANAGER.savesetting("CRK","passreal2","DMND")
 end
 
-local passmen = Window:new(-15,-15, 610, 300)
+local passmen = Window:new(-15,-15, 610, 255)
 local pasmenmsg = Label:new(240,5,120, 10,"Welcome to the Password Manager V2.0")
 local pasmenmsg2 = Label:new(35,150,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
 local pasmenmsg3 = Label:new(308,40,120, 10,"Can be upto 8 character long, case sensitive, blank spaces also count.")
-local pasmenmsg4 = Label:new(35,130,120, 10,"Protection Status: "..passbutlab:text())
+local pasmenmsg4 = Label:new(25,130,120, 10,"Status: "..passbutlab:text())
 local pasmenmsg6 = Label:new(32,170,120, 10,"Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
 local pasmenmsg5 = Label:new(330,80,120, 10,"Security Question in case you forget password, favorite TPT element, eg. DMND.")
 local doned2 = Button:new(110,31,80,30, "Set password", "Save")
-local doned3 = Button:new(290,280,80,15, "Close", "Close")
-local doned4 = Button:new(40,195,90,20, "Protection ON", "Save ON")
-local doned5 = Button:new(40,225,90,20, "Protection OFF", "Save OFF")
+local doned3 = Button:new(525,237,80,15, "Close", "Close")
+local doned4 = Button:new(40,195,90,20, "Password ON", "Save ON")
+local doned5 = Button:new(40,225,90,20, "Password OFF", "Save OFF")
 local doned6 = Button:new(110,71,80,30, "Set Element", "Save")
 local passtime2 = Textbox:new(40, 30, 55, 30, '', 'Password..')
 local passtime3 = Textbox:new(40, 70, 35, 30, '', 'Elem.')
@@ -233,13 +233,13 @@ end)
 doned4 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","1")
 passbutlab:text("ON")
-pasmenmsg4:text("Protection status: "..passbutlab:text())
+pasmenmsg4:text("Status: "..passbutlab:text())
 end)
 
 doned5 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","0")
 passbutlab:text("OFF")
-pasmenmsg4:text("Protection status: "..passbutlab:text())
+pasmenmsg4:text("Status: "..passbutlab:text())
 end)
 end)
 
@@ -303,8 +303,9 @@ elseif savetime >= saveend then
 savetime = 0
 end
 
-if saveend - savetime < 18 then
-graphics.drawRect(4,367,33,14, 255,255,0,200)
+if saveend - savetime < 15 then
+graphics.drawRect(4,367,33,14, 255,255,0,255)
+graphics.fillRect(4,367,33,14, 55,55,55,200)
 graphics.drawText(8,370,"Stamp", 255,255,0,255)
 end
 
@@ -396,9 +397,9 @@ end)
 
 edito:action(function(sender)
 close()
-local editomenu = Window:new(-15,-15, 610, 365)
-local doned = Button:new(310,347,80,15, "Done", "Edit")
-local cancel = Button:new(210,347,80,15, "Cancel", "Hide.")
+local editomenu = Window:new(-15,-15, 610, 375)
+local doned = Button:new(530,357,70,15, "Done", "Edit")
+local cancel = Button:new(460,357,70,15, "Cancel", "Hide.")
 local edmsg = Label:new(153,5,120, 10,"    Welcome to the Element Editor. Note: These changes are temporory and will not be saved!")
 local edelnam = Textbox:new(10, 30, 100, 15, '', 'Elem to Edit.')
 local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
@@ -415,6 +416,7 @@ local edelname11 = Textbox:new(10, 260, 100, 15, '', 'Spawn Temp.')
 local edelname12 = Textbox:new(10, 280, 100, 15, '', 'Diffusion.')
 local edelname13 = Textbox:new(10, 300, 100, 15, '', 'Gravity.')
 local edelname14 = Textbox:new(10, 320, 100, 15, '', 'Advection.')
+local edelname15 = Textbox:new(10, 340, 100, 15, '', 'Melting point.')
 
 local ed0 = Label:new(170,33,120, 10,"Type the element name to be edited (Eg. STNE).")
 local ed1 = Label:new(106,63,70, 10,"New name.")
@@ -430,6 +432,7 @@ local ed11 = Label:new(137,263,120, 10,"Temp. at which element is spawn.")
 local ed12 = Label:new(211,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10.")
 local ed13 = Label:new(156,303,120, 10,"How fast the particle falls. -0.1 to 0.4.")
 local ed14 = Label:new(205,323,120, 10,"How much the particle is accelerated by moving air. -1 to 01")
+local ed15 = Label:new(162,343,120, 10,"Temp. at which element melts (in Celsius).")
 
 editomenu:addComponent(edmsg)
 editomenu:addComponent(doned)
@@ -448,6 +451,7 @@ editomenu:addComponent(edelname11)
 editomenu:addComponent(edelname12)
 editomenu:addComponent(edelname13)
 editomenu:addComponent(edelname14)
+editomenu:addComponent(edelname15)
 editomenu:addComponent(ed0)
 editomenu:addComponent(ed1)
 editomenu:addComponent(ed2)
@@ -462,6 +466,7 @@ editomenu:addComponent(ed11)
 editomenu:addComponent(ed12)
 editomenu:addComponent(ed13)
 editomenu:addComponent(ed14)
+editomenu:addComponent(ed15)
 editomenu:addComponent(cancel)
 
 ui.showWindow(editomenu)
@@ -469,7 +474,7 @@ ui.showWindow(editomenu)
 
 doned:action(function(sender)
 function errormsg()
-graphics.drawText(400,351,"Please Enter Valid Element Name!", 255,0,0,255)
+graphics.drawText(480,344,"Invalid element entered!", 255,0,0,255)
 end
 
 if edelnam:text() ~= nil then
@@ -545,6 +550,11 @@ end
 if edelname14:text() == "" then
 else
 elements.property(newName, "Advection", tonumber(edelname14:text()))
+end
+
+if edelname15:text() == "" then
+else
+elements.property(newName, "HighTemperature", tonumber(edelname15:text()) + 273 )
 end
 
 ui.closeWindow(editomenu)
@@ -658,6 +668,7 @@ clearsb()
 startTime = os.time()
 if tonumber(remtime:text()) < 1 or tonumber(remtime:text()) > 60 then
 entimey = "10"
+remtime:text("10")
 else
 entimey = tonumber(remtime:text())
 end
@@ -917,7 +928,10 @@ end)
 --Texter script hybrid end
 
 function autohidehud()
-	if tpt.mousey <= 38 then tpt.hud(0) else tpt.hud(1)
+	if tpt.mousey <= 38 then 
+tpt.hud(0) 
+gfx.drawText(6,6,"Hidden",255,255,255,200)
+else tpt.hud(1)
 	end
 end
 
@@ -1221,7 +1235,7 @@ as = 50
 end
 
 tpt.drawrect(3,3,605,377,backvr,backvg,backvb,as + 200)
-tpt.fillrect(3,3,606,377,backvr,backvg,backvb,as)
+tpt.fillrect(3,3,605,377,backvr,backvg,backvb,as)
 end
 
 function clearback()
@@ -1245,7 +1259,7 @@ else
 al = brightSlider:value()
 end
 
-tpt.drawrect(613,103,14,14,ar,ag,ab,al)
+
 
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
@@ -1269,6 +1283,7 @@ end
 --Topbarend
 
 --MP and manager
+tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 
 --top
@@ -1278,6 +1293,7 @@ tpt.drawrect(613,33,14,14,ar,ag,ab,al)
 tpt.drawrect(613,49,14,14,ar,ag,ab,al)
 tpt.drawrect(613,65,14,14,ar,ag,ab,al)
 tpt.drawrect(613,81,14,14,ar,ag,ab,al)
+
 --right
 tpt.drawrect(613,136,14,14,ar,ag,ab,al)
 tpt.drawrect(613,152,14,14,ar,ag,ab,al)
@@ -1308,7 +1324,6 @@ tpt.drawline(36,408,36,421,ar,ag,ab,al)
 tpt.drawline(18,408,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,422,ar,ag,ab,al)
 tpt.drawline(596,409,596,422,ar,ag,ab,al)
-tpt.drawrect(1,408,626,14,ar,ag,ab,al)
 tpt.drawline(418,408,418,421,ar,ag,ab,al)
 end
 end
@@ -1349,8 +1364,6 @@ end
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
 
-tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
-
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
@@ -1371,6 +1384,7 @@ end
 
 --Topbarend
 --MP and manager
+tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
 --top
@@ -1410,7 +1424,6 @@ tpt.drawline(36,408,36,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(18,408,18,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(580,409,580,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(596,409,596,422,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(418,408,418,421,colourRED,colourGRN,colourBLU,al)
 end
 end
@@ -1432,6 +1445,7 @@ local bg2 = Button:new(74,310,45,15,"Blue", "Blue background")
 local bg3 = Button:new(124,310,45,15,"Red", "Red background")
 local bg4 = Button:new(174,310,45,15,"Green", "Green background")
 local bg5 = Button:new(224,310,45,15,"Orange", "Yellow background")
+local bg6 = Button:new(274,310,45,15,"Theme", "Same as set theme")
 
 --topbar
 local barlb = Label:new(70, 244, 5, 5, " Long")
@@ -1501,7 +1515,7 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenuth:addComponent(alphalb)
 end
 
-tpt.fillrect(65,292,10,10,backvr,backvg,backvb,255)
+tpt.fillrect(65,292,12,10,backvr,backvg,backvb,255)
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
@@ -1549,6 +1563,7 @@ newmenuth:addComponent(bg2)
 newmenuth:addComponent(bg3)
 newmenuth:addComponent(bg4)
 newmenuth:addComponent(bg5)
+newmenuth:addComponent(bg6)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
@@ -1691,6 +1706,13 @@ bg5:action(function(sender)
 backvr = 250
 backvg = 111
 backvb = 0
+clearback()
+end)
+
+bg6:action(function(sender)
+backvr = MANAGER.getsetting("CRK","ar")
+backvg = MANAGER.getsetting("CRK","ag")
+backvb = MANAGER.getsetting("CRK","ab")
 clearback()
 end)
 
