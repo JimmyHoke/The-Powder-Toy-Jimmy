@@ -1,4 +1,4 @@
---cracker1000 mod script v5.6--
+--cracker1000 mod script v5.7--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
@@ -57,9 +57,9 @@ local dellb = Label:new(106, 34, 10, 15, "Shown")
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 local fplb = Label:new(101, 66, 10, 15, "ON")
 
-local reset= Button:new(10,92,80,25,"Reset", "Reset everything.")
+local reset = Button:new(10,92,80,25,"Reset", "Reset everything.")
 
-local info= Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
+local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
 local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
 local rulb = Label:new(101, 162, 10, 15, "OFF")
@@ -305,7 +305,7 @@ end
 
 if saveend - savetime < 15 then
 graphics.drawRect(4,367,33,14, 255,255,0,255)
-graphics.fillRect(4,367,33,14, 55,55,55,200)
+graphics.fillRect(4,367,33,14,15,15,15,200)
 graphics.drawText(8,370,"Stamp", 255,255,0,255)
 end
 
@@ -397,9 +397,9 @@ end)
 
 edito:action(function(sender)
 close()
-local editomenu = Window:new(-15,-15, 610, 375)
-local doned = Button:new(530,357,70,15, "Done", "Edit")
-local cancel = Button:new(460,357,70,15, "Cancel", "Hide.")
+local editomenu = Window:new(-15,-15, 610, 380)
+local doned = Button:new(534,362,70,15, "Done", "Edit")
+local cancel = Button:new(464,362,70,15, "Cancel", "Hide.")
 local edmsg = Label:new(153,5,120, 10,"    Welcome to the Element Editor. Note: These changes are temporory and will not be saved!")
 local edelnam = Textbox:new(10, 30, 100, 15, '', 'Elem to Edit.')
 local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
@@ -417,6 +417,7 @@ local edelname12 = Textbox:new(10, 280, 100, 15, '', 'Diffusion.')
 local edelname13 = Textbox:new(10, 300, 100, 15, '', 'Gravity.')
 local edelname14 = Textbox:new(10, 320, 100, 15, '', 'Advection.')
 local edelname15 = Textbox:new(10, 340, 100, 15, '', 'Melting point.')
+local edelname16 = Textbox:new(10, 360, 100, 15, '', 'Freezing point.')
 
 local ed0 = Label:new(170,33,120, 10,"Type the element name to be edited (Eg. STNE).")
 local ed1 = Label:new(106,63,70, 10,"New name.")
@@ -432,7 +433,8 @@ local ed11 = Label:new(137,263,120, 10,"Temp. at which element is spawn.")
 local ed12 = Label:new(211,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10.")
 local ed13 = Label:new(156,303,120, 10,"How fast the particle falls. -0.1 to 0.4.")
 local ed14 = Label:new(205,323,120, 10,"How much the particle is accelerated by moving air. -1 to 01")
-local ed15 = Label:new(162,343,120, 10,"Temp. at which element melts (in Celsius).")
+local ed15 = Label:new(160,343,120, 10,"Temp. at which element melts (in Celsius).")
+local ed16 = Label:new(164,363,120, 10,"Temp. at which element freezes (in Celsius).")
 
 editomenu:addComponent(edmsg)
 editomenu:addComponent(doned)
@@ -452,6 +454,7 @@ editomenu:addComponent(edelname12)
 editomenu:addComponent(edelname13)
 editomenu:addComponent(edelname14)
 editomenu:addComponent(edelname15)
+editomenu:addComponent(edelname16)
 editomenu:addComponent(ed0)
 editomenu:addComponent(ed1)
 editomenu:addComponent(ed2)
@@ -467,6 +470,7 @@ editomenu:addComponent(ed12)
 editomenu:addComponent(ed13)
 editomenu:addComponent(ed14)
 editomenu:addComponent(ed15)
+editomenu:addComponent(ed16)
 editomenu:addComponent(cancel)
 
 ui.showWindow(editomenu)
@@ -474,7 +478,7 @@ ui.showWindow(editomenu)
 
 doned:action(function(sender)
 function errormsg()
-graphics.drawText(480,344,"Invalid element entered!", 255,0,0,255)
+graphics.drawText(480,348,"Invalid element entered!", 255,0,0,255)
 end
 
 if edelnam:text() ~= nil then
@@ -554,7 +558,12 @@ end
 
 if edelname15:text() == "" then
 else
-elements.property(newName, "HighTemperature", tonumber(edelname15:text()) + 273 )
+elements.property(newName, "HighTemperature", tonumber(edelname15:text()) + 273)
+end
+
+if edelname16:text() == "" then
+else
+elements.property(newName, "LowTemperature", tonumber(edelname16:text()) + 273)
 end
 
 ui.closeWindow(editomenu)
@@ -1064,7 +1073,7 @@ local creditstxt = Label:new(6,-22, 598, 418,"\n\n                              
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n  Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n  37) CHRL: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of CHLR+H2 = ACID.\n  CHRL + WATR = DSTW (distillation below 70C) or ACID (above 70C). Kills stkm. Slows down when cooled.")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n  37) CHRL: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of CHLR+H2 = ACID.\n  CHRL + WATR = DSTW (distillation below 70C) or ACID (above 70C). Kills stkm. Slows when cooled. Rusts IRON & BMTL.")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
@@ -1453,20 +1462,20 @@ local baropa =  Button:new(24,260,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,260,35,20,"Long", "Long")
 local baropd =  Button:new(104,260,35,20,"OFF", "Turn off")
 
-local als = Label:new(280,155, 10, 15, "Alpha")
-local rl = Label:new(275, 176, 10, 15, "Red")
-local gl = Label:new(280,197, 10, 15, "Green")
-local bl = Label:new(278, 218, 10, 15, "Blue")
+local als = Label:new(325,155, 30, 15, "Alpha")
+local rl = Label:new(321, 176, 30, 15, "Red")
+local gl = Label:new(325,197, 30, 15, "Green")
+local bl = Label:new(323, 218, 30, 15, "Blue")
 
-local aSlider = Slider:new(20, 155, 200, 15, 255)
-local rSlider = Slider:new(20, 176, 200, 15, 255)
-local gSlider = Slider:new(20, 197, 200, 15, 255)
-local bSlider = Slider:new(20, 218, 200, 15, 255)
+local aSlider = Slider:new(20, 155, 255, 15, 255)
+local rSlider = Slider:new(20, 176, 255, 15, 255)
+local gSlider = Slider:new(20, 197, 255, 15, 255)
+local bSlider = Slider:new(20, 218, 255, 15, 255)
 
-local alb = Label:new(240,155,10, 15)
-local rlb = Label:new(240, 176, 10, 15)
-local glb = Label:new(240, 197, 10, 15)
-local blb = Label:new(240, 218, 10, 15)
+local alb = Label:new(290,155,10, 15)
+local rlb = Label:new(290, 176, 10, 15)
+local glb = Label:new(290, 197, 10, 15)
+local blb = Label:new(290, 218, 10, 15)
 
 local newmenuth = Window:new(-15,-15, 609, 330)
 local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control centre.")
@@ -1632,16 +1641,16 @@ mpnolag()
 end)
 
 mp3:action(function(sender)
-MANAGER.savesetting("CRK","ar",10)
-MANAGER.savesetting("CRK","ag",10)
-MANAGER.savesetting("CRK","ab",220)
-MANAGER.savesetting("CRK","al",220)
+MANAGER.savesetting("CRK","ar",50)
+MANAGER.savesetting("CRK","ag",100)
+MANAGER.savesetting("CRK","ab",255)
+MANAGER.savesetting("CRK","al",255)
 mpnolag()
 end)
 
 mp4:action(function(sender)
 MANAGER.savesetting("CRK","ar",0)
-MANAGER.savesetting("CRK","ag",220)
+MANAGER.savesetting("CRK","ag",190)
 MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",220)
 mpnolag()

@@ -32,7 +32,7 @@ void Element::Element_CHLR()
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine gas (heavy), reacts with WATR/ H2 (photochemical rxn) to form ACID. Distills WATR. Harms STKM.";
+	Description = "Chlorine gas, reacts with WATR/ H2 (photochemical rxn) to form ACID. Distills WATR. Harms STKM, rusts IRON & BMTL.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
@@ -120,6 +120,17 @@ static int update(UPDATE_FUNC_ARGS)
 						if (RNG::Ref().chance(1, 70))
 						{
 							sim->kill_part(ID(r));
+						}
+					}
+					break;
+					case PT_IRON:
+					case PT_BMTL:
+					{
+
+						if (RNG::Ref().chance(1, 400))
+						{
+							sim->part_change_type(ID(r), x + rx, y + ry, PT_BRMT);
+							sim->kill_part(i);
 						}
 					}
 					break;
