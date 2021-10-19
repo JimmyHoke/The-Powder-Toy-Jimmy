@@ -75,21 +75,25 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_SLTW:
 					case PT_CBNW:
 					case PT_DSTW:
+					case PT_WTRV:
 					{
-						if (parts[i].temp > 295.15f)
+						if (parts[i].temp > 343.15f)
 						{
-							if (RNG::Ref().chance(1, 200))
+							if (RNG::Ref().chance(1, 400))
 							{
+								sim->pv[(y / CELL)][(x / CELL)] = 4.0f;
+								sim->kill_part(ID(r));
 								parts[i].life = 200;
 								sim->part_change_type(i, x + rx, y + ry, PT_ACID);
-								sim->kill_part(ID(r));
 							}
 						}
-						if (parts[i].temp < 295.15f)
+
+						else if (parts[i].temp < 343.15f)
 						{
-							if (RNG::Ref().chance(1, 50))
+							if (RNG::Ref().chance(1, 100))
 							{
 								sim->part_change_type(ID(r), x + rx, y + ry, PT_DSTW);
+								sim->kill_part(i);
 							}
 						}
 					}
@@ -97,12 +101,14 @@ static int update(UPDATE_FUNC_ARGS)
 					//Photochemical reaction
 					case PT_H2:
 					{
+						parts[i].tmp = 50;
+			
 						if (RNG::Ref().chance(1, 400))
 					{
-						sim->create_part(i, x, y, PT_ACID);
-					}
-						parts[i].tmp = 44;
 						sim->kill_part(ID(r));
+						sim->create_part(i, x + rx, y + ry, PT_ACID);
+					}
+					
 					}
 					break;
 
@@ -128,9 +134,9 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp == 0)
 	{
-		*firer = 165;
-		*fireg = 200;
-		*fireb = 55;
+		*firer = 155;
+		*fireg = 190;
+		*fireb = 45;
 		*firea = 15;
 	}
 	else
@@ -138,7 +144,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*firer = 145;
 		*fireg = 170;
 		*fireb = 245;
-		*firea = cpart->tmp*3;
+		*firea = cpart->tmp*4;
 	}
 	
 	*colr = 125;
