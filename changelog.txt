@@ -4,6 +4,8 @@ Additions:
 *  AMBE: Element for setting ambient heat temperature, tmp = range, powered element.
 * CHLR: Chlorine, heavy gas that settles down fast, reacts with watr to form ACID, photochemical reaction with H2 and distills watr, rusts some metals (More details in wiki).
 * New Smart Auto Stamp (can automatically calculate the best stamp selection area, also more optimised now).
+* Rewritten Texter with realtime previews.
+* Texter now supports clearing sim screen too.
 * Raise Autostamp upper limit.
 * New option to show or hide Mod elements.
 * More properties added to the editor.

@@ -744,7 +744,7 @@ newmenu:removeComponent(bropc)
 end)
 
 --Texter script hybrid start
-yvalue = 50
+local yvalue = 30
 local linenumber = 01
 function drawLetter(letter, x, y, element, font)
 
@@ -791,40 +791,53 @@ function drawText(text, x, y, element, font)
 
         end
 end
+local timerfoi = 0
+local newmenu4 = Window:new(20,340, 550, 40)
 
-chud:action(function(sender)
-
-function drawglitch2()
-graphics.drawLine(12,85,560,85,ar,ag,ab,250)
+function drawblip()
+ui.closeWindow(newmenu4)
+if timerfoi < 4 then
+timerfoi= timerfoi + 1
 end
 
-close()
-local newmenu4 = Window:new(1,1, 610, 405)
-local scripthelp2 = Label:new(13,5,120, 20,"Welcome to the texter 4.0")
+if timerfoi >= 4 then
 ui.showWindow(newmenu4)
-local yvalue = 30
+timerfoi = 0
+tpt.unregister_step(drawblip)
+end
+
+end
+local texttext = "Typing starts here"
+function drawprev2()
+graphics.drawText(10,yvalue+12,texttext,255,255,255,255)
+end
+
+chud:action(function(sender)
+yvalue = 30
+texttext = "Typing starts here"
+tpt.unregister_step(drawblip)
+tpt.register_step(drawblip)
+
+close()
+
 linenumber = 01
 local mouseX, mouseY = tpt.mousex, tpt.mousey
 local text, element, font = '', 'DMND', '5x7'
-local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
-local textTextboxs = Textbox:new(96, 55, 42, 20, '', 'Element')
-local scripthelp23 = Label:new(10,90,40, 10,"Preview:")
-local scripthelp = Label:new(10,90,630, 300,"")
-local place = Button:new(10,55,40,20,"Enter", "Toggle hidden elements.")
-local cancel= Button:new(52,55,40,20,"Close", "Cancel the element placement.")
-local lno  = Label:new(473, 58, 10, 15, "| Line No:")
-local lnol  = Label:new(505, 58, 10, 15, linenumber)
-local lno2  = Label:new(160, 58, 10, 15, "Font:")
-local smalf = Button:new(180,55,46,20,"Normal", "5x7.")
-local bigf = Button:new(230,55,46,20,"Big", "7x10.")
-local fsize  = Label:new(415, 58, 10, 15, "Font: Normal")
-local clrsc = Button:new(520,30,40,20,"Clear", "Clear text")
+local textTextbox = Textbox:new(5, 2, 505, 15, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
+local textTextboxs = Textbox:new(96, 22, 42, 15, '', 'Element')
+local place = Button:new(5,22,40,15,"Enter", "Toggle hidden elements.")
+local cancel= Button:new(50,22,40,15,"Close", "Cancel the element placement.")
+local lno  = Label:new(423, 22, 10, 15, "| Line No:")
+local lnol  = Label:new(455, 22, 10, 15, linenumber)
+local lno2  = Label:new(190, 22, 10, 15, "Font:")
+local smalf = Button:new(210,22,46,15,"Normal", "5x7.")
+local bigf = Button:new(260,22,46,15,"Big", "7x10.")
+local fsize  = Label:new(365, 22, 10, 15, "Font: Normal")
+local clrsc = Button:new(514,2,30,16,"Clr", "Clear text")
+local clrsc2 = Button:new(484,20,60,16,"Clr Screen", "Clear text")
 
 newmenu4:addComponent(textTextbox)
 newmenu4:addComponent(textTextboxs)
-newmenu4:addComponent(scripthelp) 
-newmenu4:addComponent(scripthelp2) 
-newmenu4:addComponent(scripthelp23) 
 newmenu4:addComponent(place)
 newmenu4:addComponent(cancel)
 newmenu4:addComponent(lno)
@@ -834,11 +847,12 @@ newmenu4:addComponent(smalf)
 newmenu4:addComponent(bigf)
 newmenu4:addComponent(fsize)
 newmenu4:addComponent(clrsc)
-newmenu4:onDraw(drawglitch2)
-
+newmenu4:addComponent(clrsc2)
+newmenu4:onDraw(drawprev2)
  textTextbox:onTextChanged(
                     function(sender)
                             text = textTextbox:text();
+						    texttext = textTextbox:text();
                     end
                 )
 
@@ -867,9 +881,6 @@ fsize:text("Font:  Big")
 end)
 
 cancel:action(function(sender)
-newmenu4:removeComponent(scripthelp)
-newmenu4:removeComponent(scripthelp2)
-newmenu4:removeComponent(scripthelp23)
 newmenu4:removeComponent(textTextbox)
 newmenu4:removeComponent(textTextboxs)
 newmenu4:removeComponent(place)
@@ -881,30 +892,26 @@ newmenu4:removeComponent(smalf)
 newmenu4:removeComponent(bigf)
 newmenu4:removeComponent(fsize)
 newmenu4:removeComponent(clrsc)
-
+newmenu4:removeComponent(clrsc2)
+tpt.unregister_step(drawblip)
 ui.closeWindow(newmenu4)
 end)
-local texth = scripthelp:text()
-local valueplace = 0
 
 clrsc:action(function(sender)
 textTextbox:text("")
 end)
 
+clrsc2:action(function(sender)
+sim.clearSim()
+ui.closeWindow(newmenu4)
+tpt.register_step(drawblip)
+end)
+
 place:action(function(sender)
-if linenumber >22 and valueplace == 0 then
-scripthelp:text("")
-valueplace = 1
-end
- 
-if yvalue < 360 then
-text = textTextbox:text();
-texth = scripthelp:text()
-if ffix == "1" then
-scripthelp:text(texth..text.." L:"..linenumber.." ("..fontdis..") \n")
-else
-scripthelp:text(texth..text.." L:"..linenumber.." ("..fontdis..") \n")
-end
+ui.closeWindow(newmenu4)
+tpt.register_step(drawblip)
+texttext = ">"
+if yvalue < 315 then
 
 if ffix == "1" then
 yvalue = yvalue + 14
@@ -916,21 +923,12 @@ textTextbox:text('')
 linenumber = linenumber + 1
 lnol:text(linenumber)
 
-if linenumber <=  33 then
 drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
+text = textTextbox:text()
+if yvalue >= 315 then
+lnol:text("        Max lines!")
 end
 
-if linenumber == 2 then 
-scripthelp:text("                                                                                                                            .\n"..texth..text.." L:1".." ("..fontdis..") \n")
-end
-
-if linenumber == 24 then 
-scripthelp:text("                                                                                                                            .\n"..texth..text.." L:24".." ("..fontdis..") \n")
-end
-
-if yvalue > 355 then
-scripthelp:text(texth..text.." Max lines reached.")
-end
 end
 end)
 end)
