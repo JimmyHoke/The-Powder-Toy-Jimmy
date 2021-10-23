@@ -1,10 +1,10 @@
 Changelog for V30.0 SE (49) (Release: 2022!)
 
 Additions:
-*  AMBE: Element for setting ambient heat temperature, tmp = range, powered element.
+* AMBE: Element for setting ambient heat temperature, tmp = range, powered element.
 * CHLR: Chlorine, heavy gas that settles down fast, reacts with watr to form ACID, photochemical reaction with H2 and distills watr, rusts some metals (More details in wiki).
 * New Smart Auto Stamp (can automatically calculate the best stamp selection area, also more optimised now).
-* Rewritten Texter with realtime previews.
+* Rewritten Texter with realtime previews and better line spacings.
 * Texter now supports clearing sim screen too.
 * Raise Autostamp upper limit.
 * New option to show or hide Mod elements.
@@ -16,6 +16,7 @@ Additions:
 Changes:
 * Merge Filter controls with control centre
 * Lower the alpha slider lower limit.
+* Colour changes when changing fonts in texter.
 * Sliders operate more smoothly now.
 * Optimisations to QGP.
 * Add a tiny text indicator for autohide hud.

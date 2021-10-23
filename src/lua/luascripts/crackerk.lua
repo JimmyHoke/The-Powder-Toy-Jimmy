@@ -397,7 +397,7 @@ end)
 
 edito:action(function(sender)
 close()
-local editomenu = Window:new(-15,-15, 610, 380)
+local editomenu = Window:new(-15,-15, 610, 382)
 local doned = Button:new(534,362,70,15, "Done", "Edit")
 local cancel = Button:new(464,362,70,15, "Cancel", "Hide.")
 local edmsg = Label:new(153,5,120, 10,"    Welcome to the Element Editor. Note: These changes are temporory and will not be saved!")
@@ -474,7 +474,6 @@ editomenu:addComponent(ed16)
 editomenu:addComponent(cancel)
 
 ui.showWindow(editomenu)
-
 
 doned:action(function(sender)
 function errormsg()
@@ -744,7 +743,7 @@ newmenu:removeComponent(bropc)
 end)
 
 --Texter script hybrid start
-local yvalue = 30
+local yvalue = 10
 local linenumber = 01
 function drawLetter(letter, x, y, element, font)
 
@@ -792,29 +791,50 @@ function drawText(text, x, y, element, font)
         end
 end
 local timerfoi = 0
-local newmenu4 = Window:new(20,340, 550, 40)
+local newmenu4 = Window:new(10,344, 550, 40)
 
 function drawblip()
 ui.closeWindow(newmenu4)
-if timerfoi < 4 then
+if timerfoi < 1 then
 timerfoi= timerfoi + 1
 end
 
-if timerfoi >= 4 then
+if timerfoi >= 1 then
 ui.showWindow(newmenu4)
 timerfoi = 0
 tpt.unregister_step(drawblip)
 end
 
 end
-local texttext = "Typing starts here"
+local texttext = "Typing starts here."
+local tr,tg,tb
+local ffix = "0"
+local yval2 = 10
+
 function drawprev2()
-graphics.drawText(10,yvalue+12,texttext,255,255,255,255)
+if ffix == "0" then
+tr = 255
+tg = 255
+tb = 255
+if yvalue < 318 then
+yval2 = 10
+end
+end
+ if ffix == "1" then
+tr = 255
+tg = 90
+tb = 0
+if yvalue < 318 then
+yval2 = 14
+end
+end
+graphics.drawText(10,yvalue+yval2,texttext,tr,tg,tb,255)
 end
 
 chud:action(function(sender)
-yvalue = 30
-texttext = "Typing starts here"
+tpt.hud(0)
+yvalue = 10
+texttext = "Typing starts here."
 tpt.unregister_step(drawblip)
 tpt.register_step(drawblip)
 
@@ -861,22 +881,21 @@ newmenu4:onDraw(drawprev2)
                             element = textTextboxs:text();
                     end
                 )
-
-local ffix = "0"
-local fx = "1"
-local fontdis = "N"
-
+				
 smalf:action(function(sender)
 font='5x7'
+
+if ffix == "1" and yvalue < 318 then
+yvalue = yvalue + 5
+end
 ffix = "0"
-fontdis = "N"
 fsize:text("Font: Normal")
+
 end)
 
 bigf:action(function(sender)
 font='7x10'
 ffix = "1"
-fontdis = "B"
 fsize:text("Font:  Big")
 end)
 
@@ -894,14 +913,17 @@ newmenu4:removeComponent(fsize)
 newmenu4:removeComponent(clrsc)
 newmenu4:removeComponent(clrsc2)
 tpt.unregister_step(drawblip)
+tpt.hud(1)
 ui.closeWindow(newmenu4)
 end)
 
 clrsc:action(function(sender)
 textTextbox:text("")
+texttext = "Cleared."
 end)
 
 clrsc2:action(function(sender)
+texttext = "Screen Cleared."
 sim.clearSim()
 ui.closeWindow(newmenu4)
 tpt.register_step(drawblip)
@@ -910,13 +932,13 @@ end)
 place:action(function(sender)
 ui.closeWindow(newmenu4)
 tpt.register_step(drawblip)
-texttext = ">"
-if yvalue < 315 then
 
+if yvalue < 318 then
+texttext = ">"
 if ffix == "1" then
 yvalue = yvalue + 14
 else
-yvalue = yvalue + 12
+yvalue = yvalue + 10
 end
 
 textTextbox:text('')
@@ -925,10 +947,11 @@ lnol:text(linenumber)
 
 drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
 text = textTextbox:text()
-if yvalue >= 315 then
-lnol:text("        Max lines!")
-end
 
+end
+if yvalue >= 318 then
+texttext = "Max lines reached!"
+lnol:text("   Max!")
 end
 end)
 end)

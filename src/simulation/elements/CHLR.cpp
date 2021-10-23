@@ -26,13 +26,13 @@ void Element::Element_CHLR()
 	Flammable = 0;
 	Explosive = 0;
 	Meltable = 0;
-	Hardness = 1;
+	Hardness = 0;
 
 	Weight = 1;
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine gas, reacts with WATR/ H2 (photochemical rxn) to form ACID. Distills WATR. Harms STKM, rusts IRON & BMTL.";
+	Description = "Chlorine gas, reacts with WATR/ H2 (photochemical rxn) to form ACID. Distills WATR. Harms STKM. Rusts IRON & BMTL.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
@@ -127,7 +127,7 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_BMTL:
 					{
 
-						if (RNG::Ref().chance(1, 400))
+						if (RNG::Ref().chance(1, 1000))
 						{
 							sim->part_change_type(ID(r), x + rx, y + ry, PT_BRMT);
 							sim->kill_part(i);
