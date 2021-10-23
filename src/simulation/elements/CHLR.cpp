@@ -8,7 +8,7 @@ void Element::Element_CHLR()
 {
 	Identifier = "DEFAULT_PT_CHLR";
 	Name = "CHLR";
-	Colour = PIXPACK(0xA5B437);
+	Colour = PIXPACK(0x8bc34a);
 	MenuVisible = 1;
 	MenuSection = SC_GAS;
 	Enabled = 1;
@@ -28,11 +28,11 @@ void Element::Element_CHLR()
 	Meltable = 0;
 	Hardness = 0;
 
-	Weight = 1;
+	Weight = 38;
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine gas, reacts with WATR/ H2 (photochemical rxn) to form ACID. Distills WATR. Harms STKM. Rusts IRON & BMTL.";
+	Description = "Chlorine gas, photochemical rxn with H2. Distills WATR below 50C (ACID > 50C), Rusts IRON & BMTL. Kills STKMs.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
@@ -55,9 +55,9 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp > 0)
 		parts[i].tmp--;
 
-	if (parts[i].temp < 243.15f)
+	if (parts[i].temp < 273.15f)
 	{
-		parts[i].vy = 1.0;
+		parts[i].vy = 0.1;
 	}
 
 	int r, rx, ry;
@@ -77,22 +77,22 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_DSTW:
 					case PT_WTRV:
 					{
-						if (parts[i].temp > 343.15f)
+						if (parts[i].temp > 323.15f)
 						{
 							if (RNG::Ref().chance(1, 400))
 							{
-								sim->pv[(y / CELL)][(x / CELL)] = 4.0f;
+								sim->pv[(y / CELL)][(x / CELL)] = 6.0f;
 								sim->kill_part(ID(r));
 								parts[i].life = 200;
 								sim->part_change_type(i, x + rx, y + ry, PT_ACID);
 							}
 						}
 
-						else if (parts[i].temp < 343.15f)
+						else if (parts[i].temp < 323.15f)
 						{
-							if (RNG::Ref().chance(1, 100))
+							sim->part_change_type(ID(r), x + rx, y + ry, PT_DSTW);
+							if (RNG::Ref().chance(1, 300))
 							{
-								sim->part_change_type(ID(r), x + rx, y + ry, PT_DSTW);
 								sim->kill_part(i);
 							}
 						}
@@ -145,24 +145,21 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp == 0)
 	{
-		*firer = 155;
-		*fireg = 190;
-		*fireb = 45;
+		*firer = 139;
+		*fireg = 295;
+		*fireb = 74;
 		*firea = 15;
 	}
 	else
 	{
-		*firer = 145;
-		*fireg = 170;
-		*fireb = 245;
-		*firea = cpart->tmp*4;
+		*firer = 205;
+		*fireg = 205;
+		*fireb = 255;
+		*firea = cpart->tmp*2;
 	}
-	
-	*colr = 125;
-	*colg = 150;
-	*colb = 25;
+
+	*pixel_mode = PMODE_NONE;
 	*pixel_mode |= FIRE_BLEND;
-	*pixel_mode |= FIRE_ADD;
 		
 	return 0;
 }
