@@ -36,7 +36,7 @@ src>gui>search>Searchview.cpp
 (FUEL, 196);
 (DMRN, 198);             Simulation.cpp
 (PINV, 199);                SPRK.cpp and simulation.cpp (check for .life!)
-(WALL, 200);              Simulation.cpp (search for love, define wall element)
+(WALL, 200);
 (COND, 201);
 (QGPP, 202);
 (UVRD, 203);             Simulation.cpp (Add with PROT)

@@ -51,8 +51,7 @@ void Element::Element_TIMC()
 static int update(UPDATE_FUNC_ARGS)
 {
 	{
-		int r, rx, ry, oldl;
-		oldl = parts[i].tmp2;
+		int r, rx, ry;
 		if (parts[i].tmp2 > 0)
 			parts[i].tmp2--;
 		for (rx = -2; rx < 3; rx++)

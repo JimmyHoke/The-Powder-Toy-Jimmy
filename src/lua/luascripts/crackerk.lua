@@ -117,7 +117,7 @@ local passbutlab = Label:new(487, 194, 10, 15, "OFF")
 
 local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
 local remtime = Textbox:new(486, 223, 20, 20, '', '10')
-local remlabel = Label:new(380, 2, 10, 15, "Reminder set for10 mins")
+local remlabel = Label:new(380, 2, 10, 15, "Reminder set for 10 mins")
 local remlabel21 = Label:new(538, 205, 20, 15, "1-60 Mins.")
 remtime:text("10")
 local remon2 = Button:new(516,223,30,20,"Set", "Save.")
@@ -744,6 +744,7 @@ end)
 
 --Texter script hybrid start
 local yvalue = 10
+local ylimit = 315
 local linenumber = 01
 function drawLetter(letter, x, y, element, font)
 
@@ -816,16 +817,15 @@ if ffix == "0" then
 tr = 255
 tg = 255
 tb = 255
-if yvalue < 318 then
+if yvalue < ylimit then
 yval2 = 10
 end
-end
- if ffix == "1" then
+elseif ffix == "1" then
 tr = 255
 tg = 90
 tb = 0
-if yvalue < 318 then
-yval2 = 14
+if yvalue < ylimit then
+yval2 = 13
 end
 end
 graphics.drawText(10,yvalue+yval2,texttext,tr,tg,tb,255)
@@ -885,7 +885,7 @@ newmenu4:onDraw(drawprev2)
 smalf:action(function(sender)
 font='5x7'
 
-if ffix == "1" and yvalue < 318 then
+if ffix == "1" and yvalue < ylimit then
 yvalue = yvalue + 5
 end
 ffix = "0"
@@ -933,10 +933,10 @@ place:action(function(sender)
 ui.closeWindow(newmenu4)
 tpt.register_step(drawblip)
 
-if yvalue < 318 then
+if yvalue < ylimit then
 texttext = ">"
 if ffix == "1" then
-yvalue = yvalue + 14
+yvalue = yvalue + 13
 else
 yvalue = yvalue + 10
 end
@@ -949,7 +949,7 @@ drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
 text = textTextbox:text()
 
 end
-if yvalue >= 318 then
+if yvalue >= ylimit then
 texttext = "Max lines reached!"
 lnol:text("   Max!")
 end
@@ -1289,12 +1289,10 @@ else
 al = brightSlider:value()
 end
 
-
-
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(3,-1,605,3, ar,ag,ab,al)
+tpt.fillrect(2,-1,606,3, ar,ag,ab,al)
 end
 
 if uival == "1" then
@@ -1306,7 +1304,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(3,-1,605,3, ar,ag,ab,al)
+tpt.fillrect(2,-1,606,3, ar,ag,ab,al)
 end
 end
 
@@ -1397,7 +1395,7 @@ end
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(3,-1,605,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(2,-1,606,3, colourRED,colourGRN,colourBLU,al)
 end
 if uival == "1" then
 
@@ -1408,7 +1406,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "2" then
-tpt.fillrect(3,-1,605,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(2,-1,606,3, colourRED,colourGRN,colourBLU,al)
 end
 end
 
@@ -1545,7 +1543,7 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenuth:addComponent(alphalb)
 end
 
-tpt.fillrect(65,292,12,10,backvr,backvg,backvb,255)
+tpt.fillrect(65,292,10,10,backvr,backvg,backvb,255)
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
@@ -1694,14 +1692,14 @@ mpnolag()
 end)
 
 mp9:action(function(sender)
-MANAGER.savesetting("CRK","al",200)
+MANAGER.savesetting("CRK","al",210)
 MANAGER.savesetting("CRK","savergb",1)
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 aclr = aSlider:value() 
 alb:text(aclr)
+event.unregister(event.tick,theme)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
-event.unregister(event.tick,theme)
 end)
 
 bg1:action(function(sender)
@@ -1767,16 +1765,10 @@ function startupcheck()
 interface.addComponent(toggle)
 fs.makeDirectory("scripts")
 
-if MANAGER.getsetting("CRK","ar") == nil then
-MANAGER.savesetting("CRK","ar",131)
-end
-if MANAGER.getsetting("CRK","ag") == nil then
-MANAGER.savesetting("CRK","ag",0)
-end
-if MANAGER.getsetting("CRK","ab") == nil then
-MANAGER.savesetting("CRK","ab",255)
-end
 if MANAGER.getsetting("CRK","al") == nil then
+MANAGER.savesetting("CRK","ar",131)
+MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",255)
 end
 
@@ -1885,11 +1877,9 @@ end
 end)
 
 reset:action(function(sender)
-clearsb()
+close()
 interface.removeComponent(unhd)
 timerremo()
-frameCount = 0
-tpt.setdrawcap(0)
 backvr = 0
 backvg = 0
 backvb = 0
@@ -1945,12 +1935,12 @@ MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK", "savergb",2)
 tpt.hud(1)
-ui.closeWindow(newmenu) 
 hideyes()
 tpt.display_mode(3)
 tpt.watertest(0)
 sim.edgeMode(0) 
 tpt.setfpscap(60)
+tpt.setdrawcap(0)
 tpt.setwindowsize(1)
 tpt.newtonian_gravity(0)
 tpt.decorations_enable(0)

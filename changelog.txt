@@ -3,6 +3,7 @@ Changelog for V30.0 SE (49) (Release: 2022!)
 Additions:
 * AMBE: Element for setting ambient heat temperature, tmp = range, powered element.
 * CHLR: Chlorine, heavy gas that settles down fast, reacts with watr to form ACID, photochemical reaction with H2 and distills watr, rusts some metals (More details in wiki).
+* Wall behaves like a normal element now, can block pressure and accept deco too.
 * New Smart Auto Stamp (can automatically calculate the best stamp selection area, also more optimised now).
 * Rewritten Texter with realtime previews and better line spacings.
 * Texter now supports clearing sim screen too.
@@ -26,6 +27,7 @@ Changes:
 * Make Debug mode show Dcolour only for particles that actually use it.
 * More aggressive performance mode.
 * Fix lower limit for reminder settings.
+* Optimised startup checks.
 
 Bug fixes:
 * Fix WARP particles not getting detected in find mode.

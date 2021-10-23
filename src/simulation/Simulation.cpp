@@ -42,8 +42,6 @@ extern int Element_LOLZ_RuleTable[9][9];
 extern int Element_LOLZ_lolz[XRES/9][YRES/9];
 extern int Element_LOVE_RuleTable[9][9];
 extern int Element_LOVE_love[XRES/9][YRES/9];
-extern int Element_WALL_RuleTable[9][9];
-extern int Element_WALL_wall[XRES / 9][YRES / 9];
 
 int Simulation::Load(const GameSave * save, bool includePressure)
 {
@@ -5171,7 +5169,7 @@ void Simulation::BeforeSim()
 		}
 
 		// LOVE and LOLZ element handling
-		if (elementCount[PT_LOVE] > 0 || elementCount[PT_LOLZ] > 0 || elementCount[PT_WALL] > 0)
+		if (elementCount[PT_LOVE] > 0 || elementCount[PT_LOLZ] > 0)
 		{
 			int nx, nnx, ny, nny, r, rt;
 			for (ny=0; ny<YRES-4; ny++)
@@ -5192,10 +5190,6 @@ void Simulation::BeforeSim()
 					else if (parts[ID(r)].type==PT_LOLZ)
 					{
 						Element_LOLZ_lolz[nx/9][ny/9] = 1;
-					}
-					else if (parts[ID(r)].type == PT_WALL)
-					{
-						Element_WALL_wall[nx / 9][ny / 9] = 1;
 					}
 				}
 			}
@@ -5241,25 +5235,6 @@ void Simulation::BeforeSim()
 							}
 					}
 					Element_LOLZ_lolz[nx/9][ny/9]=0;
-
-					if (Element_WALL_wall[nx / 9][ny / 9] == 1)
-					{
-						for (nnx = 0; nnx < 9; nnx++)
-							for (nny = 0; nny < 9; nny++)
-							{
-								if (ny + nny > 0 && ny + nny < YRES&&nx + nnx >= 0 && nx + nnx < XRES)
-								{
-									rt = pmap[ny + nny][nx + nnx];
-									if (!rt&&Element_WALL_RuleTable[nny][nnx] == 1)
-										create_part(-1, nx + nnx, ny + nny, PT_WALL);
-									else if (!rt)
-										continue;
-									else if (parts[ID(rt)].type == PT_WALL && Element_WALL_RuleTable[nny][nnx] == 0)
-										kill_part(ID(rt));
-								}
-							}
-					}
-					Element_WALL_wall[nx / 9][ny / 9] = 0;
 				}
 			}
 		}

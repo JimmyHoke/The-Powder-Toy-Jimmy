@@ -1,4 +1,6 @@
 #include "simulation/ElementCommon.h"
+#include "simulation/Air.h"
+static int update(UPDATE_FUNC_ARGS);
 
 void Element::Element_WALL()
 {
@@ -26,9 +28,9 @@ void Element::Element_WALL()
 
 	Weight = 100;
 
-	DefaultProperties.temp = 373.0f;
-	HeatConduct = 40;
-	Description = "WALL, now in elements.";
+	DefaultProperties.temp = 293.15f;
+	HeatConduct = 0;
+	Description = "Elemental wall (1x1), indestructible. Blocks pressure like TTAN.";
 
 	Properties = TYPE_SOLID;
 
@@ -40,20 +42,32 @@ void Element::Element_WALL()
 	LowTemperatureTransition = NT;
 	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
+	Update = &update;
 }
 
-int Element_WALL_RuleTable[9][9] =
+static int update(UPDATE_FUNC_ARGS)
 {
-	{0,1,1,1,1,1,1,1,0},
-	{1,1,0,0,0,0,0,1,1},
-	{1,0,1,0,0,0,1,0,1},
-	{1,0,0,1,0,1,0,0,1},
-	{1,0,0,0,1,0,0,0,1},
-	{1,0,0,1,0,1,0,0,1},
-	{1,0,1,0,0,0,1,0,1},
-	{1,1,0,0,0,0,0,1,1},
-	{0,1,1,1,1,1,1,1,0},
+	int ttan = 0;
+	if (nt <= 2)
+		ttan = 2;
+	else if (parts[i].tmp)
+		ttan = 2;
+	else if (nt <= 6)
+	{
+		for (int rx = -1; rx <= 1; rx++)
+			for (int ry = -1; ry <= 1; ry++)
+				if ((!rx != !ry) && BOUNDS_CHECK)
+				{
+					if (TYP(pmap[y + ry][x + rx]) == PT_WALL)
+						ttan++;
+				}
+	}
 
-};
+	if (ttan >= 2)
+	{
+		sim->air->bmap_blockair[y / CELL][x / CELL] = 1;
+		sim->air->bmap_blockairh[y / CELL][x / CELL] = 0x8;
+	}
+	return 0;
+}
 
-int Element_WALL_wall[XRES / 9][YRES / 9];
