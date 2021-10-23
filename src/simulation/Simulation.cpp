@@ -29,6 +29,7 @@
 #include "common/tpt-compat.h"
 #include "common/tpt-minmax.h"
 #include "common/tpt-rand.h"
+#include "common/tpt-thread-local.h"
 #include "gui/game/Brush.h"
 
 #ifdef LUACONSOLE
@@ -669,7 +670,7 @@ bool Simulation::FloodFillPmapCheck(int x, int y, int type)
 CoordStack& Simulation::getCoordStackSingleton()
 {
 	// Future-proofing in case Simulation is later multithreaded
-	thread_local CoordStack cs;
+	static THREAD_LOCAL(CoordStack, cs);
 	return cs;
 }
 
@@ -4474,7 +4475,7 @@ killed:
 				// Checking stagnant is cool, but then it doesn't update when you change it later.
 				if (water_equal_test && elements[t].Falldown == 2 && RNG::Ref().chance(1, 200))
 				{
-					if (!flood_water(x, y, i))
+					if (flood_water(x, y, i))
 						goto movedone;
 				}
 				// liquids and powders
