@@ -36,7 +36,7 @@ src>gui>search>Searchview.cpp
 (FUEL, 196);
 (DMRN, 198);             Simulation.cpp
 (PINV, 199);                SPRK.cpp and simulation.cpp (check for .life!)
-(WALL, 200);
+(WALL, 200);              VIRS.cpp and simulation.cpp (add exceptions for PROT and VIRS!)
 (COND, 201);
 (QGPP, 202);
 (UVRD, 203);             Simulation.cpp (Add with PROT)
@@ -61,8 +61,8 @@ src>gui>search>Searchview.cpp
 (COPR, 222); 
 (PCON, 223);             SPRK.cpp
 (STRC, 224);        
-(TURB, 225);              VIRS.cpp (add exception!)
-(BFLM, 226);             
+(TURB, 225);              
+(BFLM, 226);             VIRS.cpp (add exception!)
 (PET, 227);             
 (MISL 228);     
 (AMBE 229);                 SPRK.cpp

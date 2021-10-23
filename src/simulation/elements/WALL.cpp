@@ -30,7 +30,7 @@ void Element::Element_WALL()
 
 	DefaultProperties.temp = 293.15f;
 	HeatConduct = 0;
-	Description = "Elemental wall (1x1), indestructible. Blocks pressure like TTAN.";
+	Description = "Elemental wall (1x1), indestructible, immune to VIRS. Blocks pressure like TTAN.";
 
 	Properties = TYPE_SOLID;
 
