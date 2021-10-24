@@ -32,7 +32,7 @@ void Element::Element_CHLR()
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine gas, photochemical rxn with H2. Distills WATR below 50C (ACID > 50C), Rusts IRON & BMTL. Kills STKMs.";
+	Description = "Chlorine, photochemical rxn with H2. Distills WATR below 50C (ACID > 50C), Rusts IRON & BMTL. Kills STKMs & PLNT.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
@@ -134,6 +134,16 @@ static int update(UPDATE_FUNC_ARGS)
 						}
 					}
 					break;
+					case PT_PLNT:
+					case PT_VINE:
+					{
+						if (RNG::Ref().chance(1, 200))
+						{
+							sim->kill_part(ID(r));
+							sim->kill_part(i);
+						}
+					}
+					break;
 					}
 				}
 				
@@ -155,9 +165,8 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*firer = 205;
 		*fireg = 205;
 		*fireb = 255;
-		*firea = cpart->tmp*2;
+		*firea = cpart->tmp*3;
 	}
-
 	*pixel_mode = PMODE_NONE;
 	*pixel_mode |= FIRE_BLEND;
 		

@@ -1,6 +1,6 @@
 Changelog for V30.0 SE (49) (Release: 2022!)
 
-Additions:
+#Additions:
 * AMBE: Element for setting ambient heat temperature, tmp = range, powered element.
 * CHLR: Chlorine, heavy gas that settles down fast, reacts with watr to form ACID, photochemical reaction with H2 and distills watr, rusts some metals (More details in wiki).
 * Wall behaves like a normal element now, can block pressure and accept deco too.
@@ -14,7 +14,7 @@ Additions:
 * New filter options with previews.
 * More elegant HUD.
 
-Changes:
+#Changes:
 * Merge Filter controls with control centre
 * Lower the alpha slider lower limit.
 * Colour changes when changing fonts in texter.
@@ -29,12 +29,17 @@ Changes:
 * Fix lower limit for reminder settings.
 * Optimised startup checks.
 
-Bug fixes:
-* Fix WARP particles not getting detected in find mode.
+#Fixes:
+* Fix custom elements disappearing after rotating a stamp
+* Fix cursor placement in textboxes with just a single character
+* Fix extremely rare crash when using water equalization with loop edge mode and other high velocity liquids nearby
+* Fix WARP particles not getting highlighted in FIND mode.
 * Turn off themes when mod menu is open.
 * Fix tags overlapping with votes button.
 
+
 todo:
+Fix max lines thingy
 Add WARP fix from vanilla
 Add some new elements from suggestion list.
 Merge!
