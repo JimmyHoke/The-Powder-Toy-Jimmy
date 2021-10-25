@@ -5,7 +5,7 @@ const char *const introTextData =
 "\bw                                            Welcome To The Cracker1000's Mod \n"
 "\bo                                           |-----------------------------------|\n"
 "                                              \bg<< \bwVer 30.0 \brSE \bo||\bw TPT 96.2 \bg>>"
-"\bu\n\n   Instructions:                        \n"
+"\br\n\n   Instructions:                        \n"
 "\bt *\bw There's a new \bg'Settings'\bw button near tags, press it to open the Mod menu.\n"
 "\bg *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"
 "\bt *\bw Please set the password carefully. Don't forget to set security question.\n"

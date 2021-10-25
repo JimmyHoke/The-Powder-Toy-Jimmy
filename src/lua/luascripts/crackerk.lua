@@ -1,4 +1,4 @@
---cracker1000 mod script v5.7--
+--cracker1000 mod script v5.8--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
@@ -185,15 +185,17 @@ end
 
 local passmen = Window:new(-15,-15, 610, 255)
 local pasmenmsg = Label:new(240,5,120, 10,"Welcome to the Password Manager V2.0")
-local pasmenmsg2 = Label:new(35,150,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
+local pasmenmsg4 = Label:new(15,130,120, 10,"Status: "..passbutlab:text())
+local pasmenmsg2 = Label:new(165,130,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
+local pasmenmsg6 = Label:new(365,130,120, 10,"Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
 local pasmenmsg3 = Label:new(308,40,120, 10,"Can be upto 8 character long, case sensitive, blank spaces also count.")
-local pasmenmsg4 = Label:new(25,130,120, 10,"Status: "..passbutlab:text())
-local pasmenmsg6 = Label:new(32,170,120, 10,"Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
 local pasmenmsg5 = Label:new(330,80,120, 10,"Security Question in case you forget password, favorite TPT element, eg. DMND.")
+local pasmenmsg7 = Label:new(270,240,120, 10,"Password/ Fav. element can't be blank!")
 local doned2 = Button:new(110,31,80,30, "Set password", "Save")
 local doned3 = Button:new(525,237,80,15, "Close", "Close")
-local doned4 = Button:new(40,195,90,20, "Password ON", "Save ON")
-local doned5 = Button:new(40,225,90,20, "Password OFF", "Save OFF")
+local doned4 = Button:new(40,155,90,20, "Password ON", "Save ON")
+local doned5 = Button:new(40,185,90,20, "Password OFF", "Save OFF")
+local doned7 = Button:new(40,215,90,20, "Reset", "Reset")
 local doned6 = Button:new(110,71,80,30, "Set Element", "Save")
 local passtime2 = Textbox:new(40, 30, 55, 30, '', 'Password..')
 local passtime3 = Textbox:new(40, 70, 35, 30, '', 'Elem.')
@@ -210,20 +212,43 @@ passmen:addComponent(doned3)
 passmen:addComponent(doned4)
 passmen:addComponent(doned5)
 passmen:addComponent(doned6)
+passmen:addComponent(doned7)
 passmen:addComponent(passtime2)
 passmen:addComponent(passtime3)
 
 doned2 :action(function(sender)
+passmen:removeComponent(pasmenmsg7)
+if passtime2:text() == "" then
+passmen:addComponent(pasmenmsg7)
+else
 MANAGER.savesetting("CRK", "passreal",passtime2:text())
 pasmenmsg2:text("Current Password: "..MANAGER.getsetting("CRK","passreal"))
+end
 end)
 doned3 :action(function(sender)
 ui.closeWindow(passmen)
 end)
 
 doned6 :action(function(sender)
+passmen:removeComponent(pasmenmsg7)
+if passtime3:text() == "" then
+passmen:addComponent(pasmenmsg7)
+else
 MANAGER.savesetting("CRK", "passreal2",passtime3:text())
 pasmenmsg6:text("Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
+end
+end)
+
+doned7 :action(function(sender)
+passbutlab:text("OFF")
+MANAGER.savesetting("CRK", "pass","0")
+MANAGER.savesetting("CRK", "passreal","12345678")
+MANAGER.savesetting("CRK", "passreal2","DMND")
+pasmenmsg2:text("Current Password: "..MANAGER.getsetting("CRK","passreal"))
+pasmenmsg6:text("Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
+pasmenmsg4:text("Status: "..passbutlab:text())
+passtime2:text("")
+passtime3:text("")
 end)
 
 doned3 :action(function(sender)
@@ -588,7 +613,7 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2661203)
+randsav = math.random(1,2805205)
 sim.loadSave(randsav, 0) 
 end)
 
@@ -744,7 +769,7 @@ end)
 
 --Texter script hybrid start
 local yvalue = 10
-local ylimit = 315
+local ylimit = 325
 local linenumber = 01
 function drawLetter(letter, x, y, element, font)
 
@@ -833,11 +858,11 @@ end
 
 chud:action(function(sender)
 tpt.hud(0)
+ffix = "0"
 yvalue = 10
 texttext = "Typing starts here."
 tpt.unregister_step(drawblip)
 tpt.register_step(drawblip)
-
 close()
 
 linenumber = 01
@@ -884,9 +909,10 @@ newmenu4:onDraw(drawprev2)
 				
 smalf:action(function(sender)
 font='5x7'
-
 if ffix == "1" and yvalue < ylimit then
-yvalue = yvalue + 5
+yvalue = yvalue + 10
+linenumber = linenumber + 1
+lnol:text(linenumber)
 end
 ffix = "0"
 fsize:text("Font: Normal")
@@ -895,6 +921,11 @@ end)
 
 bigf:action(function(sender)
 font='7x10'
+if ffix == "0" and yvalue < ylimit then
+yvalue = yvalue + 10
+linenumber = linenumber + 1
+lnol:text(linenumber)
+end
 ffix = "1"
 fsize:text("Font:  Big")
 end)
@@ -950,6 +981,7 @@ text = textTextbox:text()
 
 end
 if yvalue >= ylimit then
+yval2 = -320
 texttext = "Max lines reached!"
 lnol:text("   Max!")
 end
