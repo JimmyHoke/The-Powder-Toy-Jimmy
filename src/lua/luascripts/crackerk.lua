@@ -769,7 +769,7 @@ end)
 
 --Texter script hybrid start
 local yvalue = 10
-local ylimit = 325
+local ylimit = 320
 local linenumber = 01
 function drawLetter(letter, x, y, element, font)
 
@@ -835,6 +835,7 @@ end
 local texttext = "Typing starts here."
 local tr,tg,tb
 local ffix = "0"
+local ffix2 = "0"
 local yval2 = 10
 
 function drawprev2()
@@ -853,11 +854,12 @@ if yvalue < ylimit then
 yval2 = 14
 end
 end
-graphics.drawText(10,yvalue+yval2,texttext,tr,tg,tb,255)
+graphics.drawText(10,yvalue+yval2,texttext..".",tr,tg,tb,255)
 end
 
 chud:action(function(sender)
 tpt.hud(0)
+ffix2 = "0"
 ffix = "0"
 yvalue = 10
 texttext = "Typing starts here."
@@ -876,7 +878,7 @@ local lno  = Label:new(423, 22, 10, 15, "| Line No:")
 local lnol  = Label:new(455, 22, 10, 15, linenumber)
 local lno2  = Label:new(190, 22, 10, 15, "Font:")
 local smalf = Button:new(210,22,46,15,"Normal", "5x7.")
-local bigf = Button:new(260,22,46,15,"Big", "7x10.")
+local bigf = Button:new(260,22,46,15,"Title", "7x10.")
 local fsize  = Label:new(365, 22, 10, 15, "Font: Normal")
 local clrsc = Button:new(514,2,30,16,"Clr", "Clear text")
 local clrsc2 = Button:new(484,20,60,16,"Clr Screen", "Clear text")
@@ -910,11 +912,14 @@ newmenu4:onDraw(drawprev2)
 smalf:action(function(sender)
 font='5x7'
 if ffix == "1" and yvalue < ylimit then
+if ffix2 == "1" then
 yvalue = yvalue + 10
 linenumber = linenumber + 1
 lnol:text(linenumber)
 end
+end
 ffix = "0"
+ffix2 = "0"
 fsize:text("Font: Normal")
 
 end)
@@ -922,12 +927,15 @@ end)
 bigf:action(function(sender)
 font='7x10'
 if ffix == "0" and yvalue < ylimit then
+if ffix2 == "1" then
 yvalue = yvalue + 10
 linenumber = linenumber + 1
 lnol:text(linenumber)
 end
+end
 ffix = "1"
-fsize:text("Font:  Big")
+ffix2 = "0"
+fsize:text("Font:  Title")
 end)
 
 cancel:action(function(sender)
@@ -954,6 +962,10 @@ texttext = "Cleared."
 end)
 
 clrsc2:action(function(sender)
+yvalue = 10
+yval2= 10
+linenumber = "1"
+lnol:text(linenumber)
 texttext = "Screen Cleared."
 sim.clearSim()
 ui.closeWindow(newmenu4)
@@ -961,6 +973,7 @@ tpt.register_step(drawblip)
 end)
 
 place:action(function(sender)
+ffix2 = "1"
 ui.closeWindow(newmenu4)
 tpt.register_step(drawblip)
 
@@ -2071,7 +2084,7 @@ fonts['5x7'] = {}
 fonts['5x7']['width'] = 5
 fonts['5x7']['height'] = 7
 fonts['5x7']['linespacing'] = 4
-fonts['5x7']['charspacing'] = 1
+fonts['5x7']['charspacing'] = 2
 
 fonts['7x10'] = {}
 fonts['7x10']['width'] = 7
