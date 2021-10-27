@@ -10,6 +10,13 @@ Changelog for V30.0 SE (49) (1 Dec)
 * New Smart Auto Stamp (can automatically calculate the best stamp selection area, also more optimised now).
 * Raise Autostamp upper limit.
 
+#Texter:
+* Rewritten Texter with realtime previews and better line spacings.
+* More information displayed at top.
+* Add support for bold fonts.
+* Add clear screen button.
+* Visual changes when changing fonts in texter.
+
 #Control Centre:
 * New Twilight theme.(Also default now.)
 * New filter options with previews.
@@ -18,11 +25,6 @@ Changelog for V30.0 SE (49) (1 Dec)
 * Lower the alpha slider lower limit.
 * Switching to pulse theme updates the alpha slider values.
 * All the themes are now well adjusted and no longer flashy.
-
-#Texter:
-* Rewritten Texter with realtime previews and better line spacings.
-* Texter now supports clearing sim screen too.
-* Visual changes when changing fonts in texter.
 
 # Editor and Password manager:
 * Add more properties added to the editor.
