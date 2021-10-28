@@ -6,7 +6,7 @@ const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
 "                                                \br<< \bwVer 31.0 \bo||\bw TPT 96.2 \br>>"
 "\bo\n\n   Instructions:                        \n"
-"\bt *\bw There's a new \bg'Settings'\bw button near tags, press it to open the Mod menu.\n"
+"\bt *\bw There's a new \br'Settings'\bw button near tags, press it to open the Mod menu.\n"
 "\bg *\bw 'J' can be used as a shortcut to bring up the menu anytime.\n"
 "\bt *\bw Please set the password carefully. Don't forget to set security question.\n"
 "\bg *\bw The Mod features an in-built 'Texter' and an Element editor.\n"
