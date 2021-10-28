@@ -821,11 +821,11 @@ local newmenu4 = Window:new(10,344,515, 40)
 
 function drawblip()
 ui.closeWindow(newmenu4)
-if timerfoi < 1 then
-timerfoi= timerfoi + 1
+if timerfoi < 0.2 then
+timerfoi= timerfoi + 0.1
 end
 
-if timerfoi >= 1 then
+if timerfoi >= 0.1 then
 ui.showWindow(newmenu4)
 timerfoi = 0
 tpt.unregister_step(drawblip)
@@ -849,10 +849,11 @@ elseif ffix == "1" then
 yval2 = 14
 end
 end
-graphics.drawText(10,8,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+graphics.drawText(10,6,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
 end
 
 chud:action(function(sender)
+tpt.set_pause(1)
 tr = 255
 tg = 255
 tb = 255
@@ -879,7 +880,6 @@ local titf = Button:new(300,20,42,17,"Bold", "7x10, Bold")
 local clrsc = Button:new(378,20,64,17,"Clear Text", "Clear text")
 local clrsc2 = Button:new(444,20,65,17,"Clear Screen", "Clear text")
 
-
 newmenu4:addComponent(textTextbox)
 newmenu4:addComponent(textTextboxs)
 newmenu4:addComponent(place)
@@ -903,7 +903,6 @@ newmenu4:onDraw(drawprev2)
                             element = textTextboxs:text();
                     end
                 )
-				
 smalf:action(function(sender)
 font='5x7'
 tr = 255
@@ -980,6 +979,7 @@ end)
 place:action(function(sender)
 ffix2 = "1"
 ui.closeWindow(newmenu4)
+tpt.unregister_step(drawblip)
 tpt.register_step(drawblip)
 
 if yvalue < ylimit then
@@ -6760,6 +6760,26 @@ fonts['7x10-Bold']['$'] = {
                 {1, 0, 0, 1, 0, 0, 1},
                 {0, 1, 1, 1, 1, 1, 0},
                 {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['_'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 1, 1, 1, 1, 1, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},

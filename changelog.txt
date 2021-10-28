@@ -1,23 +1,23 @@
-Changelog for V30.0 SE (49) (1 Dec)
+Changelog for V31.0 (49)
 
-#Elements:
+>>Elements:
 * AMBE: Element for setting ambient heat temperature, tmp = range, powered element.
 * CHLR: Chlorine, heavy gas that settles down fast, reacts with watr to form ACID, photochemical reaction with H2 and distills watr, rusts some metals (More details in wiki).
 * Wall behaves like a normal element now, can block pressure and accept deco too.
 * Optimisations to QGP, NITR and TIMC.
 
-#Autostamp:
+>>Autostamp:
 * New Smart Auto Stamp (can automatically calculate the best stamp selection area, also more optimised now).
 * Raise Autostamp upper limit.
 
-#Texter:
+>>Texter:
 * Rewritten Texter with realtime previews and better line spacings.
 * More information displayed at top.
 * Add support for bold fonts.
 * Add clear screen button.
 * Visual changes when changing fonts in texter.
 
-#Control Centre:
+>>Control Centre:
 * New Twilight theme.(Also default now.)
 * New filter options with previews.
 * Sliders operate more smoothly now.
@@ -26,12 +26,13 @@ Changelog for V30.0 SE (49) (1 Dec)
 * Switching to pulse theme updates the alpha slider values.
 * All the themes are now well adjusted and no longer flashy.
 
-# Editor and Password manager:
+>>Editor and Password manager:
 * Add more properties added to the editor.
 * Reset button for passwords.
 * Give error when Passwords/ Fav elements are set to blank.
 
-#Misc:
+>>Misc:
+* Update tptmp to v2.0.22
 * New option to show or hide Mod elements.
 * More elegant HUD.
 * Add a tiny text indicator for autohide hud.
@@ -40,14 +41,12 @@ Changelog for V30.0 SE (49) (1 Dec)
 * Fix lower limit for reminder settings.
 * Optimised startup check.
 
-#Fixes:
+>>Fixes:
+* Fix potential crash when adding a custom GOL type 
+* Fix warp particles not getting highlighted when using find mode.
 * Fix custom elements disappearing after rotating a stamp
 * Fix cursor placement in textboxes with just a single character
 * Fix extremely rare crash when using water equalization with loop edge mode and other high velocity liquids nearby
 * Fix WARP particles not getting highlighted in FIND mode.
 * Turn off themes when mod menu is open.
 * Fix tags overlapping with votes button.
-
-todo:
-Add WARP fix from vanilla
-Merge!
