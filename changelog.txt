@@ -1,7 +1,9 @@
 Changelog for V32.0 (50)
-Themes are now called Appearance
+
+Themes are now called as Control Centre.
+Add an update multiplayer button.
 Make inbuilt multiplayer script run only when a newer version is not present.
 Fix "New version already running" error on startup when manually updating the multiplayer.
-Add an update multiplayer button.
-Move Crosshair to Apprearance
-Add support for motd
+Move Crosshair to Control Centre.
+Add support for motds :)
+Reset button will now delete the downloaded versions of mp and switch back to inbuilt one!

@@ -2,7 +2,7 @@
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
-local motw = "Offline"
+local motw = "No new message"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -123,7 +123,7 @@ local remoff  = Button:new(546,223,30,20,"Off", "Cancel.")
 
 local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
 
-local hide= Button:new(582,2,25,25, "X", "Hide.")
+local hide= Button:new(578,5,25,25, "X", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -170,25 +170,37 @@ end
 local perfmv = "1"
 local fpsval = "1"
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
+local req2 = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/motd.txt")
+local timermp = 0
 
 function writefile()
-print("Attempting To Update Multiplayer...")
-f = io.open('updatedmp.lua', 'w')
+timermp = timermp + 1
+if timermp >= 500 then
+print("Taking too long to update, Try agin after restarting..")
+tpt.unregister_step(writefile)
+end
 if req:status() == "done" then
 local ret, code = req:finish()
 if code == 200 then
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+f = io.open('updatedmp.lua', 'w')
 f:write(ret)
 f:close()
 dofile("updatedmp.lua")
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
-print("Update successful.")
+print("Multiplayer Updated Successfully.")
+if MANAGER.getsetting("CRK", "savergb") == "1" then
+event.register(event.tick,colourblender)
+else
+event.register(event.tick,theme)
+end
+event.unregister(event.tick,colourblender)
 else
 print("Error updating multiplayer, make sure you have internet access!")
+tpt.unregister_step(writefile)
 end
 end
 end
 
-local req2 = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/motd.txt")
 function writefile2()
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
@@ -200,17 +212,11 @@ end
 
 upmp:action(function(sender)
 close()
-MANAGER.savesetting("CRK","mpupd","1")
+timermp = 0
+print("Attempting To Update Multiplayer...")
 fs.makeDirectory("scripts/downloaded")
-writefile()
-if MANAGER.getsetting("CRK", "savergb") == "1" then
-event.register(event.tick,theme)
-event.register(event.tick,colourblender)
-else
-event.unregister(event.tick,theme)
-event.register(event.tick,theme)
-end
-
+event.unregister(event.tick,writefile)
+event.register(event.tick,writefile)
 end)
 
 passbut:action(function(sender)
@@ -1523,57 +1529,57 @@ end
 
 mp:action(function(sender)
 clearsb()
-local mp1 = Button:new(20,102,45,20,"Dark", "Change the theme to default")
-local mp2 = Button:new(70,102,45,20,"Fire", "Change the theme to Blue")
-local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
-local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
-local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,102,45,20,"Twilight", "Magnita/Default")
-local mp9 = Button:new(320,102,45,20,"Pulse", "RBG makes everything better.")
-local mpop = Button:new(530,357,75,20,"Done", "Close")
+local mp1 = Button:new(20,92,45,20,"Dark", "Change the theme to default")
+local mp2 = Button:new(70,92,45,20,"Fire", "Change the theme to Blue")
+local mp3 = Button:new(120,92,45,20,"Aqua", "Change the theme to Red")
+local mp4 = Button:new(170,92,45,20,"Forest", "Change the theme to Green")
+local mp7 = Button:new(220,92,45,20,"Vanilla", "Change the theme back to Plain white")
+local mp8 = Button:new(270,92,45,20,"Twilight", "Magnita/Default")
+local mp9 = Button:new(320,92,45,20,"Pulse", "RBG makes everything better.")
+local mpop = Button:new(530,347,75,20,"Done", "Close")
 
-local bg1 = Button:new(24,310,45,15,"Off", "Default")
-local bg2 = Button:new(74,310,45,15,"Blue", "Blue background")
-local bg3 = Button:new(124,310,45,15,"Red", "Red background")
-local bg4 = Button:new(174,310,45,15,"Green", "Green background")
-local bg5 = Button:new(224,310,45,15,"Orange", "Yellow background")
-local bg6 = Button:new(274,310,45,15,"Theme", "Same as set theme")
+local bg1 = Button:new(24,300,45,15,"Off", "Default")
+local bg2 = Button:new(74,300,45,15,"Blue", "Blue background")
+local bg3 = Button:new(124,300,45,15,"Red", "Red background")
+local bg4 = Button:new(174,300,45,15,"Green", "Green background")
+local bg5 = Button:new(224,300,45,15,"Orange", "Yellow background")
+local bg6 = Button:new(274,300,45,15,"Theme", "Same as set theme")
 
-local bog1 = Button:new(24,355,45,15,"Off", "Default")
-local bog2 = Button:new(74,355,45,15,"On", "on")
-local fanlb = Label:new(78, 335, 10, 15, "OFF")
+local bog1 = Button:new(24,345,45,15,"Off", "Default")
+local bog2 = Button:new(74,345,45,15,"On", "on")
+local fanlb = Label:new(77, 325, 10, 15, "OFF")
 
 --topbar
-local barlb = Label:new(70, 244, 5, 5, " Long")
-local baropa =  Button:new(24,260,35,20,"Short", "Short and moving")
-local baropb =  Button:new(64,260,35,20,"Long", "Long")
-local baropd =  Button:new(104,260,35,20,"OFF", "Turn off")
+local barlb = Label:new(70, 234, 5, 5, " Long")
+local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
+local baropb =  Button:new(64,250,35,20,"Long", "Long")
+local baropd =  Button:new(104,250,35,20,"OFF", "Turn off")
 
-local als = Label:new(325,155, 30, 15, "Alpha")
-local rl = Label:new(321, 176, 30, 15, "Red")
-local gl = Label:new(325,197, 30, 15, "Green")
-local bl = Label:new(323, 218, 30, 15, "Blue")
+local als = Label:new(325,145, 30, 15, "Alpha")
+local rl = Label:new(321, 166, 30, 15, "Red")
+local gl = Label:new(325,187, 30, 15, "Green")
+local bl = Label:new(323, 208, 30, 15, "Blue")
 
-local aSlider = Slider:new(20, 155, 255, 15, 255)
-local rSlider = Slider:new(20, 176, 255, 15, 255)
-local gSlider = Slider:new(20, 197, 255, 15, 255)
-local bSlider = Slider:new(20, 218, 255, 15, 255)
+local aSlider = Slider:new(20, 145, 255, 15, 255)
+local rSlider = Slider:new(20, 166, 255, 15, 255)
+local gSlider = Slider:new(20, 187, 255, 15, 255)
+local bSlider = Slider:new(20, 208, 255, 15, 255)
 
-local alb = Label:new(290,155,10, 15)
-local rlb = Label:new(290, 176, 10, 15)
-local glb = Label:new(290, 197, 10, 15)
-local blb = Label:new(290, 218, 10, 15)
+local alb = Label:new(290,145,10, 15)
+local rlb = Label:new(290, 166, 10, 15)
+local glb = Label:new(290, 187, 10, 15)
+local blb = Label:new(290, 208, 10, 15)
 
-local newmenuth = Window:new(-15,-15, 609, 380)
+local newmenuth = Window:new(-15,-15, 609, 370)
 local creditsth = Label:new(280,-20,100, 60,"Welcome To The Control Centre.")
-local presetlb = Label:new(-10,68,100, 50,"Presets:")
-local previewlb = Label:new(-10,10,100, 60,"Preview:")
-local custlb = Label:new(-10,118,100, 60,"Custom:")
-local bartlb = Label:new(35,242,10, 10,"Topbar:")
-local filtlb = Label:new(37,292,10, 10,"Filters:")
-local bordlb = Label:new(37,338,10, 10,"Crosshair:")
-local pulselb = Label:new(70,30,100, 60,"Pulse theme on, preview not available.")
-local alphalb = Label:new(87,134,100, 60,"Brightness turned on, alpha slider not available.")
+local presetlb = Label:new(-10,58,100, 50,"Presets:")
+local previewlb = Label:new(-10,-5,100, 60,"Preview:")
+local custlb = Label:new(-10,108,100, 60,"Custom:")
+local bartlb = Label:new(35,232,10, 10,"Topbar:")
+local filtlb = Label:new(37,282,10, 10,"Filters:")
+local bordlb = Label:new(41,328,10, 10,"Crosshair:")
+local pulselb = Label:new(70,20,100, 60,"Pulse theme on, preview not available.")
+local alphalb = Label:new(87,124,100, 60,"Brightness turned on, alpha slider not available.")
 
 function mpnolag()
 newmenuth:removeComponent(pulselb)
@@ -1603,7 +1609,7 @@ event.unregister(event.tick,colourblender)
 end
 
 function drawprev()
-graphics.drawRect(20,48,573,26,255,255,255,255)
+graphics.drawRect(20,38,573,26,255,255,255,255)
 if MANAGER.getsetting("CRK", "savergb") == "1" then
 newmenuth:addComponent(pulselb)
 end
@@ -1612,12 +1618,13 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenuth:addComponent(alphalb)
 end
 
-tpt.fillrect(65,292,10,10,backvr,backvg,backvb,255)
+tpt.drawrect(65,282,10,10,backvr,backvg,backvb,255)
+tpt.fillrect(65,282,10,10,backvr,backvg,backvb,100)
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
-graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
-graphics.drawRect(1,1, 609, 380, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
-graphics.fillRect(1,1, 609, 380, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
+graphics.fillRect(22, 40,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+graphics.drawRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
+graphics.fillRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 end
 end
 newmenuth:onDraw(drawprev)
@@ -1641,8 +1648,6 @@ ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
 barlength = 1
 end
-
-newmenuth:onTryExit(closewindow)
 
 ui.showWindow(newmenuth)
 
@@ -2004,6 +2009,7 @@ savetime = 0
 barktext:text("5")
 remtime:text("10")
 showmodelem()
+event.unregister(event.tick,writefile)
 event.unregister(event.tick,autosave)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
@@ -2059,7 +2065,7 @@ end
 function drawglitch()
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
-graphics.drawLine(12, 18,319,18,ar,ag,ab,al)
+graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
 graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
 else
@@ -2121,6 +2127,7 @@ end)
 function keyclicky(key)
 if (key =="j") and TPTMP.chatHidden == true and shrtv == "1" then
 open()
+writefile2()
 end
 end
 tpt.register_keypress(keyclicky) 

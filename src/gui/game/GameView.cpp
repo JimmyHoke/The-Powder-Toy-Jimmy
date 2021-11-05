@@ -2242,8 +2242,8 @@ void GameView::OnDraw()
 			sampleInfo << "Empty";
 		}
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(4, 18, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(6, 22, sampleInfo.Build(), 225, 225, 225, alpha*0.95f);
+		g->fillrect(6, 18, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
+		g->drawtext(8, 22, sampleInfo.Build(), 225, 225, 225, alpha*0.95f);
 
 #ifndef OGLI
 		if (wavelengthGfx)
@@ -2314,8 +2314,8 @@ void GameView::OnDraw()
 					sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
-				g->fillrect(4, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(6, 37, sampleInfo.Build(), 255, 12, 12, alpha*0.95f);
+				g->fillrect(6, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
+				g->drawtext(8, 37, sampleInfo.Build(), 255, 12, 12, alpha*0.95f);
 			}
 	}
 	if(showHud && introText < 51)
@@ -2373,8 +2373,8 @@ void GameView::OnDraw()
 	
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
-		g->fillrect(4, 3, textWidth + 6, 15, ar, ag, ab, alpha*0.65);
-		g->drawtext(6, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
+		g->fillrect(6, 3, textWidth + 6, 15, ar, ag, ab, alpha*0.65);
+		g->drawtext(8, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
 	}
 
 	//Tooltips
