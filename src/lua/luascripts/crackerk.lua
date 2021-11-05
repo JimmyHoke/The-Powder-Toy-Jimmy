@@ -193,7 +193,7 @@ event.register(event.tick,colourblender)
 else
 event.register(event.tick,theme)
 end
-event.unregister(event.tick,colourblender)
+event.unregister(event.tick,writefile)
 else
 print("Error updating multiplayer, make sure you have internet access!")
 tpt.unregister_step(writefile)
