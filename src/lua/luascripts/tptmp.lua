@@ -2039,12 +2039,12 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = { 70, 70, 70 },
+			border     = { 90, 90, 90 },
 		},
 		active = {
 			background = { 255, 255, 255 },
 			text       = {   0,   0,   0 },
-			border     = { 70, 70, 70 },
+			border     = { 90, 90, 90 },
 		},
 	}
 	
@@ -4388,7 +4388,7 @@ require_preload__["tptmp.client.side_button"] = function()
 		if manager.side_button_conflict then
 			pos_y = pos_y - 17
 		end
-		local text = "M"
+		local text = "<<"
 		local tw, th = gfx.textSize(text)
 		local tx = pos_x + math.ceil((width - tw) / 2)
 		local ty = pos_y + math.floor((height - th) / 2)
@@ -6734,7 +6734,7 @@ require_preload__["tptmp.common.config"] = function()
 		-- ***********************************************************************
 	
 		-- * Protocol version, between 0 and 254. 255 is reserved for future use.
-		version = 24,
+		version = 26,
 	
 		-- * Client-to-server message size limit, between 0 and 255, the latter
 		--   limit being imposted by the protocol.

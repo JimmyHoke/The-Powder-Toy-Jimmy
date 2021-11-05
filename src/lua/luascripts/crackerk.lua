@@ -2,6 +2,7 @@
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
+local motw = "Offline"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -82,7 +83,7 @@ local wiki  =  Button:new(203,28,80,25,"Wiki", "Element wiki!")
 local bare = Button:new(203,60,80,25,"Hidden Elem.", "Toggle hidden elements.")
 local remlabe = Label:new(294, 66, 10, 15, "OFF")
 
-local mp = Button:new(203,92,80,25,"Theme", "Changes game's theme")
+local mp = Button:new(203,92,80,25,"Control Centre", "Changes game's theme")
 
 local bg = Button:new(203,124,80,25,"Mod Elem.", "")
 local bglab = Label:new(294, 130, 10, 15, "ON")
@@ -98,9 +99,6 @@ local brop = Button:new(293,237,45,15,"On", "Save.")
 local bropc = Button:new(342,237,45,15,"Off", "Cancel.")
 local brlabel = Label:new(340, 208, 10, 15, "Turned: Off")
 
-local fancur = Button:new(396,28,80,25, "Crosshair", "Draws graphics around cursor.")
-local fanlb = Label:new(487, 34, 10, 15, "OFF")
- 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
 local shrt = Button:new(396,92,80,25, "Toggle J Key", "Turns off the J key shortcut")
@@ -123,6 +121,8 @@ remtime:text("10")
 local remon2 = Button:new(516,223,30,20,"Set", "Save.")
 local remoff  = Button:new(546,223,30,20,"Off", "Cancel.")
 
+local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
+
 local hide= Button:new(582,2,25,25, "X", "Hide.")
 
 function clearm()
@@ -142,12 +142,12 @@ newmenu:removeComponent(autohide)
 newmenu:removeComponent(chud)
 newmenu:removeComponent(brightness)
 newmenu:removeComponent(reminder)
-newmenu:removeComponent(fancur)
 newmenu:removeComponent(Help)
 newmenu:removeComponent(shrt)
 newmenu:removeComponent(edito)
 newmenu:removeComponent(perfm)
 newmenu:removeComponent(passbut)
+newmenu:removeComponent(upmp)
 end
 
 function clearsb()
@@ -162,18 +162,58 @@ newmenu:removeComponent(remoff)
 newmenu:removeComponent(remtime)
 newmenu:removeComponent(remlabel21) 
 newmenu:removeComponent(barkon)
-newmenu:removeComponent( barkoff)
-newmenu:removeComponent( barktext)
+newmenu:removeComponent(barkoff)
+newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
-
-newmenu:onDraw(drawglitch)
 end
 
 local perfmv = "1"
 local fpsval = "1"
+local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
+
+function writefile()
+print("Attempting To Update Multiplayer...")
+f = io.open('updatedmp.lua', 'w')
+if req:status() == "done" then
+local ret, code = req:finish()
+if code == 200 then
+f:write(ret)
+f:close()
+dofile("updatedmp.lua")
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+print("Update successful.")
+else
+print("Error updating multiplayer, make sure you have internet access!")
+end
+end
+end
+
+local req2 = http.get("https://pastebin.com/raw/QPXcYUHq")
+function writefile2()
+if req2:status() == "done" then
+local ret2, code2 = req2:finish()
+if code2 == 200 then
+motw = ret2
+end
+end
+end
+
+upmp:action(function(sender)
+close()
+MANAGER.savesetting("CRK","mpupd","1")
+fs.makeDirectory("scripts/downloaded")
+writefile()
+if MANAGER.getsetting("CRK", "savergb") == "1" then
+event.register(event.tick,theme)
+event.register(event.tick,colourblender)
+else
+event.unregister(event.tick,theme)
+event.register(event.tick,theme)
+end
+
+end)
 
 passbut:action(function(sender)
-
 clearsb()
 if MANAGER.getsetting("CRK", "passreal") == nil then
 MANAGER.savesetting("CRK","passreal","12345678")
@@ -654,27 +694,6 @@ graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,colourRED,colourGRN,
 graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, colourRED,colourGRN,colourBLU,255)
 end
 end
-
-local fanval = "1"
-fancur:action(function(sender)
-clearsb()
-if fanval == "1" then
-MANAGER.savesetting("CRK", "fancurs","1") 
-event.register(event.tick,drawcirc)
-fanlb:text("ON")
-fanval = "0"
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-event.unregister(event.tick,cbrightness)
-event.register(event.tick,cbrightness)
-end
-
-elseif fanval == "0" then
-MANAGER.savesetting("CRK", "fancurs","0") 
-event.unregister(event.tick,drawcirc)
-fanval = "1"
-fanlb:text("OFF")
-end
-end)
 
 local startTime
 local entimey
@@ -1338,7 +1357,7 @@ end
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(2,-1,606,3, ar,ag,ab,al)
+tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 
 if uival == "1" then
@@ -1350,7 +1369,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(2,-1,606,3, ar,ag,ab,al)
+tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 end
 
@@ -1441,7 +1460,7 @@ end
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(2,-1,606,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(2,-1,607,3, colourRED,colourGRN,colourBLU,al)
 end
 if uival == "1" then
 
@@ -1452,7 +1471,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "2" then
-tpt.fillrect(2,-1,606,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(2,-1,607,3, colourRED,colourGRN,colourBLU,al)
 end
 end
 
@@ -1504,7 +1523,6 @@ end
 
 mp:action(function(sender)
 clearsb()
-
 local mp1 = Button:new(20,102,45,20,"Dark", "Change the theme to default")
 local mp2 = Button:new(70,102,45,20,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
@@ -1512,7 +1530,7 @@ local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(270,102,45,20,"Twilight", "Magnita/Default")
 local mp9 = Button:new(320,102,45,20,"Pulse", "RBG makes everything better.")
-local mpop = Button:new(530,307,75,20,"Done", "Custom options.")
+local mpop = Button:new(530,357,75,20,"Done", "Close")
 
 local bg1 = Button:new(24,310,45,15,"Off", "Default")
 local bg2 = Button:new(74,310,45,15,"Blue", "Blue background")
@@ -1520,6 +1538,10 @@ local bg3 = Button:new(124,310,45,15,"Red", "Red background")
 local bg4 = Button:new(174,310,45,15,"Green", "Green background")
 local bg5 = Button:new(224,310,45,15,"Orange", "Yellow background")
 local bg6 = Button:new(274,310,45,15,"Theme", "Same as set theme")
+
+local bog1 = Button:new(24,355,45,15,"Off", "Default")
+local bog2 = Button:new(74,355,45,15,"On", "on")
+local fanlb = Label:new(78, 335, 10, 15, "OFF")
 
 --topbar
 local barlb = Label:new(70, 244, 5, 5, " Long")
@@ -1542,13 +1564,14 @@ local rlb = Label:new(290, 176, 10, 15)
 local glb = Label:new(290, 197, 10, 15)
 local blb = Label:new(290, 218, 10, 15)
 
-local newmenuth = Window:new(-15,-15, 609, 330)
-local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control centre.")
+local newmenuth = Window:new(-15,-15, 609, 380)
+local creditsth = Label:new(280,-20,100, 60,"Welcome To The Control Centre.")
 local presetlb = Label:new(-10,68,100, 50,"Presets:")
 local previewlb = Label:new(-10,10,100, 60,"Preview:")
 local custlb = Label:new(-10,118,100, 60,"Custom:")
 local bartlb = Label:new(35,242,10, 10,"Topbar:")
 local filtlb = Label:new(37,292,10, 10,"Filters:")
+local bordlb = Label:new(37,338,10, 10,"Crosshair:")
 local pulselb = Label:new(70,30,100, 60,"Pulse theme on, preview not available.")
 local alphalb = Label:new(87,134,100, 60,"Brightness turned on, alpha slider not available.")
 
@@ -1593,11 +1616,15 @@ tpt.fillrect(65,292,10,10,backvr,backvg,backvb,255)
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
-graphics.drawRect(1,1, 609, 330, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
-graphics.fillRect(1,1, 609, 330, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
+graphics.drawRect(1,1, 609, 380, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
+graphics.fillRect(1,1, 609, 380, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 end
 end
 newmenuth:onDraw(drawprev)
+
+if MANAGER.getsetting("CRK", "fancurs") == "1" then
+fanlb:text("ON")
+end
 
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barlb:text("OFF")
@@ -1639,6 +1666,9 @@ newmenuth:addComponent(bg4)
 newmenuth:addComponent(bg5)
 newmenuth:addComponent(bg6)
 
+newmenuth:addComponent(bog1)
+newmenuth:addComponent(bog2)
+
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
 newmenuth:addComponent(bSlider)
@@ -1654,6 +1684,8 @@ newmenuth:addComponent(baropb)
 newmenuth:addComponent(baropd)
 newmenuth:addComponent(barlb)
 newmenuth:addComponent(bartlb)
+newmenuth:addComponent(bordlb)
+newmenuth:addComponent(fanlb)
 
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 newmenuth:addComponent(aSlider)
@@ -1683,6 +1715,22 @@ aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
+
+bog2:action(function(sender)
+MANAGER.savesetting("CRK", "fancurs","1") 
+event.register(event.tick,drawcirc)
+fanlb:text("ON")
+if MANAGER.getsetting("CRK", "brightstate") == "1" then
+event.unregister(event.tick,cbrightness)
+event.register(event.tick,cbrightness)
+end
+end)
+
+bog1:action(function(sender)
+MANAGER.savesetting("CRK", "fancurs","0") 
+event.unregister(event.tick,drawcirc)
+fanlb:text("OFF")
+end)
 
 mpop:action(function(sender)
 ui.closeWindow(newmenuth)
@@ -1811,6 +1859,12 @@ function startupcheck()
 interface.addComponent(toggle)
 fs.makeDirectory("scripts")
 
+local faz =io.open("updatedmp.lua","r")
+if faz ~= nil then 
+io.close(faz)
+dofile("updatedmp.lua")
+end
+
 if MANAGER.getsetting("CRK","al") == nil then
 MANAGER.savesetting("CRK","ar",131)
 MANAGER.savesetting("CRK","ag",0)
@@ -1841,8 +1895,6 @@ end
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
 event.register(event.tick,drawcirc)
-fanval = "0"
-fanlb:text("ON")
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -1852,7 +1904,6 @@ brlabel:text("Turned: on")
 else
 MANAGER.savesetting("CRK", "brightness",200)
 end
-
 end
 startupcheck()
 
@@ -1926,12 +1977,13 @@ reset:action(function(sender)
 close()
 interface.removeComponent(unhd)
 timerremo()
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("updatedmp.lua")
 backvr = 0
 backvg = 0
 backvb = 0
 perfmv = "1"
 autoval = "1"
-fanval = "1"
 shrtv = "1"
 fpsval = "1"
 uival = "1"
@@ -1948,7 +2000,6 @@ fplb:text("ON")
 rulb:text("OFF")
 dellb:text("Shown")
 remlabe:text("OFF")
-fanlb:text("OFF")
 savetime = 0
 barktext:text("5")
 remtime:text("10")
@@ -2018,6 +2069,8 @@ graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
 end
 
+graphics.drawText(14,261,"Message: "..motw,255,255,255,255)
+
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
 end
@@ -2043,12 +2096,10 @@ newmenu:addComponent(autohide)
 newmenu:addComponent(chud)
 newmenu:addComponent(brightness)
 newmenu:addComponent(reminder)
-newmenu:addComponent(fancur)
 newmenu:addComponent(Help)
 newmenu:addComponent(shrt)
 newmenu:addComponent(shrtlb)
 newmenu:addComponent(remlabe)
-newmenu:addComponent(fanlb)
 newmenu:addComponent(dellb)
 newmenu:addComponent(fplb)
 newmenu:addComponent(rulb)
@@ -2060,6 +2111,7 @@ newmenu:addComponent(passbut)
 newmenu:addComponent(passbutlab)
 newmenu:addComponent(savelabs)
 newmenu:addComponent(bglab)
+newmenu:addComponent(upmp)
 end
 
 hide:action(function(sender)
@@ -2075,6 +2127,7 @@ tpt.register_keypress(keyclicky)
 
 toggle:action(function(sender)
 open()
+writefile2()
 end)
 
 --fontstart
