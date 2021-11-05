@@ -188,7 +188,7 @@ end
 end
 end
 
-local req2 = http.get("https://pastebin.com/raw/QPXcYUHq")
+local req2 = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/motd.txt")
 function writefile2()
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
