@@ -7,7 +7,7 @@ static void create(ELEMENT_CREATE_FUNC_ARGS);
 void Element::Element_CHLR()
 {
 	Identifier = "DEFAULT_PT_CHLR";
-	Name = "CHLR";
+	Name = "Cl";
 	Colour = PIXPACK(0x8bc34a);
 	MenuVisible = 1;
 	MenuSection = SC_GAS;
@@ -32,7 +32,7 @@ void Element::Element_CHLR()
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine, photochemical rxn with H2. Distills WATR below 50C (ACID > 50C), Rusts IRON & BMTL. Kills STKMs & PLNT.";
+	Description = "Chlorine, photochemical rxn with H2. Distills WATR below 50C (ACID > 50C), rusts IRON & BMTL. Kills STKMs & PLNT.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 

@@ -1,9 +1,12 @@
 Changelog for V32.0 (50)
 
-Themes are now called as Control Centre.
+Make CLRC acid resistant.
 Add an update multiplayer button.
-Make inbuilt multiplayer script run only when a newer version is not present.
+Reset button will now delete the downloaded versions of mp and switch back to inbuilt one, so keep that in mind while resetting!
+Rename some elements like LITH2 -> RBTR, CHLR -> Cl.
+Add some missing bold fonts.
+Themes are now called as Control Centre.
 Fix "New version already running" error on startup when manually updating the multiplayer.
 Move Crosshair to Control Centre.
 Add support for motds :)
-Reset button will now delete the downloaded versions of mp and switch back to inbuilt one!
+

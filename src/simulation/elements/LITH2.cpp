@@ -7,7 +7,7 @@ static void create(ELEMENT_CREATE_FUNC_ARGS);
 void Element::Element_LITH2()
 {
 	Identifier = "DEFAULT_PT_LITH2";
-	Name = "LITH2";
+	Name = "LBTR";
 	Colour = PIXPACK(0x707080);
 	MenuVisible = 1;
 	MenuSection = SC_ELEC;
@@ -30,7 +30,7 @@ void Element::Element_LITH2()
 	Weight = 100;
 
 	HeatConduct = 200;
-	Description = "Lithium ion battery. Charge with INST when deactivated, discharges to INST when activated. (use .life for capacity)";
+	Description = "Lithium Ion battery. Charges with INST when deactivated, discharges to INST when activated. (use .life for capacity)";
 
 	Properties = TYPE_SOLID;
 	LowPressure = IPL;
