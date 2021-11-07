@@ -208,7 +208,7 @@ timermotd = timermotd + 1
 if timermotd >= 150 then
 tpt.unregister_step(writefile2)
 end
-gfx.fillRect(1,375,4,2,0,255,0,255)
+gfx.fillRect(1,375,2,2,0,255,0,255)
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
@@ -1230,7 +1230,7 @@ tpt.el.fntc.menu=0
 tpt.el.fptc.menu=0
 tpt.el.cwir.menu=0
 tpt.el.copr.menu=0
-tpt.el.lith2.menu=0
+tpt.el.lbtr.menu=0
 tpt.el.led.menu=0
 tpt.el.timc.menu=0
 tpt.el.pinv.menu=0
@@ -1265,7 +1265,7 @@ tpt.el.wall.menu=0
 tpt.el.sun.menu=0
 tpt.el.bee.menu=0
 tpt.el.pet.menu=0
-tpt.el.chlr.menu=0
+tpt.el.cl.menu=0
 end
 
 function showmodelem()
@@ -1273,7 +1273,7 @@ tpt.el.fntc.menu=1
 tpt.el.fptc.menu=1
 tpt.el.cwir.menu=1
 tpt.el.copr.menu=1
-tpt.el.lith2.menu=1
+tpt.el.lbtr.menu=1
 tpt.el.led.menu=1
 tpt.el.timc.menu=1
 tpt.el.pinv.menu=1
@@ -1308,7 +1308,7 @@ tpt.el.wall.menu=1
 tpt.el.sun.menu=1
 tpt.el.bee.menu=1
 tpt.el.pet.menu=1
-tpt.el.chlr.menu=1
+tpt.el.cl.menu=1
 end
 local modelemval = 0
 bg:action(function(sender)
