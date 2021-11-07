@@ -1990,8 +1990,19 @@ reset:action(function(sender)
 close()
 interface.removeComponent(unhd)
 timerremo()
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+local restneed = 0
+local fd1 = io.open("updatedmp.lua","r")
+local fd2 = io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua","r")
+if fd1 ~= nil then
+fd1:close()
 os.remove("updatedmp.lua")
+restneed = "1"
+end
+if fd2 ~= nil then
+fd2:close()
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+restneed = "1"
+end
 backvr = 0
 backvg = 0
 backvb = 0
@@ -2061,6 +2072,9 @@ sim.resetTemp()
 tpt.reset_velocity(1,380,300,300)
 tpt.setdebug(0X0)
 sim.clearSim()
+if restneed == "1" then
+platform.restart()
+end
 end)
 
 function close()
