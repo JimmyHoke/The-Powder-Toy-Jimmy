@@ -1,12 +1,4 @@
-Changelog for V32.0 (50)
+Changelog for V32.1 (52)
 
-Make CLRC acid resistant.
-Add an update multiplayer button.
-Reset button will now delete the downloaded versions of mp and switch back to inbuilt one, so keep that in mind while resetting!
-Rename some elements like LITH2 -> RBTR, CHLR -> Cl.
-Add some missing bold fonts.
-Themes are now called as Control Centre.
-Fix "New version already running" error on startup when manually updating the multiplayer.
-Move Crosshair to Control Centre.
-Add support for motds :)
+Fix errors when restarting/ turning mod elements off
 
