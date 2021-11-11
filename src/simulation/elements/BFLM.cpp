@@ -34,7 +34,7 @@ void Element::Element_BFLM()
 
 	DefaultProperties.temp = R_TEMP + 400.0f + 273.15f;
 	HeatConduct = 88;
-	Description = "Black Flames, unstoppable flames that eat everything in its way (except DMRN).";
+	Description = "Black Flames, unstoppable flames that eat everything in its way (except DMRN & WALL).";
 
 	Properties = TYPE_GAS | PROP_LIFE_DEC | PROP_LIFE_KILL;
 
@@ -68,7 +68,7 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 					r = sim->photons[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (TYP(r) && TYP(r) != PT_BFLM && TYP(r) != PT_DMRN)
+				if (TYP(r) && TYP(r) != PT_BFLM && TYP(r) != PT_DMRN && TYP(r) != PT_WALL)
 				{
 					parts[i].tmp = 5;
 					if (RNG::Ref().chance(1, 13))

@@ -29,6 +29,7 @@
 #include "common/tpt-compat.h"
 #include "common/tpt-minmax.h"
 #include "common/tpt-rand.h"
+#include "common/tpt-thread-local.h"
 #include "gui/game/Brush.h"
 
 #ifdef LUACONSOLE
@@ -41,17 +42,17 @@ extern int Element_LOLZ_RuleTable[9][9];
 extern int Element_LOLZ_lolz[XRES/9][YRES/9];
 extern int Element_LOVE_RuleTable[9][9];
 extern int Element_LOVE_love[XRES/9][YRES/9];
-extern int Element_WALL_RuleTable[9][9];
-extern int Element_WALL_wall[XRES / 9][YRES / 9];
-int Simulation::Load(GameSave * save, bool includePressure)
+
+int Simulation::Load(const GameSave * save, bool includePressure)
 {
 	return Load(save, includePressure, 0, 0);
 }
 
-int Simulation::Load(GameSave * save, bool includePressure, int fullX, int fullY)
+int Simulation::Load(const GameSave * originalSave, bool includePressure, int fullX, int fullY)
 {
-	if (!save)
+	if (!originalSave)
 		return 1;
+	auto save = std::unique_ptr<GameSave>(new GameSave(*originalSave));
 	try
 	{
 		save->Expand();
@@ -78,9 +79,8 @@ int Simulation::Load(GameSave * save, bool includePressure, int fullX, int fullY
 	}
 	if(save->palette.size())
 	{
-		for(std::vector<GameSave::PaletteItem>::iterator iter = save->palette.begin(), end = save->palette.end(); iter != end; ++iter)
+		for(auto &pi : save->palette)
 		{
-			GameSave::PaletteItem pi = *iter;
 			if (pi.second > 0 && pi.second < PT_NUM)
 			{
 				int myId = 0;
@@ -668,7 +668,7 @@ bool Simulation::FloodFillPmapCheck(int x, int y, int type)
 CoordStack& Simulation::getCoordStackSingleton()
 {
 	// Future-proofing in case Simulation is later multithreaded
-	thread_local CoordStack cs;
+	static THREAD_LOCAL(CoordStack, cs);
 	return cs;
 }
 
@@ -2460,7 +2460,7 @@ void Simulation::init_can_move()
 		 || destinationType == PT_ISOZ || destinationType == PT_ISZS || destinationType == PT_QRTZ || destinationType == PT_PQRT
 		 || destinationType == PT_H2   || destinationType == PT_BGLA || destinationType == PT_C5)
 			can_move[PT_PHOT][destinationType] = 2;
-		if (destinationType != PT_JRAY && destinationType != PT_DMND && destinationType != PT_INSL && destinationType != PT_VOID && destinationType != PT_PVOD && destinationType != PT_VIBR && destinationType != PT_BVBR && destinationType != PT_PRTI && destinationType != PT_PRTO && destinationType != PT_SUN && destinationType != PT_DMRN)
+		if (destinationType != PT_JRAY && destinationType != PT_DMND && destinationType != PT_INSL && destinationType != PT_VOID && destinationType != PT_PVOD && destinationType != PT_VIBR && destinationType != PT_BVBR && destinationType != PT_PRTI && destinationType != PT_PRTO && destinationType != PT_SUN && destinationType != PT_DMRN && destinationType != PT_WALL)
 		{
 			can_move[PT_PROT][destinationType] = 2;
 			can_move[PT_UVRD][destinationType] = 2;
@@ -4474,7 +4474,7 @@ killed:
 				// Checking stagnant is cool, but then it doesn't update when you change it later.
 				if (water_equal_test && elements[t].Falldown == 2 && RNG::Ref().chance(1, 200))
 				{
-					if (!flood_water(x, y, i))
+					if (flood_water(x, y, i))
 						goto movedone;
 				}
 				// liquids and powders
@@ -5170,7 +5170,7 @@ void Simulation::BeforeSim()
 		}
 
 		// LOVE and LOLZ element handling
-		if (elementCount[PT_LOVE] > 0 || elementCount[PT_LOLZ] > 0 || elementCount[PT_WALL] > 0)
+		if (elementCount[PT_LOVE] > 0 || elementCount[PT_LOLZ] > 0)
 		{
 			int nx, nnx, ny, nny, r, rt;
 			for (ny=0; ny<YRES-4; ny++)
@@ -5191,10 +5191,6 @@ void Simulation::BeforeSim()
 					else if (parts[ID(r)].type==PT_LOLZ)
 					{
 						Element_LOLZ_lolz[nx/9][ny/9] = 1;
-					}
-					else if (parts[ID(r)].type == PT_WALL)
-					{
-						Element_WALL_wall[nx / 9][ny / 9] = 1;
 					}
 				}
 			}
@@ -5240,25 +5236,6 @@ void Simulation::BeforeSim()
 							}
 					}
 					Element_LOLZ_lolz[nx/9][ny/9]=0;
-
-					if (Element_WALL_wall[nx / 9][ny / 9] == 1)
-					{
-						for (nnx = 0; nnx < 9; nnx++)
-							for (nny = 0; nny < 9; nny++)
-							{
-								if (ny + nny > 0 && ny + nny < YRES&&nx + nnx >= 0 && nx + nnx < XRES)
-								{
-									rt = pmap[ny + nny][nx + nnx];
-									if (!rt&&Element_WALL_RuleTable[nny][nnx] == 1)
-										create_part(-1, nx + nnx, ny + nny, PT_WALL);
-									else if (!rt)
-										continue;
-									else if (parts[ID(rt)].type == PT_WALL && Element_WALL_RuleTable[nny][nnx] == 0)
-										kill_part(ID(rt));
-								}
-							}
-					}
-					Element_WALL_wall[nx / 9][ny / 9] = 0;
 				}
 			}
 		}
@@ -5430,7 +5407,7 @@ void Simulation::SetCustomGOL(std::vector<CustomGOLData> newCustomGol)
 	customGol = newCustomGol;
 }
 
-String Simulation::ElementResolve(int type, int ctype)
+String Simulation::ElementResolve(int type, int ctype) const
 {
 	if (type == PT_LIFE)
 	{
@@ -5450,7 +5427,7 @@ String Simulation::ElementResolve(int type, int ctype)
 	return "Empty";
 }
 
-String Simulation::BasicParticleInfo(Particle const &sample_part)
+String Simulation::BasicParticleInfo(Particle const &sample_part) const
 {
 	StringBuilder sampleInfo;
 	int type = sample_part.type;

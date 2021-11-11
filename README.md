@@ -1,6 +1,16 @@
-The Cracker1000's Mod - 2021
+Cracker1000's Mod - Nov 2021
+==========================
 
-Get the latest version [from here](https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279) 
+Get the latest version [from the Powder Toy website](https://powdertoy.co.uk/Download.html).
+
+To use online features such as saving, you need to [register an account](https://powdertoy.co.uk/Register.html).
+You can also visit [the official TPT forum](https://powdertoy.co.uk/Discussions/Categories/Index.html).
+
+Have you ever wanted to blow something up? Or maybe you always dreamt of operating an atomic power plant? Do you have a will to develop your own CPU? The Powder Toy lets you to do all of these, and even more!
+
+The Powder Toy is a free physics sandbox game, which simulates air pressure and velocity, heat, gravity and a countless number of interactions between different substances! The game provides you with various building materials, liquids, gases and electronic components which can be used to construct complex machines, guns, bombs, realistic terrains and almost anything else. You can then mine them and watch cool explosions, add intricate wirings, play with little stickmen or operate your machine. You can browse and play thousands of different saves made by the community or upload your own – we welcome your creations!
+
+There is a Lua API – you can automate your work or even make plugins for the game. The Powder Toy is free and the source code is distributed under the GNU General Public License, so you can modify the game yourself or help with development.
 
 Build instructions
 ===========================================================================
@@ -10,10 +20,23 @@ See the _Powder Toy Development Help_ section [on the main page of the wiki](htt
 Thanks
 ===========================================================================
 
-* Cracker1000
+* Stanislaw K Skowronek - Designed the original
+* Simon Robertshaw
+* Skresanov Savely
+* cracker64
+* Catelite
+* Bryan Hoyle
+* Nathan Cousins
+* jacksonmj
+* Felix Wallin
+* Lieuwe Mosch
+* Anthony Boot
+* Me4502
+* MaksProg
 * jacob1
-* Maticzpl
+* mniip
 * LBPHacker
+* Cracker1000
 
 Libraries and other assets used
 ===========================================================================

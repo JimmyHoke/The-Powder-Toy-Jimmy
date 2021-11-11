@@ -278,9 +278,9 @@ require_preload__["tptmp.client"] = function()
 							sx, sy = 0, 0
 						end
 						local tool = member.last_tool or member.tool_l
-						local tool_name = util.to_tool[tool] or decode_rulestring(tool) or "TPTMP_PT_UNKNOWN"
+						local tool_name = util.to_tool[tool] or decode_rulestring(tool) or "UNKNOWN"
 						local tool_class = util.xid_class[tool]
-						if elem[tool_name] and tool ~= 0 and tool_name ~= "TPTMP_PT_UNKNOWN" then
+						if elem[tool_name] and tool ~= 0 and tool_name ~= "UNKNOWN" then
 							local real_name = elem.property(elem[tool_name], "Name")
 							if real_name ~= "" then
 								tool_name = real_name
@@ -297,9 +297,9 @@ require_preload__["tptmp.client"] = function()
 						local repl_tool_name
 						if member.bmode ~= 0 then
 							local repl_tool = member.tool_x
-							repl_tool_name = util.to_tool[repl_tool] or "TPTMP_PT_UNKNOWN"
+							repl_tool_name = util.to_tool[repl_tool] or "UNKNOWN"
 							local repl_tool_class = util.xid_class[repl_tool]
-							if elem[repl_tool_name] and repl_tool ~= 0 and repl_tool_name ~= "TPTMP_PT_UNKNOWN" then
+							if elem[repl_tool_name] and repl_tool ~= 0 and repl_tool_name ~= "UNKNOWN" then
 								local real_name = elem.property(elem[repl_tool_name], "Name")
 								if real_name ~= "" then
 									repl_tool_name = real_name
@@ -841,7 +841,7 @@ require_preload__["tptmp.client.client"] = function()
 		local tool = bit.bor(lo, bit.lshift(hi, 8))
 		local index = bit.rshift(tool, 14)
 		local xtype = bit.band(tool, 0x3FFF)
-		member[index_to_lrax[index]] = util.to_tool[xtype] and xtype or util.from_tool.TPTMP_PT_UNKNOWN
+		member[index_to_lrax[index]] = util.to_tool[xtype] and xtype or util.unknown_xid
 		member.last_toolslot = index
 	end
 	
@@ -2039,12 +2039,12 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = { 70, 70, 70},
+			border     = { 90, 90, 90 },
 		},
 		active = {
 			background = { 255, 255, 255 },
 			text       = {   0,   0,   0 },
-			border     = { 70, 70, 70 },
+			border     = { 90, 90, 90 },
 		},
 	}
 	
@@ -2062,7 +2062,7 @@ require_preload__["tptmp.client.config"] = function()
 
 	local common_config = require("tptmp.common.config")
 	
-	local versionstr = "v2.0.21"
+	local versionstr = "v2.0.22"
 	
 	local config = {
 		-- ***********************************************************************
@@ -2806,7 +2806,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		[ "DEFAULT_PT_SPAWN"    ] = "stkm",
 		[ "DEFAULT_PT_SPAWN2"   ] = "stkm",
 		[ "DEFAULT_PT_FIGH"     ] = "stkm",
-		[ "TPTMP_PT_UNKNOWN"    ] = "unknown",
+		[ "UNKNOWN"             ] = "unknown",
 	}
 	local toolwarn_messages = {
 		prop      =                      "The PROP tool does not sync, you will have to use /sync",
@@ -2897,11 +2897,10 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	
 	local function stash_part()
 		local id = sim.parts()()
-		local x, y, info
+		local info
 		if id then
-			x, y = sim.partPosition(id)
-			x, y = math.floor(x + 0.5), math.floor(y + 0.5)
-			id = sim.partID(x, y)
+			local x, y = sim.partPosition(id)
+			id = sim.partID(math.floor(x + 0.5), math.floor(y + 0.5))
 			local ty = sim.partProperty(id, "type")
 			if ty then
 				info = { [ sim.FIELD_TYPE ] = ty }
@@ -2913,10 +2912,9 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 			end
 			sim.partProperty(id, "type", elem.DEFAULT_PT_ELEC)
 		else
-			x, y = 0, 0
-			id = sim.partCreate(-3, x, y, elem.DEFAULT_PT_ELEC)
+			id = sim.partCreate(-3, 0, 0, elem.DEFAULT_PT_ELEC)
 		end
-		return id, info, x, y
+		return id, info
 	end
 	
 	local function unstash_part(id, info)
@@ -2931,25 +2929,6 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		for _, v in ipairs(props) do
 			sim.partProperty(id, v, info[v])
 		end
-	end
-	
-	local function brush_mode()
-		-- * TODO[api]: add an api for this to tpt
-		local id, stashed, x, y = stash_part()
-		local bmode = 0
-		local selectedreplace = tpt.selectedreplace
-		tpt.selectedreplace = "DEFAULT_PT_ELEC"
-		sim.createParts(x, y, 0, 0, elem.DEFAULT_PT_PROT, 0)
-		local new_type = sim.partProperty(id, "type")
-		if not new_type then
-			assert(sim.partCreate(-3, x, y, elem.DEFAULT_PT_DMND) == id)
-			bmode = 2
-		elseif new_type == elem.DEFAULT_PT_PROT then
-			bmode = 1
-		end
-		tpt.selectedreplace = selectedreplace
-		unstash_part(id, stashed)
-		return bmode
 	end
 	
 	local function in_zoom_window(x, y)
@@ -3249,18 +3228,26 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	function profile_i:post_event_check_()
 		if self.placesave_postmsg_ then
 			local partcount = self.placesave_postmsg_.partcount
+			if self.debug_ then
+				self.debug_("fallback placesave detection", sim.NUM_PARTS, partcount)
+			end
 			if partcount and (partcount ~= sim.NUM_PARTS or sim.NUM_PARTS == sim.XRES * sim.YRES) and self.registered_func_() then
 				-- * TODO[api]: get rid of all of this nonsense once redo-ui lands
 				if self.client_ then
 					self.client_:send_sync()
 				end
-				-- self.log_event_func_("If you just pasted something, you will have to use /sync")
+				if self.debug_ then
+					self.debug_("failed to determine paste area while connected, syncing everything")
+				end
 			end
 			self.placesave_postmsg_ = nil
 		end
 		if self.placesave_size_ then
 			local x1, y1, x2, y2 = self:end_placesave_size_()
 			if x1 then
+				if self.debug_ then
+					self.debug_("placesave size determined to be", x1, y1, x2, y2)
+				end
 				local x, y, w, h = util.corners_to_rect(x1, y1, x2, y2)
 				self.simstate_invalid_ = true
 				if self.placesave_open_ then
@@ -3281,6 +3268,10 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 					self:report_clearsim_()
 				else
 					self:report_pastestamp_(x, y, w, h)
+				end
+			else
+				if self.debug_ then
+					self.debug_("placesave size not determined")
 				end
 			end
 			self.placesave_open_ = nil
@@ -3473,7 +3464,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 	end
 	
 	function profile_i:update_bmode_()
-		local bmode = brush_mode()
+		local bmode = sim.replaceModeFlags()
 		if self.bmode_ ~= bmode then
 			self.bmode_ = bmode
 			self:report_bmode_()
@@ -3509,22 +3500,22 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		local taid = tpt.selecteda
 		local txid = tpt.selectedreplace
 		if self.tool_lid_ ~= tlid then
-			self.tool_l_ = util.from_tool[tlid] or util.from_tool.TPTMP_PT_UNKNOWN
+			self.tool_l_ = util.from_tool[tlid] or util.unknown_xid
 			self.tool_lid_ = tlid
 			self:report_tool_(0)
 		end
 		if self.tool_rid_ ~= trid then
-			self.tool_r_ = util.from_tool[trid] or util.from_tool.TPTMP_PT_UNKNOWN
+			self.tool_r_ = util.from_tool[trid] or util.unknown_xid
 			self.tool_rid_ = trid
 			self:report_tool_(1)
 		end
 		if self.tool_aid_ ~= taid then
-			self.tool_a_ = util.from_tool[taid] or util.from_tool.TPTMP_PT_UNKNOWN
+			self.tool_a_ = util.from_tool[taid] or util.unknown_xid
 			self.tool_aid_ = taid
 			self:report_tool_(2)
 		end
 		if self.tool_xid_ ~= txid then
-			self.tool_x_ = util.from_tool[txid] or util.from_tool.TPTMP_PT_UNKNOWN
+			self.tool_x_ = util.from_tool[txid] or util.unknown_xid
 			self.tool_xid_ = txid
 			self:report_tool_(3)
 		end
@@ -3555,20 +3546,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		end
 	end
 	
-	local preshack_prof
-	local preshack_elem
-	local preshack_stashed
-	local function preshack_graphics(id)
-		preshack_prof:post_event_check_()
-		unstash_part(id, preshack_stashed)
-		preshack_stashed = nil
-		return 0, 0
-	end
-	
 	function profile_i:begin_placesave_size_(x, y, aux_button)
-		local id, x, y
-		id, preshack_stashed, x, y = stash_part()
-		sim.partProperty(id, "type", preshack_elem)
 		local bx, by = math.floor(x / 4), math.floor(y / 4)
 		local p = 0
 		local pres = {}
@@ -3596,6 +3574,7 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 			by = by,
 			aux_button = aux_button,
 			airmode = sim.airMode(),
+			partcount = sim.NUM_PARTS,
 		}
 		if aux_button then
 			-- * This means that begin_placesave_size_ was called from a button
@@ -3642,10 +3621,11 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		if not self.placesave_size_.aux_button or lx == math.huge then
 			sim.airMode(self.placesave_size_.airmode)
 		end
+		local partcount = self.placesave_size_.partcount
 		self.placesave_size_ = nil
 		if lx == math.huge then
 			self.placesave_postmsg_ = {
-				partcount = sim.NUM_PARTS,
+				partcount = partcount,
 			}
 		else
 			return math.max((lx - 2) * 4, 0),
@@ -4188,10 +4168,10 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 				clear  = { x = gfx.WIDTH - 159, y = gfx.HEIGHT - 16, w = 17, h = 15 },
 			},
 		}, profile_m)
-		prof.tool_l_ = util.from_tool.TPTMP_PT_UNKNOWN
-		prof.tool_r_ = util.from_tool.TPTMP_PT_UNKNOWN
-		prof.tool_a_ = util.from_tool.TPTMP_PT_UNKNOWN
-		prof.tool_x_ = util.from_tool.TPTMP_PT_UNKNOWN
+		prof.tool_l_ = util.from_tool.UNKNOWN
+		prof.tool_r_ = util.from_tool.UNKNOWN
+		prof.tool_a_ = util.from_tool.UNKNOWN
+		prof.tool_x_ = util.from_tool.UNKNOWN
 		prof.last_tool_ = prof.tool_l_
 		prof.deco_ = sim.decoColour()
 		prof:update_pos_(tpt.mousex, tpt.mousey)
@@ -4204,9 +4184,11 @@ require_preload__["tptmp.client.profile.vanilla"] = function()
 		prof:update_shape_()
 		prof:update_zoom_()
 		prof:check_signs({})
-		preshack_elem = util.alloc_utility_element("VANILLAPRESHACK")
-		elem.property(preshack_elem, "Graphics", preshack_graphics)
-		preshack_prof = prof
+		if false then
+			prof.debug_ = function(...)
+				print("[prof debug]", ...)
+			end
+		end
 		return prof
 	end
 	
@@ -4406,7 +4388,7 @@ require_preload__["tptmp.client.side_button"] = function()
 		if manager.side_button_conflict then
 			pos_y = pos_y - 17
 		end
-		local text = "M"
+		local text = "<<"
 		local tw, th = gfx.textSize(text)
 		local tx = pos_x + math.ceil((width - tw) / 2)
 		local ty = pos_y + math.floor((height - th) / 2)
@@ -4557,17 +4539,6 @@ require_preload__["tptmp.client.util"] = function()
 	local config      = require("tptmp.client.config")
 	local common_util = require("tptmp.common.util")
 	
-	local function alloc_utility_element(name)
-		if not elem["TPTMP_PT_" .. name] then
-			assert(elem.allocate("TPTMP", name) ~= -1, "out of element IDs")
-			elem.property(elem["TPTMP_PT_" .. name], "MenuSection", 17) -- * TODO[req]: hack, remove
-			elem.property(elem["TPTMP_PT_" .. name], "Name", "\238\128\163")
-			elem.property(elem["TPTMP_PT_" .. name], "Description", "\238\128\163")
-		end
-		return elem["TPTMP_PT_" .. name]
-	end
-	alloc_utility_element("UNKNOWN")
-	
 	local jacobsmod = rawget(_G, "jacobsmod")
 	local from_tool = {}
 	local to_tool = {}
@@ -4578,7 +4549,7 @@ require_preload__["tptmp.client.util"] = function()
 	local has_ambient_heat_tools
 	do
 		local old_selectedl = tpt.selectedl
-		if old_selectedl == "DEFAULT_UI_PROPERTY" then
+		if old_selectedl == "DEFAULT_UI_PROPERTY" or old_selectedl == "DEFAULT_UI_ADDLIFE" then
 			old_selectedl = "DEFAULT_PT_DUST"
 		end
 		has_ambient_heat_tools = pcall(function() tpt.selectedl = "DEFAULT_TOOL_AMBM" end)
@@ -4592,6 +4563,14 @@ require_preload__["tptmp.client.util"] = function()
 			for j = 1, #arrays[i] do
 				table.insert(tbl, arrays[i][j])
 			end
+		end
+		return tbl
+	end
+	
+	local function array_keyify(arr)
+		local tbl = {}
+		for i = 1, #arr do
+			tbl[arr[i]] = true
 		end
 		return tbl
 	end
@@ -4646,6 +4625,7 @@ require_preload__["tptmp.client.util"] = function()
 		"DEFAULT_UI_SIGN",
 		"DEFAULT_UI_PROPERTY",
 		"DEFAULT_UI_WIND",
+		"DEFAULT_UI_ADDLIFE",
 	}, {
 		"DEFAULT_TOOL_HEAT",
 		"DEFAULT_TOOL_COOL",
@@ -4676,13 +4656,237 @@ require_preload__["tptmp.client.util"] = function()
 		xid_class[xtype] = class
 		xid_first[class] = math.min(xid_first[class] or math.huge, xtype)
 	end
+	-- * TODO[opt]: support custom elements
+	local known_elements = array_keyify({
+		"DEFAULT_PT_NONE",
+		"DEFAULT_PT_DUST",
+		"DEFAULT_PT_WATR",
+		"DEFAULT_PT_OIL",
+		"DEFAULT_PT_FIRE",
+		"DEFAULT_PT_STNE",
+		"DEFAULT_PT_LAVA",
+		"DEFAULT_PT_GUN",
+		"DEFAULT_PT_GUNP",
+		"DEFAULT_PT_NITR",
+		"DEFAULT_PT_CLNE",
+		"DEFAULT_PT_GAS",
+		"DEFAULT_PT_C-4",
+		"DEFAULT_PT_PLEX",
+		"DEFAULT_PT_GOO",
+		"DEFAULT_PT_ICE",
+		"DEFAULT_PT_ICEI",
+		"DEFAULT_PT_METL",
+		"DEFAULT_PT_SPRK",
+		"DEFAULT_PT_SNOW",
+		"DEFAULT_PT_WOOD",
+		"DEFAULT_PT_NEUT",
+		"DEFAULT_PT_PLUT",
+		"DEFAULT_PT_PLNT",
+		"DEFAULT_PT_ACID",
+		"DEFAULT_PT_VOID",
+		"DEFAULT_PT_WTRV",
+		"DEFAULT_PT_CNCT",
+		"DEFAULT_PT_DSTW",
+		"DEFAULT_PT_SALT",
+		"DEFAULT_PT_SLTW",
+		"DEFAULT_PT_DMND",
+		"DEFAULT_PT_BMTL",
+		"DEFAULT_PT_BRMT",
+		"DEFAULT_PT_PHOT",
+		"DEFAULT_PT_URAN",
+		"DEFAULT_PT_WAX",
+		"DEFAULT_PT_MWAX",
+		"DEFAULT_PT_PSCN",
+		"DEFAULT_PT_NSCN",
+		"DEFAULT_PT_LNTG",
+		"DEFAULT_PT_LN2",
+		"DEFAULT_PT_INSL",
+		"DEFAULT_PT_BHOL",
+		"DEFAULT_PT_VACU",
+		"DEFAULT_PT_WHOL",
+		"DEFAULT_PT_VENT",
+		"DEFAULT_PT_RBDM",
+		"DEFAULT_PT_LRBD",
+		"DEFAULT_PT_NTCT",
+		"DEFAULT_PT_SAND",
+		"DEFAULT_PT_GLAS",
+		"DEFAULT_PT_PTCT",
+		"DEFAULT_PT_BGLA",
+		"DEFAULT_PT_THDR",
+		"DEFAULT_PT_PLSM",
+		"DEFAULT_PT_ETRD",
+		"DEFAULT_PT_NICE",
+		"DEFAULT_PT_NBLE",
+		"DEFAULT_PT_BTRY",
+		"DEFAULT_PT_LCRY",
+		"DEFAULT_PT_STKM",
+		"DEFAULT_PT_SWCH",
+		"DEFAULT_PT_SMKE",
+		"DEFAULT_PT_DESL",
+		"DEFAULT_PT_COAL",
+		"DEFAULT_PT_LO2",
+		"DEFAULT_PT_LOXY",
+		"DEFAULT_PT_O2",
+		"DEFAULT_PT_OXYG",
+		"DEFAULT_PT_INWR",
+		"DEFAULT_PT_YEST",
+		"DEFAULT_PT_DYST",
+		"DEFAULT_PT_THRM",
+		"DEFAULT_PT_GLOW",
+		"DEFAULT_PT_BRCK",
+		"DEFAULT_PT_HFLM",
+		"DEFAULT_PT_CFLM",
+		"DEFAULT_PT_FIRW",
+		"DEFAULT_PT_FUSE",
+		"DEFAULT_PT_FSEP",
+		"DEFAULT_PT_AMTR",
+		"DEFAULT_PT_BCOL",
+		"DEFAULT_PT_PCLN",
+		"DEFAULT_PT_HSWC",
+		"DEFAULT_PT_IRON",
+		"DEFAULT_PT_MORT",
+		"DEFAULT_PT_LIFE",
+		"DEFAULT_PT_DLAY",
+		"DEFAULT_PT_CO2",
+		"DEFAULT_PT_DRIC",
+		"DEFAULT_PT_BUBW",
+		"DEFAULT_PT_CBNW",
+		"DEFAULT_PT_STOR",
+		"DEFAULT_PT_PVOD",
+		"DEFAULT_PT_CONV",
+		"DEFAULT_PT_CAUS",
+		"DEFAULT_PT_LIGH",
+		"DEFAULT_PT_TESC",
+		"DEFAULT_PT_DEST",
+		"DEFAULT_PT_SPNG",
+		"DEFAULT_PT_RIME",
+		"DEFAULT_PT_FOG",
+		"DEFAULT_PT_BCLN",
+		"DEFAULT_PT_LOVE",
+		"DEFAULT_PT_DEUT",
+		"DEFAULT_PT_WARP",
+		"DEFAULT_PT_PUMP",
+		"DEFAULT_PT_FWRK",
+		"DEFAULT_PT_PIPE",
+		"DEFAULT_PT_FRZZ",
+		"DEFAULT_PT_FRZW",
+		"DEFAULT_PT_GRAV",
+		"DEFAULT_PT_BIZR",
+		"DEFAULT_PT_BIZG",
+		"DEFAULT_PT_BIZRG",
+		"DEFAULT_PT_BIZRS",
+		"DEFAULT_PT_BIZS",
+		"DEFAULT_PT_INST",
+		"DEFAULT_PT_ISOZ",
+		"DEFAULT_PT_ISZS",
+		"DEFAULT_PT_PRTI",
+		"DEFAULT_PT_PRTO",
+		"DEFAULT_PT_PSTE",
+		"DEFAULT_PT_PSTS",
+		"DEFAULT_PT_ANAR",
+		"DEFAULT_PT_VINE",
+		"DEFAULT_PT_INVIS",
+		"DEFAULT_PT_INVS",
+		"DEFAULT_PT_116",
+		"DEFAULT_PT_EQVE",
+		"DEFAULT_PT_SPAWN2",
+		"DEFAULT_PT_SPWN2",
+		"DEFAULT_PT_SPWN",
+		"DEFAULT_PT_SPAWN",
+		"DEFAULT_PT_SHLD",
+		"DEFAULT_PT_SHLD1",
+		"DEFAULT_PT_SHLD2",
+		"DEFAULT_PT_SHD2",
+		"DEFAULT_PT_SHD3",
+		"DEFAULT_PT_SHLD3",
+		"DEFAULT_PT_SHLD4",
+		"DEFAULT_PT_SHD4",
+		"DEFAULT_PT_LOLZ",
+		"DEFAULT_PT_WIFI",
+		"DEFAULT_PT_FILT",
+		"DEFAULT_PT_ARAY",
+		"DEFAULT_PT_BRAY",
+		"DEFAULT_PT_STKM2",
+		"DEFAULT_PT_STK2",
+		"DEFAULT_PT_BOMB",
+		"DEFAULT_PT_C5",
+		"DEFAULT_PT_C-5",
+		"DEFAULT_PT_SING",
+		"DEFAULT_PT_QRTZ",
+		"DEFAULT_PT_PQRT",
+		"DEFAULT_PT_EMP",
+		"DEFAULT_PT_BREC",
+		"DEFAULT_PT_BREL",
+		"DEFAULT_PT_ELEC",
+		"DEFAULT_PT_ACEL",
+		"DEFAULT_PT_DCEL",
+		"DEFAULT_PT_TNT",
+		"DEFAULT_PT_BANG",
+		"DEFAULT_PT_IGNT",
+		"DEFAULT_PT_IGNC",
+		"DEFAULT_PT_BOYL",
+		"DEFAULT_PT_GEL",
+		"DEFAULT_PT_TRON",
+		"DEFAULT_PT_TTAN",
+		"DEFAULT_PT_EXOT",
+		"DEFAULT_PT_EMBR",
+		"DEFAULT_PT_HYGN",
+		"DEFAULT_PT_H2",
+		"DEFAULT_PT_SOAP",
+		"DEFAULT_PT_NBHL",
+		"DEFAULT_PT_NWHL",
+		"DEFAULT_PT_MERC",
+		"DEFAULT_PT_PBCN",
+		"DEFAULT_PT_GPMP",
+		"DEFAULT_PT_CLST",
+		"DEFAULT_PT_WWLD",
+		"DEFAULT_PT_WIRE",
+		"DEFAULT_PT_GBMB",
+		"DEFAULT_PT_FIGH",
+		"DEFAULT_PT_FRAY",
+		"DEFAULT_PT_RPEL",
+		"DEFAULT_PT_PPIP",
+		"DEFAULT_PT_DTEC",
+		"DEFAULT_PT_DMG",
+		"DEFAULT_PT_TSNS",
+		"DEFAULT_PT_VIBR",
+		"DEFAULT_PT_BVBR",
+		"DEFAULT_PT_CRAY",
+		"DEFAULT_PT_PSTN",
+		"DEFAULT_PT_FRME",
+		"DEFAULT_PT_GOLD",
+		"DEFAULT_PT_TUNG",
+		"DEFAULT_PT_PSNS",
+		"DEFAULT_PT_PROT",
+		"DEFAULT_PT_VIRS",
+		"DEFAULT_PT_VRSS",
+		"DEFAULT_PT_VRSG",
+		"DEFAULT_PT_GRVT",
+		"DEFAULT_PT_DRAY",
+		"DEFAULT_PT_CRMC",
+		"DEFAULT_PT_HEAC",
+		"DEFAULT_PT_SAWD",
+		"DEFAULT_PT_POLO",
+		"DEFAULT_PT_RFRG",
+		"DEFAULT_PT_RFGL",
+		"DEFAULT_PT_LSNS",
+		"DEFAULT_PT_LDTC",
+		"DEFAULT_PT_SLCN",
+		"DEFAULT_PT_PTNM",
+		"DEFAULT_PT_VSNS",
+		"DEFAULT_PT_ROCK",
+		"DEFAULT_PT_LITH",
+	})
 	for key, value in pairs(elem) do
-		-- * TODO[opt]: support custom elements
-		if key:find("^DEFAULT_PT_") or key == "TPTMP_PT_UNKNOWN" then
+		if known_elements[key] then
 			from_tool[key] = value
 			to_tool[value] = key
 		end
 	end
+	local unknown_xid = 0x3FFF
+	assert(not to_tool[unknown_xid])
+	from_tool["UNKNOWN"] = unknown_xid
+	to_tool[unknown_xid] = "UNKNOWN"
 	
 	local WL_FAN = from_tool.DEFAULT_WL_FAN - xid_first.WL
 	
@@ -4728,7 +4932,7 @@ require_preload__["tptmp.client.util"] = function()
 		[ from_tool.DEFAULT_UI_PROPERTY ] = true,
 		[ from_tool.DEFAULT_UI_SAMPLE   ] = true,
 		[ from_tool.DEFAULT_UI_SIGN     ] = true,
-		[ from_tool.TPTMP_PT_UNKNOWN    ] = true,
+		[ from_tool.UNKNOWN             ] = true,
 	}
 	local line_only = {
 		[ from_tool.DEFAULT_UI_WIND ] = true,
@@ -4919,7 +5123,7 @@ require_preload__["tptmp.client.util"] = function()
 		local selectedreplace
 		if member.bmode ~= 0 then
 			selectedreplace = tpt.selectedreplace
-			tpt.selectedreplace = to_tool[member.tool_x] or "TPTMP_PT_UNKNOWN"
+			tpt.selectedreplace = to_tool[member.tool_x] or "DEFAULT_PT_NONE"
 		end
 		sim.createParts(x, y, rx, ry, xtype, brush, member.bmode)
 		if member.bmode ~= 0 then
@@ -5018,7 +5222,7 @@ require_preload__["tptmp.client.util"] = function()
 		local selectedreplace
 		if member.bmode ~= 0 then
 			selectedreplace = tpt.selectedreplace
-			tpt.selectedreplace = to_tool[member.tool_x] or "TPTMP_PT_UNKNOWN"
+			tpt.selectedreplace = to_tool[member.tool_x] or "DEFAULT_PT_NONE"
 		end
 		sim.createLine(x1, y1, x2, y2, rx, ry, xtype, brush, member.bmode)
 		if member.bmode ~= 0 then
@@ -5054,7 +5258,7 @@ require_preload__["tptmp.client.util"] = function()
 		local selectedreplace
 		if member.bmode ~= 0 then
 			selectedreplace = tpt.selectedreplace
-			tpt.selectedreplace = to_tool[member.tool_x] or "TPTMP_PT_UNKNOWN"
+			tpt.selectedreplace = to_tool[member.tool_x] or "DEFAULT_PT_NONE"
 		end
 		sim.createBox(x1, y1, x2, y2, xtype, member and member.bmode)
 		if member.bmode ~= 0 then
@@ -5086,7 +5290,7 @@ require_preload__["tptmp.client.util"] = function()
 		local selectedreplace
 		if member.bmode ~= 0 then
 			selectedreplace = tpt.selectedreplace
-			tpt.selectedreplace = to_tool[member.tool_x] or "TPTMP_PT_UNKNOWN"
+			tpt.selectedreplace = to_tool[member.tool_x] or "DEFAULT_PT_NONE"
 		end
 		sim.floodParts(x, y, xtype, part_flood_hint, member.bmode)
 		if member.bmode ~= 0 then
@@ -5172,7 +5376,7 @@ require_preload__["tptmp.client.util"] = function()
 		tpt_version = tpt_version,
 		urlencode = urlencode,
 		heat_clear = heat_clear,
-		alloc_utility_element = alloc_utility_element,
+		unknown_xid = unknown_xid,
 	}
 	
 end
@@ -6530,7 +6734,7 @@ require_preload__["tptmp.common.config"] = function()
 		-- ***********************************************************************
 	
 		-- * Protocol version, between 0 and 254. 255 is reserved for future use.
-		version = 23,
+		version = 26,
 	
 		-- * Client-to-server message size limit, between 0 and 255, the latter
 		--   limit being imposted by the protocol.

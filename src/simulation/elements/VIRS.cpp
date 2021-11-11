@@ -112,7 +112,7 @@ int Element_VIRS_update(UPDATE_FUNC_ARGS)
 					}
 				}
 				//transforms things into virus here
-				else if (TYP(r) != PT_VIRS && TYP(r) != PT_VRSS && TYP(r) != PT_VRSG && TYP(r) != PT_DMND && TYP(r) != PT_BFLM && TYP(r) != PT_JRAY)
+				else if (TYP(r) != PT_VIRS && TYP(r) != PT_VRSS && TYP(r) != PT_VRSG && TYP(r) != PT_DMND && TYP(r) != PT_BFLM && TYP(r) != PT_WALL && TYP(r) != PT_JRAY)
 				{
 					if (!(rndstore & 0x7))
 					{

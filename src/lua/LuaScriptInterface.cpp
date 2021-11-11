@@ -379,9 +379,12 @@ tpt.partsdata = nil");
 	{
 		//Ignore;
 	}
-	if (luaL_loadbuffer(l, (const char *)tptmp_lua, tptmp_lua_size, "@[built-in tptmp.lua]") || lua_pcall(l, 0, 0, 0))
+	if (!Platform::FileExists("scripts/downloaded/2 LBPHacker-TPTMulti.lua") && !Platform::FileExists("updatedmp.lua")) // Don't run inbuilt multiplayer when a newer version is already present, prevents the error on startup.
 	{
-		//Ignore;
+		if (luaL_loadbuffer(l, (const char *)tptmp_lua, tptmp_lua_size, "@[built-in tptmp.lua]") || lua_pcall(l, 0, 0, 0))
+		{
+			//Ignore;
+		}
 	}
 	if (luaL_loadbuffer(l, (const char *)crackerk_lua, crackerk_lua_size, "@[built-in crackerk.lua]") || lua_pcall(l, 0, 0, 0))
 	{
@@ -3712,7 +3715,7 @@ int LuaScriptInterface::fileSystem_removeFile(lua_State * l)
 {
 	const char * filename = luaL_checkstring(l, 1);
 
-	bool ret = Platform::DeleteFile(filename);
+	bool ret = Platform::RemoveFile(filename);
 	lua_pushboolean(l, ret);
 	return 1;
 }

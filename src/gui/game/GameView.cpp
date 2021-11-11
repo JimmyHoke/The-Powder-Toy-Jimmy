@@ -2242,8 +2242,8 @@ void GameView::OnDraw()
 			sampleInfo << "Empty";
 		}
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(4, 18, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(6, 22, sampleInfo.Build(), 225, 225, 225, alpha*0.95f);
+		g->fillrect(6, 18, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
+		g->drawtext(8, 22, sampleInfo.Build(), 225, 225, 225, alpha*0.95f);
 
 #ifndef OGLI
 		if (wavelengthGfx)
@@ -2288,29 +2288,24 @@ void GameView::OnDraw()
 			if (showDebug)
 			{
 				StringBuilder sampleInfo;
+				StringBuilder sampleInfo32;
 				sampleInfo << Format::Precision(2);
 
-				if (showDebug)
-				{
+				sampleInfo<< "X:" << sample.PositionX << ", Y:" << sample.PositionY;
 					sampleInfo << Format::Precision(1);
 					if (type)
 					{
-						sampleInfo << "Pavg0: " << sample.particle.pavg[0];
-						sampleInfo << ", Pavg1: " << sample.particle.pavg[1];
+						sampleInfo << ", Vx: " << sample.particle.vx;
+						sampleInfo << ", Vy: " << sample.particle.vy;
 						if (sample.particle.dcolour)
 						{
 							sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
 						}
 						sampleInfo << Format::Dec();
-						sampleInfo << ", Vx: " << sample.particle.vx;
-						sampleInfo << ", Vy: " << sample.particle.vy;
+						sampleInfo << ", P0: " << sample.particle.pavg[0];
+						sampleInfo << ", P1: " << sample.particle.pavg[1];
+						sampleInfo << ", #" << sample.ParticleID;
 					}
-				}
-				if (type)
-				{
-					sampleInfo << ", #" << sample.ParticleID<<", ";
-				}
-				sampleInfo << "X:" << sample.PositionX << ", Y:" << sample.PositionY;
 
 				if (sample.Gravity)
 					sampleInfo << ", GX: " << sample.GravityVelocityX << " GY: " << sample.GravityVelocityY;
@@ -2319,8 +2314,8 @@ void GameView::OnDraw()
 					sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
-				g->fillrect(4, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(6, 37, sampleInfo.Build(), 255, 32, 32, alpha*0.95f);
+				g->fillrect(6, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
+				g->drawtext(8, 37, sampleInfo.Build(), 255, 12, 12, alpha*0.95f);
 			}
 	}
 	if(showHud && introText < 51)
@@ -2378,8 +2373,8 @@ void GameView::OnDraw()
 	
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
-		g->fillrect(4, 3, textWidth + 6, 15, ar, ag, ab, alpha*0.65);
-		g->drawtext(6, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
+		g->fillrect(6, 3, textWidth + 6, 15, ar, ag, ab, alpha*0.65);
+		g->drawtext(8, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
 	}
 
 	//Tooltips

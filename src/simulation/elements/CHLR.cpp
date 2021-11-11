@@ -7,8 +7,8 @@ static void create(ELEMENT_CREATE_FUNC_ARGS);
 void Element::Element_CHLR()
 {
 	Identifier = "DEFAULT_PT_CHLR";
-	Name = "CHLR";
-	Colour = PIXPACK(0xA5B437);
+	Name = "Cl";
+	Colour = PIXPACK(0x8bc34a);
 	MenuVisible = 1;
 	MenuSection = SC_GAS;
 	Enabled = 1;
@@ -26,13 +26,13 @@ void Element::Element_CHLR()
 	Flammable = 0;
 	Explosive = 0;
 	Meltable = 0;
-	Hardness = 1;
+	Hardness = 0;
 
-	Weight = 1;
+	Weight = 38;
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine gas (heavy), reacts with WATR/ H2 (photochemical rxn) to form ACID. Distills WATR. Harms STKM.";
+	Description = "Chlorine, photochemical rxn with H2. Distills WATR below 50C (ACID > 50C), rusts IRON & BMTL. Kills STKMs & PLNT.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
@@ -55,9 +55,9 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp > 0)
 		parts[i].tmp--;
 
-	if (parts[i].temp < 243.15f)
+	if (parts[i].temp < 273.15f)
 	{
-		parts[i].vy = 1.0;
+		parts[i].vy = 0.1;
 	}
 
 	int r, rx, ry;
@@ -75,21 +75,25 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_SLTW:
 					case PT_CBNW:
 					case PT_DSTW:
+					case PT_WTRV:
 					{
-						if (parts[i].temp > 295.15f)
+						if (parts[i].temp > 323.15f)
 						{
-							if (RNG::Ref().chance(1, 200))
+							if (RNG::Ref().chance(1, 400))
 							{
+								sim->pv[(y / CELL)][(x / CELL)] = 6.0f;
+								sim->kill_part(ID(r));
 								parts[i].life = 200;
 								sim->part_change_type(i, x + rx, y + ry, PT_ACID);
-								sim->kill_part(ID(r));
 							}
 						}
-						if (parts[i].temp < 295.15f)
+
+						else if (parts[i].temp < 323.15f)
 						{
-							if (RNG::Ref().chance(1, 50))
+							sim->part_change_type(ID(r), x + rx, y + ry, PT_DSTW);
+							if (RNG::Ref().chance(1, 300))
 							{
-								sim->part_change_type(ID(r), x + rx, y + ry, PT_DSTW);
+								sim->kill_part(i);
 							}
 						}
 					}
@@ -97,12 +101,14 @@ static int update(UPDATE_FUNC_ARGS)
 					//Photochemical reaction
 					case PT_H2:
 					{
+						parts[i].tmp = 50;
+			
 						if (RNG::Ref().chance(1, 400))
 					{
-						sim->create_part(i, x, y, PT_ACID);
-					}
-						parts[i].tmp = 44;
 						sim->kill_part(ID(r));
+						sim->create_part(i, x + rx, y + ry, PT_ACID);
+					}
+					
 					}
 					break;
 
@@ -117,6 +123,27 @@ static int update(UPDATE_FUNC_ARGS)
 						}
 					}
 					break;
+					case PT_IRON:
+					case PT_BMTL:
+					{
+
+						if (RNG::Ref().chance(1, 1000))
+						{
+							sim->part_change_type(ID(r), x + rx, y + ry, PT_BRMT);
+							sim->kill_part(i);
+						}
+					}
+					break;
+					case PT_PLNT:
+					case PT_VINE:
+					{
+						if (RNG::Ref().chance(1, 200))
+						{
+							sim->kill_part(ID(r));
+							sim->kill_part(i);
+						}
+					}
+					break;
 					}
 				}
 				
@@ -128,24 +155,20 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp == 0)
 	{
-		*firer = 165;
-		*fireg = 200;
-		*fireb = 55;
+		*firer = 139;
+		*fireg = 295;
+		*fireb = 74;
 		*firea = 15;
 	}
 	else
 	{
-		*firer = 145;
-		*fireg = 170;
-		*fireb = 245;
+		*firer = 205;
+		*fireg = 205;
+		*fireb = 255;
 		*firea = cpart->tmp*3;
 	}
-	
-	*colr = 125;
-	*colg = 150;
-	*colb = 25;
+	*pixel_mode = PMODE_NONE;
 	*pixel_mode |= FIRE_BLEND;
-	*pixel_mode |= FIRE_ADD;
 		
 	return 0;
 }

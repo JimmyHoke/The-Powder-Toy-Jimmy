@@ -1,7 +1,8 @@
---cracker1000 mod script v5.6--
+--cracker1000 mod script v6.0--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
+local motw = ""
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -57,9 +58,9 @@ local dellb = Label:new(106, 34, 10, 15, "Shown")
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 local fplb = Label:new(101, 66, 10, 15, "ON")
 
-local reset= Button:new(10,92,80,25,"Reset", "Reset everything.")
+local reset = Button:new(10,92,80,25,"Reset", "Reset everything.")
 
-local info= Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
+local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
 local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
 local rulb = Label:new(101, 162, 10, 15, "OFF")
@@ -82,7 +83,7 @@ local wiki  =  Button:new(203,28,80,25,"Wiki", "Element wiki!")
 local bare = Button:new(203,60,80,25,"Hidden Elem.", "Toggle hidden elements.")
 local remlabe = Label:new(294, 66, 10, 15, "OFF")
 
-local mp = Button:new(203,92,80,25,"Theme", "Changes game's theme")
+local mp = Button:new(203,92,80,25,"Control Centre", "Changes game's theme")
 
 local bg = Button:new(203,124,80,25,"Mod Elem.", "")
 local bglab = Label:new(294, 130, 10, 15, "ON")
@@ -98,9 +99,6 @@ local brop = Button:new(293,237,45,15,"On", "Save.")
 local bropc = Button:new(342,237,45,15,"Off", "Cancel.")
 local brlabel = Label:new(340, 208, 10, 15, "Turned: Off")
 
-local fancur = Button:new(396,28,80,25, "Crosshair", "Draws graphics around cursor.")
-local fanlb = Label:new(487, 34, 10, 15, "OFF")
- 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
 local shrt = Button:new(396,92,80,25, "Toggle J Key", "Turns off the J key shortcut")
@@ -117,13 +115,15 @@ local passbutlab = Label:new(487, 194, 10, 15, "OFF")
 
 local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
 local remtime = Textbox:new(486, 223, 20, 20, '', '10')
-local remlabel = Label:new(380, 2, 10, 15, "Reminder set for10 mins")
+local remlabel = Label:new(380, 2, 10, 15, "Reminder set for 10 mins")
 local remlabel21 = Label:new(538, 205, 20, 15, "1-60 Mins.")
 remtime:text("10")
 local remon2 = Button:new(516,223,30,20,"Set", "Save.")
 local remoff  = Button:new(546,223,30,20,"Off", "Cancel.")
 
-local hide= Button:new(582,2,25,25, "X", "Hide.")
+local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
+
+local hide= Button:new(578,5,25,25, "X", "Hide.")
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -142,12 +142,12 @@ newmenu:removeComponent(autohide)
 newmenu:removeComponent(chud)
 newmenu:removeComponent(brightness)
 newmenu:removeComponent(reminder)
-newmenu:removeComponent(fancur)
 newmenu:removeComponent(Help)
 newmenu:removeComponent(shrt)
 newmenu:removeComponent(edito)
 newmenu:removeComponent(perfm)
 newmenu:removeComponent(passbut)
+newmenu:removeComponent(upmp)
 end
 
 function clearsb()
@@ -162,18 +162,72 @@ newmenu:removeComponent(remoff)
 newmenu:removeComponent(remtime)
 newmenu:removeComponent(remlabel21) 
 newmenu:removeComponent(barkon)
-newmenu:removeComponent( barkoff)
-newmenu:removeComponent( barktext)
+newmenu:removeComponent(barkoff)
+newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
-
-newmenu:onDraw(drawglitch)
 end
 
 local perfmv = "1"
 local fpsval = "1"
+local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
+local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
+local timermp = 0
+
+function writefile()
+timermp = timermp + 1
+if timermp >= 450 then
+print("Taking too long to update, try agin after restarting..")
+tpt.unregister_step(writefile)
+end
+if req:status() == "done" then
+local ret, code = req:finish()
+if code == 200 then
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+f = io.open('updatedmp.lua', 'w')
+f:write(ret)
+f:close()
+dofile("updatedmp.lua")
+print("Multiplayer Updated Successfully.")
+if MANAGER.getsetting("CRK", "savergb") == "1" then
+event.register(event.tick,colourblender)
+else
+event.register(event.tick,theme)
+end
+event.unregister(event.tick,writefile)
+else
+print("Error updating multiplayer, make sure you have internet access!")
+event.unregister(event.tick,writefile)
+end
+end
+end
+
+local timermotd = 0
+
+function writefile2()
+timermotd = timermotd + 1
+if timermotd >= 150 then
+tpt.unregister_step(writefile2)
+end
+gfx.fillRect(1,375,2,2,0,255,0,255)
+if req2:status() == "done" then
+local ret2, code2 = req2:finish()
+if code2 == 200 then
+motw = ret2
+tpt.unregister_step(writefile2)
+end
+end
+end
+
+upmp:action(function(sender)
+close()
+timermp = 0
+print("Attempting To Update Multiplayer...")
+fs.makeDirectory("scripts/downloaded")
+event.unregister(event.tick,writefile)
+event.register(event.tick,writefile)
+end)
 
 passbut:action(function(sender)
-
 clearsb()
 if MANAGER.getsetting("CRK", "passreal") == nil then
 MANAGER.savesetting("CRK","passreal","12345678")
@@ -183,17 +237,19 @@ if MANAGER.getsetting("CRK", "passreal2") == nil then
 MANAGER.savesetting("CRK","passreal2","DMND")
 end
 
-local passmen = Window:new(-15,-15, 610, 300)
+local passmen = Window:new(-15,-15, 610, 255)
 local pasmenmsg = Label:new(240,5,120, 10,"Welcome to the Password Manager V2.0")
-local pasmenmsg2 = Label:new(35,150,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
+local pasmenmsg4 = Label:new(15,130,120, 10,"Status: "..passbutlab:text())
+local pasmenmsg2 = Label:new(165,130,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
+local pasmenmsg6 = Label:new(365,130,120, 10,"Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
 local pasmenmsg3 = Label:new(308,40,120, 10,"Can be upto 8 character long, case sensitive, blank spaces also count.")
-local pasmenmsg4 = Label:new(35,130,120, 10,"Protection Status: "..passbutlab:text())
-local pasmenmsg6 = Label:new(32,170,120, 10,"Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
 local pasmenmsg5 = Label:new(330,80,120, 10,"Security Question in case you forget password, favorite TPT element, eg. DMND.")
+local pasmenmsg7 = Label:new(270,240,120, 10,"Password/ Fav. element can't be blank!")
 local doned2 = Button:new(110,31,80,30, "Set password", "Save")
-local doned3 = Button:new(290,280,80,15, "Close", "Close")
-local doned4 = Button:new(40,195,90,20, "Protection ON", "Save ON")
-local doned5 = Button:new(40,225,90,20, "Protection OFF", "Save OFF")
+local doned3 = Button:new(525,237,80,15, "Close", "Close")
+local doned4 = Button:new(40,155,90,20, "Password ON", "Save ON")
+local doned5 = Button:new(40,185,90,20, "Password OFF", "Save OFF")
+local doned7 = Button:new(40,215,90,20, "Reset", "Reset")
 local doned6 = Button:new(110,71,80,30, "Set Element", "Save")
 local passtime2 = Textbox:new(40, 30, 55, 30, '', 'Password..')
 local passtime3 = Textbox:new(40, 70, 35, 30, '', 'Elem.')
@@ -210,20 +266,43 @@ passmen:addComponent(doned3)
 passmen:addComponent(doned4)
 passmen:addComponent(doned5)
 passmen:addComponent(doned6)
+passmen:addComponent(doned7)
 passmen:addComponent(passtime2)
 passmen:addComponent(passtime3)
 
 doned2 :action(function(sender)
+passmen:removeComponent(pasmenmsg7)
+if passtime2:text() == "" then
+passmen:addComponent(pasmenmsg7)
+else
 MANAGER.savesetting("CRK", "passreal",passtime2:text())
 pasmenmsg2:text("Current Password: "..MANAGER.getsetting("CRK","passreal"))
+end
 end)
 doned3 :action(function(sender)
 ui.closeWindow(passmen)
 end)
 
 doned6 :action(function(sender)
+passmen:removeComponent(pasmenmsg7)
+if passtime3:text() == "" then
+passmen:addComponent(pasmenmsg7)
+else
 MANAGER.savesetting("CRK", "passreal2",passtime3:text())
 pasmenmsg6:text("Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
+end
+end)
+
+doned7 :action(function(sender)
+passbutlab:text("OFF")
+MANAGER.savesetting("CRK", "pass","0")
+MANAGER.savesetting("CRK", "passreal","12345678")
+MANAGER.savesetting("CRK", "passreal2","DMND")
+pasmenmsg2:text("Current Password: "..MANAGER.getsetting("CRK","passreal"))
+pasmenmsg6:text("Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
+pasmenmsg4:text("Status: "..passbutlab:text())
+passtime2:text("")
+passtime3:text("")
 end)
 
 doned3 :action(function(sender)
@@ -233,13 +312,13 @@ end)
 doned4 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","1")
 passbutlab:text("ON")
-pasmenmsg4:text("Protection status: "..passbutlab:text())
+pasmenmsg4:text("Status: "..passbutlab:text())
 end)
 
 doned5 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","0")
 passbutlab:text("OFF")
-pasmenmsg4:text("Protection status: "..passbutlab:text())
+pasmenmsg4:text("Status: "..passbutlab:text())
 end)
 end)
 
@@ -303,8 +382,9 @@ elseif savetime >= saveend then
 savetime = 0
 end
 
-if saveend - savetime < 18 then
-graphics.drawRect(4,367,33,14, 255,255,0,200)
+if saveend - savetime < 15 then
+graphics.drawRect(4,367,33,14, 255,255,0,255)
+graphics.fillRect(4,367,33,14,15,15,15,200)
 graphics.drawText(8,370,"Stamp", 255,255,0,255)
 end
 
@@ -396,9 +476,9 @@ end)
 
 edito:action(function(sender)
 close()
-local editomenu = Window:new(-15,-15, 610, 365)
-local doned = Button:new(310,347,80,15, "Done", "Edit")
-local cancel = Button:new(210,347,80,15, "Cancel", "Hide.")
+local editomenu = Window:new(-15,-15, 610, 382)
+local doned = Button:new(534,362,70,15, "Done", "Edit")
+local cancel = Button:new(464,362,70,15, "Cancel", "Hide.")
 local edmsg = Label:new(153,5,120, 10,"    Welcome to the Element Editor. Note: These changes are temporory and will not be saved!")
 local edelnam = Textbox:new(10, 30, 100, 15, '', 'Elem to Edit.')
 local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
@@ -415,6 +495,8 @@ local edelname11 = Textbox:new(10, 260, 100, 15, '', 'Spawn Temp.')
 local edelname12 = Textbox:new(10, 280, 100, 15, '', 'Diffusion.')
 local edelname13 = Textbox:new(10, 300, 100, 15, '', 'Gravity.')
 local edelname14 = Textbox:new(10, 320, 100, 15, '', 'Advection.')
+local edelname15 = Textbox:new(10, 340, 100, 15, '', 'Melting point.')
+local edelname16 = Textbox:new(10, 360, 100, 15, '', 'Freezing point.')
 
 local ed0 = Label:new(170,33,120, 10,"Type the element name to be edited (Eg. STNE).")
 local ed1 = Label:new(106,63,70, 10,"New name.")
@@ -430,6 +512,8 @@ local ed11 = Label:new(137,263,120, 10,"Temp. at which element is spawn.")
 local ed12 = Label:new(211,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10.")
 local ed13 = Label:new(156,303,120, 10,"How fast the particle falls. -0.1 to 0.4.")
 local ed14 = Label:new(205,323,120, 10,"How much the particle is accelerated by moving air. -1 to 01")
+local ed15 = Label:new(160,343,120, 10,"Temp. at which element melts (in Celsius).")
+local ed16 = Label:new(164,363,120, 10,"Temp. at which element freezes (in Celsius).")
 
 editomenu:addComponent(edmsg)
 editomenu:addComponent(doned)
@@ -448,6 +532,8 @@ editomenu:addComponent(edelname11)
 editomenu:addComponent(edelname12)
 editomenu:addComponent(edelname13)
 editomenu:addComponent(edelname14)
+editomenu:addComponent(edelname15)
+editomenu:addComponent(edelname16)
 editomenu:addComponent(ed0)
 editomenu:addComponent(ed1)
 editomenu:addComponent(ed2)
@@ -462,14 +548,15 @@ editomenu:addComponent(ed11)
 editomenu:addComponent(ed12)
 editomenu:addComponent(ed13)
 editomenu:addComponent(ed14)
+editomenu:addComponent(ed15)
+editomenu:addComponent(ed16)
 editomenu:addComponent(cancel)
 
 ui.showWindow(editomenu)
 
-
 doned:action(function(sender)
 function errormsg()
-graphics.drawText(400,351,"Please Enter Valid Element Name!", 255,0,0,255)
+graphics.drawText(480,348,"Invalid element entered!", 255,0,0,255)
 end
 
 if edelnam:text() ~= nil then
@@ -547,6 +634,16 @@ else
 elements.property(newName, "Advection", tonumber(edelname14:text()))
 end
 
+if edelname15:text() == "" then
+else
+elements.property(newName, "HighTemperature", tonumber(edelname15:text()) + 273)
+end
+
+if edelname16:text() == "" then
+else
+elements.property(newName, "LowTemperature", tonumber(edelname16:text()) + 273)
+end
+
 ui.closeWindow(editomenu)
 end)
 
@@ -570,7 +667,7 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2661203)
+randsav = math.random(1,2805205)
 sim.loadSave(randsav, 0) 
 end)
 
@@ -612,27 +709,6 @@ graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, colourRED,colourGRN,
 end
 end
 
-local fanval = "1"
-fancur:action(function(sender)
-clearsb()
-if fanval == "1" then
-MANAGER.savesetting("CRK", "fancurs","1") 
-event.register(event.tick,drawcirc)
-fanlb:text("ON")
-fanval = "0"
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-event.unregister(event.tick,cbrightness)
-event.register(event.tick,cbrightness)
-end
-
-elseif fanval == "0" then
-MANAGER.savesetting("CRK", "fancurs","0") 
-event.unregister(event.tick,drawcirc)
-fanval = "1"
-fanlb:text("OFF")
-end
-end)
-
 local startTime
 local entimey
 function remindme()
@@ -658,6 +734,7 @@ clearsb()
 startTime = os.time()
 if tonumber(remtime:text()) < 1 or tonumber(remtime:text()) > 60 then
 entimey = "10"
+remtime:text("10")
 else
 entimey = tonumber(remtime:text())
 end
@@ -724,7 +801,8 @@ newmenu:removeComponent(bropc)
 end)
 
 --Texter script hybrid start
-yvalue = 50
+local yvalue = 10
+local ylimit = 320
 local linenumber = 01
 function drawLetter(letter, x, y, element, font)
 
@@ -771,54 +849,85 @@ function drawText(text, x, y, element, font)
 
         end
 end
+local timerfoi = 0
+local newmenu4 = Window:new(10,344,515, 40)
 
-chud:action(function(sender)
-
-function drawglitch2()
-graphics.drawLine(12,85,560,85,ar,ag,ab,250)
+function drawblip()
+ui.closeWindow(newmenu4)
+if timerfoi < 0.2 then
+timerfoi= timerfoi + 0.1
 end
 
-close()
-local newmenu4 = Window:new(1,1, 610, 405)
-local scripthelp2 = Label:new(13,5,120, 20,"Welcome to the texter 4.0")
+if timerfoi >= 0.1 then
 ui.showWindow(newmenu4)
-local yvalue = 30
+timerfoi = 0
+tpt.unregister_step(drawblip)
+end
+
+end
+local texttext = "Typing starts here."
+local tr,tg,tb = 255
+local ffix = "0"
+local ffix2 = "0"
+local yval2 = 10
+local fsize = "Normal"
+local linenumber = 01
+
+function drawprev2()
+if yvalue < ylimit then
+graphics.drawText(10,yvalue+yval2,texttext..".",tr,tg,tb,255)
+if ffix == "0" then
+yval2 = 10
+elseif ffix == "1" then
+yval2 = 14
+end
+end
+graphics.drawText(10,6,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+end
+
+chud:action(function(sender)
+tpt.set_pause(1)
+tr = 255
+tg = 255
+tb = 255
 linenumber = 01
+tpt.hud(0)
+ffix2 = "0"
+ffix = "0"
+yvalue = 10
+texttext = "Typing starts here"
+tpt.unregister_step(drawblip)
+tpt.register_step(drawblip)
+close()
+
 local mouseX, mouseY = tpt.mousex, tpt.mousey
 local text, element, font = '', 'DMND', '5x7'
-local textTextbox = Textbox:new(10, 30, 505, 20, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
-local textTextboxs = Textbox:new(96, 55, 42, 20, '', 'Element')
-local scripthelp23 = Label:new(10,90,40, 10,"Preview:")
-local scripthelp = Label:new(10,90,630, 300,"")
-local place = Button:new(10,55,40,20,"Enter", "Toggle hidden elements.")
-local cancel= Button:new(52,55,40,20,"Close", "Cancel the element placement.")
-local lno  = Label:new(473, 58, 10, 15, "| Line No:")
-local lnol  = Label:new(505, 58, 10, 15, linenumber)
-local lno2  = Label:new(160, 58, 10, 15, "Font:")
-local smalf = Button:new(180,55,46,20,"Normal", "5x7.")
-local bigf = Button:new(230,55,46,20,"Big", "7x10.")
-local fsize  = Label:new(415, 58, 10, 15, "Font: Normal")
-local clrsc = Button:new(520,30,40,20,"Clear", "Clear text")
+local textTextbox = Textbox:new(5, 2, 505, 15, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
+local place = Button:new(5,20,50,17,"Enter", "Toggle hidden elements.")
+local cancel= Button:new(60,20,50,17,"Close", "Cancel the element placement.")
+local textTextboxs = Textbox:new(116, 20, 42, 17, '', 'Element')
+local lno2  = Label:new(190, 20, 10, 17, "Font:")
+local smalf = Button:new(210,20,42,17,"Normal", "5x7.")
+local bigf = Button:new(255,20,42,17,"Title", "7x10.")
+local titf = Button:new(300,20,42,17,"Bold", "7x10, Bold")
+local clrsc = Button:new(378,20,64,17,"Clear Text", "Clear text")
+local clrsc2 = Button:new(444,20,65,17,"Clear Screen", "Clear text")
 
 newmenu4:addComponent(textTextbox)
 newmenu4:addComponent(textTextboxs)
-newmenu4:addComponent(scripthelp) 
-newmenu4:addComponent(scripthelp2) 
-newmenu4:addComponent(scripthelp23) 
 newmenu4:addComponent(place)
 newmenu4:addComponent(cancel)
-newmenu4:addComponent(lno)
 newmenu4:addComponent(lno2)
-newmenu4:addComponent(lnol)
 newmenu4:addComponent(smalf)
 newmenu4:addComponent(bigf)
-newmenu4:addComponent(fsize)
+newmenu4:addComponent(titf)
 newmenu4:addComponent(clrsc)
-newmenu4:onDraw(drawglitch2)
-
+newmenu4:addComponent(clrsc2)
+newmenu4:onDraw(drawprev2)
  textTextbox:onTextChanged(
                     function(sender)
                             text = textTextbox:text();
+						    texttext = textTextbox:text();
                     end
                 )
 
@@ -827,97 +936,111 @@ newmenu4:onDraw(drawglitch2)
                             element = textTextboxs:text();
                     end
                 )
-
-local ffix = "0"
-local fx = "1"
-local fontdis = "N"
-
 smalf:action(function(sender)
 font='5x7'
+tr = 255
+tg = 255
+tb = 255
+if ffix == "1" and yvalue < ylimit then
+if ffix2 == "1" then
+yvalue = yvalue + 10
+linenumber = linenumber + 1
+end
+end
 ffix = "0"
-fontdis = "N"
-fsize:text("Font: Normal")
+ffix2 = "0"
+fsize = "Normal"
 end)
 
 bigf:action(function(sender)
+tr = 255
+tg = 90
+tb = 0
 font='7x10'
+if ffix == "0" and yvalue < ylimit then
+if ffix2 == "1" then
+yvalue = yvalue + 10
+linenumber = linenumber + 1
+end
+end
 ffix = "1"
-fontdis = "B"
-fsize:text("Font:  Big")
+ffix2 = "0"
+fsize = "Title"
+end)
+
+titf:action(function(sender)
+tr = 50
+tg = 100
+tb = 255
+font='7x10-Bold'
+if ffix == "0" and yvalue < ylimit then
+if ffix2 == "1" then
+yvalue = yvalue + 10
+linenumber = linenumber + 1
+end
+end
+ffix = "1"
+ffix2 = "0"
+fsize = "Bold"
 end)
 
 cancel:action(function(sender)
-newmenu4:removeComponent(scripthelp)
-newmenu4:removeComponent(scripthelp2)
-newmenu4:removeComponent(scripthelp23)
+tpt.hud(1)
 newmenu4:removeComponent(textTextbox)
 newmenu4:removeComponent(textTextboxs)
-newmenu4:removeComponent(place)
-newmenu4:removeComponent(cancel)
-newmenu4:removeComponent(lno)
-newmenu4:removeComponent(lno2)
-newmenu4:removeComponent(lnol)
-newmenu4:removeComponent(smalf)
-newmenu4:removeComponent(bigf)
-newmenu4:removeComponent(fsize)
-newmenu4:removeComponent(clrsc)
-
+tpt.unregister_step(drawblip)
 ui.closeWindow(newmenu4)
 end)
-local texth = scripthelp:text()
-local valueplace = 0
 
 clrsc:action(function(sender)
 textTextbox:text("")
+texttext = "Textbox Cleared"
+end)
+
+clrsc2:action(function(sender)
+yvalue = 10
+yval2= 10
+ffix2 = "0"
+linenumber = "1"
+texttext = "Screen Cleared"
+sim.clearSim()
+ui.closeWindow(newmenu4)
+tpt.unregister_step(drawblip)
+tpt.register_step(drawblip)
 end)
 
 place:action(function(sender)
-if linenumber >22 and valueplace == 0 then
-scripthelp:text("")
-valueplace = 1
-end
- 
-if yvalue < 360 then
-text = textTextbox:text();
-texth = scripthelp:text()
-if ffix == "1" then
-scripthelp:text(texth..text.." L:"..linenumber.." ("..fontdis..") \n")
-else
-scripthelp:text(texth..text.." L:"..linenumber.." ("..fontdis..") \n")
-end
+ffix2 = "1"
+ui.closeWindow(newmenu4)
+tpt.unregister_step(drawblip)
+tpt.register_step(drawblip)
 
+if yvalue < ylimit then
+texttext = ">"
 if ffix == "1" then
 yvalue = yvalue + 14
-else
-yvalue = yvalue + 12
+elseif ffix == "0" then
+yvalue = yvalue + 10
 end
 
 textTextbox:text('')
 linenumber = linenumber + 1
-lnol:text(linenumber)
-
-if linenumber <=  33 then
 drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
-end
+text = textTextbox:text()
 
-if linenumber == 2 then 
-scripthelp:text("                                                                                                                            .\n"..texth..text.." L:1".." ("..fontdis..") \n")
 end
-
-if linenumber == 24 then 
-scripthelp:text("                                                                                                                            .\n"..texth..text.." L:24".." ("..fontdis..") \n")
-end
-
-if yvalue > 355 then
-scripthelp:text(texth..text.." Max lines reached.")
-end
+if yvalue >= ylimit then
+linenumber = "Max lines reached!"
 end
 end)
 end)
 --Texter script hybrid end
 
 function autohidehud()
-	if tpt.mousey <= 38 then tpt.hud(0) else tpt.hud(1)
+	if tpt.mousey <= 40 then 
+tpt.hud(0) 
+gfx.drawText(6,6,"Hidden",255,255,255,200)
+else tpt.hud(1)
 	end
 end
 
@@ -1046,11 +1169,11 @@ local prevpg = Button:new(242, 400, 40, 15, "Prev.")
 local nextpg = Button:new(292, 400, 40, 15, "Next")
 local close2 = Button:new(512, 400, 100, 15, "Close wiki")
 
-local creditstxt = Label:new(6,-22, 598, 418,"\n\n                                         << Welcome To The Element Wiki >>\n\n01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n.tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\nEvaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\nIt can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\nCan split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LITH2: Lithium ion battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\nReacts with different elements like O2, WATR, ACID etc as IRL.\n")
+local creditstxt = Label:new(6,-22, 598, 418,"\n\n                                         << Welcome To The Element Wiki >>\n\n01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n.tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\nEvaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\nIt can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\nCan split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\nReacts with different elements like O2, WATR, ACID etc as IRL.\n")
 
 local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n  Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.")
 
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & energy particles are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n  37) CHRL: Chlorine gas, settels down fast. Photochemical reaction with H2. CHLR+H2 = ACID, Distills WATR at room temp.\n  Turns WATR into ACID at higher temp. Kills stkm. Slows down when cooled.")
+local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n  37) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n  Cl+WATR=DSTW (distillation below 50C) or ACID (>50C). Kills STKM & PLNT. Slows when cooled. Rusts IRON & BMTL.")
 
 creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
@@ -1107,7 +1230,7 @@ tpt.el.fntc.menu=0
 tpt.el.fptc.menu=0
 tpt.el.cwir.menu=0
 tpt.el.copr.menu=0
-tpt.el.lith2.menu=0
+tpt.el.lbtr.menu=0
 tpt.el.led.menu=0
 tpt.el.timc.menu=0
 tpt.el.pinv.menu=0
@@ -1142,7 +1265,7 @@ tpt.el.wall.menu=0
 tpt.el.sun.menu=0
 tpt.el.bee.menu=0
 tpt.el.pet.menu=0
-tpt.el.chlr.menu=0
+tpt.el.cl.menu=0
 end
 
 function showmodelem()
@@ -1150,7 +1273,7 @@ tpt.el.fntc.menu=1
 tpt.el.fptc.menu=1
 tpt.el.cwir.menu=1
 tpt.el.copr.menu=1
-tpt.el.lith2.menu=1
+tpt.el.lbtr.menu=1
 tpt.el.led.menu=1
 tpt.el.timc.menu=1
 tpt.el.pinv.menu=1
@@ -1185,7 +1308,7 @@ tpt.el.wall.menu=1
 tpt.el.sun.menu=1
 tpt.el.bee.menu=1
 tpt.el.pet.menu=1
-tpt.el.chlr.menu=1
+tpt.el.cl.menu=1
 end
 local modelemval = 0
 bg:action(function(sender)
@@ -1221,7 +1344,7 @@ as = 50
 end
 
 tpt.drawrect(3,3,605,377,backvr,backvg,backvb,as + 200)
-tpt.fillrect(3,3,606,377,backvr,backvg,backvb,as)
+tpt.fillrect(3,3,605,377,backvr,backvg,backvb,as)
 end
 
 function clearback()
@@ -1245,12 +1368,10 @@ else
 al = brightSlider:value()
 end
 
-tpt.drawrect(613,103,14,14,ar,ag,ab,al)
-
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(3,-1,605,3, ar,ag,ab,al)
+tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 
 if uival == "1" then
@@ -1262,13 +1383,14 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 
 elseif barval == "2" then
-tpt.fillrect(3,-1,605,3, ar,ag,ab,al)
+tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 end
 
 --Topbarend
 
 --MP and manager
+tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 
 --top
@@ -1278,6 +1400,7 @@ tpt.drawrect(613,33,14,14,ar,ag,ab,al)
 tpt.drawrect(613,49,14,14,ar,ag,ab,al)
 tpt.drawrect(613,65,14,14,ar,ag,ab,al)
 tpt.drawrect(613,81,14,14,ar,ag,ab,al)
+
 --right
 tpt.drawrect(613,136,14,14,ar,ag,ab,al)
 tpt.drawrect(613,152,14,14,ar,ag,ab,al)
@@ -1308,7 +1431,6 @@ tpt.drawline(36,408,36,421,ar,ag,ab,al)
 tpt.drawline(18,408,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,422,ar,ag,ab,al)
 tpt.drawline(596,409,596,422,ar,ag,ab,al)
-tpt.drawrect(1,408,626,14,ar,ag,ab,al)
 tpt.drawline(418,408,418,421,ar,ag,ab,al)
 end
 end
@@ -1349,12 +1471,10 @@ end
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
 
-tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
-
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
-tpt.fillrect(3,-1,605,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(2,-1,607,3, colourRED,colourGRN,colourBLU,al)
 end
 if uival == "1" then
 
@@ -1365,12 +1485,13 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
 
 elseif barval == "2" then
-tpt.fillrect(3,-1,605,3, colourRED,colourGRN,colourBLU,al)
+tpt.fillrect(2,-1,607,3, colourRED,colourGRN,colourBLU,al)
 end
 end
 
 --Topbarend
 --MP and manager
+tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
 
 --top
@@ -1410,59 +1531,63 @@ tpt.drawline(36,408,36,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(18,408,18,421,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(580,409,580,422,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(596,409,596,422,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
 tpt.drawline(418,408,418,421,colourRED,colourGRN,colourBLU,al)
 end
 end
 
 mp:action(function(sender)
 clearsb()
+local mp1 = Button:new(20,92,45,20,"Dark", "Change the theme to default")
+local mp2 = Button:new(70,92,45,20,"Fire", "Change the theme to Blue")
+local mp3 = Button:new(120,92,45,20,"Aqua", "Change the theme to Red")
+local mp4 = Button:new(170,92,45,20,"Forest", "Change the theme to Green")
+local mp7 = Button:new(220,92,45,20,"Vanilla", "Change the theme back to Plain white")
+local mp8 = Button:new(270,92,45,20,"Twilight", "Magnita/Default")
+local mp9 = Button:new(320,92,45,20,"Pulse", "RBG makes everything better.")
+local mpop = Button:new(530,347,75,20,"Done", "Close")
 
-local mp1 = Button:new(20,102,45,20,"Dark", "Change the theme to default")
-local mp2 = Button:new(70,102,45,20,"Fire", "Change the theme to Blue")
-local mp3 = Button:new(120,102,45,20,"Aqua", "Change the theme to Red")
-local mp4 = Button:new(170,102,45,20,"Forest", "Change the theme to Green")
-local mp7 = Button:new(220,102,45,20,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,102,45,20,"Twilight", "Magnita/Default")
-local mp9 = Button:new(320,102,45,20,"Pulse", "RBG makes everything better.")
-local mpop = Button:new(530,307,75,20,"Done", "Custom options.")
+local bg1 = Button:new(24,300,45,15,"Off", "Default")
+local bg2 = Button:new(74,300,45,15,"Blue", "Blue background")
+local bg3 = Button:new(124,300,45,15,"Red", "Red background")
+local bg4 = Button:new(174,300,45,15,"Green", "Green background")
+local bg5 = Button:new(224,300,45,15,"Orange", "Yellow background")
+local bg6 = Button:new(274,300,45,15,"Theme", "Same as set theme")
 
-local bg1 = Button:new(24,310,45,15,"Off", "Default")
-local bg2 = Button:new(74,310,45,15,"Blue", "Blue background")
-local bg3 = Button:new(124,310,45,15,"Red", "Red background")
-local bg4 = Button:new(174,310,45,15,"Green", "Green background")
-local bg5 = Button:new(224,310,45,15,"Orange", "Yellow background")
+local bog1 = Button:new(24,345,45,15,"Off", "Default")
+local bog2 = Button:new(74,345,45,15,"On", "on")
+local fanlb = Label:new(77, 325, 10, 15, "OFF")
 
 --topbar
-local barlb = Label:new(70, 244, 5, 5, " Long")
-local baropa =  Button:new(24,260,35,20,"Short", "Short and moving")
-local baropb =  Button:new(64,260,35,20,"Long", "Long")
-local baropd =  Button:new(104,260,35,20,"OFF", "Turn off")
+local barlb = Label:new(70, 234, 5, 5, " Long")
+local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
+local baropb =  Button:new(64,250,35,20,"Long", "Long")
+local baropd =  Button:new(104,250,35,20,"OFF", "Turn off")
 
-local als = Label:new(280,155, 10, 15, "Alpha")
-local rl = Label:new(275, 176, 10, 15, "Red")
-local gl = Label:new(280,197, 10, 15, "Green")
-local bl = Label:new(278, 218, 10, 15, "Blue")
+local als = Label:new(325,145, 30, 15, "Alpha")
+local rl = Label:new(321, 166, 30, 15, "Red")
+local gl = Label:new(325,187, 30, 15, "Green")
+local bl = Label:new(323, 208, 30, 15, "Blue")
 
-local aSlider = Slider:new(20, 155, 200, 15, 255)
-local rSlider = Slider:new(20, 176, 200, 15, 255)
-local gSlider = Slider:new(20, 197, 200, 15, 255)
-local bSlider = Slider:new(20, 218, 200, 15, 255)
+local aSlider = Slider:new(20, 145, 255, 15, 255)
+local rSlider = Slider:new(20, 166, 255, 15, 255)
+local gSlider = Slider:new(20, 187, 255, 15, 255)
+local bSlider = Slider:new(20, 208, 255, 15, 255)
 
-local alb = Label:new(240,155,10, 15)
-local rlb = Label:new(240, 176, 10, 15)
-local glb = Label:new(240, 197, 10, 15)
-local blb = Label:new(240, 218, 10, 15)
+local alb = Label:new(290,145,10, 15)
+local rlb = Label:new(290, 166, 10, 15)
+local glb = Label:new(290, 187, 10, 15)
+local blb = Label:new(290, 208, 10, 15)
 
-local newmenuth = Window:new(-15,-15, 609, 330)
-local creditsth = Label:new(285,-20,100, 60,"Welcome to the theme control centre.")
-local presetlb = Label:new(-10,68,100, 50,"Presets:")
-local previewlb = Label:new(-10,10,100, 60,"Preview:")
-local custlb = Label:new(-10,118,100, 60,"Custom:")
-local bartlb = Label:new(35,242,10, 10,"Topbar:")
-local filtlb = Label:new(37,292,10, 10,"Filters:")
-local pulselb = Label:new(70,30,100, 60,"Pulse theme on, preview not available.")
-local alphalb = Label:new(87,134,100, 60,"Brightness turned on, alpha slider not available.")
+local newmenuth = Window:new(-15,-15, 609, 370)
+local creditsth = Label:new(280,-20,100, 60,"Welcome To The Control Centre.")
+local presetlb = Label:new(-10,58,100, 50,"Presets:")
+local previewlb = Label:new(-10,-5,100, 60,"Preview:")
+local custlb = Label:new(-10,108,100, 60,"Custom:")
+local bartlb = Label:new(35,232,10, 10,"Topbar:")
+local filtlb = Label:new(37,282,10, 10,"Filters:")
+local bordlb = Label:new(41,328,10, 10,"Crosshair:")
+local pulselb = Label:new(70,20,100, 60,"Pulse theme on, preview not available.")
+local alphalb = Label:new(87,124,100, 60,"Brightness turned on, alpha slider not available.")
 
 function mpnolag()
 newmenuth:removeComponent(pulselb)
@@ -1492,7 +1617,7 @@ event.unregister(event.tick,colourblender)
 end
 
 function drawprev()
-graphics.drawRect(20,48,573,26,255,255,255,255)
+graphics.drawRect(20,38,573,26,255,255,255,255)
 if MANAGER.getsetting("CRK", "savergb") == "1" then
 newmenuth:addComponent(pulselb)
 end
@@ -1501,15 +1626,20 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenuth:addComponent(alphalb)
 end
 
-tpt.fillrect(65,292,10,10,backvr,backvg,backvb,255)
+tpt.drawrect(65,282,10,10,backvr,backvg,backvb,255)
+tpt.fillrect(65,282,10,10,backvr,backvg,backvb,100)
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
-graphics.fillRect(22, 50,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
-graphics.drawRect(1,1, 609, 330, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
-graphics.fillRect(1,1, 609, 330, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
+graphics.fillRect(22, 40,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+graphics.drawRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
+graphics.fillRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 end
 end
 newmenuth:onDraw(drawprev)
+
+if MANAGER.getsetting("CRK", "fancurs") == "1" then
+fanlb:text("ON")
+end
 
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barlb:text("OFF")
@@ -1526,8 +1656,6 @@ ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
 barlength = 1
 end
-
-newmenuth:onTryExit(closewindow)
 
 ui.showWindow(newmenuth)
 
@@ -1549,6 +1677,10 @@ newmenuth:addComponent(bg2)
 newmenuth:addComponent(bg3)
 newmenuth:addComponent(bg4)
 newmenuth:addComponent(bg5)
+newmenuth:addComponent(bg6)
+
+newmenuth:addComponent(bog1)
+newmenuth:addComponent(bog2)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
@@ -1565,6 +1697,8 @@ newmenuth:addComponent(baropb)
 newmenuth:addComponent(baropd)
 newmenuth:addComponent(barlb)
 newmenuth:addComponent(bartlb)
+newmenuth:addComponent(bordlb)
+newmenuth:addComponent(fanlb)
 
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 newmenuth:addComponent(aSlider)
@@ -1595,6 +1729,22 @@ rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
 
+bog2:action(function(sender)
+MANAGER.savesetting("CRK", "fancurs","1") 
+event.register(event.tick,drawcirc)
+fanlb:text("ON")
+if MANAGER.getsetting("CRK", "brightstate") == "1" then
+event.unregister(event.tick,cbrightness)
+event.register(event.tick,cbrightness)
+end
+end)
+
+bog1:action(function(sender)
+MANAGER.savesetting("CRK", "fancurs","0") 
+event.unregister(event.tick,drawcirc)
+fanlb:text("OFF")
+end)
+
 mpop:action(function(sender)
 ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
@@ -1617,16 +1767,16 @@ mpnolag()
 end)
 
 mp3:action(function(sender)
-MANAGER.savesetting("CRK","ar",10)
-MANAGER.savesetting("CRK","ag",10)
-MANAGER.savesetting("CRK","ab",220)
-MANAGER.savesetting("CRK","al",220)
+MANAGER.savesetting("CRK","ar",50)
+MANAGER.savesetting("CRK","ag",100)
+MANAGER.savesetting("CRK","ab",255)
+MANAGER.savesetting("CRK","al",255)
 mpnolag()
 end)
 
 mp4:action(function(sender)
 MANAGER.savesetting("CRK","ar",0)
-MANAGER.savesetting("CRK","ag",220)
+MANAGER.savesetting("CRK","ag",190)
 MANAGER.savesetting("CRK","ab",0)
 MANAGER.savesetting("CRK","al",220)
 mpnolag()
@@ -1649,14 +1799,14 @@ mpnolag()
 end)
 
 mp9:action(function(sender)
-MANAGER.savesetting("CRK","al",200)
+MANAGER.savesetting("CRK","al",210)
 MANAGER.savesetting("CRK","savergb",1)
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 aclr = aSlider:value() 
 alb:text(aclr)
+event.unregister(event.tick,theme)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,colourblender)
-event.unregister(event.tick,theme)
 end)
 
 bg1:action(function(sender)
@@ -1694,6 +1844,13 @@ backvb = 0
 clearback()
 end)
 
+bg6:action(function(sender)
+backvr = MANAGER.getsetting("CRK","ar")
+backvg = MANAGER.getsetting("CRK","ag")
+backvb = MANAGER.getsetting("CRK","ab")
+clearback()
+end)
+
 baropa:action(function(sender)
 barlb:text(" Short")
 MANAGER.savesetting("CRK","barval","1")
@@ -1712,19 +1869,19 @@ end)
 end)
 
 function startupcheck()
+event.register(event.tick,writefile2)
 interface.addComponent(toggle)
 fs.makeDirectory("scripts")
+local faz =io.open("updatedmp.lua","r")
+if faz ~= nil then 
+io.close(faz)
+dofile("updatedmp.lua")
+end
 
-if MANAGER.getsetting("CRK","ar") == nil then
-MANAGER.savesetting("CRK","ar",131)
-end
-if MANAGER.getsetting("CRK","ag") == nil then
-MANAGER.savesetting("CRK","ag",0)
-end
-if MANAGER.getsetting("CRK","ab") == nil then
-MANAGER.savesetting("CRK","ab",255)
-end
 if MANAGER.getsetting("CRK","al") == nil then
+MANAGER.savesetting("CRK","ar",131)
+MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",255)
 end
 
@@ -1751,8 +1908,6 @@ end
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
 event.register(event.tick,drawcirc)
-fanval = "0"
-fanlb:text("ON")
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -1762,7 +1917,6 @@ brlabel:text("Turned: on")
 else
 MANAGER.savesetting("CRK", "brightness",200)
 end
-
 end
 startupcheck()
 
@@ -1833,17 +1987,27 @@ end
 end)
 
 reset:action(function(sender)
-clearsb()
+close()
 interface.removeComponent(unhd)
 timerremo()
-frameCount = 0
-tpt.setdrawcap(0)
+local restneed = 0
+local fd1 = io.open("updatedmp.lua","r")
+local fd2 = io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua","r")
+if fd1 ~= nil then
+fd1:close()
+os.remove("updatedmp.lua")
+restneed = "1"
+end
+if fd2 ~= nil then
+fd2:close()
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+restneed = "1"
+end
 backvr = 0
 backvg = 0
 backvb = 0
 perfmv = "1"
 autoval = "1"
-fanval = "1"
 shrtv = "1"
 fpsval = "1"
 uival = "1"
@@ -1860,11 +2024,11 @@ fplb:text("ON")
 rulb:text("OFF")
 dellb:text("Shown")
 remlabe:text("OFF")
-fanlb:text("OFF")
 savetime = 0
 barktext:text("5")
 remtime:text("10")
 showmodelem()
+event.unregister(event.tick,writefile)
 event.unregister(event.tick,autosave)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
@@ -1893,12 +2057,12 @@ MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK", "savergb",2)
 tpt.hud(1)
-ui.closeWindow(newmenu) 
 hideyes()
 tpt.display_mode(3)
 tpt.watertest(0)
 sim.edgeMode(0) 
 tpt.setfpscap(60)
+tpt.setdrawcap(0)
 tpt.setwindowsize(1)
 tpt.newtonian_gravity(0)
 tpt.decorations_enable(0)
@@ -1908,6 +2072,9 @@ sim.resetTemp()
 tpt.reset_velocity(1,380,300,300)
 tpt.setdebug(0X0)
 sim.clearSim()
+if restneed == "1" then
+platform.restart()
+end
 end)
 
 function close()
@@ -1920,7 +2087,7 @@ end
 function drawglitch()
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
-graphics.drawLine(12, 18,319,18,ar,ag,ab,al)
+graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
 graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
 else
@@ -1929,6 +2096,8 @@ graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
 graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
 end
+
+graphics.drawText(14,261,motw,255,200,55,255)
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
@@ -1955,12 +2124,10 @@ newmenu:addComponent(autohide)
 newmenu:addComponent(chud)
 newmenu:addComponent(brightness)
 newmenu:addComponent(reminder)
-newmenu:addComponent(fancur)
 newmenu:addComponent(Help)
 newmenu:addComponent(shrt)
 newmenu:addComponent(shrtlb)
 newmenu:addComponent(remlabe)
-newmenu:addComponent(fanlb)
 newmenu:addComponent(dellb)
 newmenu:addComponent(fplb)
 newmenu:addComponent(rulb)
@@ -1972,6 +2139,7 @@ newmenu:addComponent(passbut)
 newmenu:addComponent(passbutlab)
 newmenu:addComponent(savelabs)
 newmenu:addComponent(bglab)
+newmenu:addComponent(upmp)
 end
 
 hide:action(function(sender)
@@ -1990,8 +2158,6 @@ open()
 end)
 
 --fontstart
-
---fontstart
 fonts ={}
 fonts['5x7'] = {}
 fonts['5x7']['width'] = 5
@@ -2004,6 +2170,12 @@ fonts['7x10']['width'] = 7
 fonts['7x10']['height'] = 10
 fonts['7x10']['linespacing'] = 4
 fonts['7x10']['charspacing'] = 1
+
+fonts['7x10-Bold'] = {}
+fonts['7x10-Bold']['width'] = 7
+fonts['7x10-Bold']['height'] = 10
+fonts['7x10-Bold']['linespacing'] = 4
+fonts['7x10-Bold']['charspacing'] = 1
 
 fonts['5x7']['~'] = {
         ['descender'] = 0,
@@ -2422,8 +2594,6 @@ fonts['5x7'][' '] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
-
 fonts['5x7']['0'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -2574,7 +2744,6 @@ fonts['5x7']['9'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['.'] = {
         ['descender'] = 0,
         ['kerning'] = -4,
@@ -2590,7 +2759,6 @@ fonts['5x7']['.'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['<'] = {
         ['descender'] = 0,
         ['kerning'] = -2,
@@ -2606,7 +2774,6 @@ fonts['5x7']['<'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['>'] = {
         ['descender'] = 0,
         ['kerning'] = -2,
@@ -2622,7 +2789,6 @@ fonts['5x7']['>'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['@'] = {
         ['descender'] = -2,
         ['kerning'] = 0,
@@ -2638,7 +2804,6 @@ fonts['5x7']['@'] = {
                 {0, 1, 1, 1, 0}
         }
 }
-
 fonts['5x7']['#'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -2654,7 +2819,6 @@ fonts['5x7']['#'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['$'] = {
         ['descender'] = -2,
         ['kerning'] = 0,
@@ -2670,7 +2834,6 @@ fonts['5x7']['$'] = {
                 {0, 0, 1, 0, 0}
         }
 }
-
 fonts['5x7']['%'] = {
         ['descender'] = -1,
         ['kerning'] = 0,
@@ -2686,7 +2849,6 @@ fonts['5x7']['%'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['^'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -2702,7 +2864,6 @@ fonts['5x7']['^'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['{'] = {
         ['descender'] = -2,
         ['kerning'] = -2,
@@ -2718,7 +2879,6 @@ fonts['5x7']['{'] = {
                 {0, 0, 1, 0, 0}
         }
 }
-
 fonts['5x7']['}'] = {
         ['descender'] = -2,
         ['kerning'] = -2,
@@ -2734,7 +2894,6 @@ fonts['5x7']['}'] = {
                 {1, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['&'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -2750,7 +2909,6 @@ fonts['5x7']['&'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['*'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -2766,7 +2924,6 @@ fonts['5x7']['*'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['('] = {
         ['descender'] = -2,
         ['kerning'] = -2,
@@ -2782,7 +2939,6 @@ fonts['5x7']['('] = {
                 {0, 0, 1, 0, 0}
         }
 }
-
 fonts['5x7'][')'] = {
         ['descender'] = -2,
         ['kerning'] = -2,
@@ -2798,7 +2954,6 @@ fonts['5x7'][')'] = {
                 {1, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['='] = {
         ['descender'] = 0,
         ['kerning'] = -1,
@@ -2814,7 +2969,6 @@ fonts['5x7']['='] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['['] = {
         ['descender'] = -2,
         ['kerning'] = -3,
@@ -2830,7 +2984,6 @@ fonts['5x7']['['] = {
                 {1, 1, 0, 0, 0}
         }
 }
-
 fonts['5x7'][']'] = {
         ['descender'] = -2,
         ['kerning'] = -3,
@@ -2846,7 +2999,6 @@ fonts['5x7'][']'] = {
                 {1, 1, 0, 0, 0}
         }
 }
-
 fonts['5x7']['|'] = {
         ['descender'] = -2,
         ['kerning'] = -4,
@@ -2862,7 +3014,6 @@ fonts['5x7']['|'] = {
                 {1, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['!'] = {
         ['descender'] = 0,
         ['kerning'] = -4,
@@ -2878,7 +3029,6 @@ fonts['5x7']['!'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['?'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -2894,7 +3044,6 @@ fonts['5x7']['?'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7'][','] = {
         ['descender'] = -1,
         ['kerning'] = -4,
@@ -2910,7 +3059,6 @@ fonts['5x7'][','] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7'][':'] = {
         ['descender'] = 0,
         ['kerning'] = -4,
@@ -2926,7 +3074,6 @@ fonts['5x7'][':'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7'][';'] = {
         ['descender'] = 0,
         ['kerning'] = -4,
@@ -2942,7 +3089,6 @@ fonts['5x7'][';'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['+'] = {
         ['descender'] = 0,
         ['kerning'] = -2,
@@ -2958,7 +3104,6 @@ fonts['5x7']['+'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['-'] = {
         ['descender'] = 0,
         ['kerning'] = -2,
@@ -2974,7 +3119,6 @@ fonts['5x7']['-'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['_'] = {
         ['descender'] = 0,
         ['kerning'] = -2,
@@ -2990,7 +3134,6 @@ fonts['5x7']['_'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['/'] = {
         ['descender'] = -2,
         ['kerning'] = -2,
@@ -3006,7 +3149,6 @@ fonts['5x7']['/'] = {
                 {1, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['NULL'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -3022,7 +3164,6 @@ fonts['5x7']['NULL'] = {
                 {0, 0, 0, 0, 0}
         }
 }
-
 fonts['5x7']['A'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -3038,7 +3179,6 @@ fonts['5x7']['A'] = {
                 {1, 0, 0, 0, 1}
         }
 }
-
 fonts['5x7']['B'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -3446,9 +3586,6 @@ fonts['5x7']['"'] = {
                 {0, 0, 0, 0, 0}
         }
 }
---fontstop
--- Lower Case
-
 fonts['7x10']['a'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -3989,9 +4126,6 @@ fonts['7x10'][' '] = {
                 {0, 0, 0, 0, 0, 0, 0}
         }
 }
-
--- Upper Case
-
 fonts['7x10']['A'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -4512,9 +4646,6 @@ fonts['7x10']['Z'] = {
                 {0, 0, 0, 0, 0, 0, 0}
         }
 }
-
--- Numbers
-
 fonts['7x10']['0'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -5055,7 +5186,6 @@ fonts['7x10']['"'] = {
                 {0, 0, 0, 0, 0, 0, 0}
         }
 }
-
 fonts['7x10']['['] = {
         ['descender'] = -3,
         ['kerning'] = -4,
@@ -5156,7 +5286,6 @@ fonts['7x10'][','] = {
                 {0, 0, 0, 0, 0, 0, 0}
         }
 }
-
 fonts['7x10'][':'] = {
         ['descender'] = 0,
         ['kerning'] = -6,
@@ -5237,7 +5366,6 @@ fonts['7x10']['-'] = {
                 {0, 0, 0, 0, 0, 0, 0}
         }
 }
-
 fonts['7x10']['_'] = {
         ['descender'] = 0,
         ['kerning'] = -2,
@@ -5306,6 +5434,1886 @@ fonts['7x10']['~'] = {
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 1, 1, 0, 0, 1, 1},
                 {1, 0, 0, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['a'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 0, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {0, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['b'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['c'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['d'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['e'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['f'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['g'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0}
+        }
+}
+fonts['7x10-Bold']['h'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['i'] = {
+        ['descender'] = 0,
+        ['kerning'] = -5,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['j'] = {
+        ['descender'] = -4,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['k'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 1, 1, 0, 0},
+                {1, 1, 1, 1, 0, 0, 0},
+                {1, 1, 0, 1, 1, 0, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['l'] = {
+        ['descender'] = 0,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['m'] = {
+        ['descender'] = 0,
+        ['kerning'] = 1,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 0, 1, 1, 1, 0},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['n'] = {
+        ['descender'] = 0,
+        ['kerning'] = -1,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['o'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['p'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['q'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1}
+        }
+}
+fonts['7x10-Bold']['r'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['s'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 0, 1},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 1, 1},
+                {1, 0, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['t'] = {
+        ['descender'] = 0,
+        ['kerning'] = -3,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['u'] = {
+        ['descender'] = 0,
+        ['kerning'] = -1,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['v'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['w'] = {
+        ['descender'] = 0,
+        ['kerning'] = 1,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['x'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 1, 1, 0, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['y'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['z'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold'][' '] = {
+        ['descender'] = 0,
+        ['kerning'] = -3,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['A'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['B'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['C'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['D'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['E'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 1},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['F'] = {
+        ['descender'] = 0,
+        ['kerning'] = -1,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['G'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 1, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['H'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['I'] = {
+        ['descender'] = 0,
+        ['kerning'] = -5,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['J'] = {
+        ['descender'] = 0,
+        ['kerning'] = -1,
+        ['pixels']  = {
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {0, 1, 1, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['K'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 1, 1, 0, 0},
+                {1, 1, 1, 1, 0, 0, 0},
+                {1, 1, 1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 0, 0, 0},
+                {1, 1, 0, 1, 1, 0, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['L'] = {
+        ['descender'] = 0,
+        ['kerning'] = -1,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['M'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1, 1, 1},
+                {1, 1, 0, 1, 0, 1, 1},
+                {1, 1, 0, 1, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['N'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 0, 1, 1},
+                {1, 1, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 1, 1},
+                {1, 1, 0, 1, 1, 1, 1},
+                {1, 1, 0, 0, 1, 1, 1},
+                {1, 1, 0, 0, 1, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['O'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['P'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['Q'] = {
+        ['descender'] = -2,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['R'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['S'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['T'] = {
+        ['descender'] = 0,
+        ['kerning'] = 1,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['U'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['V'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['W'] = {
+        ['descender'] = 0,
+        ['kerning'] = 1,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {1, 1, 0, 1, 1, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['X'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 1, 1, 0, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['Y'] = {
+        ['descender'] = 0,
+        ['kerning'] = 1,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 0, 1, 1},
+                {0, 1, 1, 0, 0, 1, 1, 0},
+                {0, 0, 1, 1, 1, 1, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['Z'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['0'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 1, 0, 0, 0, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 1, 1, 1},
+                {1, 1, 0, 1, 0, 1, 1},
+                {1, 1, 1, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 0, 0, 0, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['1'] = {
+        ['descender'] = 0,
+        ['kerning'] = -3,
+        ['pixels']  = {
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 1, 1, 1, 0, 0, 0},
+                {1, 1, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['2'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['3'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 0, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['4'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 1, 1, 1},
+                {0, 0, 0, 1, 1, 1, 1},
+                {0, 0, 1, 1, 0, 1, 1},
+                {0, 1, 1, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['5'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 1},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['6'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 1, 1, 1, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['7'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['8'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['9'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {1, 1, 0, 0, 0, 1, 1},
+                {0, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 1, 1},
+                {0, 0, 0, 0, 1, 1, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 1, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['.'] = {
+        ['descender'] = 0,
+        ['kerning'] = -5,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['<'] = {
+        ['descender'] = 0,
+        ['kerning'] = -3,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['>'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['!'] = {
+        ['descender'] = 0,
+        ['kerning'] = -5,
+        ['pixels']  = {
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['@'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 0, 0, 0, 0, 0, 1},
+                {1, 0, 0, 1, 1, 0, 1},
+                {1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 1, 0, 1, 0, 1},
+                {1, 0, 0, 1, 1, 0, 1},
+                {1, 0, 0, 0, 1, 0, 1},
+                {1, 0, 0, 0, 0, 1, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['#'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 0, 0, 0, 1, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 1, 0, 0, 0, 1, 0},
+                {0, 1, 0, 0, 0, 1, 0},
+                {0, 1, 0, 0, 0, 1, 0},
+                {1, 1, 1, 1, 1, 1, 1},
+                {0, 1, 0, 0, 0, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['$'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 0, 0, 1, 0, 0, 1},
+                {1, 0, 0, 1, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 1, 0, 0, 1},
+                {0, 0, 0, 1, 0, 0, 1},
+                {1, 0, 0, 1, 0, 0, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['_'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['%'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 0, 0, 0, 1},
+                {1, 0, 0, 1, 0, 0, 1},
+                {1, 0, 0, 1, 0, 1, 0},
+                {0, 1, 1, 0, 0, 1, 0},
+                {0, 0, 0, 0, 1, 0, 0},
+                {0, 0, 0, 0, 1, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 1, 1, 0},
+                {0, 1, 0, 1, 0, 0, 1},
+                {1, 0, 0, 1, 0, 0, 1},
+                {1, 0, 0, 0, 1, 1, 0}
+        }
+}
+fonts['7x10-Bold']['^'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 1, 0, 0, 0},
+                {1, 0, 0, 0, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['{'] = {
+        ['descender'] = -3,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['}'] = {
+        ['descender'] = -3,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['&'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 0, 0, 0},
+                {1, 0, 0, 0, 1, 0, 0},
+                {1, 0, 0, 0, 1, 0, 0},
+                {1, 0, 0, 1, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 0, 0, 1, 0, 0, 1},
+                {1, 0, 0, 0, 1, 0, 1},
+                {1, 0, 0, 0, 0, 1, 0},
+                {0, 1, 1, 1, 1, 0, 1},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['*'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {1, 0, 0, 1, 0, 0, 1},
+                {0, 1, 1, 1, 1, 1, 0},
+                {0, 0, 1, 1, 1, 0, 0},
+                {0, 0, 1, 0, 1, 0, 0},
+                {0, 1, 0, 0, 0, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['('] = {
+        ['descender'] = -3,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold'][')'] = {
+        ['descender'] = -3,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['='] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['['] = {
+        ['descender'] = -3,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {1, 1, 1, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold'][']'] = {
+        ['descender'] = -3,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {1, 1, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {1, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['|'] = {
+        ['descender'] = -3,
+        ['kerning'] = -6,
+        ['pixels']  = {
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['?'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 1, 1, 1, 1, 1, 0},
+                {1, 0, 0, 0, 0, 0, 1},
+                {1, 0, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 0, 1},
+                {0, 0, 0, 0, 0, 1, 0},
+                {0, 0, 0, 0, 1, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold'][','] = {
+        ['descender'] = -2,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold'][':'] = {
+        ['descender'] = 0,
+        ['kerning'] = -5,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold'][';'] = {
+        ['descender'] = -2,
+        ['kerning'] = -4,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['+'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['-'] = {
+        ['descender'] = 0,
+        ['kerning'] = -2,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 1, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['/'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 0, 1, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 0, 1, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {0, 1, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {1, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['"'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 1, 1, 0, 1, 1},
+                {0, 1, 1, 0, 1, 1, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['~'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 1, 0},
+                {1, 0, 0, 1, 1, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['`'] = {
+        ['descender'] = 0,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 1, 1, 0, 0, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0}
+        }
+}
+fonts['7x10-Bold']['NULL'] = {
+        ['descender'] = -4,
+        ['kerning'] = 0,
+        ['pixels']  = {
+                {0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 1, 1, 0, 0},
+                {0, 0, 1, 1, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
                 {0, 0, 0, 0, 0, 0, 0},
