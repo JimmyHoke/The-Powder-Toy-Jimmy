@@ -1,4 +1,7 @@
-Changelog for V32.1 (53)
+Changelog for V32.2 (54)
 
-Fix errors when restarting/ turning mod elements off
-
+Merge changes from master
+Fix BFLM not destroying PLSM and GoL.
+Add options for soft and hard reset.
+Brightness settings now also show the values.
+Fix reset not updating saved brightness values.

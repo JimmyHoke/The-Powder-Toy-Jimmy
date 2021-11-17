@@ -58,7 +58,9 @@ local dellb = Label:new(106, 34, 10, 15, "Shown")
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 local fplb = Label:new(101, 66, 10, 15, "ON")
 
-local reset = Button:new(10,92,80,25,"Reset", "Reset everything.")
+local reset = Button:new(10,92,80,25,"Reset", "Reset.")
+local reset1 = Button:new(100,92,45,25,"Soft", "Reset the mod settings.")
+local reset2 = Button:new(148,92,45,25,"Hard", "Reset everything.")
 
 local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
@@ -97,7 +99,8 @@ local brightness = Button:new(203,220,80,25, "Brightness", "Adjust brightness.")
 local brightSlider = Slider:new(290,219, 100, 17, 255)
 local brop = Button:new(293,237,45,15,"On", "Save.")
 local bropc = Button:new(342,237,45,15,"Off", "Cancel.")
-local brlabel = Label:new(340, 208, 10, 15, "Turned: Off")
+local brlabel = Label:new(335, 208, 10, 15, "Off")
+local brlabel2 = Label:new(360, 208, 10, 15, "("..brightSlider:value()..")")
 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
@@ -151,11 +154,14 @@ newmenu:removeComponent(upmp)
 end
 
 function clearsb()
+newmenu:removeComponent(reset1)
+newmenu:removeComponent(reset2)
 newmenu:removeComponent(bug1)
 newmenu:removeComponent(bug2)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel)
+newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
@@ -762,15 +768,20 @@ end
 
 brightness:action(function(sender)
 clearsb()
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-end
 brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
+brlabel2:text("("..brightSlider:value()..")")
+
 brightSlider:onValueChanged(function() 
-if brightSlider:value() < 60 then
-brightSlider:value("60")
+if brightSlider:value() < 50 then
+brightSlider:value("50")
 end
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
+brlabel2:text("("..brightSlider:value()..")")
 end)
+
+if MANAGER.getsetting("CRK", "brightstate") == "1" then
+newmenu:addComponent(brlabel2)
+end
 newmenu:addComponent(brlabel)
 newmenu:addComponent(brightSlider)
 newmenu:addComponent(brop)
@@ -782,21 +793,23 @@ MANAGER.savesetting("CRK", "brightstate", "1")
 event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
 newmenu:removeComponent(brightSlider)
-brlabel:text("Turned: on")
+brlabel:text("On")
 newmenu:removeComponent(brlabel)
+newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 end)
 
 bropc:action(function(sender)
 MANAGER.savesetting("CRK", "brightstate", "0")
-brlabel:text("Turned: off")
+brlabel:text("Off")
 event.unregister(event.tick,cbrightness)
 brightSlider:value("200")
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(brlabel)
+newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(bropc)
 end)
 
@@ -1913,7 +1926,7 @@ end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
 event.register(event.tick,cbrightness)
-brlabel:text("Turned: on")
+brlabel:text("On")
 else
 MANAGER.savesetting("CRK", "brightness",200)
 end
@@ -1987,22 +2000,15 @@ end
 end)
 
 reset:action(function(sender)
+newmenu:addComponent(reset1)
+newmenu:addComponent(reset2)
+end)
+
+
+reset1:action(function(sender)
 close()
 interface.removeComponent(unhd)
 timerremo()
-local restneed = 0
-local fd1 = io.open("updatedmp.lua","r")
-local fd2 = io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua","r")
-if fd1 ~= nil then
-fd1:close()
-os.remove("updatedmp.lua")
-restneed = "1"
-end
-if fd2 ~= nil then
-fd2:close()
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
-restneed = "1"
-end
 backvr = 0
 backvg = 0
 backvb = 0
@@ -2041,8 +2047,9 @@ event.register(event.tick,theme)
 newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabe)
 savelabs:text("OFF")
-brlabel:text("Turned: off")
+brlabel:text("Off")
 brightSlider:value("200")
+MANAGER.savesetting("CRK", "brightness", "200")
 MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
@@ -2072,9 +2079,14 @@ sim.resetTemp()
 tpt.reset_velocity(1,380,300,300)
 tpt.setdebug(0X0)
 sim.clearSim()
-if restneed == "1" then
+end)
+
+reset2:action(function(sender)
+os.remove("updatedmp.lua")
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("scripts/downloaded/scriptinfo.txt")
+os.remove("scripts/autorunsettings.txt")
 platform.restart()
-end
 end)
 
 function close()

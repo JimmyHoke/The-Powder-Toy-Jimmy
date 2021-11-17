@@ -44,8 +44,8 @@ void Element::Element_BFLM()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 2773.0f;
-	HighTemperatureTransition = PT_PLSM;
+	HighTemperature = ITH;
+	HighTemperatureTransition = NT;
 
 	Update = &Element_BFLM_update;
 	Graphics = &graphics;
