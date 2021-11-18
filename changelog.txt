@@ -2,6 +2,9 @@ Changelog for V32.2 (54)
 
 Merge changes from master
 Fix BFLM not destroying PLSM and GoL.
+MISL now blasts when above 500C
 Add options for soft and hard reset.
 Brightness settings now also show the values.
 Fix reset not updating saved brightness values.
+Updatemp no longer deletes the scriptmanager's multiplayer.
+Rewrite some parts of offline wiki. It is well formatted now and also makes adding new pages much easier.

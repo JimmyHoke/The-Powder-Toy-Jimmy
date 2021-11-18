@@ -58,7 +58,7 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp2 = 100;
 
 	//Explosion
-	if (((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2)) || parts[i].pavg[1] > 300)
+	if (((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2)) || parts[i].pavg[1] > 300 || parts[i].temp >= 873.15f)
 	{
 		sim->pv[(y / CELL)][(x / CELL)] = 270;
 		parts[i].life = 1;
