@@ -58,8 +58,8 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 	{
 	parts[i].tmp--;
     }
-	for (int rx = -1; rx < 2; rx++)
-		for (int ry = -1; ry < 2; ry++)
+	for (int rx = -2; rx < 2; rx++)
+		for (int ry = -2; ry < 2; ry++)
 		{
 			if (BOUNDS_CHECK && (rx || ry))
 			{
