@@ -1,6 +1,7 @@
 Changelog for V32.2 (54)
 
 New elements: ACTY (Acetylene gas)
+Much better graphics for bee, plus they make a small hive at center.
 Merge changes from master
 Some options like ruler now show a help text when turned on.
 Fix BFLM not destroying PLSM and GoL.

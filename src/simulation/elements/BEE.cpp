@@ -32,7 +32,7 @@ void Element::Element_BEE()
 
 	DefaultProperties.temp = R_TEMP + 20.0f + 273.15f;
 	HeatConduct = 42;
-	Description = "BEE, makes wax, attacks figh/stkm, uses plant to stay alive and reproduce. Avoids harmful elements.";
+	Description = "BEE, attacks figh/stkm, uses plant to stay alive and reproduce. Avoids harmful elements. Makes hive at center when healthy.";
 
 	Properties = TYPE_GAS;
 
@@ -42,8 +42,8 @@ void Element::Element_BEE()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = ITH;
-	HighTemperatureTransition = NT;
+	HighTemperature = 374.15f;
+	HighTemperatureTransition = PT_FIRE;
 
 	Update = &update;
 	Graphics = &graphics;
@@ -106,29 +106,34 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vx = 0.0;
 		parts[i].vy = 0.0;
 	}
-	if (parts[i].life < 30 && parts[i].x < 600 && parts[i].x > 20 && parts[i].y < 350) //Rest if no food is found.
+	if (parts[i].life < 20 && parts[i].x < 600 && parts[i].x > 20 && parts[i].y < 350) //Rest if no food is found.
 	{
 		parts[i].vy = 0.5;
 	}
 	//Meet at center if life is above 90.
 	if (parts[i].life > 90)
 	{
-		if (parts[i].x <= 330)
+		if (parts[i].x < 325)
 		{
 			parts[i].vx = 0.6;
 		}
-		else if (parts[i].x > 330)
+		else if (parts[i].x > 335)
 		{
 			parts[i].vx = -0.6;
 		}
 
-		if (parts[i].y <= 192)
+		if (parts[i].y < 185)
 		{
 			parts[i].vy = 0.6;
 		}
-		else if (parts[i].y > 192)
+		else if (parts[i].y > 195)
 		{
 			parts[i].vy = -0.6;
+		}
+
+		if (parts[i].x > 325 && parts[i].x < 335 && parts[i].y > 185 && parts[i].y < 195)
+		{
+			sim->create_part(-1, x + 3, y + 3, PT_WAX);
 		}
 	}
 
@@ -171,18 +176,6 @@ static int update(UPDATE_FUNC_ARGS)
 
 				switch (TYP(r))
 				{
-				case PT_WOOD:
-				{
-					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -2.0f;
-						if (parts[i].life > 65)
-						{
-							if (RNG::Ref().chance(1, 30))
-							{
-								sim->part_change_type(ID(r), x + rx, y + ry, PT_MWAX);
-							}
-						}
-				}
-				break;
 				case PT_BEE:
 				{
 					if (parts[i].life > 90)
@@ -240,14 +233,14 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	*pixel_mode |= PMODE_FLARE;
 	if (cpart->life <= 30)
 	{
-		*colr = 180;
-		*colg = 180;
-		*colb = 0;
+		*colr = 250;
+		*colg = 40;
+		*colb = 40;
 	}
-
+	ren->draw_line(cpart->x, cpart->y, cpart->x - 1, cpart->y-1, 255, 255, 0, 245);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + 1, cpart->y-1, 255, 255, 0, 245);
 	return 0;
 }
 
