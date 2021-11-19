@@ -16,7 +16,7 @@ void Element::Element_ACTY()
 	AirLoss = 0.99f;
 	Loss = 0.30f;
 	Collision = -0.1f;
-	Gravity = 0.0f;
+	Gravity = -0.5f;
 	Diffusion = 0.40f;
 	HotAir = 0.001f	* CFDS;
 	Falldown = 0;
@@ -30,7 +30,7 @@ void Element::Element_ACTY()
 
 	DefaultProperties.temp = R_TEMP + 273.15f;
 	HeatConduct = 255;
-	Description = "Acetylene gas, reaches temp. of 1100C when ignited and around 35000C with O2.";
+	Description = "Acetylene gas, clean gas that reaches temp. of 1100C when ignited and around 3500C with O2. Useful in gas welding.";
 
 	Properties = TYPE_GAS;
 
@@ -40,8 +40,8 @@ void Element::Element_ACTY()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = NT;
-	HighTemperatureTransition = NT;
+	HighTemperature = 2200 + 273.15;
+	HighTemperatureTransition = PT_PLSM;
 
 	Update = &update;
 }
@@ -62,24 +62,33 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 					case PT_O2:
 					{
-						parts[i].life = 200;
+						parts[i].life = 210;
 						parts[i].tmp = 1;
 						sim->kill_part(ID(r));
 						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
 					}
 					break;
+					case PT_PLSM:
+					{
+						parts[i].tmp = 1;
+						if (parts[ID(r)].life > 200)
+						{
+							parts[i].life = 210;
+						}
+						parts[i].temp = 4400 + 273.15f;
+						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
+					}
 
 					case PT_SPRK:
+					case PT_SMKE:
 					case PT_FIRE:
-					case PT_PLSM:
-					
-					{   
+					{
 						if (parts[i].tmp == 0)
 						{
-							parts[i].life = 40;
+							parts[i].life = 45;
+							parts[i].temp = 1500 + 273.15f;
+							sim->part_change_type(i, x + rx, y + ry, PT_FIRE);
 						}
-						parts[i].temp = 4000 + 273.15f;
-						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
 					}
 					break;
 					}
