@@ -239,8 +239,8 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colg = 40;
 		*colb = 40;
 	}
-	ren->draw_line(cpart->x, cpart->y, cpart->x - 1, cpart->y-1, 255, 255, 0, 245);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + 1, cpart->y-1, 255, 255, 0, 245);
+	//wings
+	ren->draw_line(cpart->x, cpart->y, RNG::Ref().between(cpart->x - 2, cpart->x + 2), cpart->y-1, 255, 255, 0, 245);
 	return 0;
 }
 

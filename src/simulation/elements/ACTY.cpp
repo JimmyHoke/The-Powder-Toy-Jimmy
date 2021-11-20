@@ -30,7 +30,7 @@ void Element::Element_ACTY()
 
 	DefaultProperties.temp = R_TEMP + 273.15f;
 	HeatConduct = 255;
-	Description = "Acetylene gas, clean gas that reaches temp. of 1100C when ignited and around 3500C with O2. Useful in gas welding.";
+	Description = "Acetylene gas, clean gas that reaches temp. of 1100C when ignited and around 3500C with O2. Makes LRBD with Chlorine.";
 
 	Properties = TYPE_GAS;
 
@@ -62,7 +62,7 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 					case PT_O2:
 					{
-						parts[i].life = 210;
+						parts[i].life = 205;
 						parts[i].tmp = 1;
 						sim->kill_part(ID(r));
 						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
@@ -71,9 +71,9 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_PLSM:
 					{
 						parts[i].tmp = 1;
-						if (parts[ID(r)].life > 200)
+						if (parts[ID(r)].life > 201)
 						{
-							parts[i].life = 210;
+							parts[i].life = 205;
 						}
 						parts[i].temp = 4400 + 273.15f;
 						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
@@ -85,7 +85,7 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 						if (parts[i].tmp == 0)
 						{
-							parts[i].life = 45;
+							parts[i].life = 35;
 							parts[i].temp = 1500 + 273.15f;
 							sim->part_change_type(i, x + rx, y + ry, PT_FIRE);
 						}

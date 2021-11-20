@@ -24,11 +24,11 @@ void Element::Element_ELEX()
 	Flammable = 0;
 	Explosive = 0;
 	Meltable = 0;
-	Hardness = 30;
+	Hardness = 0;
 
 	Weight = 100;
 	HeatConduct = 0;
-	Description = "A weird element that turns into random elements when sparked.";
+	Description = "A element that can turn into random elements.";
 
 	Properties = TYPE_GAS;
 
@@ -47,55 +47,30 @@ void Element::Element_ELEX()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].tmp == 0||parts[i].tmp > 295)
-	{
-		parts[i].vx = 0;
-		parts[i].vy = 0;
-	}
-	if (parts[i].tmp > 2 && parts[i].tmp < 300)
+	if (parts[i].tmp < 200)
 	{
 		parts[i].tmp++;
 	}
 
-	if (parts[i].tmp >= 300)
+	if (parts[i].tmp >= 199)
 	{
-		sim->create_part(1, x, y - 1, RNG::Ref().between(1, 231));
+		parts[i].vy = 0;
+		parts[i].vx = 0;
+		sim->create_part(-1, x, y-1, RNG::Ref().between(1, 231));
 		sim->kill_part(i);
 	}
-
-	{
-		int r, rx, ry;
-		if (parts[i].tmp2 > 0)
-			parts[i].tmp2--;
-		for (rx = -2; rx < 3; rx++)
-			for (ry = -2; ry < 3; ry++)
-				if (BOUNDS_CHECK && (rx || ry))
-				{
-					r = pmap[y + ry][x + rx];
-					if (!r || sim->parts_avg(ID(r), i, PT_INSL) == PT_INSL)
-						continue;
-					if (TYP(r) == PT_SPRK)
-					{
-						parts[i].tmp = 3;
-					}
-				}
-		//}
-		return 0;
-	}
+	return 0;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if (cpart->tmp > 2 && cpart->tmp < 300)
-	{
-		float frequency = 0.04045;
-		*colr = (sin(frequency* cpart->tmp + 4) * 127 + 150);
-		*colg = (sin(frequency* cpart->tmp + 8) * 127 + 150);
-		*colb = (sin(frequency* cpart->tmp + 5) * 127 + 150);
-		*pixel_mode |= PMODE_FLARE;
-		ren->fillcircle(cpart->x, cpart->y, 8, 8, *colr, *colg, *colb, cpart->tmp);
-		ren->draw_line(cpart->x, cpart->y, RNG::Ref().between(cpart->x - 12, cpart->x + 12), RNG::Ref().between(cpart->y - 12, cpart->y + 12), *colr, *colg, *colb, 255);
-	}
+	float frequency = 0.04045;
+	int cr = (sin(frequency* cpart->tmp + 5) * 127 + 150);
+	int cg = (sin(frequency* cpart->tmp + 6) * 127 + 150);
+	int cb = (sin(frequency* cpart->tmp + 8) * 127 + 150);
+	ren->drawcircle(cpart->x, cpart->y,4,4,cr,cg,cb,150);
+	ren->fillcircle(cpart->x, cpart->y,3,3,cr,cg,cb,100);
+	ren->drawcircle(cpart->x, cpart->y,5,5,cr,cg,cb,150);
 	return 0;
 }
 

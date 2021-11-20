@@ -102,13 +102,22 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_H2:
 					{
 						parts[i].tmp = 50;
-			
 						if (RNG::Ref().chance(1, 400))
 					{
 						sim->kill_part(ID(r));
 						sim->create_part(i, x + rx, y + ry, PT_ACID);
 					}
-					
+					}
+					break;
+
+					case PT_ACTY:
+					{
+						parts[i].temp += 1.0f;
+						if (RNG::Ref().chance(1, 700))
+						{
+							sim->kill_part(ID(r));
+							sim->create_part(i, x + rx, y + ry, PT_LRBD);
+						}
 					}
 					break;
 

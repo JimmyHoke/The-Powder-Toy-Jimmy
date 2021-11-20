@@ -210,7 +210,7 @@ local timermotd = 0
 
 function writefile2()
 timermotd = timermotd + 1
-if timermotd >= 150 then
+if timermotd >= 130 then
 tpt.unregister_step(writefile2)
 end
 gfx.fillRect(1,375,2,2,0,255,0,255)
@@ -1183,8 +1183,8 @@ local close2 = Button:new(570, 400, 50, 15, "Close")
 
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
 local wpage2 = "14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n    Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n    Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
-local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n    .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n    .Ctype decides the element it explodes into. Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords or when > 500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that quickly burns (~1100C) without smoke, burns hotter (~3500) and for longer with O2."
-local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: Secretmical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: Weird element that turns into a random elements when sparked with PSCN, has cool graphics, flies. \n\n    You have reached the end of wiki."
+local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n    .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n    .Ctype decides the element it explodes into. Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords or when > 500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
+local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element, has weird graphics, flies. \n\n\n    << You have reached the end of wiki >>"
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1272,6 +1272,8 @@ tpt.el.sun.menu=0
 tpt.el.bee.menu=0
 tpt.el.pet.menu=0
 tpt.el.cl.menu=0
+tpt.el.acty.menu=0
+tpt.el.elex.menu=0
 end
 
 function showmodelem()
@@ -1315,6 +1317,8 @@ tpt.el.sun.menu=1
 tpt.el.bee.menu=1
 tpt.el.pet.menu=1
 tpt.el.cl.menu=1
+tpt.el.acty.menu=1
+tpt.el.elex.menu=1
 end
 local modelemval = 0
 bg:action(function(sender)
@@ -1559,7 +1563,7 @@ local bg4 = Button:new(174,300,45,15,"Green", "Green background")
 local bg5 = Button:new(224,300,45,15,"Orange", "Yellow background")
 local bg6 = Button:new(274,300,45,15,"Theme", "Same as set theme")
 
-local bg7 = Button:new(594,4,5,5,"*", "Disable inbuilt scripts")
+local bg7 = Button:new(598,3,6,6,"`", "Disable inbuilt scripts")
 
 local bog1 = Button:new(24,345,45,15,"Off", "Default")
 local bog2 = Button:new(74,345,45,15,"On", "on")
@@ -1861,12 +1865,9 @@ clearback()
 end)
 
 bg7:action(function(sender)
-local fdlf3 = io.open('dlf3.lua', 'w')
-local fdlf2 = io.open('updatedmp.lua', 'w')
-local fdlf1 = io.open('dlf1.lua', 'w')
+local fdlf3 = io.open('deleteme.txt', 'w')
+fdlf3:write("Message from Cracker1000: This file disables the inbuilt scripts in Cracker1000's Mod, delete this and then restart to make it load scripts again.")
 fdlf3:close()
-fdlf2:close()
-fdlf1:close()
 platform.restart()
 end)
 
@@ -1888,9 +1889,9 @@ end)
 end)
 
 function startupcheck()
+fs.makeDirectory("scripts")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
-fs.makeDirectory("scripts")
 local faz =io.open("updatedmp.lua","r")
 if faz ~= nil then 
 io.close(faz)
