@@ -28,7 +28,7 @@ void Element::Element_ELEX()
 
 	Weight = 100;
 	HeatConduct = 0;
-	Description = "A secret element with weird properties. SPRK to activate.";
+	Description = "A weird element that turns into random elements when sparked.";
 
 	Properties = TYPE_GAS;
 
