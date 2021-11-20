@@ -1,15 +1,4 @@
-Changelog for V32.2 (54)
+Changelog for V32.3 (55)
 
-New elements: ACTY (Acetylene gas)
-Much better graphics for bee, plus they make a small hive at center.
-Merge changes from master
-Some options like ruler now show a help text when turned on.
-Fix BFLM not destroying PLSM and GoL.
-MISL now blasts when above 500C
-CL now decays most of the organic mattter like seed, wood, plnt, yest, etc.
-Add options for soft and hard reset.
-Brightness settings now also show the values.
-Fix reset not updating saved brightness values.
-Updatemp no longer deletes the scriptmanager's multiplayer.
-Rewrite some parts of offline wiki. It is well formatted now and also makes adding new pages much easier.
+Fixes and enhancements.
                    
