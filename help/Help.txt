@@ -66,7 +66,9 @@ src>gui>search>Searchview.cpp
 (PET, 227);             
 (MISL 228);     
 (AMBE 229);                 SPRK.cpp
-(CHLR 230);                
+(CHLR 230);         
+(ACTY 231);    
+(ELEX 230);    Make sure not not include 232 as an elem ID in update function!              
 
 Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 
