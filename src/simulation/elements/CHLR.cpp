@@ -32,7 +32,7 @@ void Element::Element_CHLR()
 
 	DefaultProperties.temp = R_TEMP+273.15f;
 	HeatConduct = 42;
-	Description = "Chlorine, photochemical rxn with H2. Distills WATR below 50C (ACID > 50C), rusts IRON & BMTL. Kills STKMs & PLNT.";
+	Description = "Chlorine, photochemical rxn with H2. WATR-> DSTW below 50C (ACID > 50C), rusts IRON/BMTL. Decays organic matter.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
@@ -102,13 +102,22 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_H2:
 					{
 						parts[i].tmp = 50;
-			
 						if (RNG::Ref().chance(1, 400))
 					{
 						sim->kill_part(ID(r));
 						sim->create_part(i, x + rx, y + ry, PT_ACID);
 					}
-					
+					}
+					break;
+
+					case PT_ACTY:
+					{
+						parts[i].temp += 1.0f;
+						if (RNG::Ref().chance(1, 700))
+						{
+							sim->kill_part(ID(r));
+							sim->create_part(i, x + rx, y + ry, PT_LRBD);
+						}
 					}
 					break;
 
@@ -136,6 +145,9 @@ static int update(UPDATE_FUNC_ARGS)
 					break;
 					case PT_PLNT:
 					case PT_VINE:
+					case PT_WOOD:
+					case PT_YEST:
+					case PT_SEED:
 					{
 						if (RNG::Ref().chance(1, 200))
 						{
@@ -169,7 +181,6 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	*pixel_mode = PMODE_NONE;
 	*pixel_mode |= FIRE_BLEND;
-		
 	return 0;
 }
 

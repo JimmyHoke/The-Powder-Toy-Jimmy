@@ -44,8 +44,8 @@ void Element::Element_BFLM()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 2773.0f;
-	HighTemperatureTransition = PT_PLSM;
+	HighTemperature = ITH;
+	HighTemperatureTransition = NT;
 
 	Update = &Element_BFLM_update;
 	Graphics = &graphics;
@@ -58,8 +58,8 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 	{
 	parts[i].tmp--;
     }
-	for (int rx = -1; rx < 2; rx++)
-		for (int ry = -1; ry < 2; ry++)
+	for (int rx = -2; rx < 2; rx++)
+		for (int ry = -2; ry < 2; ry++)
 		{
 			if (BOUNDS_CHECK && (rx || ry))
 			{

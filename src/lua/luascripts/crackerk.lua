@@ -58,7 +58,9 @@ local dellb = Label:new(106, 34, 10, 15, "Shown")
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 local fplb = Label:new(101, 66, 10, 15, "ON")
 
-local reset = Button:new(10,92,80,25,"Reset", "Reset everything.")
+local reset = Button:new(10,92,80,25,"Reset", "Reset.")
+local reset1 = Button:new(100,92,45,25,"Soft", "Reset the mod settings.")
+local reset2 = Button:new(148,92,45,25,"Hard", "Reset everything.")
 
 local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
@@ -97,7 +99,8 @@ local brightness = Button:new(203,220,80,25, "Brightness", "Adjust brightness.")
 local brightSlider = Slider:new(290,219, 100, 17, 255)
 local brop = Button:new(293,237,45,15,"On", "Save.")
 local bropc = Button:new(342,237,45,15,"Off", "Cancel.")
-local brlabel = Label:new(340, 208, 10, 15, "Turned: Off")
+local brlabel = Label:new(335, 208, 10, 15, "OFF")
+local brlabel2 = Label:new(358, 208, 10, 15, "("..brightSlider:value()..")")
 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
@@ -151,11 +154,14 @@ newmenu:removeComponent(upmp)
 end
 
 function clearsb()
+newmenu:removeComponent(reset1)
+newmenu:removeComponent(reset2)
 newmenu:removeComponent(bug1)
 newmenu:removeComponent(bug2)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel)
+newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
@@ -182,7 +188,6 @@ end
 if req:status() == "done" then
 local ret, code = req:finish()
 if code == 200 then
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 f = io.open('updatedmp.lua', 'w')
 f:write(ret)
 f:close()
@@ -205,7 +210,7 @@ local timermotd = 0
 
 function writefile2()
 timermotd = timermotd + 1
-if timermotd >= 150 then
+if timermotd >= 130 then
 tpt.unregister_step(writefile2)
 end
 gfx.fillRect(1,375,2,2,0,255,0,255)
@@ -667,7 +672,7 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2805205)
+randsav = math.random(1,2803438)
 sim.loadSave(randsav, 0) 
 end)
 
@@ -762,15 +767,20 @@ end
 
 brightness:action(function(sender)
 clearsb()
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-end
 brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
+brlabel2:text("("..brightSlider:value()..")")
+
 brightSlider:onValueChanged(function() 
-if brightSlider:value() < 60 then
-brightSlider:value("60")
+if brightSlider:value() < 50 then
+brightSlider:value("50")
 end
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
+brlabel2:text("("..brightSlider:value()..")")
 end)
+
+if MANAGER.getsetting("CRK", "brightstate") == "1" then
+newmenu:addComponent(brlabel2)
+end
 newmenu:addComponent(brlabel)
 newmenu:addComponent(brightSlider)
 newmenu:addComponent(brop)
@@ -782,21 +792,23 @@ MANAGER.savesetting("CRK", "brightstate", "1")
 event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
 newmenu:removeComponent(brightSlider)
-brlabel:text("Turned: on")
+brlabel:text("ON")
 newmenu:removeComponent(brlabel)
+newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 end)
 
 bropc:action(function(sender)
 MANAGER.savesetting("CRK", "brightstate", "0")
-brlabel:text("Turned: off")
+brlabel:text("OFF")
 event.unregister(event.tick,cbrightness)
 brightSlider:value("200")
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(brlabel)
+newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(bropc)
 end)
 
@@ -1160,63 +1172,57 @@ end
 
 end)
 
-wikipg = "1"
-
 wiki:action(function(sender)
-local pgno1 = Label:new(30,400,10, 15, "Page 1/3")
+local pgno = 1
+local maxpage = 4
+
 local creditw = Window:new(-15,-15, 626, 422)
 local prevpg = Button:new(242, 400, 40, 15, "Prev.")
-local nextpg = Button:new(292, 400, 40, 15, "Next")
-local close2 = Button:new(512, 400, 100, 15, "Close wiki")
+local nextpg = Button:new(332, 400, 40, 15, "Next")
+local close2 = Button:new(570, 400, 50, 15, "Close")
 
-local creditstxt = Label:new(6,-22, 598, 418,"\n\n                                         << Welcome To The Element Wiki >>\n\n01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n.tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\nEvaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\nIt can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\nCan split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\nReacts with different elements like O2, WATR, ACID etc as IRL.\n")
+local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
+local wpage2 = "14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n    Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n    Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
+local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n    .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n    .Ctype decides the element it explodes into. Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords or when > 500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
+local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element, has weird graphics, flies. \n\n\n    << You have reached the end of wiki >>"
 
-local creditstxt2 = Label:new(6,-25, 598, 418,"\n\n  14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n  Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.  \n\n  15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n  Glows in different colours just before exploding. \n\n  16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n  17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n  Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n  Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n  18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n  19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n  20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n  Explodes at low temp and emits neut at high temp.\n\n  21) BEE: Eats PLNT. Makes wax when in contact with wood and life > 75.  Attacks STKMs and FIGH can regulate temp.\n  Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n  22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n  23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n  Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n  24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n  25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow.")
-
-local creditstxt3 = Label:new(6,-25, 598, 418," \n\n\n  26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n  27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n  Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n  28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n  29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n  .Ctype decides the element it explodes into.\n  .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n  Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n  30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n  31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n  .tmp2 = Max overhang strength. (Default = 10). \n\n  32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n  33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n  Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n  34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n  Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n  Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n  35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords.\n\n  36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n  37) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n  Cl+WATR=DSTW (distillation below 50C) or ACID (>50C). Kills STKM & PLNT. Slows when cooled. Rusts IRON & BMTL.")
-
-creditw:addComponent(creditstxt)
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
-creditw:addComponent(pgno1)
 creditw:addComponent(prevpg)
 
+function drawwikitext()
+local wcontent
+if pgno == 1 then
+gfx.drawText(250,8,"Welcome To In Game WIKI",255,255,55,255)
+wcontent = wpage1
+elseif pgno == 2 then
+wcontent = wpage2
+elseif pgno == 3 then
+wcontent = wpage3
+elseif pgno == 4 then
+wcontent = wpage4
+end
+gfx.drawRect(10,395,610,1,255,255,55,255)
+gfx.drawText(10,22,wcontent,255,255,255,255)
+gfx.drawText(290,405,"Page: "..pgno,255,255,55,255)
+end
+
+creditw:onDraw(drawwikitext)
 local function clearpg()
 creditw:removeComponent(creditstxt)
 creditw:removeComponent(creditstxt2)
 creditw:removeComponent(creditstxt3)
 end
 
-prevpg:action(function()
-
-if wikipg == "2" then
-clearpg()
-creditw:addComponent(creditstxt)
-pgno1:text("Page 1/3")
-wikipg = "1"
-end
-
-if wikipg == "3" then
-clearpg()
-creditw:addComponent(creditstxt2)
-pgno1:text("Page 2/3")
-wikipg = "2"
+nextpg:action(function()
+if pgno < maxpage then
+pgno = pgno + 1
 end
 end)
 
-nextpg:action(function() 
-if wikipg == "2" then
-clearpg()
-creditw:addComponent(creditstxt3)
-pgno1:text("Page 3/3")
-wikipg = "3"
-end
-
-if wikipg == "1" then
-clearpg()
-creditw:addComponent(creditstxt2)
-pgno1:text("Page 2/3")
-wikipg = "2"
+prevpg:action(function() 
+if pgno > 1 then
+pgno = pgno - 1
 end
 end)
 
@@ -1266,6 +1272,8 @@ tpt.el.sun.menu=0
 tpt.el.bee.menu=0
 tpt.el.pet.menu=0
 tpt.el.cl.menu=0
+tpt.el.acty.menu=0
+tpt.el.elex.menu=0
 end
 
 function showmodelem()
@@ -1309,6 +1317,8 @@ tpt.el.sun.menu=1
 tpt.el.bee.menu=1
 tpt.el.pet.menu=1
 tpt.el.cl.menu=1
+tpt.el.acty.menu=1
+tpt.el.elex.menu=1
 end
 local modelemval = 0
 bg:action(function(sender)
@@ -1553,6 +1563,8 @@ local bg4 = Button:new(174,300,45,15,"Green", "Green background")
 local bg5 = Button:new(224,300,45,15,"Orange", "Yellow background")
 local bg6 = Button:new(274,300,45,15,"Theme", "Same as set theme")
 
+local bg7 = Button:new(598,3,6,6,"`", "Disable inbuilt scripts")
+
 local bog1 = Button:new(24,345,45,15,"Off", "Default")
 local bog2 = Button:new(74,345,45,15,"On", "on")
 local fanlb = Label:new(77, 325, 10, 15, "OFF")
@@ -1678,6 +1690,7 @@ newmenuth:addComponent(bg3)
 newmenuth:addComponent(bg4)
 newmenuth:addComponent(bg5)
 newmenuth:addComponent(bg6)
+newmenuth:addComponent(bg7)
 
 newmenuth:addComponent(bog1)
 newmenuth:addComponent(bog2)
@@ -1851,6 +1864,13 @@ backvb = MANAGER.getsetting("CRK","ab")
 clearback()
 end)
 
+bg7:action(function(sender)
+local fdlf3 = io.open('deleteme.txt', 'w')
+fdlf3:write("Message from Cracker1000: This file disables the inbuilt scripts in Cracker1000's Mod, delete this and then restart to make it load scripts again.")
+fdlf3:close()
+platform.restart()
+end)
+
 baropa:action(function(sender)
 barlb:text(" Short")
 MANAGER.savesetting("CRK","barval","1")
@@ -1869,9 +1889,9 @@ end)
 end)
 
 function startupcheck()
+fs.makeDirectory("scripts")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
-fs.makeDirectory("scripts")
 local faz =io.open("updatedmp.lua","r")
 if faz ~= nil then 
 io.close(faz)
@@ -1913,7 +1933,7 @@ end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
 event.register(event.tick,cbrightness)
-brlabel:text("Turned: on")
+brlabel:text("ON")
 else
 MANAGER.savesetting("CRK", "brightness",200)
 end
@@ -1928,7 +1948,7 @@ if rulval == "1" then
 rulval = "0"
 tpt.setdebug(0X4)
 rulb:text("ON")
-
+print("Use shift + Drag to use Ruler")
 elseif rulval == "0" then
 tpt.setdebug(0X0)
 rulval = "1"
@@ -1987,22 +2007,15 @@ end
 end)
 
 reset:action(function(sender)
+newmenu:addComponent(reset1)
+newmenu:addComponent(reset2)
+end)
+
+
+reset1:action(function(sender)
 close()
 interface.removeComponent(unhd)
 timerremo()
-local restneed = 0
-local fd1 = io.open("updatedmp.lua","r")
-local fd2 = io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua","r")
-if fd1 ~= nil then
-fd1:close()
-os.remove("updatedmp.lua")
-restneed = "1"
-end
-if fd2 ~= nil then
-fd2:close()
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
-restneed = "1"
-end
 backvr = 0
 backvg = 0
 backvb = 0
@@ -2041,8 +2054,9 @@ event.register(event.tick,theme)
 newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabe)
 savelabs:text("OFF")
-brlabel:text("Turned: off")
+brlabel:text("OFF")
 brightSlider:value("200")
+MANAGER.savesetting("CRK", "brightness", "200")
 MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
@@ -2072,9 +2086,14 @@ sim.resetTemp()
 tpt.reset_velocity(1,380,300,300)
 tpt.setdebug(0X0)
 sim.clearSim()
-if restneed == "1" then
+end)
+
+reset2:action(function(sender)
+os.remove("updatedmp.lua")
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("scripts/downloaded/scriptinfo.txt")
+os.remove("scripts/autorunsettings.txt")
 platform.restart()
-end
 end)
 
 function close()
@@ -2096,9 +2115,7 @@ graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
 graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
 end
-
 graphics.drawText(14,261,motw,255,200,55,255)
-
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
 end

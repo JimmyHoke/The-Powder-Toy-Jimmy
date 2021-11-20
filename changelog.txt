@@ -1,4 +1,4 @@
-Changelog for V32.1 (53)
+Changelog for V32.3 (55)
 
-Fix errors when restarting/ turning mod elements off
-
+Fixes and enhancements.
+                   

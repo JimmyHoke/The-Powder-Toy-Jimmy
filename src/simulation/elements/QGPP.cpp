@@ -52,7 +52,6 @@ void Element::Element_QGPP()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	
 				if (parts[i].tmp > 0)
 				{
 					parts[i].tmp--;
@@ -83,6 +82,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colr = (sin(frequency* cpart->tmp + 4) * 127 + 150);
 		*colg = (sin(frequency* cpart->tmp + 8) * 127 + 150);
 		*colb = (sin(frequency* cpart->tmp + 5) * 127 + 150);
+		ren->draw_line(cpart->x, cpart->y, RNG::Ref().between(cpart->x-6,cpart->x+6), RNG::Ref().between(cpart->y-6,cpart->y+6), *colr, *colg, *colb, 255);
 	}
 	if (cpart->temp < 373.15f)
 	{
