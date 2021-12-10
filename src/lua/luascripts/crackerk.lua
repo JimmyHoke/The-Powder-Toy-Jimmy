@@ -1082,12 +1082,12 @@ end)
 
 bug1:action(function(sender)
 clearsb()
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=25749")
 end)
 
 bug2:action(function(sender)
 close()
-sim.loadSave(2596812,0) 
+sim.loadSave(2829160,0) 
 end)
 
 function hideno()
