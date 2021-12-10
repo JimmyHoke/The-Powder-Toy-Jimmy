@@ -2,9 +2,9 @@
 #include "Config.h"
 const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
-"\bw                                            Welcome To The Jimmy's Mod \n"
+"\bw                                               Welcome To The Jimmy's Mod \n"
 "\bo                                           |-----------------------------------|\n"
-"                                                \br<< \bwVer 32.3 \bo||\bw TPT 96.2 \br>>"
+"                                                \br<< \bwVer 1.0.0 \bo||\bw TPT 96.2 \br>>"
 "\bl\n\n   Instructions:                        \n"
 "\bt *\bw There's a new 'Settings' button near tags, press it to open the Mod menu ('J' shortcut).\n"
 "\bg *\bw Themes, crosshair and other options can be found in Control Centre settings.\n"
