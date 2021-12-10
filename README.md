@@ -37,6 +37,7 @@ Thanks
 * mniip
 * LBPHacker
 * Cracker1000
+* Jimmy Hoke
 
 Libraries and other assets used
 ===========================================================================
