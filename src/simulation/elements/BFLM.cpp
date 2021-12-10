@@ -68,7 +68,7 @@ int Element_BFLM_update(UPDATE_FUNC_ARGS)
 					r = sim->photons[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (TYP(r) && TYP(r) != PT_BFLM && TYP(r) != PT_DMRN && TYP(r) != PT_WALL)
+				if (TYP(r) && TYP(r) != PT_BFLM && TYP(r) != PT_DMRN && TYP(r) != PT_WALL && TYP(r) != PT_JRAY)
 				{
 					parts[i].tmp = 5;
 					if (RNG::Ref().chance(1, 13))
