@@ -193,6 +193,32 @@ int Element_FIRE_update(UPDATE_FUNC_ARGS)
 					}
 				}
 
+				if ((rt==PT_EBCL))
+				{
+					if ((t==PT_FIRE || t==PT_PLSM))
+					{
+						if (parts[ID(r)].life>501 && RNG::Ref().chance(1, 1))
+						{
+							parts[ID(r)].life = 500;
+						}
+					}
+					else if (t==PT_LAVA)
+					{
+						if (parts[i].ctype == PT_IRON && RNG::Ref().chance(1, 500))
+						{
+							parts[i].ctype = PT_METL;
+							sim->kill_part(ID(r));
+							continue;
+						}
+						if ((parts[i].ctype == PT_STNE || parts[i].ctype == PT_NONE) && RNG::Ref().chance(1, 60))
+						{
+							parts[i].ctype = PT_SLCN;
+							sim->kill_part(ID(r));
+							continue;
+						}
+					}
+				}
+
 				if (t == PT_LAVA)
 				{
 					// LAVA(CLST) + LAVA(PQRT) + high enough temp = LAVA(CRMC) + LAVA(CRMC)
