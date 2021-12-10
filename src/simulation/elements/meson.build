@@ -234,6 +234,8 @@ simulation_elem_ids = [
 	['ELEX', 232],
 	['JRAY', 500],
 	['EBCL', 501],
+	['GGOO', 502],
+	['RGOO', 503],
 ]
 simulation_elem_src = []
 foreach elem_name_id : simulation_elem_ids
