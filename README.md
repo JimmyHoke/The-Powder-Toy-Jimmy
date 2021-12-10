@@ -1,4 +1,4 @@
-Cracker1000's Mod - Nov 2021
+Jimmy's Mod
 ==========================
 
 Get the latest version [from the Powder Toy website](https://powdertoy.co.uk/Download.html).
