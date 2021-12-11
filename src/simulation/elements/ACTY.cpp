@@ -62,8 +62,8 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 					case PT_O2:
 					{
-						parts[i].life = 205;
 						parts[i].tmp = 1;
+						parts[i].life = 205;
 						sim->kill_part(ID(r));
 						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
 					}
@@ -86,7 +86,7 @@ static int update(UPDATE_FUNC_ARGS)
 						if (parts[i].tmp == 0)
 						{
 							parts[i].life = 35;
-							parts[i].temp = 1500 + 273.15f;
+							parts[i].temp = 1800 + 273.15f;
 							sim->part_change_type(i, x + rx, y + ry, PT_FIRE);
 						}
 					}

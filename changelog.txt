@@ -1,4 +1,10 @@
-Changelog for V32.3 (55)
+Changelog for V33 (56)
 
-Fixes and enhancements.
+Prevent ELEX from turning into certain elements and also make it a bit faster
+Improvements to ACTY
+
+todo:
+Merge changes from official version
+
+
                    

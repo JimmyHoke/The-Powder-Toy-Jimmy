@@ -28,7 +28,7 @@ void Element::Element_ELEX()
 
 	Weight = 100;
 	HeatConduct = 0;
-	Description = "A element that can turn into random elements.";
+	Description = "Element that can turns into random an element when above 0C.";
 
 	Properties = TYPE_GAS;
 
@@ -47,30 +47,42 @@ void Element::Element_ELEX()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].tmp < 200)
+	if (parts[i].tmp < 120)
 	{
 		parts[i].tmp++;
 	}
-
-	if (parts[i].tmp >= 199)
+	
+	if (parts[i].tmp >= 115 && parts[i].temp >= 274.15f)
 	{
-		parts[i].vy = 0;
-		parts[i].vx = 0;
-		sim->create_part(-1, x, y-1, RNG::Ref().between(1, 231));
-		sim->kill_part(i);
+		int elemid = (RNG::Ref().between(1, (1 << PMAPBITS) - 1)); //max element id.
+		if (elemid != 78 && elemid != 226 && elemid != 232) // prevent from turning into BFLM, GoL and itself.
+		{
+			sim->create_part(-1, x, y - 1, elemid);
+			sim->kill_part(i);
+		}
 	}
 	return 0;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
+	int cr, cb, cg = 0;
+	if (cpart->temp < 274.15f)
+	{
+		cr = 255;
+		cg = 0;
+		cb = 131;
+	}
+	else 
+	{
 	float frequency = 0.04045;
-	int cr = (sin(frequency* cpart->tmp + 5) * 127 + 150);
-	int cg = (sin(frequency* cpart->tmp + 6) * 127 + 150);
-	int cb = (sin(frequency* cpart->tmp + 8) * 127 + 150);
-	ren->drawcircle(cpart->x, cpart->y,4,4,cr,cg,cb,150);
-	ren->fillcircle(cpart->x, cpart->y,3,3,cr,cg,cb,100);
-	ren->drawcircle(cpart->x, cpart->y,5,5,cr,cg,cb,150);
+	cr = (sin(frequency* cpart->tmp + 4) * 127 + 150);
+	cg = (sin(frequency* cpart->tmp + 5) * 127 + 150);
+	cb = (sin(frequency* cpart->tmp + 8) * 127 + 150);
+	}
+	ren->drawcircle(cpart->x, cpart->y,2,2,cr,cg,cb,150);
+	ren->fillcircle(cpart->x, cpart->y,1,1,cr,cg,cb,100);
+	ren->drawcircle(cpart->x, cpart->y,3,3,cr,cg,cb,150);
 	return 0;
 }
 
