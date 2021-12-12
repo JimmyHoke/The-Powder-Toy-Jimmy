@@ -3,7 +3,6 @@
 
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
-static void create(ELEMENT_CREATE_FUNC_ARGS);
 
 void Element::Element_TUNG()
 {
@@ -47,7 +46,6 @@ void Element::Element_TUNG()
 
 	Update = &update;
 	Graphics = &graphics;
-	Create = &create;
 }
 
 static int update(UPDATE_FUNC_ARGS)
@@ -95,15 +93,15 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy += RNG::Ref().between(-50, 50);
 		return 1;
 	}
-	auto press = int(sim->pv[y/CELL][x/CELL] * 64);
-	auto diff = press - parts[i].tmp3;
-	if (diff > 32 || diff < -32)
+	parts[i].pavg[0] = parts[i].pavg[1];
+	parts[i].pavg[1] = sim->pv[y/CELL][x/CELL];
+	float diff = parts[i].pavg[1] - parts[i].pavg[0];
+	if (diff > 0.50f || diff < -0.50f)
 	{
 		sim->part_change_type(i,x,y,PT_BRMT);
 		parts[i].ctype = PT_TUNG;
 		return 1;
 	}
-	parts[i].tmp3 = press;
 	return 0;
 }
 
@@ -128,9 +126,4 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*pixel_mode |= FIRE_ADD;
 	}
 	return 0;
-}
-
-static void create(ELEMENT_CREATE_FUNC_ARGS)
-{
-	sim->parts[i].tmp3 = int(sim->pv[y/CELL][x/CELL] * 64);
 }

@@ -44,7 +44,7 @@ void Element::Element_VRSS()
 	HighTemperature = 305.0f;
 	HighTemperatureTransition = PT_VIRS;
 
-	DefaultProperties.tmp4 = 250;
+	DefaultProperties.pavg[1] = 250;
 
 	Update = &Element_VIRS_update;
 	Graphics = &graphics;
