@@ -207,14 +207,15 @@ end
 end
 
 local timermotd = 0
-
 function writefile2()
 timermotd = timermotd + 1
-if timermotd >= 130 then
+if timermotd >= 150 then
 tpt.unregister_step(writefile2)
 end
+gfx.fillRect(1,375,4,2,0,255,0,255)
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
+if code2 == 200 then
 motw = ret2
 tpt.unregister_step(writefile2)
 end
