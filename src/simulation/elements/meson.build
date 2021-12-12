@@ -238,6 +238,7 @@ simulation_elem_ids = [
 	['RGOO', 503],
 	['NIH', 504],
 	['NIHM', 505],
+	['SCLT', 506],
 ]
 simulation_elem_src = []
 foreach elem_name_id : simulation_elem_ids
