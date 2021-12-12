@@ -95,15 +95,15 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 		if (cpart->tmp > 994 && cpart->tmp < 999)
 		{
-			*firea = 35;
-			*fireb = 100;
-			*firer = 100;
-			*fireg = 100;
+			*fireb = 15;
+			*firer = 20;
+			*fireg = 20;
+			*firea = 20;
 			*pixel_mode = PMODE_LFLARE;
 		}
 		else
 		{
-			*firea = RNG::Ref().between(3, 10);
+			*firea = RNG::Ref().between(0, 15);
 			*fireb = 255-cpart->tmp/8;
 			*firer = 255-cpart->tmp/8;
 			*fireg = 255-cpart->tmp/8;

@@ -2,7 +2,6 @@
 
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
-static void create(ELEMENT_CREATE_FUNC_ARGS);
 
 void Element::Element_CHLR()
 {
@@ -47,7 +46,6 @@ void Element::Element_CHLR()
 
 	Update = &update;
 	Graphics = &graphics;
-	Create = &create;
 }
 
 static int update(UPDATE_FUNC_ARGS)
@@ -179,12 +177,6 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*fireb = 255;
 		*firea = cpart->tmp*3;
 	}
-	*pixel_mode = PMODE_NONE;
-	*pixel_mode |= FIRE_BLEND;
+	*pixel_mode = FIRE_BLEND;
 	return 0;
-}
-
-static void create(ELEMENT_CREATE_FUNC_ARGS)
-{
-	sim->parts[i].tmp = 0;
 }

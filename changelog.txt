@@ -1,10 +1,13 @@
 Changelog for V33 (56)
 
 Prevent ELEX from turning into certain elements and also make it a bit faster.
-Rewrite ACTY and improve its graphics.
-Performance and graphical improvements to CLOUD
+Show a pointer for easy configuration of MISL (disappears when activated).
+Performance and graphical improvements to CLOUD, ACTY and Cl.
+Fix Mod elements button not working after a reset.
+Fix CMNT's weight values.
 
 todo:
+New element
 Merge changes from official version
 
 

@@ -56,7 +56,7 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp2++;
 	}
 
-	if (parts[i].tmp2 > 40)
+	if (parts[i].tmp2 > 80)
 	{
 		sim->kill_part(i);
 	}
@@ -108,10 +108,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp > 0)
 	{
-		*firer = 141;
-		*fireg = 30;
-		*fireb = 240;
-		*firea = 15;
+		*firer = 131;
+		*fireg = 20;
+		*fireb = 190;
+		*firea = 40-cpart->tmp2/2;
 	}
 	else
 	{
