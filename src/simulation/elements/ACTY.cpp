@@ -1,6 +1,7 @@
 #include "simulation/ElementCommon.h"
 
 static int update(UPDATE_FUNC_ARGS);
+static int graphics(GRAPHICS_FUNC_ARGS);
 
 void Element::Element_ACTY()
 {
@@ -40,15 +41,26 @@ void Element::Element_ACTY()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 2200 + 273.15;
+	HighTemperature = 3800 + 273.15;
 	HighTemperatureTransition = PT_PLSM;
 
 	Update = &update;
+	Graphics = &graphics;
 }
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].tmp > 0)
+	{
+		parts[i].temp = 3500 + 273.15f;
+		parts[i].tmp2++;
+	}
 
+	if (parts[i].tmp2 > 40)
+	{
+		sim->kill_part(i);
+	}
+	
 	int r, rx, ry;
 	for (rx = -2; rx < 3; rx++)
 		for (ry = -2; ry < 3; ry++)
@@ -63,27 +75,22 @@ static int update(UPDATE_FUNC_ARGS)
 					case PT_O2:
 					{
 						parts[i].tmp = 1;
-						parts[i].life = 205;
 						sim->kill_part(ID(r));
-						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
 					}
 					break;
-					case PT_PLSM:
+					case PT_ACTY:
 					{
+						if (parts[ID(r)].tmp > 0)
 						parts[i].tmp = 1;
-						if (parts[ID(r)].life > 201)
-						{
-							parts[i].life = 205;
-						}
-						parts[i].temp = 4400 + 273.15f;
-						sim->part_change_type(i, x + rx, y + ry, PT_PLSM);
 					}
+					break;
 
 					case PT_SPRK:
 					case PT_SMKE:
 					case PT_FIRE:
+					case PT_PLSM:
 					{
-						if (parts[i].tmp == 0)
+						if (parts[i].tmp != 1)
 						{
 							parts[i].life = 35;
 							parts[i].temp = 1800 + 273.15f;
@@ -96,3 +103,24 @@ static int update(UPDATE_FUNC_ARGS)
 			}
 	return 0;
 }
+
+static int graphics(GRAPHICS_FUNC_ARGS)
+{
+	if (cpart->tmp > 0)
+	{
+		*firer = 141;
+		*fireg = 30;
+		*fireb = 240;
+		*firea = 15;
+	}
+	else
+	{
+		*firer = 173;
+		*fireg = 216;
+		*fireb = 220;
+		*firea = 8;
+	}
+	*pixel_mode = FIRE_BLEND;
+	return 0;
+}
+

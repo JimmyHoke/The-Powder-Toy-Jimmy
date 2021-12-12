@@ -1,7 +1,8 @@
 Changelog for V33 (56)
 
-Prevent ELEX from turning into certain elements and also make it a bit faster
-Improvements to ACTY
+Prevent ELEX from turning into certain elements and also make it a bit faster.
+Rewrite ACTY and improve its graphics.
+Performance and graphical improvements to CLOUD
 
 todo:
 Merge changes from official version
