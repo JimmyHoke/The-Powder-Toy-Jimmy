@@ -114,7 +114,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 				*colr = cpart->life + 50;
 				*colg = 0;
 				*colb = cpart->life + 50;
-				*pixel_mode |= PMODE_FLARE;
+				*pixel_mode = PMODE_FLARE;
 			}
 			else
 			{
@@ -123,7 +123,6 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 				*colg = 0;
 				*pixel_mode |= NO_DECO;
 			}
-		*pixel_mode |= NO_DECO;
 		return 0;
 	}
 

@@ -127,12 +127,11 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 {
-	if (cpart->life == 0)
+	if (cpart->life == 0)// pointer
 	{
 		ren->drawrect(cpart->tmp - 2, cpart->tmp2, 5, 1, 255, 0, 0, 255);
 		ren->drawrect(cpart->tmp, cpart->tmp2 - 2, 1, 5, 255, 0, 0, 255);
 	}
-
 	if (cpart->pavg[0] == 0)//Up
 	{
 		ren->drawrect(cpart->x - 1, cpart->y - 4, 3, 1, 255, 65, 0, 255);

@@ -46,57 +46,43 @@ void Element::Element_CEXP()
 }
 static int update(UPDATE_FUNC_ARGS)
 {
-		if (parts[i].life <= -256 || parts[i].life > 273)
-	{
-		parts[i].life = 10.0;
-	}
-
-	if (parts[i].tmp < -273 || parts[i].tmp > 9724)
-	{
-		parts[i].tmp = 150;
-	}
-
-	if (parts[i].tmp2 < -273 || parts[i].tmp2 > 9724)
-	{
-		parts[i].tmp2 = 1000;
-	}
-
 	int r, rx, ry;
-	for (rx = -2; rx < 3; rx++)
-		for (ry = -2; ry < 3; ry++)
+	for (rx = -3; rx < 3; rx++)
+		for (ry = -3; ry < 3; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if ((parts[i].temp - 273.15f > parts[i].tmp)|| parts[ID(r)].type == PT_SPRK)
 				{
-					parts[i].pavg[0] = 10;
-					
-				}
-				else if (TYP(r) == PT_CEXP)
-				{
-					if (!parts[i].pavg[0])
+					switch (TYP(r))
 					{
-						if (parts[ID(r)].pavg[0])
-						{
-							parts[i].pavg[0] = parts[ID(r)].pavg[0];
-							if ((ID(r)) > i)
-								parts[i].pavg[0]--;
-						}
+					case PT_SPRK:
+					case PT_FIRE:
+					{
+						parts[i].pavg[0] = 10;
 					}
-					else if (!parts[ID(r)].pavg[0])
+					break;
+
+					case PT_CEXP:
+
 					{
-						parts[ID(r)].pavg[0] = parts[i].pavg[0];
-						if ((ID(r)) > i)
-							parts[ID(r)].pavg[0]++;
+						if (parts[ID(r)].pavg[0] > 0)
+							parts[i].pavg[0] = 10;
+					}
+					break;
 					}
 				}
 			}
+	if (parts[i].temp - 273.15f > parts[i].tmp || parts[ID(r)].temp - 273.15f > parts[i].tmp)
+	{
+		parts[i].pavg[0] = 10;
+	}
+
 	if (parts[i].pavg[0] > 0)
 	{
 		sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
-		parts[ID(r)].temp =  parts[i].tmp2 + 273.15f;
+		parts[ID(r)].temp =  parts[i].tmp2;
 		sim->create_part(i, x, y, parts[i].ctype);
 	}
 	return 0;
@@ -105,7 +91,7 @@ static int update(UPDATE_FUNC_ARGS)
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
 	sim->parts[i].tmp = 150;
-	sim->parts[i].tmp2 = 1000;
-	sim->parts[i].ctype = PT_FIRE;
-	sim->parts[i].life = 10.0;
+	sim->parts[i].tmp2 = 9700;
+	sim->parts[i].ctype = PT_PLSM;
+	sim->parts[i].life = 50.0;
 }
