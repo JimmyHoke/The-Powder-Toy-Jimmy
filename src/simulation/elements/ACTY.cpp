@@ -108,10 +108,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp > 0)
 	{
-		*firer = 131;
-		*fireg = 20;
-		*fireb = 190;
-		*firea = 40-cpart->tmp2/2;
+		*firer = 65;
+		*fireg = 105;
+		*fireb = 255;
+		*firea = 40 - cpart->tmp2 / 2;
 	}
 	else
 	{

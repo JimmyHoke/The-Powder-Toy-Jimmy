@@ -129,8 +129,8 @@ static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 {
 	if (cpart->life == 0)// pointer
 	{
-		ren->drawrect(cpart->tmp - 2, cpart->tmp2, 5, 1, 255, 0, 0, 255);
-		ren->drawrect(cpart->tmp, cpart->tmp2 - 2, 1, 5, 255, 0, 0, 255);
+			ren->drawrect(cpart->tmp - 2, cpart->tmp2, 5, 1, 255, 0, 0, 255);
+			ren->drawrect(cpart->tmp, cpart->tmp2 - 2, 1, 5, 255, 0, 0, 255);
 	}
 	if (cpart->pavg[0] == 0)//Up
 	{

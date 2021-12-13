@@ -70,8 +70,8 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	if (cpart->temp < 274.15f)
 	{
 		cr = 255;
-		cg = 0;
-		cb = 131;
+		cg = 20;
+		cb = 20;
 	}
 	else 
 	{
