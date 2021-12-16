@@ -6,7 +6,7 @@ void Element::Element_CEXP()
 {
 	Identifier = "DEFAULT_PT_CEXP";
 	Name = "CEXP";
-	Colour = PIXPACK(0xFF6347);
+	Colour = PIXPACK(0xFFA500);
 	MenuVisible = 1;
 	MenuSection = SC_EXPLOSIVE;
 	Enabled = 1;
@@ -46,17 +46,26 @@ void Element::Element_CEXP()
 }
 static int update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].temp - 273.15f > parts[i].tmp)
+	{
+		parts[i].pavg[0] = 10;
+	}
+
+	if (parts[i].pavg[0] > 0)
+	{
+		sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
+		parts[i].temp = parts[i].tmp2;
+		sim->create_part(i, x, y, parts[i].ctype);
+	}
+
 	int r, rx, ry;
-	for (rx = -3; rx < 3; rx++)
-		for (ry = -3; ry < 3; ry++)
+	for (rx = -1; rx < 2; rx++)
+		for (ry = -1; ry < 2; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				r = pmap[y + ry][x + rx];
-				if (!r)
-					continue;
+				switch (TYP(r))
 				{
-					switch (TYP(r))
-					{
 					case PT_SPRK:
 					case PT_FIRE:
 					{
@@ -65,7 +74,6 @@ static int update(UPDATE_FUNC_ARGS)
 					break;
 
 					case PT_CEXP:
-
 					{
 						if (parts[ID(r)].pavg[0] > 0)
 							parts[i].pavg[0] = 10;
@@ -73,18 +81,6 @@ static int update(UPDATE_FUNC_ARGS)
 					break;
 					}
 				}
-			}
-	if (parts[i].temp - 273.15f > parts[i].tmp || parts[ID(r)].temp - 273.15f > parts[i].tmp)
-	{
-		parts[i].pavg[0] = 10;
-	}
-
-	if (parts[i].pavg[0] > 0)
-	{
-		sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
-		parts[ID(r)].temp =  parts[i].tmp2;
-		sim->create_part(i, x, y, parts[i].ctype);
-	}
 	return 0;
 }
 
@@ -93,5 +89,5 @@ static void create(ELEMENT_CREATE_FUNC_ARGS)
 	sim->parts[i].tmp = 150;
 	sim->parts[i].tmp2 = 9700;
 	sim->parts[i].ctype = PT_PLSM;
-	sim->parts[i].life = 50.0;
+	sim->parts[i].life = 240.0;
 }

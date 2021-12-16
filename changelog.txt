@@ -3,15 +3,16 @@ Changelog for V34 (56)
 Add support for realistic fonts to texter.
 Prevent ELEX from turning into certain elements and also make it a bit faster.
 New loading animation (by Xphere07)
-Show a pointer for easy configuration of MISL (disappears when activated).
-Performance and graphical improvements to CLUD, ACTY, CEXP, UVRD and Cl.
-Change CEXP preset values to make it much stronger.
+MISL now spawns with an unique colour, target and a pointer. (pointer hidden until MISL is placed near PSCN!)
+Performance and graphical improvements to CLUD, ACTY, CEXP, UVRD, MISL and Cl.
+New and improved CEXP with stronger preset values.
 Fix texter font not updating after closing texter window.
+Fix bugs related to CEXP element.
 Fix Mod elements button not working after a reset.
 Fix CMNT's weight values.
 
 todo:
-New element
+New element:
 Merge changes from official version
 
 

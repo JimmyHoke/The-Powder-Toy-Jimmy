@@ -949,16 +949,21 @@ newmenu4:onDraw(drawprev2)
                             element = textTextboxs:text();
                     end
                 )
+				
+function textup()
+if ffix2 == "1" then
+yvalue = yvalue + 4
+linenumber = linenumber + 1
+end
+end
+				
 smalf:action(function(sender)
 font='5x7'
 tr = 255
 tg = 255
 tb = 255
 if ffix == "1" and yvalue < ylimit then
-if ffix2 == "1" then
-yvalue = yvalue + 10
-linenumber = linenumber + 1
-end
+textup()
 end
 ffix = "0"
 ffix2 = "0"
@@ -971,10 +976,7 @@ tg = 90
 tb = 0
 font='7x10'
 if ffix == "0" and yvalue < ylimit then
-if ffix2 == "1" then
-yvalue = yvalue + 10
-linenumber = linenumber + 1
-end
+textup()
 end
 ffix = "1"
 ffix2 = "0"
@@ -982,15 +984,12 @@ fsize = "Title"
 end)
 
 titf:action(function(sender)
-tr = 150
-tg = 150
-tb = 250
+tr = 120
+tg = 120
+tb = 255
 font='7x10-Bold'
 if ffix == "0" and yvalue < ylimit then
-if ffix2 == "1" then
-yvalue = yvalue + 10
-linenumber = linenumber + 1
-end
+textup()
 end
 ffix = "1"
 ffix2 = "0"
@@ -999,14 +998,11 @@ end)
 
 local cursor = {10, yvalue}
 titf2:action(function(sender)
-tr = 150
-tg = 250
-tb = 150
+tr = 120
+tg = 255
+tb = 120
 if ffix == "1" and yvalue < ylimit then
-if ffix2 == "1" then
-yvalue = yvalue + 10
-linenumber = linenumber + 1
-end
+textup()
 end
 ffix = "0"
 ffix2 = "0"
@@ -1038,7 +1034,6 @@ tpt.unregister_step(drawblip)
 tpt.register_step(drawblip)
 end)
 
---start
 local primary = "vent"
 local secondary = "shld"
 local third = "glas"
@@ -1090,7 +1085,6 @@ function drawText2(text)
     cursor_pointat[1] = cursor[1]
     cursor_pointat[2] = cursor[2]
 end
---end
 
 place:action(function(sender)
 ffix2 = "1"
