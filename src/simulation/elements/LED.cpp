@@ -28,7 +28,7 @@ void Element::Element_LED()
 
 	Weight = 100;
 	HeatConduct = 0;
-	Description = "Light emitting diode, .tmp2 changes colours. Temp sets brightness, use with NSCN and PSCN.";
+	Description = "Light emitting diode, .tmp2 changes colours. Temp sets brightness, use with PSCN.";
 
 	Properties = TYPE_SOLID;
 
