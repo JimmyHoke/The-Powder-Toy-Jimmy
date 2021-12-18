@@ -28,10 +28,10 @@ void Element::Element_CEXP()
 	Weight = 100;
 	PhotonReflectWavelengths = 0xFF6347;
 
-	HeatConduct = 240;
-	Description = "Custom explosive, read wiki. Tmp = Temp at which exp. occur, Tmp2 = Temp. on explosion, Ctype = Element, Life = Pressure.";
+	HeatConduct = 0;
+	Description = "Custom explosive, read wiki. Temp = Temp upon explosion, Life = Pressure it creates, tmp = power (0-10).";
 
-	Properties = TYPE_SOLID | PROP_NEUTPENETRATE;
+	Properties = TYPE_SOLID;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
@@ -46,17 +46,8 @@ void Element::Element_CEXP()
 }
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].temp - 273.15f > parts[i].tmp)
-	{
-		parts[i].pavg[0] = 10;
-	}
-
-	if (parts[i].pavg[0] > 0)
-	{
-		sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
-		parts[i].temp = parts[i].tmp2;
-		sim->create_part(i, x, y, parts[i].ctype);
-	}
+	if (parts[i].tmp < 0 || parts[i].tmp > 10)
+		parts[i].tmp = 10;
 
 	int r, rx, ry;
 	for (rx = -1; rx < 2; rx++)
@@ -68,26 +59,37 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					case PT_SPRK:
 					case PT_FIRE:
+					case PT_PLSM:
+					case PT_THDR:
+					case PT_LIGH:
 					{
-						parts[i].pavg[0] = 10;
+						parts[i].tmp2 = 10;
 					}
 					break;
 
 					case PT_CEXP:
 					{
-						if (parts[ID(r)].pavg[0] > 0)
-							parts[i].pavg[0] = 10;
+						if (parts[ID(r)].tmp2 > 0)
+							parts[i].tmp2 = 10;
 					}
 					break;
-					}
+				}
+				if (parts[i].tmp2 > 0)
+				{
+					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
+					sim->create_part(-1, x + parts[i].tmp, y + parts[i].tmp, PT_PLSM);
+					sim->create_part(-1, x - parts[i].tmp, y - parts[i].tmp, PT_PLSM);
+					sim->create_part(-1, x - parts[i].tmp, y + parts[i].tmp, PT_PLSM);
+					sim->create_part(-1, x + parts[i].tmp, y - parts[i].tmp, PT_PLSM);
+					sim->part_change_type(i, x, y, PT_FIRE);
+				}
 				}
 	return 0;
 }
 
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
-	sim->parts[i].tmp = 150;
-	sim->parts[i].tmp2 = 9700;
-	sim->parts[i].ctype = PT_PLSM;
-	sim->parts[i].life = 240.0;
+	sim->parts[i].temp = 9700;
+	sim->parts[i].tmp = 10;
+	sim->parts[i].life = 250.0;
 }

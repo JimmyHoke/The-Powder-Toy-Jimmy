@@ -56,7 +56,8 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp = 100;
 	if (parts[i].tmp2 <= 0 || parts[i].tmp2 > 380)
 		parts[i].tmp2 = 100;
-
+	if (parts[i].pavg[1] < 1)
+		parts[i].pavg[1] = 1;
 	//Explosion
 	if (((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2)) || parts[i].pavg[1] > 300 || parts[i].temp >= 873.15f)
 	{
@@ -117,9 +118,9 @@ static int update(UPDATE_FUNC_ARGS)
 					parts[i].life = 20;
 				}
 
-				if (parts[ID(r)].type == PT_PSCN)
+				if (TYP(r) == PT_PSCN && parts[i].life == 0)
 					{
-					parts[i].pavg[1] = 1;
+					parts[i].pavg[1] = 0;
 					}
 				if (parts[i].life > 0)
 				{

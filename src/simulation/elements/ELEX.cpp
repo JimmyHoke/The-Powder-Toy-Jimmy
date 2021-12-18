@@ -27,7 +27,7 @@ void Element::Element_ELEX()
 	Hardness = 0;
 
 	Weight = 100;
-	HeatConduct = 0;
+	HeatConduct = 50;
 	Description = "Element that can turns into random an element when above 0C.";
 
 	Properties = TYPE_GAS;
@@ -57,8 +57,7 @@ static int update(UPDATE_FUNC_ARGS)
 		int elemid = (RNG::Ref().between(1, (1 << PMAPBITS) - 1)); //max element id.
 		if (elemid != 78 && elemid != 226 && elemid != 232) // prevent from turning into BFLM, GoL and itself.
 		{
-			sim->create_part(-1, x, y - 1, elemid);
-			sim->kill_part(i);
+			sim->create_part(i, x, y, elemid);
 		}
 	}
 	return 0;
@@ -67,7 +66,7 @@ static int update(UPDATE_FUNC_ARGS)
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	int cr, cb, cg = 0;
-	if (cpart->temp < 274.15f)
+	if (cpart->temp < 273.15f)
 	{
 		cr = 255;
 		cg = 20;
@@ -75,7 +74,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	else 
 	{
-	float frequency = 0.04045;
+	float frequency = 0.1045;
 	cr = (sin(frequency* cpart->tmp + 4) * 127 + 150);
 	cg = (sin(frequency* cpart->tmp + 5) * 127 + 150);
 	cb = (sin(frequency* cpart->tmp + 8) * 127 + 150);
