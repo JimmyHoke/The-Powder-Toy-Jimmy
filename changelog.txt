@@ -3,6 +3,7 @@ Changelog for V34 (56)
 Add support for realistic fonts to texter.
 Fix texter font not resetting after closing texter window.
 New loading animation (by Xphere07)
+Much better and faster LED.
 New, improved CEXP with stronger preset values.
 Prevent ELEX from turning into certain elements and also make it a bit faster.
 MISL now spawns with an unique colour, target and a pointer. (pointer hidden until MISL is placed near PSCN!)

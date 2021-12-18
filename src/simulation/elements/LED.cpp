@@ -53,6 +53,9 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].temp < 274.15f)
 		parts[i].temp = 274.15f;
 
+	if (parts[i].life > 0)
+		parts[i].life--;
+
 	if (parts[i].tmp2 == 6 && parts[i].tmp < 1000)
 	{
 		parts[i].tmp++;
@@ -68,35 +71,29 @@ static int update(UPDATE_FUNC_ARGS)
 	}
 	
 		int r, rx, ry;
-		if (parts[i].life != 10)
-		{
-			if (parts[i].life > 0)
-				parts[i].life--;
-		}
-		else
-		{
-			for (rx = -2; rx < 3; rx++)
-				for (ry = -2; ry < 3; ry++)
+			for (rx = -3; rx < 3; rx++)
+				for (ry = -3; ry < 3; ry++)
 					if (BOUNDS_CHECK && (rx || ry))
 					{
 						r = pmap[y + ry][x + rx];
+						int newlife = 15;
 						if (!r)
 							continue;
-						if (TYP(r) == PT_LED)
+						if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].life > 0 && parts[ID(r)].ctype == PT_PSCN)
 						{
-							if (parts[ID(r)].life < 10 && parts[ID(r)].life>0)
-								parts[i].life = 9;
-							else if (parts[ID(r)].life == 0)
-								parts[ID(r)].life = 10;
+							{
+								PropertyValue value;
+								value.Integer = newlife;
+								sim->flood_prop(x, y, offsetof(Particle, life), value, StructProperty::Integer);
+							}
 						}
-					}
-		}
+						}
 		return 0;
 	}
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-		if (cpart->life == 0)
+		if (cpart->life > 0)
 		{
 			if (cpart->tmp2 == 1)                            // Different tmp modes change colour of glow.
 			{
