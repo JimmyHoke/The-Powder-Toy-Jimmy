@@ -11,10 +11,10 @@ Fix bugs related to CEXP element.
 TIMC is now a powder crystal and can convert into its ctype properly.
 Fix Mod elements button not working after a reset.
 Fix CMNT's weight values.
+Update wiki
 
 todo:
 New element:
-Update wiki
 Merge changes from official version
 
 
