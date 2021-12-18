@@ -15,8 +15,7 @@ Fix CMNT's weight values.
 Update wiki
 
 todo:
-New element:
-Merge changes from official version
+Merge changes from official version (from pointer array commit)
 
 
                    
