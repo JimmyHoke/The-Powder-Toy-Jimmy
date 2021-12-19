@@ -50,11 +50,10 @@ void Element::Element_RADN()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-		if (RNG::Ref().chance(1, 3000))
+		if (RNG::Ref().chance(1, 800))
 		{
 			sim->part_change_type(i, x, y, PT_NEUT);
 		}
-
 	int r, rx, ry;
 	for (rx = -2; rx < 3; rx++)
 		for (ry = -2; ry < 3; ry++)
@@ -86,6 +85,10 @@ static int update(UPDATE_FUNC_ARGS)
 						{
 							sim->part_change_type(i, x + rx, y + ry, PT_PHOT);
 						}
+						if (RNG::Ref().chance(1, 900))
+						{
+							sim->part_change_type(i, x + rx, y + ry, PT_POLO);
+						}
 					}
 					else if (sim->pv[y / CELL][x / CELL] < 0.0)
 					{
@@ -108,22 +111,21 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	*colr = 50;
-	*colg = 50;
-	*colb = 50;
+	*colr = 150;
+	*colg = 150;
+	*colb = 150;
+	*firea = 15;
 	if (cpart->life == 0)
 	{
 		*firer = 100;
 		*fireg = 100;
 		*fireb = 230;
-		*firea = 20;
 	}
 	else 
 	{
 		*firer = 255;
 		*fireg = 0;
 		*fireb = 0;
-		*firea = cpart->life*10;
 	}
 	*pixel_mode |= FIRE_BLEND;
 	return 0;

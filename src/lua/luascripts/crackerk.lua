@@ -1346,6 +1346,7 @@ tpt.el.pet.menu=0
 tpt.el.cl.menu=0
 tpt.el.acty.menu=0
 tpt.el.elex.menu=0
+tpt.el.radn.menu=0
 end
 
 function showmodelem()
@@ -1391,6 +1392,7 @@ tpt.el.pet.menu=1
 tpt.el.cl.menu=1
 tpt.el.acty.menu=1
 tpt.el.elex.menu=1
+tpt.el.radn.menu=1
 end
 local modelemval = "0"
 bg:action(function(sender)

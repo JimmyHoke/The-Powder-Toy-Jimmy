@@ -16,6 +16,8 @@ Add support for realistic fonts to texter.
 Fix texter font not resetting after closing texter window.
 New loading animation (by Xphere07)
 Fix Mod elements button not working after a reset.
+Fix potential crash when adding a custom GOL type
+Fix ambient air temperature being loaded from saves as int, not float
 Update wiki
 
 
