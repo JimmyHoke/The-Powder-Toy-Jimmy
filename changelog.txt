@@ -1,17 +1,21 @@
 Changelog for V34 (56)
 
+Elements: This update changes a lot of stuff when it comes to elements. Please read the updated wiki for more info.
+New element: RADN (a radioactive gas element with some unrealistic propeties).
+Prevent ELEX from turning into certain elements and also make it a bit faster.
+Rewrite LED (it's much faster and better now)
+MISL now spawns with an unique colour, target and a pointer. (hidden when there's a nearby PSCN particle)
+New, improved CEXP with stronger preset values.
+Performance improvements to CLUD, ACTY, CEXP, UVRD and Cl.
+TIMC is now a powder crystal and can convert into its ctype properly.
+Fix bugs related to CEXP element.
+Fix CMNT's weight values.
+
+Misc.:
 Add support for realistic fonts to texter.
 Fix texter font not resetting after closing texter window.
 New loading animation (by Xphere07)
-Much better and faster LED.
-New, improved CEXP with stronger preset values.
-Prevent ELEX from turning into certain elements and also make it a bit faster.
-MISL now spawns with an unique colour, target and a pointer. (pointer hidden until MISL is placed near PSCN!)
-Performance improvements to CLUD, ACTY, CEXP, UVRD and Cl.
-Fix bugs related to CEXP element.
-TIMC is now a powder crystal and can convert into its ctype properly.
 Fix Mod elements button not working after a reset.
-Fix CMNT's weight values.
 Update wiki
 
 

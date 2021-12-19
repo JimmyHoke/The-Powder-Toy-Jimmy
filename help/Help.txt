@@ -68,7 +68,8 @@ src>gui>search>Searchview.cpp
 (AMBE 229);               SPRK.cpp
 (CHLR 230);         
 (ACTY 231);    
-(ELEX 230);                  
+(ELEX 232);   
+(RADN 233);                          
 
 Elements that use.tmp2 >> type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 

@@ -30,6 +30,7 @@ void Element::Element_ACTY()
 	Weight = 30;
 
 	DefaultProperties.temp = R_TEMP + 273.15f;
+	DefaultProperties.tmp2 = 40;
 	HeatConduct = 255;
 	Description = "Acetylene gas, clean gas that reaches temp. of 1100C when ignited and around 3500C with O2. Makes LRBD with Chlorine.";
 
@@ -53,10 +54,10 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp > 0)
 	{
 		parts[i].temp = 3500 + 273.15f;
-		parts[i].tmp2++;
+		parts[i].tmp2--;
 	}
 
-	if (parts[i].tmp2 > 80)
+	if (parts[i].tmp2 <= 0)
 	{
 		sim->kill_part(i);
 	}
@@ -70,6 +71,10 @@ static int update(UPDATE_FUNC_ARGS)
 				if (!r)
 					continue;
 				{
+					if (TYP(r) && TYP(r) != PT_ACTY && TYP(r) != PT_FIRE && TYP(r) != PT_PLSM && TYP(r) != PT_O2 && parts[i].tmp == 1)
+					{
+					  sim->part_change_type(i, x, y, PT_FIRE);
+					}
 					switch (TYP(r))
 					{
 					case PT_O2:
@@ -108,10 +113,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp > 0)
 	{
-		*firer = 65;
-		*fireg = 105;
-		*fireb = 255;
-		*firea = 40 - cpart->tmp2 / 2;
+		*firer = 75;
+		*fireg = 75;
+		*fireb = 195;
+		*firea = cpart->tmp2;
 	}
 	else
 	{
