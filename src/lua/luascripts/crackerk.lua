@@ -1,4 +1,4 @@
---cracker1000 mod script v6.0--
+--cracker1000 mod script v7.0--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"

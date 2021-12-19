@@ -14,8 +14,5 @@ Fix Mod elements button not working after a reset.
 Fix CMNT's weight values.
 Update wiki
 
-todo:
-Merge changes from official version (from pointer array commit)
-
 
                    

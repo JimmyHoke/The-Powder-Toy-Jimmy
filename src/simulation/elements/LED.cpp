@@ -29,6 +29,7 @@ void Element::Element_LED()
 	Weight = 100;
 	HeatConduct = 0;
 	Description = "Light emitting diode, .tmp2 changes colours. Temp sets brightness, use with PSCN.";
+	DefaultProperties.temp = 35.0f + 273.15f;
 
 	Properties = TYPE_SOLID;
 
@@ -71,19 +72,18 @@ static int update(UPDATE_FUNC_ARGS)
 	}
 	
 		int r, rx, ry;
-			for (rx = -3; rx < 3; rx++)
-				for (ry = -3; ry < 3; ry++)
+			for (rx = -2; rx < 2; rx++)
+				for (ry = -2; ry < 2; ry++)
 					if (BOUNDS_CHECK && (rx || ry))
 					{
 						r = pmap[y + ry][x + rx];
-						int newlife = 10;
 						if (!r)
 							continue;
 						if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].life > 0 && parts[ID(r)].ctype == PT_PSCN)
 						{
 							{
 								PropertyValue value;
-								value.Integer = newlife;
+								value.Integer = 10;
 								sim->flood_prop(x, y, offsetof(Particle, life), value, StructProperty::Integer);
 							}
 						}

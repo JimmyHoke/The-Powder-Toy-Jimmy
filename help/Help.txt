@@ -65,10 +65,10 @@ src>gui>search>Searchview.cpp
 (BFLM, 226);             VIRS.cpp (add exception!)
 (PET, 227);             
 (MISL 228);     
-(AMBE 229);                 SPRK.cpp
+(AMBE 229);               SPRK.cpp
 (CHLR 230);         
 (ACTY 231);    
-(ELEX 230);    Make sure not not include 232 as an elem ID in update function!              
+(ELEX 230);                  
 
 Elements that use.tmp2 >> type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 
