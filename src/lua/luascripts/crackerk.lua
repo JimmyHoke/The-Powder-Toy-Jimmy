@@ -2,7 +2,7 @@
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
-local motw = ""
+local motw = "."
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -2187,10 +2187,16 @@ graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
 graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
 graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
+
+if motw ~= "." then
+graphics.fillRect(2,258,608,15,255,200,55,30)
+graphics.drawRect(2,258,608,15,255,200,55,200)
+graphics.drawText(6,262,motw,255,200,55,255)
 end
-graphics.drawText(14,261,motw,255,200,55,255)
+
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
+end
 end
 end
 
@@ -7421,8 +7427,6 @@ fonts['7x10-Bold']['NULL'] = {
         }
 }
 --fontstop
-
-
 
 chars_light = {
     ["0"] = {
