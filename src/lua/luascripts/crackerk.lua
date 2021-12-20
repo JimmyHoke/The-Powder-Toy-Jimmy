@@ -6,15 +6,15 @@ local motw = "."
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
-local forgotmsg = Label:new(100, 120, 10, 15, " Please enter your favorite TPT element.\n\n                 if problem persists.")
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
 local passok2 = Button:new(10,75,80,20,"Forgot", "Enter Elem.")
-local passok4 = Button:new(12,132,75,15,"Message here", "Open Mod thread")
+local passok4 = Button:new(12,105,175,15,"Message here if problem persists", "Open Mod thread")
 local passok3 = Button:new(178,1,20,20,"X", "Close.")
 local passtime = Textbox:new(70, 30, 55, 20, '', 'Password..')
-
+local par,pag,pab = 80,250,0
+local passmesg = "Enter password to continue."
 function passglit()
-graphics.drawText(230,160," Enter Password to continue..", 80,250,0,255)
+graphics.drawText(230,160,passmesg, par,pag,pab,255)
 ui.showWindow(passmenu)
 end
 
@@ -26,17 +26,22 @@ passmenu:addComponent(passtime)
 tpt.register_step(passglit)
 
 passok:action(function(sender)
-if passtime:text() == MANAGER.getsetting("CRK", "passreal") or passtime:text() == "xkcd-xyz" or passtime:text() == MANAGER.getsetting("CRK", "passreal2")   then
+if passtime:text() == MANAGER.getsetting("CRK", "passreal") or passtime:text() == "xkcd-xyza" or passtime:text() == MANAGER.getsetting("CRK", "passreal2")   then
 tpt.unregister_step(passglit)
 ui.closeWindow(passmenu)
 else 
-passtime:text("Wrong!")
+par,pag,pab = 255,0,0
+passmesg = "     Wrong, try again!"
+passtime:text("")
 end
+passmenu:removeComponent(passok4)
 end)
 
 passok2:action(function(sender)
-passmenu:addComponent(forgotmsg)
 passmenu:addComponent(passok4)
+par,pag,pab = 80,250,0
+passmesg = "Enter your favourite element"
+passtime:text("")
 end)
 passok3:action(function(sender)
 tpt.unregister_step(passglit)

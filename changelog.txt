@@ -14,6 +14,7 @@ Fix CMNT's weight values.
 Misc.:
 Add support for realistic fonts to texter.
 Fix texter font not resetting after closing texter window.
+visual changes to password dialogue box.
 New loading animation (by Xphere07)
 Fix Mod elements button not working after a reset.
 Fix potential crash when adding a custom GOL type

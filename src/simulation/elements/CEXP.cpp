@@ -76,7 +76,7 @@ static int update(UPDATE_FUNC_ARGS)
 				}
 				if (parts[i].tmp2 > 0)
 				{
-					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life;
+					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = parts[i].life;
 					sim->create_part(-1, x + parts[i].tmp, y + parts[i].tmp, PT_PLSM);
 					sim->create_part(-1, x - parts[i].tmp, y - parts[i].tmp, PT_PLSM);
 					sim->create_part(-1, x - parts[i].tmp, y + parts[i].tmp, PT_PLSM);
@@ -89,7 +89,7 @@ static int update(UPDATE_FUNC_ARGS)
 
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
-	sim->parts[i].temp = 9700;
+	sim->parts[i].temp = 9720;
 	sim->parts[i].tmp = 10;
-	sim->parts[i].life = 250.0;
+	sim->parts[i].life = 256.0;
 }
