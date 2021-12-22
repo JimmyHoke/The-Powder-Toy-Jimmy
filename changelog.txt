@@ -1,25 +1,27 @@
 Changelog for V34 (56)
 
 Elements: This update changes a lot of stuff when it comes to elements. Please read the updated wiki for more info.
-New element: RADN (a radioactive gas element with some unrealistic propeties).
+2 New elements: RADN (a radioactive gas element with some unrealistic propeties) and GRPH (graphene).
 Prevent ELEX from turning into certain elements and also make it a bit faster.
-Rewrite LED (it's much faster and better now)
-MISL now spawns with an unique colour, target and a pointer. (hidden when there's a nearby PSCN particle)
+Rewrite LED (it's much faster and better now).
+MISL now spawns with an unique colour, target and a pointer (hidden when there's a nearby PSCN particle).
 New, improved CEXP with stronger preset values.
 Performance improvements to CLUD, ACTY, CEXP, UVRD and Cl.
+PHOS as a fertiliser works more realistically, improve the glow property aswell.
+Copper Oxide now falls apart when sparked.
 TIMC is now a powder crystal and can convert into its ctype properly.
 Fix bugs related to CEXP element.
 Fix CMNT's weight values.
 
 Misc.:
 Add support for realistic fonts to texter.
+New loading animation (by Xphere07).
 Fix texter font not resetting after closing texter window.
 visual changes to password dialogue box.
-New loading animation (by Xphere07)
 Fix Mod elements button not working after a reset.
-Fix potential crash when adding a custom GOL type
-Fix ambient air temperature being loaded from saves as int, not float
-Update wiki
+Fix potential crash when adding a custom GOL type.
+Fix ambient air temperature being loaded from saves as int, not float.
+Update wiki.
 
 
                    

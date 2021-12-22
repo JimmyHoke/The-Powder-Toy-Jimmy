@@ -31,7 +31,7 @@ void Element::Element_TIMC()
 	Weight = 100;
 	HeatConduct = 0;
 	Description = "Time crystal, converts into it's ctype when sparked with PSCN.";
-
+	DefaultProperties.ctype = PT_CHLR;
 	Properties = TYPE_PART;
 
 	LowPressure = IPL;
@@ -99,9 +99,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*firer = 235;
 		*fireg = 95;
 		*fireb = 95;
-		*firea = 40;
+		*firea = 50;
 		*pixel_mode |= FIRE_ADD;
 	}
+	*pixel_mode |= PMODE_FLARE;
 	return 0;
 }
 

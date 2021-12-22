@@ -94,6 +94,7 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 						if (RNG::Ref().chance(1, 80))
 						{
+							sim->pv[y / CELL][x / CELL] = -1.0;
 							parts[i].tmp += 1;
 							sim->kill_part(ID(r));
 						}
@@ -104,6 +105,8 @@ static int update(UPDATE_FUNC_ARGS)
 			 {
 					if (parts[ID(r)].ctype == PT_COPR && (parts[i].tmp > 20 || parts[i].temp >= 573.15f))
 						sim->part_change_type(ID(r), x , y, PT_COPR);
+					if (parts[ID(r)].tmp > 30)
+					parts[i].tmp2 = 1;
 			}
 				break;
 			}

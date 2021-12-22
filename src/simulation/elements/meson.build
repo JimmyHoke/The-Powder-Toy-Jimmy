@@ -232,7 +232,9 @@ simulation_elem_ids = [
 	['CHLR', 230],
 	['ACTY', 231],
 	['ELEX', 232],
-	['RADN', 233]
+	['RADN', 233],
+	['GRPH', 234]
+
 ]
 
 simulation_elem_src = []
