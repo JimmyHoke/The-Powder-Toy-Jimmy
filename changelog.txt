@@ -14,9 +14,11 @@ Fix bugs related to CEXP element.
 Fix CMNT's weight values.
 
 Misc.:
+Settings button will now glow if there's a new message.
 Add support for realistic fonts to texter.
 New loading animation (by Xphere07).
-New floating motd banner.
+Support for longer element descriptions when editing elements via editor.
+New dynamic motd banner.
 Fix texter font not resetting after closing texter window.
 visual changes to password dialogue box.
 Fix Mod elements button not working after a reset.

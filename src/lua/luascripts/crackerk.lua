@@ -3,6 +3,7 @@ local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
 local motw = "."
+local motwv = "0"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -222,6 +223,9 @@ local ret2, code2 = req2:finish()
 if code2 == 200 then
 motw = ret2
 tpt.unregister_step(writefile2)
+if motw ~= "."then
+motwv = "1"
+end
 end
 end
 end
@@ -493,7 +497,7 @@ local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
 local edelname2 = Textbox:new(10, 80, 100, 15, '', 'New Colour.')
 local edelname4 = Textbox:new(10, 100, 100, 15, '', 'Menu Section.')
 local edelname5 = Textbox:new(10, 120, 100, 15, '', 'Show / Hide.')
-local edelname3 = Textbox:new(10, 140, 400, 15, '', '                           New Element Description.')
+local edelname3 = Textbox:new(10, 140, 550, 15, '', '                                              New Element Description.')
 local edelname6 = Textbox:new(10, 160, 100, 15, '', 'Explosive.')
 local edelname7 = Textbox:new(10, 180, 100, 15, '', 'HeatConduct.')
 local edelname8 = Textbox:new(10, 200, 100, 15, '', 'Flammable.')
@@ -1254,14 +1258,14 @@ local pgno = 1
 local maxpage = 4
 
 local creditw = Window:new(-15,-15, 626, 422)
-local prevpg = Button:new(242, 400, 40, 15, "Prev.")
-local nextpg = Button:new(332, 400, 40, 15, "Next")
+local prevpg = Button:new(238, 400, 40, 15, "Prev.")
+local nextpg = Button:new(342, 400, 40, 15, "Next")
 local close2 = Button:new(570, 400, 50, 15, "Close")
 
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n    Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n    Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half life. Can conduct (turns red while conducting).\n    Can turn into different energy particles under pressure > 10. Emits neut when pressure < 0\n\n42) GRPH: Graphene powder, very slippery. Best heat and electricity conductor. Melts at 3900C.\n    Once ignited the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator."
+local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half life. Can conduct (turns red while conducting).\n    Can turn into different energy particles under pressure > 10. Emits neut when pressure < 0\n\n42) GRPH: Graphene powder, very slippery. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1281,7 +1285,7 @@ wcontent = wpage4
 end
 gfx.drawRect(10,395,610,1,255,255,55,255)
 gfx.drawText(10,22,wcontent,255,255,255,255)
-gfx.drawText(290,405,"Page: "..pgno,255,255,55,255)
+gfx.drawText(287,405,"Page: "..pgno.."/"..maxpage ,255,255,55,255)
 end
 
 creditw:onDraw(drawwikitext)
@@ -1479,6 +1483,11 @@ end
 
 --Topbarend
 
+ --Motw notification
+if motwv == "1" then
+tpt.fillrect(418,408,51,14,255,200,55,200)
+end
+
 --MP and manager
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
@@ -1560,7 +1569,10 @@ end
   colourRED = 255
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
-
+ --Motw notification
+if motwv == "1" then
+tpt.fillrect(418,408,51,14,255,200,55,200)
+end
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
@@ -2098,6 +2110,7 @@ close()
 interface.removeComponent(unhd)
 timerremo()
 posix = 580
+motwv = "0"
 backvr = 0
 backvg = 0
 backvb = 0
@@ -2228,6 +2241,7 @@ end)
 function open()
 ui.showWindow(newmenu) 
 newmenu:onDraw(drawglitch)
+motwv = "0"
 newmenu:onTryExit(close)
 newmenu:addComponent(deletesparkButton)
 newmenu:addComponent(FPS)

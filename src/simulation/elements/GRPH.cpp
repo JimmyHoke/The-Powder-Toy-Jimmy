@@ -15,7 +15,7 @@ void Element::Element_GRPH()
 	AirLoss = 0.94f;
 	Loss = 0.95f;
 	Collision = -0.1f;
-	Gravity = 0.3f;
+	Gravity = 0.4f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
 	Falldown = 1;
@@ -28,7 +28,7 @@ void Element::Element_GRPH()
 	Weight = 75;
 
 	HeatConduct = 255;
-	Description = "Graphene, very slippery powder, efficient heat & electricity conductor. Hard to extinguish once ignited. Absorbs NEUT.";
+	Description = "Graphene, a slippery powder, efficient conductor. Hard to extinguish once ignited. Absorbs NEUT. GRPH + O2 -> CO2.";
 
 	Properties = TYPE_PART| PROP_CONDUCTS | PROP_LIFE_DEC | PROP_HOT_GLOW | PROP_NEUTPASS;
 
@@ -48,13 +48,13 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].tmp == 1)
 	{
-		if (RNG::Ref().chance(1, 80))
+		if (RNG::Ref().chance(1, 70))
 		{
 			sim->create_part(-1, x, y - 1, PT_FIRE);
 		}
-		if (RNG::Ref().chance(1, 700))
+		if (RNG::Ref().chance(1, 500))
 		{
-			parts[i].life = 70;
+			parts[i].life = 90;
 			sim->part_change_type(i, x, y, PT_FIRE);
 		}
 	}
@@ -73,23 +73,7 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					parts[i].vy = -0.2;
 				}
-				if (!parts[i].life)
-				{
-					for (int j = 0; j < 4; j++)
-					{
-						static const int checkCoordsX[] = { -8, 8, 0, 0 };
-						static const int checkCoordsY[] = { 0, 0, -8, 8 };
-						int rx = checkCoordsX[j];
-						int ry = checkCoordsY[j];
-						int r = pmap[y + ry][x + rx];
-						if (r && TYP(r) == PT_SPRK && parts[ID(r)].life && parts[ID(r)].life < 4)
-						{
-							sim->part_change_type(i, x, y, PT_SPRK);
-							parts[i].life = 4;
-							parts[i].ctype = PT_GRPH;
-						}
-					}
-				}
+
 				switch (TYP(r))
 				{
 				case PT_FIRE:
@@ -103,6 +87,15 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					if (parts[ID(r)].tmp > 0)
 					parts[i].tmp = 1;
+				}
+				break;
+				case PT_O2:
+				{
+					if (RNG::Ref().chance(1, 30))
+					{
+						sim->part_change_type(i, x, y, PT_CO2);
+						sim->kill_part(ID(r));
+					}
 				}
 				break;
 				case PT_NEUT:
