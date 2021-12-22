@@ -2097,6 +2097,7 @@ reset1:action(function(sender)
 close()
 interface.removeComponent(unhd)
 timerremo()
+posix = 580
 backvr = 0
 backvg = 0
 backvb = 0
@@ -2185,6 +2186,16 @@ clearm()
 barlength = 1
 end
 
+local posix = 580
+function showmotd()
+if posix > -700 then
+posix = posix - 1
+end
+if posix <= -700 then
+posix = 580
+end
+end
+
 function drawglitch()
 if perlab:text() == "OFF" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
@@ -2198,9 +2209,10 @@ graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
 
 if motw ~= "." then
-graphics.fillRect(2,258,608,15,255,200,55,30)
-graphics.drawRect(2,258,608,15,255,200,55,200)
-graphics.drawText(6,262,motw,255,200,55,255)
+showmotd()
+graphics.fillRect(2,258,608,15,255,200,55,20)
+graphics.drawRect(2,258,608,15,255,200,55,100)
+graphics.drawText(posix,262,motw,255,200,55,255)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then

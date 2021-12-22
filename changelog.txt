@@ -16,6 +16,7 @@ Fix CMNT's weight values.
 Misc.:
 Add support for realistic fonts to texter.
 New loading animation (by Xphere07).
+New floating motd banner.
 Fix texter font not resetting after closing texter window.
 visual changes to password dialogue box.
 Fix Mod elements button not working after a reset.
