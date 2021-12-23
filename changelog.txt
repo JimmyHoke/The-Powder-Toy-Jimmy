@@ -19,12 +19,10 @@ Add support for realistic fonts to texter.
 New loading animation (by Xphere07).
 Support for longer element descriptions when editing elements via editor.
 New dynamic motd banner.
+Hide interface option is more useful now, dims the interface instead of completely hiding it.
 Fix texter font not resetting after closing texter window.
 visual changes to password dialogue box.
 Fix Mod elements button not working after a reset.
 Fix potential crash when adding a custom GOL type.
 Fix ambient air temperature being loaded from saves as int, not float.
 Update wiki.
-
-
-                   

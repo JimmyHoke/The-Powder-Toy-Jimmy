@@ -3,7 +3,6 @@ local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
 local motw = "."
-local motwv = "0"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -213,21 +212,34 @@ end
 end
 
 local timermotd = 0
+local timeplus = 255
+
 function writefile2()
 timermotd = timermotd + 1
 if timermotd >= 150 then
-tpt.unregister_step(writefile2)
+event.unregister(event.tick,writefile2)
 end
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
 motw = ret2
-tpt.unregister_step(writefile2)
 if motw ~= "."then
-motwv = "1"
+event.unregister(event.tick,showmotdnot)
+event.register(event.tick,showmotdnot)
+end
+event.unregister(event.tick,writefile2)
 end
 end
 end
+
+function showmotdnot()
+if timeplus > 0 then
+timeplus = timeplus - 2
+end
+if timeplus <= 0 then
+timeplus = 255
+end
+tpt.fillrect(418,408,51,14,255,200,55,timeplus)
 end
 
 upmp:action(function(sender)
@@ -345,7 +357,6 @@ tpt.unregister_step(colourblender)
 tpt.display_mode(7)
 perlab:text("ON")
 if fplb:text() == "OFF" then
-
 fplb:text("ON")
 end
 
@@ -404,7 +415,6 @@ if saveend - savetime == 0 then
 getmax()
 sim.saveStamp(maxpart1,maxpart2,maxpart3-maxpart1,maxpart4-maxpart2)
 end
-
 end
 
 bar:action(function(sender)
@@ -580,77 +590,62 @@ if edelname:text() == "" then
 else
 elements.property(newName, "Name", edelname:text())
 end
-
 if edelname3:text() == "" then
 else
 elements.property(newName, "Description", edelname3:text())
 end
-
 if edelname2:text() == "" then
 else
 elements.property(newName, "Colour", edelname2:text())
 end
-
 if edelname4:text() == "" then
 else
 elements.property(newName, "MenuSection", edelname4:text())
 end
-
 if edelname5:text() == "" then
 else
 elements.property(newName, "MenuVisible", tonumber(edelname5:text()))
 end
-
 if edelname6:text() == "" then
 else
 elements.property(newName, "Explosive", tonumber(edelname6:text()))
 end
-
 if edelname7:text() == "" then
 else
 elements.property(newName, "HeatConduct", tonumber(edelname7:text()))
 end
-
 if edelname8:text() == "" then
 else
 elements.property(newName, "Flammable", tonumber(edelname8:text()))
 end
-
 if edelname9:text() == "" then
 else
 elements.property(newName, "Weight", tonumber(edelname9:text()))
 end
-
 if edelname10:text() == "" then
 else
 elements.property(newName, "Hardness", tonumber(edelname10:text()))
 end
-
 if edelname11:text() == "" then
 else
 elements.property(newName, "Temperature", tonumber(edelname11:text())+273.15)
 end
-
 if edelname12:text() == "" then
 else
 elements.property(newName, "Diffusion", tonumber(edelname12:text()))
 end
-
 if edelname13:text() == "" then
 else
 elements.property(newName, "Gravity", tonumber(edelname13:text()))
 end
-
 if edelname14:text() == "" then
 else
 elements.property(newName, "Advection", tonumber(edelname14:text()))
 end
-
 if edelname15:text() == "" then
 else
 elements.property(newName, "HighTemperature", tonumber(edelname15:text()) + 273)
 end
-
 if edelname16:text() == "" then
 else
 elements.property(newName, "LowTemperature", tonumber(edelname16:text()) + 273)
@@ -758,7 +753,6 @@ newmenu:removeComponent(remlabel21)
 remlabel:text("Reminder set for "..entimey.." mins.")
 end)
 
-
 remoff:action(function(sender)
 clearsb()
 event.unregister(event.tick,remindme)
@@ -819,7 +813,7 @@ newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(bropc)
 end)
 
---Texter script hybrid start
+--Texter hybrid start
 local yvalue = 10
 local ylimit = 320
 local linenumber = 01
@@ -1127,7 +1121,7 @@ linenumber = "Max lines reached!"
 end
 end)
 end)
---Texter script hybrid end
+--Texter hybrid end
 
 function autohidehud()
 	if tpt.mousey <= 40 then 
@@ -1971,28 +1965,6 @@ end)
 
 end)
 
- --Motw notification
-local timeplus = 255
-local timeplus2 = 0
-function showmotdnot()
-if motwv == "1" then
-if timeplus > 0 then
-timeplus = timeplus - 2
-end
-if timeplus <= 0 then
-timeplus = 255
-end
-tpt.fillrect(418,408,51,14,255,200,55,timeplus)
-else
-if timeplus2 < 157 then
-timeplus2 = timeplus2 + 1
-end
-if timeplus2 >= 155 then
-event.unregister(event.tick, showmotdnot)
-end
-end
-end
-
 function startupcheck()
 fs.makeDirectory("scripts")
 event.register(event.tick,writefile2)
@@ -2002,8 +1974,6 @@ if faz ~= nil then
 io.close(faz)
 dofile("updatedmp.lua")
 end
---Motw notification check
-event.register(event.tick, showmotdnot)
 if MANAGER.getsetting("CRK","al") == nil then
 MANAGER.savesetting("CRK","ar",131)
 MANAGER.savesetting("CRK","ag",0)
@@ -2063,11 +2033,11 @@ end
 end)
 
 function UIhide()
-tpt.fillrect(-1,382,616,42,0,0,0,255)
-tpt.fillrect(612,0,17,424,0,0,0,255)
+tpt.fillrect(-1,382,616,42,0,0,0,215)
+tpt.fillrect(612,0,17,424,0,0,0,215)
 end
 
-local unhd = Button:new(315,1,40,20, "Show", "Unhides the interface.")
+local unhd = Button:new(315,1,29,18, "Show", "Brings back the interface.")
 
 unhd:action(function(sender)
 tpt.hud(1)
@@ -2087,7 +2057,7 @@ uival = "0"
 interface.removeComponent(unhd)
 interface.addComponent(unhd)
 dellb:text("Hidden")
-print("Interface is hidden, click show button at top to unhide.")
+print("Interface is now out of focus, click show button at top to undo.")
 
 elseif uival == "0" then
 tpt.hud(1)
@@ -2125,8 +2095,6 @@ interface.removeComponent(unhd)
 timerremo()
 posix = 580
 timeplus = 255
-timeplus2 = 0
-motwv = "0"
 backvr = 0
 backvg = 0
 backvb = 0
@@ -2154,6 +2122,7 @@ barktext:text("5")
 remtime:text("10")
 showmodelem()
 event.unregister(event.tick,writefile)
+event.unregister(event.tick,showmotdnot)
 event.unregister(event.tick,autosave)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
@@ -2239,7 +2208,6 @@ end
 
 if motw ~= "." then
 showmotd()
-
 graphics.drawRect(2,258,608,13,255,200,55,140)
 graphics.drawText(posix,261,motw,255,200,55,255)
 end
@@ -2257,7 +2225,7 @@ end)
 function open()
 ui.showWindow(newmenu) 
 newmenu:onDraw(drawglitch)
-motwv = "0"
+event.unregister(event.tick,showmotdnot)
 newmenu:onTryExit(close)
 newmenu:addComponent(deletesparkButton)
 newmenu:addComponent(FPS)
