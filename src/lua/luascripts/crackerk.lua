@@ -1482,12 +1482,6 @@ end
 end
 
 --Topbarend
-
- --Motw notification
-if motwv == "1" then
-tpt.fillrect(418,408,51,14,255,200,55,200)
-end
-
 --MP and manager
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
@@ -1569,10 +1563,7 @@ end
   colourRED = 255
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
- --Motw notification
-if motwv == "1" then
-tpt.fillrect(418,408,51,14,255,200,55,200)
-end
+
 --Topbar
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
@@ -1980,6 +1971,28 @@ end)
 
 end)
 
+ --Motw notification
+local timeplus = 255
+local timeplus2 = 0
+function showmotdnot()
+if motwv == "1" then
+if timeplus > 0 then
+timeplus = timeplus - 2
+end
+if timeplus <= 0 then
+timeplus = 255
+end
+tpt.fillrect(418,408,51,14,255,200,55,timeplus)
+else
+if timeplus2 < 157 then
+timeplus2 = timeplus2 + 1
+end
+if timeplus2 >= 155 then
+event.unregister(event.tick, showmotdnot)
+end
+end
+end
+
 function startupcheck()
 fs.makeDirectory("scripts")
 event.register(event.tick,writefile2)
@@ -1989,7 +2002,8 @@ if faz ~= nil then
 io.close(faz)
 dofile("updatedmp.lua")
 end
-
+--Motw notification check
+event.register(event.tick, showmotdnot)
 if MANAGER.getsetting("CRK","al") == nil then
 MANAGER.savesetting("CRK","ar",131)
 MANAGER.savesetting("CRK","ag",0)
@@ -2110,6 +2124,8 @@ close()
 interface.removeComponent(unhd)
 timerremo()
 posix = 580
+timeplus = 255
+timeplus2 = 0
 motwv = "0"
 backvr = 0
 backvg = 0
@@ -2201,10 +2217,10 @@ end
 
 local posix = 580
 function showmotd()
-if posix > -700 then
-posix = posix - 1
+if posix > -650 then
+posix = posix - 2
 end
-if posix <= -700 then
+if posix <= -650 then
 posix = 580
 end
 end
@@ -2223,9 +2239,9 @@ end
 
 if motw ~= "." then
 showmotd()
-graphics.fillRect(2,258,608,15,255,200,55,20)
-graphics.drawRect(2,258,608,15,255,200,55,100)
-graphics.drawText(posix,262,motw,255,200,55,255)
+
+graphics.drawRect(2,258,608,13,255,200,55,140)
+graphics.drawText(posix,261,motw,255,200,55,255)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
