@@ -30,8 +30,8 @@ void Element::Element_RADN()
 	Weight = 38;
 
 	DefaultProperties.temp = R_TEMP + 273.15f;
-	HeatConduct = 42;
-	Description = "Radon, a heavy radioactive condutive gas with short half life. Undergoes reaction when pressure's > 10 or < 0";
+	HeatConduct = 52;
+	Description = "Radon, a heavy radioactive conductive gas with short half-life. Gets ionised in presence of UV.";
 
 	Properties = TYPE_GAS | PROP_NEUTPASS | PROP_CONDUCTS | PROP_LIFE_DEC;
 
@@ -50,10 +50,46 @@ void Element::Element_RADN()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-		if (RNG::Ref().chance(1, 800))
+	if (RNG::Ref().chance(1, 300) && parts[i].tmp == 0)
+	{
+		if (RNG::Ref().chance(1, 5))
 		{
-			sim->part_change_type(i, x, y, PT_NEUT);
+			sim->create_part(-1, x, y, PT_NEUT);
 		}
+			parts[i].tmp = 1;
+	}
+
+	if (parts[i].tmp2 > 0)
+	{
+		parts[i].tmp2--;
+		if (parts[i].tmp2 < 500)
+		{
+			if (RNG::Ref().chance(1, 100))
+			{
+				sim->create_part(i, x, y, PT_PHOT);
+			}
+			if (RNG::Ref().chance(1, 190))
+			{
+				sim->create_part(i, x, y, PT_EMBR);
+			}
+			if (RNG::Ref().chance(1, 120))
+			{
+				sim->create_part(i, x, y, PT_GRVT);
+			}
+			if (RNG::Ref().chance(1, 90))
+			{
+				sim->create_part(i, x, y, PT_PROT);
+			}
+			if (RNG::Ref().chance(1, 290))
+			{
+				sim->create_part(i, x, y, PT_BVBR);
+			}
+			if (RNG::Ref().chance(1, 140))
+			{
+				sim->create_part(i, x, y, PT_NEUT);
+			}
+		}
+	}
 	int r, rx, ry;
 	for (rx = -2; rx < 3; rx++)
 		for (ry = -2; ry < 3; ry++)
@@ -63,69 +99,47 @@ static int update(UPDATE_FUNC_ARGS)
 				if (!r)
 					continue;
 				{
-					if (sim->pv[y / CELL][x / CELL] > 10.0)
+					switch (TYP(r))
 					{
-						if (RNG::Ref().chance(1, 100))
-						{
-							sim->part_change_type(i, x + rx, y + ry, PT_NEUT);
-						}
-						if (RNG::Ref().chance(1, 50))
-						{
-							sim->part_change_type(i, x + rx, y + ry, PT_PROT);
-						}
-						if (RNG::Ref().chance(1, 100))
-						{
-							sim->part_change_type(i, x + rx, y + ry, PT_GRVT);
-						}
-						if (RNG::Ref().chance(1, 300))
-						{
-							sim->part_change_type(i, x + rx, y + ry, PT_ELEC);
-						}
-						if (RNG::Ref().chance(1, 100))
-						{
-							sim->part_change_type(i, x + rx, y + ry, PT_PHOT);
-						}
-						if (RNG::Ref().chance(1, 900))
-						{
-							sim->part_change_type(i, x + rx, y + ry, PT_POLO);
-						}
-					}
-					else if (sim->pv[y / CELL][x / CELL] < 0.0)
-					{
-						if (RNG::Ref().chance(1, 200))
-						{
-							sim->part_change_type(i, x + rx, y + ry, PT_NEUT);
-						}
-					}
-					if (TYP(r) == PT_STKM || TYP(r) == PT_STKM2 || TYP(r) == PT_FIGH)
+					case PT_STKM:
+					case PT_STKM2:
+					case PT_FIGH:
 					{
 						if (RNG::Ref().chance(1, 70))
 						{
 							sim->kill_part(ID(r));
 						}
 					}
+					break;
+					}
 				}
 			}
+
+	int rp = sim->photons[y + ry][x + rx];
+	if (TYP(rp) == PT_UVRD)
+	{
+		parts[i].tmp2 = 700;
+		sim->kill_part(ID(rp));
+	}
 	return 0;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	*colr = 150;
-	*colg = 150;
-	*colb = 150;
-	*firea = 15;
-	if (cpart->life == 0)
+
+	if (cpart->tmp2 > 0)
 	{
-		*firer = 100;
-		*fireg = 100;
-		*fireb = 230;
+		*firer = 90;
+		*fireg = 200;
+		*fireb = 90;
+		*firea = 80;
 	}
-	else 
+	else
 	{
-		*firer = 255;
-		*fireg = 0;
-		*fireb = 0;
+		*firer = 60;
+		*fireg = 60;
+		*fireb = 230;
+		*firea = 30;
 	}
 	*pixel_mode |= FIRE_BLEND;
 	return 0;

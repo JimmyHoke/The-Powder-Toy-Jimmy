@@ -28,7 +28,7 @@ void Element::Element_ELEX()
 
 	Weight = 100;
 	HeatConduct = 50;
-	Description = "Element that can turns into random an element when above 0C.";
+	Description = "Element X, turns into random element when above 0C.";
 
 	Properties = TYPE_GAS;
 

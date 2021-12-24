@@ -30,7 +30,7 @@ void Element::Element_SUN()
 
 	DefaultProperties.temp = 6300.15f;
 	HeatConduct = 0;
-	Description = "SUN.";
+	Description = "SUN, extremely hot, emits harmful UV radiation. Makes PLNT grow in direction of sunlight.";
 
 	Properties = TYPE_SOLID;
 

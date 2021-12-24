@@ -12,8 +12,10 @@ Copper Oxide now falls apart when sparked.
 TIMC is now a powder crystal and can convert into its ctype properly.
 Fix bugs related to CEXP element.
 Fix CMNT's weight values.
+Correct some element descriptions.
 
 Misc.:
+New christmas theme, will be gone forever if you manually change the theme!
 Settings button will now glow if there's a new message.
 Add support for realistic fonts to texter.
 New loading animation (by Xphere07).
