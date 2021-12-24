@@ -7,44 +7,80 @@ if MANAGER.getsetting("CRK", "christmasv") == nil then
 MANAGER.savesetting("CRK","christmasv","1")
 end
 if MANAGER.getsetting("CRK", "christmasv") == "1" then
-MANAGER.savesetting("CRK","ar",50)
-MANAGER.savesetting("CRK","ag",50)
-MANAGER.savesetting("CRK","ab",50)
-MANAGER.savesetting("CRK","al",250)
+MANAGER.savesetting("CRK","ar",20)
+MANAGER.savesetting("CRK","ag",20)
+MANAGER.savesetting("CRK","ab",20)
+MANAGER.savesetting("CRK","al",0)
 end
 end
 chcheck()
 
+local alchrist = 130
 function chspecial()
-
 if MANAGER.getsetting ("CRK","christmasv") == "0" then
 tpt.unregister_step(chspecial)
 end
-tpt.fillrect(613,103,14,14,255,0,0,150)
-tpt.fillrect(613,119,14,15,200,200,200,150)
-tpt.fillrect(613,1,14,14,255,0,0,150)
-tpt.fillrect(613,17,14,14,200,200,200,150)
-tpt.fillrect(613,33,14,14,255,0,0,150)
-tpt.fillrect(613,49,14,14,200,200,200,150)
-tpt.fillrect(613,65,14,14,255,0,0,150)
-tpt.fillrect(613,81,14,14,200,200,200,150)
+
+if alchrist > 10 then
+alchrist = alchrist - 1
+elseif alchrist == 10 then 
+alchrist = 130
+end
+
+tpt.drawrect(613,103,14,14,255,0,0,255)
+tpt.drawrect(613,119,14,15,200,200,200,255)
+tpt.drawrect(613,1,14,14,255,0,0,255)
+tpt.drawrect(613,17,14,14,200,200,200,255)
+tpt.drawrect(613,33,14,14,255,0,0,255)
+tpt.drawrect(613,49,14,14,200,200,200,255)
+tpt.drawrect(613,65,14,14,255,0,0,255)
+tpt.drawrect(613,81,14,14,200,200,200,255)
+
+
+tpt.drawrect(613,136,14,14,255,0,0,255)
+tpt.drawrect(613,152,14,14,200,200,200,255)
+tpt.drawrect(613,168,14,14,255,0,0,255)
+tpt.drawrect(613,184,14,14,200,200,200,255)
+tpt.drawrect(613,200,14,14,255,0,0,255)
+tpt.drawrect(613,216,14,14,200,200,200,255)
+tpt.drawrect(613,232,14,14,255,0,0,255)
+tpt.drawrect(613,248,14,14,200,200,200,255)
+tpt.drawrect(613,264,14,14,255,0,0,255)
+tpt.drawrect(613,280,14,14,200,200,200,255)
+tpt.drawrect(613,296,14,14,255,0,0,255)
+tpt.drawrect(613,312,14,14,200,200,200,255)
+tpt.drawrect(613,328,14,14,255,0,0,255)
+tpt.drawrect(613,344,14,14,200,200,200,255)
+tpt.drawrect(613,360,14,14,255,0,0,255)
+tpt.drawrect(613,376,14,14,200,200,200,255)
+tpt.drawrect(613,392,14,14,255,0,0,255)
+
+
+tpt.fillrect(613,103,14,14,255,0,0,100)
+tpt.fillrect(613,119,14,15,200,200,200,alchrist)
+tpt.fillrect(613,1,14,14,255,0,0,100)
+tpt.fillrect(613,17,14,14,200,200,200,alchrist)
+tpt.fillrect(613,33,14,14,255,0,0,100)
+tpt.fillrect(613,49,14,14,200,200,200,alchrist)
+tpt.fillrect(613,65,14,14,255,0,0,100)
+tpt.fillrect(613,81,14,14,200,200,200,alchrist)
 
 tpt.fillrect(613,136,14,14,255,0,0,150)
-tpt.fillrect(613,152,14,14,200,200,200,150)
+tpt.fillrect(613,152,14,14,200,200,200,alchrist)
 tpt.fillrect(613,168,14,14,255,0,0,150)
-tpt.fillrect(613,184,14,14,200,200,200,150)
+tpt.fillrect(613,184,14,14,200,200,200,alchrist)
 tpt.fillrect(613,200,14,14,255,0,0,150)
-tpt.fillrect(613,216,14,14,200,200,200,150)
+tpt.fillrect(613,216,14,14,200,200,200,alchrist)
 tpt.fillrect(613,232,14,14,255,0,0,150)
-tpt.fillrect(613,248,14,14,200,200,200,150)
+tpt.fillrect(613,248,14,14,200,200,200,alchrist)
 tpt.fillrect(613,264,14,14,255,0,0,150)
-tpt.fillrect(613,280,14,14,200,200,200,150)
+tpt.fillrect(613,280,14,14,200,200,200,alchrist)
 tpt.fillrect(613,296,14,14,255,0,0,150)
-tpt.fillrect(613,312,14,14,200,200,200,150)
+tpt.fillrect(613,312,14,14,200,200,200,alchrist)
 tpt.fillrect(613,328,14,14,255,0,0,150)
-tpt.fillrect(613,344,14,14,200,200,200,150)
+tpt.fillrect(613,344,14,14,200,200,200,alchrist)
 tpt.fillrect(613,360,14,14,255,0,0,150)
-tpt.fillrect(613,376,14,14,200,200,200,150)
+tpt.fillrect(613,376,14,14,200,200,200,alchrist)
 tpt.fillrect(613,392,14,14,255,0,0,150)
 end
 if MANAGER.getsetting ("CRK","christmasv") == "1" then
@@ -266,7 +302,7 @@ end
 end
 
 local timermotd = 0
-local timeplus = 255
+local timeplus = 235
 
 function writefile2()
 timermotd = timermotd + 1
@@ -277,10 +313,11 @@ if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
 motw = ret2
-if motw ~= "."then
+if motw ~= "." and motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
 event.register(event.tick,showmotdnot)
 end
+MANAGER.savesetting("CRK","storedmotd",ret2)
 event.unregister(event.tick,writefile2)
 end
 end
@@ -288,10 +325,10 @@ end
 
 function showmotdnot()
 if timeplus > 0 then
-timeplus = timeplus - 2
+timeplus = timeplus - 3
 end
 if timeplus <= 0 then
-timeplus = 255
+timeplus = 235
 end
 tpt.fillrect(418,408,51,14,255,200,55,timeplus)
 end

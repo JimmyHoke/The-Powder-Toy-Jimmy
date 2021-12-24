@@ -14,4 +14,4 @@ const char *const introTextData =
 "\bg *\bw You can unhide all the hidden elements using 'Hidden elements' option.\n"
 "\bt *\bw New gravity modes can be switched using W key aswell.\n"
 "\bg *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same.\n\n"
-"\br   Press Any Key (except power) To Continue...\n\n\n\n\n\n\n\n\n\n\n\n\n";
+"\br   Press Any Key (except power) To Continue...                                                    \brChristmas \bwEdition\n\n\n\n\n\n\n\n\n\n\n\n\n";
