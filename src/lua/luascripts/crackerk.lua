@@ -1,20 +1,6 @@
 --cracker1000 mod script v7.0--
 
 --christmas special start
-fs.makeDirectory("scripts")
-function chcheck()
-if MANAGER.getsetting("CRK", "christmasv") == nil then
-MANAGER.savesetting("CRK","christmasv","1")
-end
-if MANAGER.getsetting("CRK", "christmasv") == "1" then
-MANAGER.savesetting("CRK","ar",20)
-MANAGER.savesetting("CRK","ag",20)
-MANAGER.savesetting("CRK","ab",20)
-MANAGER.savesetting("CRK","al",0)
-end
-end
-chcheck()
-
 local alchrist = 130
 function chspecial()
 if MANAGER.getsetting ("CRK","christmasv") == "0" then
@@ -28,31 +14,31 @@ alchrist = 130
 end
 
 tpt.drawrect(613,103,14,14,255,0,0,255)
-tpt.drawrect(613,119,14,15,200,200,200,255)
+tpt.drawrect(613,119,14,15,100,255,100,255)
 tpt.drawrect(613,1,14,14,255,0,0,255)
-tpt.drawrect(613,17,14,14,200,200,200,255)
+tpt.drawrect(613,17,14,14,100,255,100,255)
 tpt.drawrect(613,33,14,14,255,0,0,255)
-tpt.drawrect(613,49,14,14,200,200,200,255)
+tpt.drawrect(613,49,14,14,100,255,100,255)
 tpt.drawrect(613,65,14,14,255,0,0,255)
-tpt.drawrect(613,81,14,14,200,200,200,255)
+tpt.drawrect(613,81,14,14,100,255,100,255)
 
 
 tpt.drawrect(613,136,14,14,255,0,0,255)
 tpt.drawrect(613,152,14,14,200,200,200,255)
 tpt.drawrect(613,168,14,14,255,0,0,255)
-tpt.drawrect(613,184,14,14,200,200,200,255)
+tpt.drawrect(613,184,14,14,100,255,100,255)
 tpt.drawrect(613,200,14,14,255,0,0,255)
 tpt.drawrect(613,216,14,14,200,200,200,255)
 tpt.drawrect(613,232,14,14,255,0,0,255)
-tpt.drawrect(613,248,14,14,200,200,200,255)
+tpt.drawrect(613,248,14,14,100,255,100,255)
 tpt.drawrect(613,264,14,14,255,0,0,255)
 tpt.drawrect(613,280,14,14,200,200,200,255)
 tpt.drawrect(613,296,14,14,255,0,0,255)
-tpt.drawrect(613,312,14,14,200,200,200,255)
+tpt.drawrect(613,312,14,14,100,255,100,255)
 tpt.drawrect(613,328,14,14,255,0,0,255)
 tpt.drawrect(613,344,14,14,200,200,200,255)
 tpt.drawrect(613,360,14,14,255,0,0,255)
-tpt.drawrect(613,376,14,14,200,200,200,255)
+tpt.drawrect(613,376,14,14,100,255,100,255)
 tpt.drawrect(613,392,14,14,255,0,0,255)
 
 
@@ -61,12 +47,12 @@ tpt.fillrect(613,119,14,15,200,200,200,alchrist)
 tpt.fillrect(613,1,14,14,255,0,0,100)
 tpt.fillrect(613,17,14,14,200,200,200,alchrist)
 tpt.fillrect(613,33,14,14,255,0,0,100)
-tpt.fillrect(613,49,14,14,200,200,200,alchrist)
+tpt.fillrect(613,49,14,14,100,255,100,alchrist)
 tpt.fillrect(613,65,14,14,255,0,0,100)
 tpt.fillrect(613,81,14,14,200,200,200,alchrist)
 
 tpt.fillrect(613,136,14,14,255,0,0,150)
-tpt.fillrect(613,152,14,14,200,200,200,alchrist)
+tpt.fillrect(613,152,14,14,200,250,200,alchrist)
 tpt.fillrect(613,168,14,14,255,0,0,150)
 tpt.fillrect(613,184,14,14,200,200,200,alchrist)
 tpt.fillrect(613,200,14,14,255,0,0,150)
@@ -83,9 +69,23 @@ tpt.fillrect(613,360,14,14,255,0,0,150)
 tpt.fillrect(613,376,14,14,200,200,200,alchrist)
 tpt.fillrect(613,392,14,14,255,0,0,150)
 end
-if MANAGER.getsetting ("CRK","christmasv") == "1" then
+
+fs.makeDirectory("scripts")
+function chcheck()
+if MANAGER.getsetting("CRK", "christmasv") == nil then
+MANAGER.savesetting("CRK","christmasv","1")
+end
+if MANAGER.getsetting("CRK", "christmasv") == "1" then
+print("Merry christmas :)")
+MANAGER.savesetting("CRK","ar",20)
+MANAGER.savesetting("CRK","ag",20)
+MANAGER.savesetting("CRK","ab",20)
+MANAGER.savesetting("CRK","al",0)
+tpt.unregister_step(chspecial)
 tpt.register_step(chspecial)
 end
+end
+chcheck()
 --Delete from control centre too (Optional)!
 --christmas special end
 
@@ -302,7 +302,7 @@ end
 end
 
 local timermotd = 0
-local timeplus = 235
+local timeplus = 245
 
 function writefile2()
 timermotd = timermotd + 1
@@ -317,7 +317,6 @@ if motw ~= "." and motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
 event.register(event.tick,showmotdnot)
 end
-MANAGER.savesetting("CRK","storedmotd",ret2)
 event.unregister(event.tick,writefile2)
 end
 end
@@ -325,12 +324,12 @@ end
 
 function showmotdnot()
 if timeplus > 0 then
-timeplus = timeplus - 3
+timeplus = timeplus - 2
 end
 if timeplus <= 0 then
-timeplus = 235
+timeplus = 245
 end
-tpt.fillrect(418,408,51,14,255,200,55,timeplus)
+tpt.fillrect(418,408,51,14,255,210,55,timeplus)
 end
 
 upmp:action(function(sender)
@@ -1722,6 +1721,7 @@ local mp4 = Button:new(170,92,45,20,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,92,45,20,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(270,92,45,20,"Twilight", "Magnita/Default")
 local mp9 = Button:new(320,92,45,20,"Pulse", "RBG makes everything better.")
+local mp10 = Button:new(370,92,45,20,"Christmas", "Delete this")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
 local bg1 = Button:new(24,300,45,15,"Off", "Default")
@@ -1852,6 +1852,7 @@ newmenuth:addComponent(mp4)
 newmenuth:addComponent(mp7)
 newmenuth:addComponent(mp8)
 newmenuth:addComponent(mp9)
+newmenuth:addComponent(mp10)
 
 newmenuth:addComponent(bg1)
 newmenuth:addComponent(bg2)
@@ -1930,6 +1931,11 @@ end)
 mpop:action(function(sender)
 ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
+end)
+
+mp10:action(function(sender)
+MANAGER.savesetting("CRK","christmasv","1")
+chcheck()
 end)
 
 mp1:action(function(sender)
@@ -2318,6 +2324,9 @@ end)
 function open()
 ui.showWindow(newmenu) 
 newmenu:onDraw(drawglitch)
+if motw ~= "." then
+MANAGER.savesetting("CRK","storedmotd",motw)
+end
 event.unregister(event.tick,showmotdnot)
 newmenu:onTryExit(close)
 newmenu:addComponent(deletesparkButton)

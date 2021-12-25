@@ -15,8 +15,8 @@ Fix CMNT's weight values.
 Correct some element descriptions.
 
 Misc.:
-New christmas theme, will be gone forever if you manually change the theme!
-Settings button will now glow if there's a new message.
+New christmas theme!
+Settings button will now blink if there's a new unread message.
 Add support for realistic fonts to texter.
 New loading animation (by Xphere07).
 Support for longer element descriptions when editing elements via editor.
