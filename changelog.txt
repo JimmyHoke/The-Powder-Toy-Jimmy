@@ -1,30 +1,7 @@
-Changelog for V34 (56)
+Changelog for V35 (57)
 
-Elements: This update changes a lot of stuff when it comes to elements. Please read the updated wiki for more info.
-2 New elements: RADN (a radioactive gas element with some unrealistic propeties) and GRPH (graphene).
-Prevent ELEX from turning into certain elements and also make it a bit faster.
-Rewrite LED (it's much faster and better now).
-MISL now spawns with an unique colour, target and a pointer (hidden when there's a nearby PSCN particle).
-New, improved CEXP with stronger preset values.
-Performance improvements to CLUD, ACTY, CEXP, UVRD and Cl.
-PHOS as a fertiliser works more realistically, improve the glow property aswell.
-Copper Oxide now falls apart when sparked.
-TIMC is now a powder crystal and can convert into its ctype properly.
-Fix bugs related to CEXP element.
-Fix CMNT's weight values.
-Correct some element descriptions.
-
-Misc.:
-New christmas theme!
-Settings button will now blink if there's a new unread message.
-Add support for realistic fonts to texter.
-New loading animation (by Xphere07).
-Support for longer element descriptions when editing elements via editor.
-New dynamic motd banner.
-Hide interface option is more useful now, dims the interface instead of completely hiding it.
-Fix texter font not resetting after closing texter window.
-visual changes to password dialogue box.
-Fix Mod elements button not working after a reset.
-Fix potential crash when adding a custom GOL type.
-Fix ambient air temperature being loaded from saves as int, not float.
-Update wiki.
+Revert changes made to support christmas theme.
+GRPH is now solid graphite.
+Less distracting motd banner.
+Reduce TIMC glow and minor element desc. changes.
+ 

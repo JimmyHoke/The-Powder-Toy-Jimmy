@@ -1,36 +1,39 @@
 #include "simulation/ElementCommon.h"
 static int update(UPDATE_FUNC_ARGS);
+static int graphics(GRAPHICS_FUNC_ARGS);
+static void create(ELEMENT_CREATE_FUNC_ARGS);
 
 void Element::Element_GRPH()
 {
 	Identifier = "DEFAULT_PT_GRPH";
 	Name = "GRPH";
-	Colour = PIXPACK(0x696969);
+	Colour = PIXPACK(0x3B3B3B);
 	MenuVisible = 1;
-	MenuSection = SC_POWDERS;
+	MenuSection = SC_SOLIDS;
 	Enabled = 1;
 
-	Advection = 0.4f;
-	AirDrag = 0.04f * CFDS;
-	AirLoss = 0.94f;
-	Loss = 0.95f;
-	Collision = -0.1f;
-	Gravity = 0.4f;
+	Advection = 0.0f;
+	AirDrag = 0.00f * CFDS;
+	AirLoss = 0.90f;
+	Loss = 0.00f;
+	Collision = 0.0f;
+	Gravity = 0.0f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
-	Falldown = 1;
+	Falldown = 0;
 
 	Flammable = 0;
 	Explosive = 0;
 	Meltable = 5;
 	Hardness = 1;
 
-	Weight = 75;
+	Weight = 100;
 
 	HeatConduct = 255;
-	Description = "Graphene, a slippery powder, efficient conductor. Hard to extinguish once ignited. Absorbs NEUT. GRPH + O2 -> CO2.";
+	DefaultProperties.tmp2 = RNG::Ref().between(0, 4);
+	Description = "Graphite, efficient heat and electricity conductor. Ignites when above 450C. Absorbs NEUT. GRPH + O2 -> CO2.";
 
-	Properties = TYPE_PART| PROP_CONDUCTS | PROP_LIFE_DEC | PROP_HOT_GLOW | PROP_NEUTPASS;
+	Properties = TYPE_SOLID| PROP_CONDUCTS | PROP_LIFE_DEC | PROP_HOT_GLOW | PROP_NEUTPASS;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
@@ -42,6 +45,8 @@ void Element::Element_GRPH()
 	HighTemperatureTransition = PT_LAVA;
 
 	Update = &update;
+	Graphics = &graphics;
+	Create = &create;
 }
 
 static int update(UPDATE_FUNC_ARGS)
@@ -54,8 +59,26 @@ static int update(UPDATE_FUNC_ARGS)
 		}
 		if (RNG::Ref().chance(1, 500))
 		{
-			parts[i].life = 90;
+			parts[i].life = 50;
 			sim->part_change_type(i, x, y, PT_FIRE);
+		}
+	}
+
+	if (!parts[i].life)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			static const int checkCoordsX[] = { -4, 4, 0, 0 };
+			static const int checkCoordsY[] = { 0, 0, -4, 4 };
+			int rx = checkCoordsX[j];
+			int ry = checkCoordsY[j];
+			int r = pmap[y + ry][x + rx];
+			if (r && TYP(r) == PT_SPRK && parts[ID(r)].life && parts[ID(r)].life < 4)
+			{
+				sim->part_change_type(i, x, y, PT_SPRK);
+				parts[i].life = 4;
+				parts[i].ctype = PT_GRPH;
+			}
 		}
 	}
 
@@ -69,17 +92,14 @@ static int update(UPDATE_FUNC_ARGS)
 					r = sim->photons[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (TYP(r) && TYP(r) != PT_GRPH && (sim->elements[TYP(r)].Properties & TYPE_SOLID) && parts[ID(r)].y > parts[i].y)
-				{
-					parts[i].vy = -0.2;
-				}
-
+		
 				switch (TYP(r))
 				{
 				case PT_FIRE:
 				case PT_SMKE:
 				case PT_PLSM:
 				{
+					if (parts[i].temp > 693.15f)
 					parts[i].tmp = 1;
 				}
 				break;
@@ -91,7 +111,7 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_O2:
 				{
-					if (RNG::Ref().chance(1, 30))
+					if (RNG::Ref().chance(1, 40))
 					{
 						sim->part_change_type(i, x, y, PT_CO2);
 						sim->kill_part(ID(r));
@@ -100,7 +120,7 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_NEUT:
 				{
-					if (RNG::Ref().chance(1,3))
+					if (RNG::Ref().chance(1,4))
 					{
 						sim->kill_part(ID(r));
 					}
@@ -110,3 +130,28 @@ static int update(UPDATE_FUNC_ARGS)
 			}
 	return 0;
 }
+
+static int graphics(GRAPHICS_FUNC_ARGS)
+{
+	if (cpart->tmp2 > 3)
+	{
+		*colr = 220;
+		*colg = 50;
+		*colb = 50;
+		*pixel_mode |= PMODE_FLARE;
+	}
+	else
+	{
+		int z = (cpart->tmp2 - 2) * 8;
+		*colr += z;
+		*colg += z;
+		*colb += z;
+	}
+	return 0;
+}
+
+static void create(ELEMENT_CREATE_FUNC_ARGS)
+{
+	sim->parts[i].tmp2 = RNG::Ref().between(0, 4);
+}
+

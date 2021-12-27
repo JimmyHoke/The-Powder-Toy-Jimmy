@@ -17,7 +17,7 @@ void Element::Element_RADN()
 	AirLoss = 0.99f;
 	Loss = 0.30f;
 	Collision = -0.1f;
-	Gravity = 0.3f;
+	Gravity = 0.2f;
 	Diffusion = 0.40f;
 	HotAir = 0.001f	* CFDS;
 	Falldown = 0;
@@ -129,18 +129,18 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 
 	if (cpart->tmp2 > 0)
 	{
-		*firer = 90;
-		*fireg = 200;
-		*fireb = 90;
+		*firer = 230;
+		*fireg = 50;
+		*fireb = 50;
 		*firea = 80;
 	}
 	else
 	{
-		*firer = 60;
-		*fireg = 60;
-		*fireb = 230;
+		*firer = 12;
+		*fireg = 24;
+		*fireb = 117;
 		*firea = 30;
 	}
-	*pixel_mode |= FIRE_BLEND;
+	*pixel_mode = FIRE_BLEND;
 	return 0;
 }

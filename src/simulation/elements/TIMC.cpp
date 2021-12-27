@@ -30,7 +30,7 @@ void Element::Element_TIMC()
 
 	Weight = 100;
 	HeatConduct = 0;
-	Description = "Time crystal, converts into it's ctype when sparked with PSCN.";
+	Description = "Time crystal, converts into its ctype when sparked with PSCN.";
 	DefaultProperties.ctype = PT_CHLR;
 	Properties = TYPE_PART;
 
@@ -96,10 +96,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp2 > 1)
 	{
-		*firer = 235;
-		*fireg = 95;
+		*firer = 95;
+		*fireg = 235;
 		*fireb = 95;
-		*firea = 50;
+		*firea = 30;
 		*pixel_mode |= FIRE_ADD;
 	}
 	*pixel_mode |= PMODE_FLARE;
