@@ -50,13 +50,16 @@ void Element::Element_RADN()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (RNG::Ref().chance(1, 300) && parts[i].tmp == 0)
+	if (parts[i].tmp == 0)
 	{
-		if (RNG::Ref().chance(1, 5))
+		if (RNG::Ref().chance(1, 300))
 		{
 			sim->create_part(-1, x, y, PT_NEUT);
 		}
+		if (RNG::Ref().chance(1, 300))
+		{
 			parts[i].tmp = 1;
+		}
 	}
 
 	if (parts[i].tmp2 > 0)
@@ -126,12 +129,11 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-
 	if (cpart->tmp2 > 0)
 	{
-		*firer = 230;
-		*fireg = 50;
-		*fireb = 50;
+		*firer = 200;
+		*fireg = 100;
+		*fireb = 100;
 		*firea = 80;
 	}
 	else

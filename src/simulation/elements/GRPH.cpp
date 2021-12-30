@@ -31,7 +31,7 @@ void Element::Element_GRPH()
 
 	HeatConduct = 255;
 	DefaultProperties.tmp2 = RNG::Ref().between(0, 4);
-	Description = "Graphite, efficient heat and electricity conductor. Ignites when above 450C. Absorbs NEUT. GRPH + O2 -> CO2.";
+	Description = "Graphene, efficient heat and electricity conductor. Ignites when above 450C. Absorbs NEUT. GRPH + O2 -> CO2.";
 
 	Properties = TYPE_SOLID| PROP_CONDUCTS | PROP_LIFE_DEC | PROP_HOT_GLOW | PROP_NEUTPASS;
 

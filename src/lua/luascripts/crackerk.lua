@@ -214,6 +214,7 @@ end
 
 local timermotd = 0
 local timeplus = 240
+local posix = 0
 
 function writefile2()
 timermotd = timermotd + 1
@@ -224,9 +225,13 @@ if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
 motw = ret2
-if motw ~= "." and motw ~= MANAGER.getsetting("CRK","storedmotd") then
+
+if motw ~= "." then
+posix = graphics.textSize(motw)
+if motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
 event.register(event.tick,showmotdnot)
+end
 end
 event.unregister(event.tick,writefile2)
 end
@@ -863,22 +868,15 @@ function drawText(text, x, y, element, font)
 
         end
 end
-local timerfoi = 0
-local newmenu4 = Window:new(10,344,515, 40)
+
+local newmenu4 = Window:new(4,344,604,42)
 
 function drawblip()
 ui.closeWindow(newmenu4)
-if timerfoi < 0.2 then
-timerfoi= timerfoi + 0.1
-end
-
-if timerfoi >= 0.1 then
 ui.showWindow(newmenu4)
-timerfoi = 0
 tpt.unregister_step(drawblip)
 end
 
-end
 local texttext = "Typing starts here."
 local tr,tg,tb = 255
 local ffix = "0"
@@ -886,6 +884,8 @@ local ffix2 = "0"
 local yval2 = 10
 local fsize = "Normal"
 local linenumber = 01
+local drawpos = 211
+local drawpos2 = 500
 
 function drawprev2()
 if yvalue < ylimit then
@@ -897,9 +897,13 @@ yval2 = 14
 end
 end
 graphics.drawText(10,6,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+graphics.drawRect(drawpos,363,42,19,tr,tg,tb,255)
+graphics.drawRect(drawpos2,348,2,11,255,0,0,255)
 end
 
 chud:action(function(sender)
+drawpos2 = 500
+drawpos = 213
 tpt.set_pause(1)
 tr = 255
 tg = 255
@@ -917,17 +921,17 @@ close()
 
 local mouseX, mouseY = tpt.mousex, tpt.mousey
 local text, element, font = '', 'DMND', '5x7'
-local textTextbox = Textbox:new(5, 2, 505, 15, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
+local textTextbox = Textbox:new(5,2,596, 15,'', 'Type the text here. Press enter once done. New lines are inserted automatically.')
 local place = Button:new(5,20,50,17,"Enter", "Toggle hidden elements.")
 local cancel= Button:new(60,20,50,17,"Close", "Cancel the element placement.")
 local textTextboxs = Textbox:new(116, 20, 42, 17, '', 'Element')
-local lno2  = Label:new(180, 20, 10, 17, "Font:")
-local smalf = Button:new(200,20,40,17,"Normal", "5x7.")
-local bigf = Button:new(242,20,40,17,"Title", "7x10.")
-local titf = Button:new(284,20,40,17,"Bold", "7x10, Bold")
-local clrsc = Button:new(378,20,64,17,"Clear Text", "Clear text")
-local clrsc2 = Button:new(444,20,65,17,"Clear Screen", "Clear text")
-local titf2 = Button:new(326,20,40,17,"Real.", "7x10, Bold")
+local lno2  = Label:new(180, 20, 10, 17, "Fonts:")
+local smalf = Button:new(210,20,40,17,"Normal", "5x7.")
+local bigf = Button:new(262,20,40,17,"Title", "7x10.")
+local titf = Button:new(314,20,40,17,"Bold", "7x10, Bold")
+local clrsc = Button:new(448,20,84,17,"Clear Textbox", "Clear text")
+local clrsc2 = Button:new(536,20,65,17,"Clear Screen", "Clear text")
+local titf2 = Button:new(366,20,40,17,"Real.", "7x10, Bold")
 
 newmenu4:addComponent(textTextbox)
 newmenu4:addComponent(textTextboxs)
@@ -962,6 +966,8 @@ end
 end
 				
 smalf:action(function(sender)
+drawpos = 213
+drawpos2 = 500
 font='5x7'
 tr = 255
 tg = 255
@@ -975,6 +981,8 @@ fsize = "Normal"
 end)
 
 bigf:action(function(sender)
+drawpos = 265
+drawpos2 = 380
 tr = 255
 tg = 90
 tb = 0
@@ -988,6 +996,8 @@ fsize = "Title"
 end)
 
 titf:action(function(sender)
+drawpos = 317
+drawpos2 = 380
 tr = 120
 tg = 120
 tb = 255
@@ -1002,6 +1012,8 @@ end)
 
 local cursor = {10, yvalue}
 titf2:action(function(sender)
+drawpos = 369
+drawpos2 = 600
 tr = 120
 tg = 255
 tb = 120
@@ -1260,7 +1272,7 @@ local close2 = Button:new(570, 400, 50, 15, "Close")
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n    Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n    Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator."
+local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphene. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -2095,7 +2107,6 @@ reset1:action(function(sender)
 close()
 interface.removeComponent(unhd)
 timerremo()
-posix = 580
 timeplus = 255
 backvr = 0
 backvg = 0
@@ -2185,14 +2196,14 @@ clearsb()
 clearm()
 barlength = 1
 end
+local posix2 = posix + 10
 
-local posix = 580
 function showmotd()
-if posix > -650 then
-posix = posix - 2
+if posix2 > -1*(posix)then
+posix2 = posix2 - 1
 end
-if posix <= -650 then
-posix = 580
+if posix2 <= -1*(posix) then
+posix2 = posix + 10
 end
 end
 
@@ -2209,13 +2220,12 @@ graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
 
 if motw ~= "." then
+if posix > 600 then
 showmotd()
-graphics.drawText(posix,259,motw,255,200,55,255)
-if MANAGER.getsetting("CRK", "savergb") == "2" then
-graphics.drawRect(2,270,607,1,ar,ag,ab,al)
-else
-graphics.drawRect(2,270,607,1,colourRED,colourGRN,colourBLU,al)
 end
+graphics.fillRect(2,258,609, 10,20,20,20,200)
+graphics.drawText(posix2,259,motw,255,200,55,255)
+graphics.drawText(10,359,posix,255,200,55,255)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
