@@ -49,17 +49,20 @@ void Element::Element_PHOS()
 static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].pavg[0] > 0)
-		parts[i].pavg[0] = 0;
+		parts[i].pavg[0]--;
+
 	if (parts[i].tmp < 250 && (RNG::Ref().chance(1, 5)))
 	{
 		parts[i].tmp++;
 	}
 	int r, rx, ry;
-	for (rx = -1; rx < 1; rx++)
-		for (ry = -1; ry < 1; ry++)
+	for (rx = -2; rx < 3; rx++)
+		for (ry = -2; ry < 3; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				r = pmap[y + ry][x + rx];
+				if (!r)
+				continue;
 				switch (TYP(r))
 				{
 				case PT_O2:
@@ -87,8 +90,11 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_PLNT:
 			    {
-					sim->part_change_type(ID(r), x + rx, y + ry, PT_VINE);
-					sim->kill_part(i);
+					if (RNG::Ref().chance(1, 100))
+					{
+						sim->part_change_type(ID(r), x + rx, y + ry, PT_VINE);
+						sim->kill_part(i);
+					}
 				}
 				break;
 				}
@@ -97,7 +103,7 @@ static int update(UPDATE_FUNC_ARGS)
 	int rp = sim->photons[y + ry][x + rx];
 	if (TYP(rp) == PT_UVRD)
 	{
-		parts[i].pavg[0] = 20;
+		parts[i].pavg[0] = parts[i].pavg[0]+2;
 	}
 	return 0;
 }
@@ -118,9 +124,9 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	if (cpart->pavg[0] > 0)
 	{
 		*firea = 55;
-		*firer = 255;
-		*fireg = 255;
-		*fireb = 255;
+		*firer = *colr;
+		*fireg = *colg;
+		*fireb = *colb;
 		*pixel_mode |= FIRE_ADD;
 	}
 	return 0;

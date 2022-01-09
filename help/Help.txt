@@ -31,7 +31,7 @@ src>gui>search>Searchview.cpp
 (FPTC, 197);              SPRK.cpp, BTRY.cpp
 (FNTC, 192);              SPRK.cpp, BTRY.cpp
 (CLNT, 193);
-(LED, 194);                SPRK.cpp
+(LED, 194);                
 (TIMC, 195);               SPRK.cpp 
 (FUEL, 196);
 (DMRN, 198);             Simulation.cpp
@@ -65,12 +65,13 @@ src>gui>search>Searchview.cpp
 (BFLM, 226);             VIRS.cpp (add exception!)
 (PET, 227);             
 (MISL 228);     
-(AMBE 229);                 SPRK.cpp
+(AMBE 229);               SPRK.cpp
 (CHLR 230);         
 (ACTY 231);    
-(ELEX 230);    Make sure not not include 232 as an elem ID in update function!              
+(ELEX 232);   
+(RADN 233);                          
 
-Elements that use.tmp2 >> type == PT_CEXP || type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
+Elements that use.tmp2 >> type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 
 For BTRY, replace this
  "if ((sim->elements[rt].Properties&PROP_CONDUCTS) && !(rt==PT_WATR||rt==PT_SLTW||rt==PT_NTCT||rt==PT_PTCT||rt==PT_INWR||rt == PT_FNTC||rt == PT_FPTC) && parts[ID(r)].life==0)"

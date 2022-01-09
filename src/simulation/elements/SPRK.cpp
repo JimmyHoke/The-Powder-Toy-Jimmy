@@ -254,13 +254,6 @@ static int update(UPDATE_FUNC_ARGS)
 					}
 				}
 					continue;
-				case PT_LED:
-					if (parts[i].life < 4)
-					{
-						if (sender == PT_NSCN) parts[ID(r)].life = 10;
-						else if (sender == PT_PSCN && parts[ID(r)].life >= 10) parts[ID(r)].life = 9;
-					}
-					continue;
 				case PT_PPTI:
 					if (parts[i].tmp2 < 4)
 					{

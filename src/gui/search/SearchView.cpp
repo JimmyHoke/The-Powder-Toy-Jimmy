@@ -507,7 +507,7 @@ void SearchView::NotifySaveListChanged(SearchModel * sender)
 		}
 		if (!sender->GetSavesLoaded())
 		{
-			errorLabel->SetText("Loading...");
+			errorLabel->SetText("");
 			loadingSpinner->Visible = true;
 		}
 		else

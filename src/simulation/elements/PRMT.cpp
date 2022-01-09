@@ -63,8 +63,8 @@ static int update(UPDATE_FUNC_ARGS)
 	}
     if (parts[i].temp <= 274.15f)
 	{
-		sim->part_change_type(i, x , y, PT_SING);
 		parts[i].tmp = 20;
+		sim->part_change_type(i, x, y, PT_SING);
 	}
 	
    if (parts[i].temp >= 874.15f)

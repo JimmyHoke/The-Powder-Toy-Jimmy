@@ -56,7 +56,8 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp = 100;
 	if (parts[i].tmp2 <= 0 || parts[i].tmp2 > 380)
 		parts[i].tmp2 = 100;
-
+	if (parts[i].pavg[1] < 1)
+		parts[i].pavg[1] = 1;
 	//Explosion
 	if (((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2)) || parts[i].pavg[1] > 300 || parts[i].temp >= 873.15f)
 	{
@@ -116,6 +117,11 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					parts[i].life = 20;
 				}
+
+				if (TYP(r) == PT_PSCN && parts[i].life == 0)
+					{
+					parts[i].pavg[1] = 0;
+					}
 				if (parts[i].life > 0)
 				{
 					if (TYP(r) && TYP(r) != PT_BRAY)
@@ -127,35 +133,45 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 {
+	int cr = cpart->tmp;
+	int cg = cpart->tmp2;
+	int cb = cpart->tmp - cpart->tmp2;
+
+	if (cpart->pavg[1] > 0) // pointer
+	{
+		ren->drawrect(cpart->tmp - 2, cpart->tmp2, 5, 1, cr, cg, cb, 255);
+		ren->drawrect(cpart->tmp, cpart->tmp2 - 2, 1, 5, cr, cg, cb, 255);
+	}
+
 	if (cpart->pavg[0] == 0)//Up
 	{
-		ren->drawrect(cpart->x - 1, cpart->y - 4, 3, 1, 255, 65, 0, 255);
+		ren->drawrect(cpart->x - 1, cpart->y - 4, 3, 1, cr, cg, cb, 255);
 		ren->drawrect(cpart->x, cpart->y - 5, 1, 5, 255, 255, 255, 255);
-		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, 255, 65, 0, 255);
+		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, cr, cg, cb, 255);
 	}
 	else if (cpart->pavg[0] == 1)//Left
 	{
-		ren->drawrect(cpart->x - 4, cpart->y - 1, 1, 3, 255, 65, 0, 255);
+		ren->drawrect(cpart->x - 4, cpart->y - 1, 1, 3, cr, cg, cb, 255);
 		ren->drawrect(cpart->x-5, cpart->y, 5, 1, 255, 255, 255, 255);
-		ren->drawrect(cpart->x, cpart->y-2, 1, 5, 255, 65, 0, 255);
+		ren->drawrect(cpart->x, cpart->y-2, 1, 5, cr, cg, cb, 255);
 	}
 	else if (cpart->pavg[0] == 2)//Right
 	{
-		ren->drawrect(cpart->x + 4, cpart->y - 1, 1, 3, 255, 65, 0, 255);
+		ren->drawrect(cpart->x + 4, cpart->y - 1, 1, 3, cr, cg, cb, 255);
 		ren->drawrect(cpart->x+1, cpart->y, 5, 1, 255, 255, 255, 255);
-		ren->drawrect(cpart->x, cpart->y-2, 1, 5, 255, 65, 0, 255);
+		ren->drawrect(cpart->x, cpart->y-2, 1, 5, cr, cg, cb, 255);
 	}
 	else if (cpart->pavg[0] == 3)//Down
 	{
-		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, 255, 65, 0, 255);
+		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, cr, cg, cb, 255);
 		ren->drawrect(cpart->x, cpart->y+1, 1, 5, 255, 255, 255, 255);
-		ren->drawrect(cpart->x - 1, cpart->y + 4, 3, 1, 255, 65, 0, 255);
+		ren->drawrect(cpart->x - 1, cpart->y + 4, 3, 1, cr, cg, cb, 255);
 	}
 	return 0;
 }
 
 static void create(ELEMENT_CREATE_FUNC_ARGS) //Default range and ctype settings.
 {
-	sim->parts[i].tmp = 300;
-	sim->parts[i].tmp2 = 200;
+	sim->parts[i].tmp = RNG::Ref().between(1, 610);
+	sim->parts[i].tmp2 = RNG::Ref().between(1, 380);
 }

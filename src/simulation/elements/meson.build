@@ -232,6 +232,7 @@ simulation_elem_ids = [
 	['CHLR', 230],
 	['ACTY', 231],
 	['ELEX', 232],
+
 	['JRAY', 500],
 	['EBCL', 501],
 	['GGOO', 502],
@@ -240,6 +241,8 @@ simulation_elem_ids = [
 	['NIHM', 505],
 	['SCLT', 506],
 	['SYST', 507],
+	['RADN', 233],
+	['GRPH', 234],
 ]
 simulation_elem_src = []
 foreach elem_name_id : simulation_elem_ids

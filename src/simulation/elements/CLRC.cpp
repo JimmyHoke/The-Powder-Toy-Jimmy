@@ -27,7 +27,7 @@ void Element::Element_CLRC()
 	Meltable = 0;
 	Hardness = 0;
 
-	Weight = 100;
+	Weight = 99;
 
 	DefaultProperties.temp = 22.0f + 273.15f;
 	HeatConduct = 0;

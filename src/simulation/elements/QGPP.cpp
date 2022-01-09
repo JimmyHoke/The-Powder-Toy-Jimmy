@@ -2,7 +2,6 @@
 
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
-static void create(ELEMENT_CREATE_FUNC_ARGS);
 
 void Element::Element_QGPP()
 {
@@ -31,9 +30,9 @@ void Element::Element_QGPP()
 	Weight = 1;
 
 	DefaultProperties.temp = R_TEMP + 2.0f + 873.15f;
+	DefaultProperties.tmp = 900;
 	HeatConduct = 42;
 	Description = "Quark Gluon Plasma, a strange element under investigation.";
-
 	Properties = TYPE_GAS | PROP_NEUTPASS;
 
 	LowPressure = IPL;
@@ -47,7 +46,6 @@ void Element::Element_QGPP()
 
 	Update = &update;
 	Graphics = &graphics;
-	Create = &create;
 }
 
 static int update(UPDATE_FUNC_ARGS)
@@ -101,9 +99,4 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 
 	return 0;
-}
-
-static void create(ELEMENT_CREATE_FUNC_ARGS)
-{
-	sim->parts[i].tmp = 900;
 }

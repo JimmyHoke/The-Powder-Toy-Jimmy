@@ -1,20 +1,21 @@
---cracker1000 mod script v6.0--
+--cracker1000 mod script v7.0--
+
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
-local motw = ""
+local motw = "."
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
-local forgotmsg = Label:new(100, 120, 10, 15, " Please enter your favorite TPT element.\n\n                 if problem persists.")
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
 local passok2 = Button:new(10,75,80,20,"Forgot", "Enter Elem.")
-local passok4 = Button:new(12,132,75,15,"Message here", "Open Mod thread")
+local passok4 = Button:new(12,105,175,15,"Message here if problem persists", "Open Mod thread")
 local passok3 = Button:new(178,1,20,20,"X", "Close.")
 local passtime = Textbox:new(70, 30, 55, 20, '', 'Password..')
-
+local par,pag,pab = 80,250,0
+local passmesg = "Enter password to continue."
 function passglit()
-graphics.drawText(230,160," Enter Password to continue..", 80,250,0,255)
+graphics.drawText(230,160,passmesg, par,pag,pab,255)
 ui.showWindow(passmenu)
 end
 
@@ -26,17 +27,22 @@ passmenu:addComponent(passtime)
 tpt.register_step(passglit)
 
 passok:action(function(sender)
-if passtime:text() == MANAGER.getsetting("CRK", "passreal") or passtime:text() == "xkcd-xyz" or passtime:text() == MANAGER.getsetting("CRK", "passreal2")   then
+if passtime:text() == MANAGER.getsetting("CRK", "passreal") or passtime:text() == "xkcd-xyza" or passtime:text() == MANAGER.getsetting("CRK", "passreal2")   then
 tpt.unregister_step(passglit)
 ui.closeWindow(passmenu)
 else 
-passtime:text("Wrong!")
+par,pag,pab = 255,0,0
+passmesg = "     Wrong, try again!"
+passtime:text("")
 end
+passmenu:removeComponent(passok4)
 end)
 
 passok2:action(function(sender)
-passmenu:addComponent(forgotmsg)
 passmenu:addComponent(passok4)
+par,pag,pab = 80,250,0
+passmesg = "Enter your favourite element"
+passtime:text("")
 end)
 passok3:action(function(sender)
 tpt.unregister_step(passglit)
@@ -104,7 +110,7 @@ local brlabel2 = Label:new(358, 208, 10, 15, "("..brightSlider:value()..")")
 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
-local shrt = Button:new(396,92,80,25, "Toggle J Key", "Turns off the J key shortcut")
+local shrt = Button:new(396,92,80,25, "Toggle J key", "Nothing")
 local shrtlb = Label:new(487, 98, 10, 15, "ON")
 
 local edito = Button:new(396,124,80,25, "Editor", "Basic element editor.")
@@ -207,20 +213,39 @@ end
 end
 
 local timermotd = 0
+local timeplus = 240
+local posix = 0
 
 function writefile2()
 timermotd = timermotd + 1
-if timermotd >= 130 then
-tpt.unregister_step(writefile2)
+if timermotd >= 150 then
+event.unregister(event.tick,writefile2)
 end
-gfx.fillRect(1,375,2,2,0,255,0,255)
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
 motw = ret2
-tpt.unregister_step(writefile2)
+
+if motw ~= "." then
+posix = graphics.textSize(motw)
+if motw ~= MANAGER.getsetting("CRK","storedmotd") then
+event.unregister(event.tick,showmotdnot)
+event.register(event.tick,showmotdnot)
 end
 end
+event.unregister(event.tick,writefile2)
+end
+end
+end
+
+function showmotdnot()
+if timeplus > 0 then
+timeplus = timeplus - 2
+end
+if timeplus <= 0 then
+timeplus = 240
+end
+tpt.fillrect(418,408,51,14,32,250,210,timeplus)
 end
 
 upmp:action(function(sender)
@@ -338,7 +363,6 @@ tpt.unregister_step(colourblender)
 tpt.display_mode(7)
 perlab:text("ON")
 if fplb:text() == "OFF" then
-
 fplb:text("ON")
 end
 
@@ -397,7 +421,6 @@ if saveend - savetime == 0 then
 getmax()
 sim.saveStamp(maxpart1,maxpart2,maxpart3-maxpart1,maxpart4-maxpart2)
 end
-
 end
 
 bar:action(function(sender)
@@ -490,7 +513,7 @@ local edelname = Textbox:new(10, 60, 100, 15, '', 'New Name.')
 local edelname2 = Textbox:new(10, 80, 100, 15, '', 'New Colour.')
 local edelname4 = Textbox:new(10, 100, 100, 15, '', 'Menu Section.')
 local edelname5 = Textbox:new(10, 120, 100, 15, '', 'Show / Hide.')
-local edelname3 = Textbox:new(10, 140, 400, 15, '', '                           New Element Description.')
+local edelname3 = Textbox:new(10, 140, 550, 15, '', '                                              New Element Description.')
 local edelname6 = Textbox:new(10, 160, 100, 15, '', 'Explosive.')
 local edelname7 = Textbox:new(10, 180, 100, 15, '', 'HeatConduct.')
 local edelname8 = Textbox:new(10, 200, 100, 15, '', 'Flammable.')
@@ -573,77 +596,62 @@ if edelname:text() == "" then
 else
 elements.property(newName, "Name", edelname:text())
 end
-
 if edelname3:text() == "" then
 else
 elements.property(newName, "Description", edelname3:text())
 end
-
 if edelname2:text() == "" then
 else
 elements.property(newName, "Colour", edelname2:text())
 end
-
 if edelname4:text() == "" then
 else
 elements.property(newName, "MenuSection", edelname4:text())
 end
-
 if edelname5:text() == "" then
 else
 elements.property(newName, "MenuVisible", tonumber(edelname5:text()))
 end
-
 if edelname6:text() == "" then
 else
 elements.property(newName, "Explosive", tonumber(edelname6:text()))
 end
-
 if edelname7:text() == "" then
 else
 elements.property(newName, "HeatConduct", tonumber(edelname7:text()))
 end
-
 if edelname8:text() == "" then
 else
 elements.property(newName, "Flammable", tonumber(edelname8:text()))
 end
-
 if edelname9:text() == "" then
 else
 elements.property(newName, "Weight", tonumber(edelname9:text()))
 end
-
 if edelname10:text() == "" then
 else
 elements.property(newName, "Hardness", tonumber(edelname10:text()))
 end
-
 if edelname11:text() == "" then
 else
 elements.property(newName, "Temperature", tonumber(edelname11:text())+273.15)
 end
-
 if edelname12:text() == "" then
 else
 elements.property(newName, "Diffusion", tonumber(edelname12:text()))
 end
-
 if edelname13:text() == "" then
 else
 elements.property(newName, "Gravity", tonumber(edelname13:text()))
 end
-
 if edelname14:text() == "" then
 else
 elements.property(newName, "Advection", tonumber(edelname14:text()))
 end
-
 if edelname15:text() == "" then
 else
 elements.property(newName, "HighTemperature", tonumber(edelname15:text()) + 273)
 end
-
 if edelname16:text() == "" then
 else
 elements.property(newName, "LowTemperature", tonumber(edelname16:text()) + 273)
@@ -751,7 +759,6 @@ newmenu:removeComponent(remlabel21)
 remlabel:text("Reminder set for "..entimey.." mins.")
 end)
 
-
 remoff:action(function(sender)
 clearsb()
 event.unregister(event.tick,remindme)
@@ -812,7 +819,7 @@ newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(bropc)
 end)
 
---Texter script hybrid start
+--Texter hybrid start
 local yvalue = 10
 local ylimit = 320
 local linenumber = 01
@@ -861,22 +868,15 @@ function drawText(text, x, y, element, font)
 
         end
 end
-local timerfoi = 0
-local newmenu4 = Window:new(10,344,515, 40)
+
+local newmenu4 = Window:new(4,344,604,42)
 
 function drawblip()
 ui.closeWindow(newmenu4)
-if timerfoi < 0.2 then
-timerfoi= timerfoi + 0.1
-end
-
-if timerfoi >= 0.1 then
 ui.showWindow(newmenu4)
-timerfoi = 0
 tpt.unregister_step(drawblip)
 end
 
-end
 local texttext = "Typing starts here."
 local tr,tg,tb = 255
 local ffix = "0"
@@ -884,6 +884,8 @@ local ffix2 = "0"
 local yval2 = 10
 local fsize = "Normal"
 local linenumber = 01
+local drawpos = 211
+local drawpos2 = 500
 
 function drawprev2()
 if yvalue < ylimit then
@@ -895,9 +897,13 @@ yval2 = 14
 end
 end
 graphics.drawText(10,6,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+graphics.drawRect(drawpos,363,42,19,tr,tg,tb,255)
+graphics.drawRect(drawpos2,348,2,11,255,0,0,255)
 end
 
 chud:action(function(sender)
+drawpos2 = 500
+drawpos = 213
 tpt.set_pause(1)
 tr = 255
 tg = 255
@@ -907,6 +913,7 @@ tpt.hud(0)
 ffix2 = "0"
 ffix = "0"
 yvalue = 10
+fsize = "Normal"
 texttext = "Typing starts here"
 tpt.unregister_step(drawblip)
 tpt.register_step(drawblip)
@@ -914,16 +921,17 @@ close()
 
 local mouseX, mouseY = tpt.mousex, tpt.mousey
 local text, element, font = '', 'DMND', '5x7'
-local textTextbox = Textbox:new(5, 2, 505, 15, '', 'Type the text here. Press enter once done. New lines are inserted automatically.')
+local textTextbox = Textbox:new(5,2,596, 15,'', 'Type the text here. Press enter once done. New lines are inserted automatically.')
 local place = Button:new(5,20,50,17,"Enter", "Toggle hidden elements.")
 local cancel= Button:new(60,20,50,17,"Close", "Cancel the element placement.")
 local textTextboxs = Textbox:new(116, 20, 42, 17, '', 'Element')
-local lno2  = Label:new(190, 20, 10, 17, "Font:")
-local smalf = Button:new(210,20,42,17,"Normal", "5x7.")
-local bigf = Button:new(255,20,42,17,"Title", "7x10.")
-local titf = Button:new(300,20,42,17,"Bold", "7x10, Bold")
-local clrsc = Button:new(378,20,64,17,"Clear Text", "Clear text")
-local clrsc2 = Button:new(444,20,65,17,"Clear Screen", "Clear text")
+local lno2  = Label:new(180, 20, 10, 17, "Fonts:")
+local smalf = Button:new(210,20,40,17,"Normal", "5x7.")
+local bigf = Button:new(262,20,40,17,"Title", "7x10.")
+local titf = Button:new(314,20,40,17,"Bold", "7x10, Bold")
+local clrsc = Button:new(448,20,84,17,"Clear Textbox", "Clear text")
+local clrsc2 = Button:new(536,20,65,17,"Clear Screen", "Clear text")
+local titf2 = Button:new(366,20,40,17,"Real.", "7x10, Bold")
 
 newmenu4:addComponent(textTextbox)
 newmenu4:addComponent(textTextboxs)
@@ -933,6 +941,7 @@ newmenu4:addComponent(lno2)
 newmenu4:addComponent(smalf)
 newmenu4:addComponent(bigf)
 newmenu4:addComponent(titf)
+newmenu4:addComponent(titf2)
 newmenu4:addComponent(clrsc)
 newmenu4:addComponent(clrsc2)
 newmenu4:onDraw(drawprev2)
@@ -948,16 +957,23 @@ newmenu4:onDraw(drawprev2)
                             element = textTextboxs:text();
                     end
                 )
+				
+function textup()
+if ffix2 == "1" then
+yvalue = yvalue + 4
+linenumber = linenumber + 1
+end
+end
+				
 smalf:action(function(sender)
+drawpos = 213
+drawpos2 = 500
 font='5x7'
 tr = 255
 tg = 255
 tb = 255
 if ffix == "1" and yvalue < ylimit then
-if ffix2 == "1" then
-yvalue = yvalue + 10
-linenumber = linenumber + 1
-end
+textup()
 end
 ffix = "0"
 ffix2 = "0"
@@ -965,15 +981,14 @@ fsize = "Normal"
 end)
 
 bigf:action(function(sender)
+drawpos = 265
+drawpos2 = 380
 tr = 255
 tg = 90
 tb = 0
 font='7x10'
 if ffix == "0" and yvalue < ylimit then
-if ffix2 == "1" then
-yvalue = yvalue + 10
-linenumber = linenumber + 1
-end
+textup()
 end
 ffix = "1"
 ffix2 = "0"
@@ -981,19 +996,33 @@ fsize = "Title"
 end)
 
 titf:action(function(sender)
-tr = 50
-tg = 100
+drawpos = 317
+drawpos2 = 380
+tr = 120
+tg = 120
 tb = 255
 font='7x10-Bold'
 if ffix == "0" and yvalue < ylimit then
-if ffix2 == "1" then
-yvalue = yvalue + 10
-linenumber = linenumber + 1
-end
+textup()
 end
 ffix = "1"
 ffix2 = "0"
 fsize = "Bold"
+end)
+
+local cursor = {10, yvalue}
+titf2:action(function(sender)
+drawpos = 369
+drawpos2 = 600
+tr = 120
+tg = 255
+tb = 120
+if ffix == "1" and yvalue < ylimit then
+textup()
+end
+ffix = "0"
+ffix2 = "0"
+fsize = "Realistic"
 end)
 
 cancel:action(function(sender)
@@ -1021,6 +1050,58 @@ tpt.unregister_step(drawblip)
 tpt.register_step(drawblip)
 end)
 
+local primary = "vent"
+local secondary = "shld"
+local third = "glas"
+
+function drawText2(text)
+    for i = 1, #text do
+        lastCharIsBig = false
+        lastCharIsSmall = false
+
+        lastCharW = 0
+        lastCharH = 0
+        local c = text:sub(i, i)
+        charmap = chars_light[c].matrix
+        if chars_light[c].isBig ~= nil then
+            lastCharIsBig = true
+        end
+        if chars_light[c].isSmall ~= nil then
+            lastCharIsSmall = true
+        end
+        for array_l_h = 1, #charmap do
+            lastCharH = array_l_h
+            for array_l_w = 1, #charmap[array_l_h] do
+                lastCharW = array_l_w
+                if charmap[array_l_h][array_l_w] == 3 then
+                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], primary)
+                end
+                if charmap[array_l_h][array_l_w] == 2 then
+                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], secondary)
+                end
+                if charmap[array_l_h][array_l_w] == 1 then
+                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], third)
+                end
+                cursor_pointat[1] = cursor_pointat[1] + 1
+            end
+            cursor_pointat[1] = cursor[1] - #charmap[array_l_h]
+            cursor_pointat[2] = cursor_pointat[2] + 1
+        end
+        cursor_pointat[2] = cursor_pointat[2] - lastCharH
+        if lastCharIsBig == true then
+            cursor_pointat[1] = cursor_pointat[1] + lastCharW
+        else
+            if lastCharIsSmall == true then
+                cursor_pointat[1] = cursor_pointat[1] + lastCharW + 2
+            else
+                cursor_pointat[1] = cursor_pointat[1] + lastCharW + 1
+            end
+        end
+    end
+    cursor_pointat[1] = cursor[1]
+    cursor_pointat[2] = cursor[2]
+end
+
 place:action(function(sender)
 ffix2 = "1"
 ui.closeWindow(newmenu4)
@@ -1037,7 +1118,14 @@ end
 
 textTextbox:text('')
 linenumber = linenumber + 1
+if fsize == "Realistic" then
+cursor_pointat = cursor
+cursor_pointat[1] = 10
+cursor_pointat[2] = yvalue
+drawText2(text)
+else
 drawText(string.gsub(text, '\\n', '\n') .. '\n', 10, yvalue, element, font)
+end
 text = textTextbox:text()
 
 end
@@ -1046,7 +1134,7 @@ linenumber = "Max lines reached!"
 end
 end)
 end)
---Texter script hybrid end
+--Texter hybrid end
 
 function autohidehud()
 	if tpt.mousey <= 40 then 
@@ -1177,14 +1265,14 @@ local pgno = 1
 local maxpage = 4
 
 local creditw = Window:new(-15,-15, 626, 422)
-local prevpg = Button:new(242, 400, 40, 15, "Prev.")
-local nextpg = Button:new(332, 400, 40, 15, "Next")
+local prevpg = Button:new(238, 400, 40, 15, "Prev.")
+local nextpg = Button:new(342, 400, 40, 15, "Next")
 local close2 = Button:new(570, 400, 50, 15, "Close")
 
-local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, converts into it's ctype when sparked with PSCN. Timer set using .tmp, default is 100.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
-local wpage2 = "14) LED:  Light Emmiting Diode. Use PSCN to activate and NSCN to deactivate. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n    Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n    Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
-local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Use .tmp for setting the temp. at which it explodes.\n    .Life and .tmp2 determines the pressure and temperature respectively that it generates while exploding.\n    .Ctype decides the element it explodes into. Limits: Life = -256 to 256, Tmp2 and tmp = -273 to 9724. \n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to set coords (X= tmp & Y = tmp2). Blasts when at set coords or when > 500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element, has weird graphics, flies. \n\n\n    << You have reached the end of wiki >>"
+local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
+local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n    Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n    Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
+local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
+local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphene. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1204,7 +1292,7 @@ wcontent = wpage4
 end
 gfx.drawRect(10,395,610,1,255,255,55,255)
 gfx.drawText(10,22,wcontent,255,255,255,255)
-gfx.drawText(290,405,"Page: "..pgno,255,255,55,255)
+gfx.drawText(287,405,"Page: "..pgno.."/"..maxpage ,255,255,55,255)
 end
 
 creditw:onDraw(drawwikitext)
@@ -1274,6 +1362,8 @@ tpt.el.pet.menu=0
 tpt.el.cl.menu=0
 tpt.el.acty.menu=0
 tpt.el.elex.menu=0
+tpt.el.radn.menu=0
+tpt.el.grph.menu=0
 end
 
 function showmodelem()
@@ -1319,17 +1409,18 @@ tpt.el.pet.menu=1
 tpt.el.cl.menu=1
 tpt.el.acty.menu=1
 tpt.el.elex.menu=1
+tpt.el.radn.menu=1
+tpt.el.grph.menu=1
 end
-local modelemval = 0
+local modelemval = "0"
 bg:action(function(sender)
-
-if modelemval == 0 then
+if modelemval == "0" then
 hidemodelem()
-modelemval = 1
+modelemval = "1"
 bglab:text("OFF")
-elseif modelemval == 1 then
+else
 showmodelem()
-modelemval = 0
+modelemval = "0"
 bglab:text("ON")
 end
 clearsb()
@@ -1398,7 +1489,6 @@ end
 end
 
 --Topbarend
-
 --MP and manager
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
@@ -1957,11 +2047,11 @@ end
 end)
 
 function UIhide()
-tpt.fillrect(-1,382,616,42,0,0,0,255)
-tpt.fillrect(612,0,17,424,0,0,0,255)
+tpt.fillrect(-1,382,616,42,0,0,0,215)
+tpt.fillrect(612,0,17,424,0,0,0,215)
 end
 
-local unhd = Button:new(315,1,40,20, "Show", "Unhides the interface.")
+local unhd = Button:new(315,1,29,18, "Show", "Brings back the interface.")
 
 unhd:action(function(sender)
 tpt.hud(1)
@@ -1981,6 +2071,7 @@ uival = "0"
 interface.removeComponent(unhd)
 interface.addComponent(unhd)
 dellb:text("Hidden")
+print("Interface is now out of focus, click show button at top to undo.")
 
 elseif uival == "0" then
 tpt.hud(1)
@@ -2016,12 +2107,14 @@ reset1:action(function(sender)
 close()
 interface.removeComponent(unhd)
 timerremo()
+timeplus = 255
 backvr = 0
 backvg = 0
 backvb = 0
 perfmv = "1"
 autoval = "1"
 shrtv = "1"
+modelemval = "0"
 fpsval = "1"
 uival = "1"
 rulval = "1"
@@ -2042,6 +2135,7 @@ barktext:text("5")
 remtime:text("10")
 showmodelem()
 event.unregister(event.tick,writefile)
+event.unregister(event.tick,showmotdnot)
 event.unregister(event.tick,autosave)
 event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
@@ -2102,6 +2196,16 @@ clearsb()
 clearm()
 barlength = 1
 end
+local posix2 = posix + 10
+
+function showmotd()
+if posix2 > -1*(posix)then
+posix2 = posix2 - 1
+end
+if posix2 <= -1*(posix) then
+posix2 = posix + 10
+end
+end
 
 function drawglitch()
 if perlab:text() == "OFF" then
@@ -2114,16 +2218,33 @@ graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
 graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
 graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
 end
+
+if motw ~= "." then
+if posix > 600 then
+showmotd()
 end
-graphics.drawText(14,261,motw,255,200,55,255)
+graphics.fillRect(2,258,609, 10,20,20,20,200)
+graphics.drawText(posix2,259,motw,255,200,55,255)
+graphics.drawText(10,359,posix,255,200,55,255)
+end
+
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
 end
 end
+end
+
+hide:action(function(sender)
+close()
+end)
 
 function open()
 ui.showWindow(newmenu) 
 newmenu:onDraw(drawglitch)
+if motw ~= "." then
+MANAGER.savesetting("CRK","storedmotd",motw)
+end
+event.unregister(event.tick,showmotdnot)
 newmenu:onTryExit(close)
 newmenu:addComponent(deletesparkButton)
 newmenu:addComponent(FPS)
@@ -7344,3 +7465,1042 @@ fonts['7x10-Bold']['NULL'] = {
         }
 }
 --fontstop
+
+chars_light = {
+    ["0"] = {
+        matrix = {
+            {0, 2, 3, 3, 0},
+            {2, 3, 1, 2, 3},
+            {3, 1, 0, 0, 3},
+            {3, 0, 2, 0, 3},
+            {3, 0, 0, 0, 3},
+            {3, 2, 0, 2, 3},
+            {0, 3, 3, 3, 0}
+        }
+    },
+    ["1"] = {
+        matrix = {
+            {0, 0, 3, 0},
+            {0, 3, 3, 0},
+            {2, 1, 3, 0},
+            {0, 0, 3, 0},
+            {0, 0, 3, 0},
+            {0, 0, 3, 0},
+            {0, 1, 3, 1}
+        }
+    },
+    ["2"] = {
+        matrix = {
+            {0, 3, 3, 3, 1},
+            {3, 2, 0, 1, 3},
+            {1, 0, 0, 1, 3},
+            {0, 0, 2, 2, 0},
+            {0, 3, 2, 0, 0},
+            {3, 1, 0, 0, 0},
+            {3, 3, 3, 3, 3}
+        }
+    },
+    ["3"] = {
+        matrix = {
+            {0, 3, 3, 3, 1},
+            {3, 1, 0, 1, 3},
+            {1, 0, 0, 0, 3},
+            {0, 0, 2, 3, 1},
+            {0, 0, 0, 0, 3},
+            {3, 0, 0, 1, 3},
+            {2, 3, 3, 3, 1}
+        }
+    },
+    ["4"] = {
+        matrix = {
+            {0, 0, 0, 3, 3},
+            {0, 0, 3, 1, 3},
+            {0, 3, 1, 0, 3},
+            {3, 1, 0, 1, 3},
+            {3, 3, 3, 2, 3},
+            {0, 0, 0, 0, 3},
+            {0, 0, 0, 1, 3}
+        }
+    },
+    ["5"] = {
+        matrix = {
+            {3, 3, 3, 3, 3},
+            {3, 0, 0, 0, 0},
+            {3, 1, 1, 1, 0},
+            {2, 3, 3, 3, 2},
+            {0, 0, 0, 0, 3},
+            {1, 0, 0, 0, 3},
+            {2, 3, 3, 3, 1}
+        }
+    },
+    ["6"] = {
+        matrix = {
+            {0, 1, 3, 3, 3},
+            {1, 3, 0, 0, 0},
+            {3, 1, 0, 0, 0},
+            {3, 3, 3, 3, 1},
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 1, 3},
+            {1, 3, 3, 3, 1}
+        }
+    },
+    ["7"] = {
+        matrix = {
+            {3, 3, 3, 3, 3, 1},
+            {0, 0, 0, 1, 3, 0},
+            {0, 0, 0, 2, 3, 0},
+            {0, 0, 2, 3, 0, 0},
+            {0, 2, 3, 0, 0, 0},
+            {1, 3, 0, 0, 0, 0},
+            {1, 3, 0, 0, 0, 0}
+        },
+        isBig = true
+    },
+    ["8"] = {
+        matrix = {
+            {0, 3, 3, 3, 1},
+            {3, 2, 0, 1, 3},
+            {3, 0, 0, 0, 3},
+            {1, 3, 3, 3, 1},
+            {3, 0, 0, 0, 3},
+            {3, 1, 0, 1, 3},
+            {1, 3, 3, 3, 1}
+        }
+    },
+    ["9"] = {
+        matrix = {
+            {0, 3, 3, 3, 1},
+            {3, 2, 0, 1, 3},
+            {3, 0, 0, 0, 3},
+            {0, 3, 3, 3, 3},
+            {0, 0, 0, 1, 3},
+            {2, 0, 0, 0, 3},
+            {1, 3, 3, 3, 1}
+        }
+    },
+    ["A"] = {
+        matrix = {
+            {0, 1, 3, 1, 0},
+            {1, 3, 1, 3, 1},
+            {3, 1, 0, 1, 3},
+            {3, 0, 0, 0, 3},
+            {3, 3, 3, 3, 3},
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 0, 3}
+        }
+    },
+    ["a"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {1, 3, 3, 1, 0},
+            {1, 0, 0, 3, 0},
+            {0, 3, 3, 3, 0},
+            {3, 0, 0, 3, 0},
+            {1, 3, 3, 3, 1}
+        },
+        isBig = true
+    },
+    ["B"] = {
+        matrix = {
+            {3, 3, 3, 2, 0},
+            {3, 0, 0, 2, 3},
+            {3, 0, 0, 1, 3},
+            {3, 3, 3, 3, 1},
+            {3, 0, 0, 1, 3},
+            {3, 0, 0, 1, 3},
+            {3, 3, 3, 3, 1}
+        }
+    },
+    ["b"] = {
+        matrix = {
+            {3, 1, 0, 0},
+            {3, 0, 0, 0},
+            {3, 3, 3, 1},
+            {3, 1, 1, 3},
+            {3, 0, 0, 3},
+            {3, 0, 0, 3},
+            {3, 3, 3, 1}
+        }
+    },
+    ["C"] = {
+        matrix = {
+            {0, 1, 3, 3, 1},
+            {1, 3, 0, 1, 3},
+            {3, 0, 0, 0, 1},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 1, 0, 1, 3},
+            {1, 3, 3, 3, 1}
+        }
+    },
+    ["c"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {1, 3, 3, 0},
+            {3, 1, 1, 2},
+            {3, 0, 0, 0},
+            {3, 0, 1, 2},
+            {1, 3, 3, 0}
+        }
+    },
+    ["D"] = {
+        matrix = {
+            {3, 3, 3, 1, 0},
+            {3, 0, 1, 3, 1},
+            {3, 0, 0, 1, 3},
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 1, 3},
+            {3, 3, 3, 3, 1}
+        }
+    },
+    ["d"] = {
+        matrix = {
+            {0, 0, 1, 3, 0},
+            {0, 0, 0, 3, 0},
+            {0, 2, 3, 3, 0},
+            {2, 3, 0, 3, 0},
+            {3, 0, 0, 3, 0},
+            {3, 1, 0, 3, 0},
+            {1, 3, 3, 3, 1}
+        },
+        isBig = true
+    },
+    ["E"] = {
+        matrix = {
+            {3, 3, 3, 3, 2},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 3, 3, 2, 0},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 1},
+            {3, 3, 3, 3, 3}
+        }
+    },
+    ["e"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {1, 3, 3, 1},
+            {3, 0, 0, 3},
+            {3, 3, 3, 2},
+            {3, 0, 0, 0},
+            {1, 3, 3, 2}
+        }
+    },
+    ["F"] = {
+        matrix = {
+            {3, 3, 3, 3, 3},
+            {3, 0, 0, 0, 1},
+            {3, 0, 0, 0, 0},
+            {3, 3, 3, 2, 0},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0}
+        }
+    },
+    ["f"] = {
+        matrix = {
+            {1, 3, 3},
+            {3, 1, 0},
+            {3, 0, 0},
+            {3, 3, 2},
+            {3, 0, 0},
+            {3, 0, 0},
+            {3, 1, 0}
+        }
+    },
+    ["G"] = {
+        matrix = {
+            {0, 1, 3, 3, 1},
+            {1, 3, 0, 1, 3},
+            {3, 0, 0, 0, 0},
+            {3, 0, 2, 3, 3},
+            {3, 0, 0, 0, 3},
+            {3, 1, 0, 1, 3},
+            {1, 3, 3, 3, 1}
+        }
+    },
+    ["g"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 3, 3, 2},
+            {3, 2, 0, 3},
+            {3, 0, 0, 3},
+            {1, 3, 3, 3},
+            {0, 0, 0, 3},
+            {1, 0, 0, 3},
+            {2, 3, 3, 1}
+        }
+    },
+    ["H"] = {
+        matrix = {
+            {3, 1, 0, 1, 3},
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 0, 3},
+            {3, 3, 3, 3, 3},
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 0, 3},
+            {3, 1, 0, 1, 3}
+        }
+    },
+    ["h"] = {
+        matrix = {
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 3, 3, 1, 0},
+            {3, 1, 2, 3, 0},
+            {3, 0, 0, 3, 0},
+            {3, 0, 0, 3, 0},
+            {3, 1, 0, 3, 1}
+        },
+        isBig = true
+    },
+    ["I"] = {
+        matrix = {
+            {1, 3, 1},
+            {0, 3, 0},
+            {0, 3, 0},
+            {0, 3, 0},
+            {0, 3, 0},
+            {0, 3, 0},
+            {1, 3, 1}
+        }
+    },
+    ["i"] = {
+        matrix = {
+            {0, 1, 0},
+            {0, 3, 1},
+            {0, 0, 0},
+            {1, 3, 0},
+            {0, 3, 0},
+            {0, 3, 0},
+            {1, 3, 1}
+        }
+    },
+    ["J"] = {
+        matrix = {
+            {0, 0, 1, 3, 1},
+            {0, 0, 0, 3, 0},
+            {0, 0, 0, 3, 0},
+            {0, 0, 0, 3, 0},
+            {0, 0, 0, 3, 0},
+            {1, 0, 1, 3, 0},
+            {3, 3, 3, 1, 0}
+        }
+    },
+    ["j"] = {
+        matrix = {
+            {0, 0, 0},
+            {0, 0, 3},
+            {0, 0, 0},
+            {0, 1, 3},
+            {0, 0, 3},
+            {0, 0, 3},
+            {0, 0, 3},
+            {0, 0, 3},
+            {2, 3, 1}
+        }
+    },
+    ["K"] = {
+        matrix = {
+            {3, 1, 0, 1, 3, 0},
+            {3, 0, 1, 3, 0, 0},
+            {3, 1, 3, 0, 0, 0},
+            {3, 3, 2, 0, 0, 0},
+            {3, 0, 3, 2, 0, 0},
+            {3, 0, 0, 3, 2, 0},
+            {3, 1, 0, 1, 3, 2}
+        }
+    },
+    ["k"] = {
+        matrix = {
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 1, 0},
+            {3, 0, 2, 3, 0},
+            {3, 2, 3, 0, 0},
+            {3, 3, 1, 0, 0},
+            {3, 0, 3, 1, 0},
+            {3, 0, 0, 3, 1}
+        },
+        isBig = true
+    },
+    ["L"] = {
+        matrix = {
+            {3, 1, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {3, 0, 0, 0, 1},
+            {3, 3, 3, 3, 2}
+        }
+    },
+    ["l"] = {
+        matrix = {
+            {3, 0, 0, 0},
+            {3, 0, 0, 0},
+            {3, 0, 0, 0},
+            {3, 0, 0, 0},
+            {3, 0, 0, 0},
+            {3, 1, 0, 1},
+            {1, 3, 3, 0}
+        },
+        isBig = true
+    },
+    ["M"] = {
+        matrix = {
+            {3, 0, 0, 0, 0, 0, 3},
+            {3, 3, 1, 0, 1, 3, 3},
+            {3, 2, 3, 1, 3, 2, 3},
+            {3, 0, 2, 3, 2, 0, 3},
+            {3, 0, 0, 2, 0, 0, 3},
+            {3, 0, 0, 0, 0, 0, 3},
+            {3, 0, 0, 0, 0, 0, 3}
+        }
+    },
+    ["m"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {3, 2, 1, 2, 1},
+            {3, 1, 3, 1, 3},
+            {3, 0, 3, 0, 3},
+            {3, 0, 2, 0, 3},
+            {3, 0, 0, 1, 3}
+        }
+    },
+    ["N"] = {
+        matrix = {
+            {3, 1, 0, 0, 0, 3},
+            {3, 3, 0, 0, 0, 3},
+            {3, 1, 3, 0, 0, 3},
+            {3, 0, 2, 2, 0, 3},
+            {3, 0, 0, 3, 1, 3},
+            {3, 0, 0, 0, 3, 3},
+            {3, 0, 0, 0, 1, 3}
+        }
+    },
+    ["n"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {3, 3, 3, 1},
+            {3, 1, 0, 3},
+            {3, 0, 0, 3},
+            {3, 0, 0, 3},
+            {3, 0, 1, 3}
+        }
+    },
+    ["O"] = {
+        matrix = {
+            {0, 1, 3, 3, 1, 0},
+            {1, 3, 1, 0, 3, 1},
+            {3, 1, 0, 0, 1, 3},
+            {3, 0, 0, 0, 0, 3},
+            {3, 0, 0, 0, 1, 3},
+            {3, 1, 0, 1, 3, 1},
+            {1, 3, 3, 3, 1, 0}
+        }
+    },
+    ["o"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {1, 3, 3, 1},
+            {3, 1, 0, 3},
+            {3, 0, 0, 3},
+            {3, 0, 1, 3},
+            {1, 3, 3, 1}
+        }
+    },
+    ["P"] = {
+        matrix = {
+            {3, 3, 3, 1, 0},
+            {3, 0, 1, 3, 1},
+            {3, 0, 0, 1, 3},
+            {3, 1, 0, 1, 3},
+            {3, 3, 3, 3, 1},
+            {3, 0, 0, 0, 0},
+            {3, 1, 0, 0, 0}
+        }
+    },
+    ["p"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {3, 3, 3, 1},
+            {3, 1, 0, 3},
+            {3, 0, 0, 3},
+            {3, 0, 1, 3},
+            {3, 3, 3, 1},
+            {3, 0, 0, 0},
+            {3, 0, 0, 0}
+        }
+    },
+    ["Q"] = {
+        matrix = {
+            {0, 1, 3, 3, 1, 0, 0},
+            {1, 3, 0, 1, 3, 1, 0},
+            {3, 1, 0, 0, 1, 3, 0},
+            {3, 0, 0, 0, 0, 3, 0},
+            {3, 0, 0, 3, 1, 3, 0},
+            {3, 1, 0, 1, 3, 1, 0},
+            {1, 3, 3, 3, 1, 3, 1}
+        },
+        isBig = true
+    },
+    ["q"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {1, 3, 3, 3, 1},
+            {3, 0, 0, 3, 0},
+            {3, 0, 0, 3, 0},
+            {3, 0, 0, 3, 0},
+            {1, 3, 3, 3, 0},
+            {0, 0, 0, 3, 0},
+            {0, 0, 0, 3, 0},
+            {0, 0, 0, 1, 1}
+        },
+        isBig = true
+    },
+    ["R"] = {
+        matrix = {
+            {3, 3, 3, 3, 1, 0},
+            {3, 0, 0, 1, 3, 0},
+            {3, 0, 0, 0, 3, 0},
+            {3, 3, 3, 3, 0, 0},
+            {3, 1, 1, 3, 0, 0},
+            {3, 0, 0, 1, 3, 0},
+            {3, 1, 0, 0, 3, 1}
+        },
+        isBig = true
+    },
+    ["r"] = {
+        matrix = {
+            {0, 0, 0},
+            {0, 0, 0},
+            {3, 0, 3},
+            {3, 3, 1},
+            {3, 1, 0},
+            {3, 0, 0},
+            {3, 0, 0}
+        }
+    },
+    ["S"] = {
+        matrix = {
+            {0, 3, 3, 3, 1},
+            {3, 2, 1, 0, 3},
+            {3, 1, 0, 0, 0},
+            {1, 3, 3, 3, 0},
+            {0, 0, 1, 2, 3},
+            {2, 0, 0, 1, 3},
+            {2, 3, 3, 3, 1}
+        }
+    },
+    ["s"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 3, 3, 1},
+            {3, 0, 0, 1},
+            {0, 3, 3, 0},
+            {1, 0, 0, 3},
+            {3, 3, 3, 0}
+        }
+    },
+    ["T"] = {
+        matrix = {
+            {3, 3, 3, 3, 3},
+            {1, 0, 3, 0, 1},
+            {0, 0, 3, 0, 0},
+            {0, 0, 3, 0, 0},
+            {0, 0, 3, 0, 0},
+            {0, 0, 3, 0, 0},
+            {0, 1, 3, 1, 0}
+        }
+    },
+    ["t"] = {
+        matrix = {
+            {0, 3, 0, 0},
+            {0, 3, 0, 0},
+            {3, 3, 3, 0},
+            {0, 3, 0, 0},
+            {0, 3, 0, 0},
+            {0, 3, 1, 0},
+            {0, 1, 3, 1}
+        },
+        isBig = true
+    },
+    ["U"] = {
+        matrix = {
+            {3, 0, 0, 0, 0, 3},
+            {3, 0, 0, 0, 0, 3},
+            {3, 0, 0, 0, 0, 3},
+            {3, 0, 0, 0, 0, 3},
+            {3, 0, 0, 0, 1, 3},
+            {3, 2, 0, 1, 3, 1},
+            {1, 3, 3, 3, 1, 0}
+        }
+    },
+    ["u"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {3, 1, 0, 3, 1},
+            {3, 0, 0, 3, 0},
+            {3, 0, 0, 3, 0},
+            {3, 0, 1, 3, 0},
+            {1, 3, 3, 3, 1}
+        },
+        isBig = true
+    },
+    ["V"] = {
+        matrix = {
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 0, 3},
+            {3, 0, 0, 0, 3},
+            {3, 2, 0, 2, 3},
+            {1, 3, 0, 3, 1},
+            {0, 3, 1, 3, 0},
+            {0, 0, 3, 0, 0}
+        }
+    },
+    ["v"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {3, 0, 0, 3},
+            {3, 0, 0, 3},
+            {3, 0, 1, 3},
+            {3, 1, 3, 2},
+            {0, 3, 2, 0}
+        }
+    },
+    ["W"] = {
+        matrix = {
+            {3, 0, 0, 0, 0, 0, 3},
+            {3, 0, 0, 1, 0, 0, 3},
+            {3, 1, 0, 3, 0, 1, 3},
+            {1, 3, 0, 3, 0, 3, 1},
+            {1, 3, 2, 3, 2, 3, 1},
+            {0, 3, 2, 0, 2, 3, 0},
+            {0, 3, 0, 0, 0, 3, 0}
+        }
+    },
+    ["w"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {3, 1, 0, 1, 3},
+            {3, 0, 2, 0, 3},
+            {3, 0, 3, 0, 3},
+            {3, 1, 3, 1, 3},
+            {1, 3, 0, 3, 1}
+        }
+    },
+    ["X"] = {
+        matrix = {
+            {3, 0, 0, 0, 0, 3, 0},
+            {1, 3, 0, 0, 3, 1, 0},
+            {0, 2, 3, 2, 3, 0, 0},
+            {0, 1, 3, 3, 0, 0, 0},
+            {0, 3, 1, 3, 2, 0, 0},
+            {1, 3, 0, 0, 3, 1, 0},
+            {3, 0, 0, 0, 0, 3, 1}
+        }
+    },
+    ["x"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {3, 0, 1, 3},
+            {3, 2, 0, 3},
+            {1, 3, 3, 1},
+            {3, 0, 2, 3},
+            {3, 1, 0, 3}
+        }
+    },
+    ["Y"] = {
+        matrix = {
+            {3, 0, 0, 0, 3},
+            {3, 2, 0, 2, 3},
+            {0, 3, 1, 3, 0},
+            {0, 1, 3, 1, 0},
+            {0, 0, 3, 0, 0},
+            {0, 0, 3, 0, 0},
+            {0, 0, 3, 0, 0}
+        }
+    },
+    ["y"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {3, 0, 0, 3},
+            {3, 0, 0, 3},
+            {3, 1, 0, 3},
+            {1, 3, 1, 3},
+            {0, 1, 3, 1},
+            {0, 0, 3, 0},
+            {3, 3, 1, 0}
+        }
+    },
+    ["Z"] = {
+        matrix = {
+            {3, 3, 3, 3, 3, 3},
+            {0, 0, 0, 1, 3, 2},
+            {0, 0, 0, 3, 2, 0},
+            {0, 0, 3, 2, 0, 0},
+            {1, 3, 2, 0, 0, 0},
+            {3, 2, 1, 0, 0, 0},
+            {3, 3, 3, 3, 3, 3}
+        }
+    },
+    ["z"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {3, 3, 3, 3},
+            {1, 0, 3, 2},
+            {0, 3, 2, 0},
+            {3, 2, 0, 1},
+            {3, 3, 3, 3}
+        }
+    },
+    [" "] = {
+        matrix = {
+            {0, 0, 0, 0}
+        }
+    },
+    ["!"] = {
+        matrix = {
+            {3, 1},
+            {3, 1},
+            {3, 0},
+            {3, 0},
+            {2, 0},
+            {0, 0},
+            {3, 1},
+            {1, 0}
+        }
+    },
+    ["@"] = {
+        matrix = {
+            {0, 2, 3, 3, 3, 3, 0},
+            {1, 3, 1, 0, 0, 0, 3},
+            {3, 1, 2, 3, 3, 1, 3},
+            {3, 0, 3, 1, 0, 3, 1},
+            {3, 0, 2, 3, 3, 3, 2},
+            {3, 1, 0, 0, 0, 0, 0},
+            {1, 3, 3, 3, 3, 2, 1}
+        }
+    },
+    ["#"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 2, 1, 2, 1},
+            {0, 3, 0, 3, 0},
+            {2, 3, 3, 3, 3},
+            {0, 3, 0, 3, 0},
+            {3, 3, 3, 3, 2},
+            {0, 3, 0, 3, 0},
+            {1, 2, 1, 2, 0}
+        }
+    },
+    ["$"] = {
+        matrix = {
+            {0, 0, 3, 0, 0},
+            {1, 3, 3, 3, 3},
+            {3, 0, 3, 0, 1},
+            {2, 3, 3, 1, 0},
+            {0, 1, 3, 3, 2},
+            {1, 0, 3, 0, 3},
+            {3, 3, 3, 3, 0},
+            {0, 0, 3, 0, 0}
+        }
+    },
+    ["%"] = {
+        matrix = {
+            {1, 3, 2, 0, 2, 3},
+            {3, 0, 3, 0, 3, 1},
+            {2, 3, 1, 3, 1, 0},
+            {0, 0, 3, 3, 0, 0},
+            {0, 1, 3, 1, 3, 2},
+            {1, 3, 0, 3, 0, 3},
+            {3, 2, 0, 2, 3, 1}
+        }
+    },
+    ["^"] = {
+        matrix = {
+            {1, 3, 1},
+            {3, 1, 3},
+            {2, 0, 2}
+        }
+    },
+    ["&"] = {
+        matrix = {
+            {1, 3, 3, 1, 0, 0},
+            {3, 0, 0, 3, 0, 0},
+            {3, 0, 1, 0, 0, 0},
+            {1, 3, 2, 0, 3, 0},
+            {3, 0, 3, 2, 3, 0},
+            {3, 0, 0, 3, 1, 0},
+            {1, 3, 3, 1, 3, 1}
+        },
+        isBig = true
+    },
+    ["("] = {
+        matrix = {
+            {0, 1, 3},
+            {1, 3, 1},
+            {3, 1, 0},
+            {3, 0, 0},
+            {3, 1, 0},
+            {1, 3, 1},
+            {0, 1, 3}
+        }
+    },
+    [")"] = {
+        matrix = {
+            {3, 1, 0},
+            {1, 3, 1},
+            {0, 1, 3},
+            {0, 0, 3},
+            {0, 1, 3},
+            {1, 3, 1},
+            {3, 1, 0}
+        }
+    },
+    ["-"] = {
+        matrix = {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {3, 3, 3, 3}
+        }
+    },
+    ["_"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {3, 3, 3, 3, 3}
+        }
+    },
+    ["="] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {3, 3, 3, 3, 3},
+            {0, 0, 0, 0, 0},
+            {3, 3, 3, 3, 3}
+        }
+    },
+    ["+"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 2, 0, 0},
+            {0, 0, 3, 0, 0},
+            {2, 3, 3, 3, 2},
+            {0, 0, 3, 0, 0},
+            {0, 0, 2, 0, 0}
+        }
+    },
+    ["`"] = {
+        matrix = {
+            {3, 0},
+            {2, 1},
+            {0, 2}
+        }
+    },
+    ["~"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 2, 0, 0},
+            {1, 3, 1, 0, 2},
+            {3, 1, 3, 1, 3},
+            {2, 0, 1, 3, 0}
+        }
+    },
+    ["["] = {
+        matrix = {
+            {3, 3, 2},
+            {3, 0, 0},
+            {3, 0, 0},
+            {3, 0, 0},
+            {3, 0, 0},
+            {3, 0, 0},
+            {3, 3, 2}
+        }
+    },
+    ["]"] = {
+        matrix = {
+            {2, 3, 3},
+            {0, 0, 3},
+            {0, 0, 3},
+            {0, 0, 3},
+            {0, 0, 3},
+            {0, 0, 3},
+            {2, 3, 3}
+        }
+    },
+    ["{"] = {
+        matrix = {
+            {0, 2, 3},
+            {0, 3, 0},
+            {0, 3, 0},
+            {3, 0, 0},
+            {0, 3, 0},
+            {0, 3, 0},
+            {0, 2, 3}
+        }
+    },
+    ["}"] = {
+        matrix = {
+            {3, 2, 0},
+            {0, 3, 0},
+            {0, 3, 0},
+            {0, 0, 3},
+            {0, 3, 0},
+            {0, 3, 0},
+            {3, 2, 0}
+        }
+    },
+    [";"] = {
+        matrix = {
+            {0, 0, 0},
+            {0, 0, 0},
+            {0, 3, 1},
+            {0, 1, 0},
+            {0, 0, 0},
+            {0, 3, 0},
+            {1, 3, 0},
+            {3, 0, 0}
+        }
+    },
+    [":"] = {
+        matrix = {
+            {0, 0, 0},
+            {0, 0, 0},
+            {0, 3, 1},
+            {0, 1, 0},
+            {0, 0, 0},
+            {0, 1, 0},
+            {0, 3, 1}
+        }
+    },
+    ["'"] = {
+        matrix = {
+            {0, 3},
+            {1, 3},
+            {3, 1}
+        }
+    },
+    ['"'] = {
+        matrix = {
+            {0, 3, 0, 3},
+            {1, 3, 1, 3},
+            {2, 0, 2, 0}
+        }
+    },
+    ["\\"] = {
+        matrix = {
+            {3, 0, 0, 0},
+            {2, 2, 0, 0},
+            {0, 3, 0, 0},
+            {0, 2, 2, 0},
+            {0, 0, 3, 0},
+            {0, 0, 2, 2},
+            {0, 0, 0, 3}
+        }
+    },
+    ["|"] = {
+        matrix = {
+            {2},
+            {3},
+            {3},
+            {3},
+            {3},
+            {3},
+            {3},
+            {1}
+        }
+    },
+    [","] = {
+        matrix = {
+            {0, 0},
+            {0, 0},
+            {0, 0},
+            {0, 0},
+            {0, 0},
+            {0, 0},
+            {0, 3},
+            {1, 3},
+            {3, 0}
+        },
+        isSmall = true
+    },
+    ["."] = {
+        matrix = {
+            {0, 0},
+            {0, 0},
+            {0, 0},
+            {0, 0},
+            {0, 0},
+            {1, 0},
+            {3, 1}
+        }
+    },
+    ["<"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 3, 3},
+            {0, 3, 3, 2, 0},
+            {3, 2, 1, 0, 0},
+            {0, 3, 3, 2, 0},
+            {0, 0, 0, 3, 3}
+        }
+    },
+    [">"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0},
+            {3, 3, 0, 0, 0},
+            {0, 2, 3, 3, 0},
+            {0, 0, 1, 2, 3},
+            {0, 2, 3, 3, 0},
+            {3, 3, 0, 0, 0}
+        }
+    },
+    ["/"] = {
+        matrix = {
+            {0, 0, 0, 2, 2},
+            {0, 0, 0, 3, 0},
+            {0, 0, 2, 2, 0},
+            {0, 0, 3, 0, 0},
+            {0, 2, 2, 0, 0},
+            {0, 3, 0, 0, 0},
+            {2, 2, 0, 0, 0}
+        }
+    },
+    ["?"] = {
+        matrix = {
+            {1, 3, 3, 3, 1},
+            {3, 1, 0, 0, 3},
+            {1, 0, 0, 2, 3},
+            {0, 0, 2, 3, 0},
+            {0, 1, 3, 0, 0},
+            {0, 0, 0, 0, 0},
+            {0, 1, 3, 0, 0}
+        }
+    }
+}
