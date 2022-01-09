@@ -1,4 +1,4 @@
-Changelog for V35 (57)
+Changelog for 1.2.0
 
 Revert changes made to support christmas theme.
 Messages shorter than a line are static.

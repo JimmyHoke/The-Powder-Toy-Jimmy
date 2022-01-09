@@ -4,7 +4,7 @@ const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
 "\bw                                               Welcome To The Jimmy's Mod \n"
 "\bo                                           |-----------------------------------|\n"
-"                                                \br<< \bwVer 1.0.3 \bo||\bw TPT 96.2 \br>>"
+"                                                \br<< \bwVer 1.2.0 \bo||\bw TPT 96.2 \br>>"
 "\bl\n\n   Instructions:                        \n"
 "                                                \br<< \bwVer 35.0 \bo||\bw TPT 96.2 \br>>"
 "\n\n   \boInstructions:                        \n"
