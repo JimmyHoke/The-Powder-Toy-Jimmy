@@ -1,11 +1,14 @@
-Changelog for V35 (57)
+Changelog for V36 (59)
 
-Revert changes made to support christmas theme.
-Messages shorter than a line are static.
-GRPH is now solid graphite.
-Less distracting motd banner.
-Reduce TIMC glow and minor element desc. changes.
-Texter is now bigger and supports a longer textbox.
-A red marking is now shown in texter to help avoid out of coords error.
+Fix message length showing along with the message.
+Fix some element descriptions.
+Grph now releases CO2 while burning and also burns for longer.
+Improved PHOS burning code.
+Add some missing element information to wiki. 
+Mod menu now can be closed using the same J key shortcut.
+Crackerk.lua Script lenght is now greatly reduced.
+Texter support placing text using enter key.
+Normal fonts look better and previews for same are more accurate.
+ 
 
  

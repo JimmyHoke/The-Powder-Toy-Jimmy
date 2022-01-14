@@ -31,7 +31,7 @@ void Element::Element_GRPH()
 
 	HeatConduct = 255;
 	DefaultProperties.tmp2 = RNG::Ref().between(0, 4);
-	Description = "Graphene, efficient heat and electricity conductor. Ignites when above 450C. Absorbs NEUT. GRPH + O2 -> CO2.";
+	Description = "Graphite, efficient heat and electricity conductor. Ignites when above 450C. Absorbs NEUT. GRPH + O2 -> CO2.";
 
 	Properties = TYPE_SOLID| PROP_CONDUCTS | PROP_LIFE_DEC | PROP_HOT_GLOW | PROP_NEUTPASS;
 
@@ -53,13 +53,17 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].tmp == 1)
 	{
-		if (RNG::Ref().chance(1, 70))
+		if (RNG::Ref().chance(1, 80))
 		{
-			sim->create_part(-1, x, y - 1, PT_FIRE);
+			sim->create_part(-1, x, y-1, PT_FIRE);
 		}
 		if (RNG::Ref().chance(1, 500))
 		{
-			parts[i].life = 50;
+			sim->create_part(-1, x, y - 1, PT_CO2);
+		}
+		if (RNG::Ref().chance(1, 700))
+		{
+			parts[i].life = 70;
 			sim->part_change_type(i, x, y, PT_FIRE);
 		}
 	}

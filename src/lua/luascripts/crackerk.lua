@@ -1,5 +1,4 @@
---cracker1000 mod script v7.0--
-
+--cracker1000 mod script v8.0--
 local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
@@ -853,7 +852,7 @@ function drawText(text, x, y, element, font)
                         x = originalX
                         y = y + fonts[font]['height'] + fonts[font]['linespacing']
 
-                elseif fonts['5x7'][currentLetter] then
+                elseif fonts['7x10'][currentLetter] then
 
                         -- Draw letter
                         drawLetter(currentLetter, x, y, element, font)
@@ -897,12 +896,17 @@ yval2 = 14
 end
 end
 graphics.drawText(10,6,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
-graphics.drawRect(drawpos,363,42,19,tr,tg,tb,255)
-graphics.drawRect(drawpos2,348,2,11,255,0,0,255)
+graphics.drawRect(drawpos,363,42,19,32,216,255,255)
 end
 
+function keyclicky23(key23)
+if (key23 == 13) then
+placetext()
+end
+end
+newmenu4:onKeyPress(keyclicky23)
+
 chud:action(function(sender)
-drawpos2 = 500
 drawpos = 213
 tpt.set_pause(1)
 tr = 255
@@ -920,7 +924,7 @@ tpt.register_step(drawblip)
 close()
 
 local mouseX, mouseY = tpt.mousex, tpt.mousey
-local text, element, font = '', 'DMND', '5x7'
+local text, element, font = '', 'DMND', '7x10'
 local textTextbox = Textbox:new(5,2,596, 15,'', 'Type the text here. Press enter once done. New lines are inserted automatically.')
 local place = Button:new(5,20,50,17,"Enter", "Toggle hidden elements.")
 local cancel= Button:new(60,20,50,17,"Close", "Cancel the element placement.")
@@ -967,11 +971,7 @@ end
 				
 smalf:action(function(sender)
 drawpos = 213
-drawpos2 = 500
 font='5x7'
-tr = 255
-tg = 255
-tb = 255
 if ffix == "1" and yvalue < ylimit then
 textup()
 end
@@ -982,10 +982,6 @@ end)
 
 bigf:action(function(sender)
 drawpos = 265
-drawpos2 = 380
-tr = 255
-tg = 90
-tb = 0
 font='7x10'
 if ffix == "0" and yvalue < ylimit then
 textup()
@@ -997,10 +993,6 @@ end)
 
 titf:action(function(sender)
 drawpos = 317
-drawpos2 = 380
-tr = 120
-tg = 120
-tb = 255
 font='7x10-Bold'
 if ffix == "0" and yvalue < ylimit then
 textup()
@@ -1013,10 +1005,6 @@ end)
 local cursor = {10, yvalue}
 titf2:action(function(sender)
 drawpos = 369
-drawpos2 = 600
-tr = 120
-tg = 255
-tb = 120
 if ffix == "1" and yvalue < ylimit then
 textup()
 end
@@ -1050,10 +1038,6 @@ tpt.unregister_step(drawblip)
 tpt.register_step(drawblip)
 end)
 
-local primary = "vent"
-local secondary = "shld"
-local third = "glas"
-
 function drawText2(text)
     for i = 1, #text do
         lastCharIsBig = false
@@ -1074,14 +1058,20 @@ function drawText2(text)
             for array_l_w = 1, #charmap[array_l_h] do
                 lastCharW = array_l_w
                 if charmap[array_l_h][array_l_w] == 3 then
-                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], primary)
+				if fsize == "Realistic" then
+					pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], "vent")
+					else
+					pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], element)
+					end
                 end
+				if fsize == "Realistic" then
                 if charmap[array_l_h][array_l_w] == 2 then
-                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], secondary)
+                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], "shld")
                 end
                 if charmap[array_l_h][array_l_w] == 1 then
-                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], third)
+                    pcall(tpt.create, cursor_pointat[1], cursor_pointat[2], "glas")
                 end
+				end
                 cursor_pointat[1] = cursor_pointat[1] + 1
             end
             cursor_pointat[1] = cursor[1] - #charmap[array_l_h]
@@ -1102,7 +1092,7 @@ function drawText2(text)
     cursor_pointat[2] = cursor[2]
 end
 
-place:action(function(sender)
+function placetext()
 ffix2 = "1"
 ui.closeWindow(newmenu4)
 tpt.unregister_step(drawblip)
@@ -1118,7 +1108,7 @@ end
 
 textTextbox:text('')
 linenumber = linenumber + 1
-if fsize == "Realistic" then
+if fsize == "Realistic" or fsize == "Normal" then
 cursor_pointat = cursor
 cursor_pointat[1] = 10
 cursor_pointat[2] = yvalue
@@ -1132,6 +1122,9 @@ end
 if yvalue >= ylimit then
 linenumber = "Max lines reached!"
 end
+end 
+place:action(function(sender)
+placetext()
 end)
 end)
 --Texter hybrid end
@@ -1270,9 +1263,9 @@ local nextpg = Button:new(342, 400, 40, 15, "Next")
 local close2 = Button:new(570, 400, 50, 15, "Close")
 
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
-local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white  particle when spawned, slowly turns into red phosphorus with time. \n    Burns blue or red  when in contact with CFLM or O2 respectively, (based on on .tmp).\n    Oil reverses the oxidation turning it back into white PHOS. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
+local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphene. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator."
+local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -2225,7 +2218,6 @@ showmotd()
 end
 graphics.fillRect(2,258,609, 10,20,20,20,200)
 graphics.drawText(posix2,259,motw,255,200,55,255)
-graphics.drawText(10,359,posix,255,200,55,255)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -2241,6 +2233,8 @@ end)
 function open()
 ui.showWindow(newmenu) 
 newmenu:onDraw(drawglitch)
+newmenu:onKeyPress(keyclicky2)
+
 if motw ~= "." then
 MANAGER.savesetting("CRK","storedmotd",motw)
 end
@@ -2283,9 +2277,19 @@ end
 hide:action(function(sender)
 close()
 end)
+local ttime = 0
+function keyclicky2(key2)
+if (key2 == 106) and shrtv == "1" then
+close()
+ttime = 2
+end
+end
 
 function keyclicky(key)
-if (key =="j") and TPTMP.chatHidden == true and shrtv == "1" then
+if ttime > 0 then
+ttime = ttime - 1
+end
+if (key == "j") and TPTMP.chatHidden == true and shrtv == "1" and ttime == 0 then
 open()
 end
 end
@@ -2297,11 +2301,6 @@ end)
 
 --fontstart
 fonts ={}
-fonts['5x7'] = {}
-fonts['5x7']['width'] = 5
-fonts['5x7']['height'] = 7
-fonts['5x7']['linespacing'] = 4
-fonts['5x7']['charspacing'] = 1
 
 fonts['7x10'] = {}
 fonts['7x10']['width'] = 7
@@ -2315,1415 +2314,6 @@ fonts['7x10-Bold']['height'] = 10
 fonts['7x10-Bold']['linespacing'] = 4
 fonts['7x10-Bold']['charspacing'] = 1
 
-fonts['5x7']['~'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 0, 1},
-                {1, 0, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0,0, 0, 0},
-                {0, 0, 0, 0,0},
-                {0, 0, 0, 0, 0}
-        }
-}
-
-fonts['5x7']['a'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1}
-        }
-}
-fonts['5x7']['b'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['c'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['d'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['e'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['f'] = {
-        ['descender'] = 0,
-        ['kerning'] = -1,
-        ['pixels']  = {
-                {0, 0, 1, 1, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['g'] = {
-        ['descender'] = -2,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1},
-                {0, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0}
-        }
-}
-fonts['5x7']['h'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['i'] = {
-        ['descender'] = 0,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['j'] = {
-        ['descender'] = -2,
-        ['kerning'] = -3,
-        ['pixels']  = {
-                {0, 1, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['k'] = {
-        ['descender'] = 0,
-        ['kerning'] = -1,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 1, 0},
-                {1, 0, 1, 0, 0},
-                {1, 1, 0, 0, 0},
-                {1, 0, 1, 0, 0},
-                {1, 0, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['l'] = {
-        ['descender'] = 0,
-        ['kerning'] = -3,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['m'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 0, 1, 0},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['n'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 1, 1, 0},
-                {1, 1, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['o'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['p'] = {
-        ['descender'] = -2,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['q'] = {
-        ['descender'] = -2,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 1}
-        }
-}
-fonts['5x7']['r'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 1, 1, 0},
-                {1, 1, 0, 0, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['s'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 1, 1, 1},
-                {1, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['t'] = {
-        ['descender'] = 0,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['u'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['v'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 1, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['w'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['x'] = {
-        ['descender'] = 0,
-        ['kerning'] = -1,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 1, 0},
-                {1, 0, 0, 1, 0},
-                {0, 1, 1, 0, 0},
-                {1, 0, 0, 1, 0},
-                {1, 0, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['y'] = {
-        ['descender'] = -2,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 1, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {1, 1, 0, 0, 0}
-        }
-}
-fonts['5x7']['z'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7'][' '] = {
-        ['descender'] = 0,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['0'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 1, 1},
-                {1, 0, 1, 0, 1},
-                {1, 1, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['1'] = {
-        ['descender'] = 0,
-        ['kerning'] = -3,
-        ['pixels']  = {
-                {0, 1, 0, 0, 0},
-                {1, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['2'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['3'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['4'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 1, 1},
-                {0, 0, 1, 0, 1},
-                {0, 1, 0, 0, 1},
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['5'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {0, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['6'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 1, 1, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['7'] = {
-        ['descender'] = 0,
-        ['kerning'] = -1,
-        ['pixels']  = {
-                {1, 1, 1, 1, 0},
-                {0, 0, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['8'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['9'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 1},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 1, 0},
-                {0, 1, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['.'] = {
-        ['descender'] = 0,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['<'] = {
-        ['descender'] = 0,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['>'] = {
-        ['descender'] = 0,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['@'] = {
-        ['descender'] = -2,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 0, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 1, 0, 0, 1},
-                {0, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0}
-        }
-}
-fonts['5x7']['#'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 0, 1, 0},
-                {1, 1, 1, 1, 1},
-                {0, 1, 0, 1, 0},
-                {1, 1, 1, 1, 1},
-                {0, 1, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['$'] = {
-        ['descender'] = -2,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 1, 1, 1, 0},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 1, 0, 0}
-        }
-}
-fonts['5x7']['%'] = {
-        ['descender'] = -1,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {1, 1, 0, 0, 1},
-                {1, 1, 0, 0, 1},
-                {0, 0, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 1, 1},
-                {1, 0, 0, 1, 1},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['^'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 1, 0},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['{'] = {
-        ['descender'] = -2,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 1, 0, 0}
-        }
-}
-fonts['5x7']['}'] = {
-        ['descender'] = -2,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['&'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 1, 0, 1},
-                {1, 0, 0, 1, 0},
-                {0, 1, 1, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['*'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 1, 0, 0},
-                {1, 0, 1, 0, 1},
-                {0, 1, 1, 1, 0},
-                {1, 0, 1, 0, 1},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['('] = {
-        ['descender'] = -2,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 1, 0, 0}
-        }
-}
-fonts['5x7'][')'] = {
-        ['descender'] = -2,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['='] = {
-        ['descender'] = 0,
-        ['kerning'] = -1,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['['] = {
-        ['descender'] = -2,
-        ['kerning'] = -3,
-        ['pixels']  = {
-                {1, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 0, 0, 0}
-        }
-}
-fonts['5x7'][']'] = {
-        ['descender'] = -2,
-        ['kerning'] = -3,
-        ['pixels']  = {
-                {1, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 1, 0, 0, 0}
-        }
-}
-fonts['5x7']['|'] = {
-        ['descender'] = -2,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['!'] = {
-        ['descender'] = 0,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['?'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7'][','] = {
-        ['descender'] = -1,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7'][':'] = {
-        ['descender'] = 0,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7'][';'] = {
-        ['descender'] = 0,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['+'] = {
-        ['descender'] = 0,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 1, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['-'] = {
-        ['descender'] = 0,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['_'] = {
-        ['descender'] = 0,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['/'] = {
-        ['descender'] = -2,
-        ['kerning'] = -2,
-        ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['NULL'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['A'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1}
-        }
-}
-fonts['5x7']['B'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['C'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['D'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['E'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['F'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['G'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 0},
-                {1, 0, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['H'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['I'] = {
-        ['descender'] = 0,
-        ['kerning'] = -4,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['J'] = {
-        ['descender'] = 0,
-        ['kerning'] = -1,
-        ['pixels']  = {
-                {0, 0, 0, 1, 0},
-                {0, 0, 0, 1, 0},
-                {0, 0, 0, 1, 0},
-                {0, 0, 0, 1, 0},
-                {0, 0, 0, 1, 0},
-                {1, 0, 0, 1, 0},
-                {0, 1, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['K'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 1, 0},
-                {1, 0, 1, 0, 0},
-                {1, 1, 0, 0, 0},
-                {1, 0, 1, 0, 0},
-                {1, 0, 0, 1, 0},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['L'] = {
-        ['descender'] = 0,
-        ['kerning'] = -1,
-        ['pixels']  = {
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['M'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 0, 1, 1},
-                {1, 1, 0, 1, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['N'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 1, 0, 0, 1},
-                {1, 1, 0, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 0, 1, 1},
-                {1, 0, 0, 1, 1},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['O'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['P'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['Q'] = {
-        ['descender'] = -2,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 1, 0},
-                {0, 0, 0, 0, 1}
-        }
-}
-fonts['5x7']['R'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['S'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 1, 1, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 0},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['T'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 1},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['U'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['V'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 1, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['W'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 1, 0, 1},
-                {1, 0, 1, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 1, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['X'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 1, 0},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['Y'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {1, 0, 0, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 1, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['Z'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 0, 1},
-                {0, 0, 0, 1, 0},
-                {0, 0, 1, 0, 0},
-                {0, 1, 0, 0, 0},
-                {1, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-
-
-fonts['5x7']['_'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 1},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
-fonts['5x7']['"'] = {
-        ['descender'] = 0,
-        ['kerning'] = 0,
-        ['pixels']  = {
-                {0, 0, 1, 0, 1},
-                {0, 1, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0}
-        }
-}
 fonts['7x10']['a'] = {
         ['descender'] = 0,
         ['kerning'] = 0,
@@ -7494,7 +6084,7 @@ chars_light = {
             {0, 3, 3, 3, 1},
             {3, 2, 0, 1, 3},
             {1, 0, 0, 1, 3},
-            {0, 0, 2, 2, 0},
+            {0, 0, 3, 3, 0},
             {0, 3, 2, 0, 0},
             {3, 1, 0, 0, 0},
             {3, 3, 3, 3, 3}
