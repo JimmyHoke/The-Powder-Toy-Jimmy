@@ -1,6 +1,9 @@
 Changelog for V36 (59)
 
+Make mod elements use .tmp instead of Pavg values.
 Visual overhaul of mod menu.
+Changes to hud.
+Brightness values are now shown in percentage.
 Fix message length showing along with the message.
 Fix some element descriptions.
 Grph now releases CO2 while burning and also burns for longer.

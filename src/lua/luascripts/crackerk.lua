@@ -1,5 +1,4 @@
 --cracker1000 mod script v8.0--
-local passvalue = "0"
 local passreal = "12345678"
 local passreal2 = "DMND"
 local motw = "."
@@ -94,11 +93,10 @@ local autohide = Button:new(203,156,80,25, "Auto Hide HUD", "Hide.")
 local chud = Button:new(203,188,80,25, "Texter", "for text.")
 
 local brightness = Button:new(203,220,80,25, "Brightness", "Adjust brightness.")
-local brightSlider = Slider:new(290,219, 100, 17, 255)
-local brop = Button:new(293,237,45,15,"On", "Save.")
-local bropc = Button:new(342,237,45,15,"Off", "Cancel.")
-local brlabel = Label:new(335, 208, 10, 15, "OFF")
-local brlabel2 = Label:new(358, 208, 10, 15, "("..brightSlider:value()..")")
+local brightSlider = Slider:new(310,220,80,27, 255)
+local brop = Button:new(313,202,32,15,"On", "Save.")
+local bropc = Button:new(356,202,32,15,"Off", "Cancel.")
+local brlabel2 = Label:new(344, 225, 10, 15, "("..brightSlider:value()..")")
 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
@@ -154,7 +152,6 @@ newmenu:removeComponent(bug1)
 newmenu:removeComponent(bug2)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
-newmenu:removeComponent(brlabel)
 newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(remon2)
@@ -257,7 +254,7 @@ end
 
 local passwordstatus = 0
 function drawpassstat()
-if passvalue == "1" then
+if MANAGER.getsetting("CRK", "pass") == "1" then
 gfx.drawText(43,132,"Status: Running",105,255,105,255)
 else
 gfx.drawText(43,132,"Status: Turned Off",255,105,105,255)
@@ -319,7 +316,6 @@ end
 end)
 
 doned7 :action(function(sender)
-passvalue = "0"
 MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "passreal","12345678")
 MANAGER.savesetting("CRK", "passreal2","DMND")
@@ -335,12 +331,10 @@ end)
 
 doned4 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","1")
-passvalue = "1"
 end)
 
 doned5 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","0")
-passvalue = "0"
 end)
 end)
 
@@ -756,20 +750,19 @@ end
 brightness:action(function(sender)
 clearsb()
 brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
-brlabel2:text("("..brightSlider:value()..")")
+brlabel2:text(tonumber(string.format("%.1f",brightSlider:value()/255*100)).."%")
 
 brightSlider:onValueChanged(function() 
-if brightSlider:value() < 50 then
-brightSlider:value("50")
+if brightSlider:value() < 40 then
+brightSlider:value("40")
 end
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
-brlabel2:text("("..brightSlider:value()..")")
+brlabel2:text(tonumber(string.format("%.1f",brightSlider:value()/255*100)).."%")
 end)
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenu:addComponent(brlabel2)
 end
-newmenu:addComponent(brlabel)
 newmenu:addComponent(brightSlider)
 newmenu:addComponent(brop)
 newmenu:addComponent(bropc)
@@ -780,8 +773,6 @@ MANAGER.savesetting("CRK", "brightstate", "1")
 event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
 newmenu:removeComponent(brightSlider)
-brlabel:text("ON")
-newmenu:removeComponent(brlabel)
 newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
@@ -789,13 +780,11 @@ end)
 
 bropc:action(function(sender)
 MANAGER.savesetting("CRK", "brightstate", "0")
-brlabel:text("OFF")
 event.unregister(event.tick,cbrightness)
 brightSlider:value("200")
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(brop)
-newmenu:removeComponent(brlabel)
 newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(bropc)
 end)
@@ -1973,10 +1962,6 @@ else
 event.register(event.tick,theme)
 end
 
-if MANAGER.getsetting("CRK", "pass") == "1" then
-passvalue = "1"
-end
-
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 hidval = "0"
@@ -1989,7 +1974,6 @@ end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
 event.register(event.tick,cbrightness)
-brlabel:text("ON")
 else
 MANAGER.savesetting("CRK", "brightness",200)
 end
@@ -2044,6 +2028,7 @@ end
 end)
 
 reset:action(function(sender)
+clearsb()
 newmenu:addComponent(reset1)
 newmenu:addComponent(reset2)
 end)
@@ -2065,7 +2050,6 @@ uival = "1"
 rulval = "1"
 hidval = "1"
 barval = "2"
-passvalue = "0"
 savetime = 0
 barktext:text("5")
 remtime:text("10")
@@ -2082,7 +2066,6 @@ event.unregister(event.tick,autohidehud)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,theme)
 newmenu:removeComponent(remlabel)
-brlabel:text("OFF")
 brightSlider:value("200")
 MANAGER.savesetting("CRK", "brightness", "200")
 MANAGER.savesetting("CRK", "pass","0")
@@ -2143,54 +2126,59 @@ end
 
 function drawglitch()
 if uival == "0" then --Focus Mode
-gfx.drawText(100,37,"ON",105,255,105,255)
+gfx.drawText(98,37,"ON",105,255,105,255)
 else
-gfx.drawText(100,37,"OFF",255,105,105,255)
+gfx.drawText(98,37,"OFF",255,105,105,255)
 end
 if fpsval == "1" then --Frame limiter
-gfx.drawText(100,69,"ON",105,255,105,255)
+gfx.drawText(98,69,"ON",105,255,105,255)
 else
-gfx.drawText(100,69,"OFF",255,105,105,255)
+gfx.drawText(98,69,"OFF",255,105,105,255)
 end
 if rulval == "0" then --Ruler
-gfx.drawText(100,165,"ON",105,255,105,255)
+gfx.drawText(98,165,"ON",105,255,105,255)
 else
-gfx.drawText(100,165,"OFF",255,105,105,255)
+gfx.drawText(98,165,"OFF",255,105,105,255)
 end
 if stamplb == "1" then --Autostamp
-gfx.drawText(100,198,"ON",105,255,105,255)
+gfx.drawText(98,198,"ON",105,255,105,255)
 else
-gfx.drawText(100,198,"OFF",255,105,105,255)
+gfx.drawText(98,198,"OFF",255,105,105,255)
 end
 if hidval == "0" then --Hidden elements
-gfx.drawText(293,69,"ON",105,255,105,255)
+gfx.drawText(291,69,"ON",105,255,105,255)
 else
-gfx.drawText(293,69,"OFF",255,105,105,255)
+gfx.drawText(291,69,"OFF",255,105,105,255)
 end
 if modelemval == "0" then --Mod elements
-gfx.drawText(293,133,"ON",105,255,105,255)
+gfx.drawText(291,133,"ON",105,255,105,255)
 else
-gfx.drawText(293,133,"OFF",255,105,105,255)
+gfx.drawText(291,133,"OFF",255,105,105,255)
 end
 if autoval == "0" then --Auto hide hud
-gfx.drawText(293,165,"ON",105,255,105,255)
+gfx.drawText(291,165,"ON",105,255,105,255)
 else
-gfx.drawText(293,165,"OFF",255,105,105,255)
+gfx.drawText(291,165,"OFF",255,105,105,255)
+end
+if MANAGER.getsetting("CRK", "brightstate") == "1" then --Brigntness
+gfx.drawText(291,229,"ON",105,255,105,255)
+else
+gfx.drawText(291,229,"OFF",255,105,105,255)
 end
 if shrtv == "1" then --J key
-gfx.drawText(486,101,"ON",105,255,105,255)
+gfx.drawText(484,101,"ON",105,255,105,255)
 else
-gfx.drawText(486,101,"OFF",255,105,105,255)
+gfx.drawText(484,101,"OFF",255,105,105,255)
 end
 if perfmv == "0" then --Performace
-gfx.drawText(486,165,"ON",105,255,105,255)
+gfx.drawText(484,165,"ON",105,255,105,255)
 else
-gfx.drawText(486,165,"OFF",255,105,105,255)
+gfx.drawText(484,165,"OFF",255,105,105,255)
 end
-if passvalue == "1" then --Password
-gfx.drawText(486,197,"ON",105,255,105,255)
+if MANAGER.getsetting("CRK", "pass") == "1" then --Password
+gfx.drawText(484,197,"ON",105,255,105,255)
 else
-gfx.drawText(486,197,"OFF",255,105,105,255)
+gfx.drawText(484,197,"OFF",255,105,105,255)
 end
 
 if perfmv == "1" then
@@ -7050,6 +7038,17 @@ chars_light = {
             {0, 0, 1, 2, 3},
             {0, 2, 3, 3, 0},
             {3, 3, 0, 0, 0}
+        }
+    },
+	  ["*"] = {
+        matrix = {
+            {0, 0, 0, 0, 0},
+            {0, 2, 3, 2, 0},
+            {1, 3, 3, 3, 1},
+            {0, 1, 3, 1, 0},
+            {0, 3, 1, 3, 0},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
         }
     },
     ["/"] = {
