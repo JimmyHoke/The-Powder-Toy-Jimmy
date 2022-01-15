@@ -95,7 +95,7 @@ local chud = Button:new(203,188,80,25, "Texter", "for text.")
 local brightness = Button:new(203,220,80,25, "Brightness", "Adjust brightness.")
 local brightSlider = Slider:new(310,220,80,27, 255)
 local brop = Button:new(313,202,32,15,"On", "Save.")
-local bropc = Button:new(356,202,32,15,"Off", "Cancel.")
+local bropc = Button:new(355,202,32,15,"Off", "Cancel.")
 local brlabel2 = Label:new(344, 225, 10, 15, "("..brightSlider:value()..")")
 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
@@ -753,16 +753,13 @@ brightSlider:value (MANAGER.getsetting("CRK", "brightness"))
 brlabel2:text(tonumber(string.format("%.1f",brightSlider:value()/255*100)).."%")
 
 brightSlider:onValueChanged(function() 
-if brightSlider:value() < 40 then
-brightSlider:value("40")
+if brightSlider:value() < 38 then
+brightSlider:value("38")
 end
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
 brlabel2:text(tonumber(string.format("%.1f",brightSlider:value()/255*100)).."%")
 end)
-
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
 newmenu:addComponent(brlabel2)
-end
 newmenu:addComponent(brightSlider)
 newmenu:addComponent(brop)
 newmenu:addComponent(bropc)
@@ -781,7 +778,7 @@ end)
 bropc:action(function(sender)
 MANAGER.savesetting("CRK", "brightstate", "0")
 event.unregister(event.tick,cbrightness)
-brightSlider:value("200")
+brightSlider:value("255")
 MANAGER.savesetting("CRK", "brightness", brightSlider:value())
 newmenu:removeComponent(brightSlider)
 newmenu:removeComponent(brop)
@@ -1975,7 +1972,7 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
 event.register(event.tick,cbrightness)
 else
-MANAGER.savesetting("CRK", "brightness",200)
+MANAGER.savesetting("CRK", "brightness",255)
 end
 end
 startupcheck()
@@ -2066,8 +2063,8 @@ event.unregister(event.tick,autohidehud)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,theme)
 newmenu:removeComponent(remlabel)
-brightSlider:value("200")
-MANAGER.savesetting("CRK", "brightness", "200")
+brightSlider:value("255")
+MANAGER.savesetting("CRK", "brightness", "255")
 MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
