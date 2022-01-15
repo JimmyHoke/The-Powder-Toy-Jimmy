@@ -57,11 +57,9 @@ local newmenu = Window:new(-15,-15, 609, 255)
 local creditstxt1 = Label:new(115,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
 newmenu:addComponent(creditstxt1)
 
-local deletesparkButton =  Button:new(10,28,80,25,"Interface", "shows UI related stuff.")
-local dellb = Label:new(106, 34, 10, 15, "Shown")
+local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI related stuff.")
 
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
-local fplb = Label:new(101, 66, 10, 15, "ON")
 
 local reset = Button:new(10,92,80,25,"Reset", "Reset.")
 local reset1 = Button:new(100,92,45,25,"Soft", "Reset the mod settings.")
@@ -70,13 +68,11 @@ local reset2 = Button:new(148,92,45,25,"Hard", "Reset everything.")
 local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
 local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
-local rulb = Label:new(101, 162, 10, 15, "OFF")
 
 local bar = Button:new(10,188,80,25,"Auto Stamp", "Toggle Auto stamp.")
-
+local stamplb = "0"
 local barktext = Textbox:new(126, 185, 27, 15, '10')
 local barklab = Label:new(162, 185, 20, 15, "1-30")
-local savelabs = Label:new(101, 191, 10, 15, "OFF")
 barktext:text("5")
 local barkon = Button:new(126,203,30,20,"Set", "Save.")
 local barkoff = Button:new(156,203,30,20,"Off", "Cancel.")
@@ -88,15 +84,12 @@ local bug2 = Button:new(148,220,45,25,"In game", "Direct to Mod thread for bug r
 local wiki  =  Button:new(203,28,80,25,"Wiki", "Element wiki!")
 
 local bare = Button:new(203,60,80,25,"Hidden Elem.", "Toggle hidden elements.")
-local remlabe = Label:new(294, 66, 10, 15, "OFF")
 
 local mp = Button:new(203,92,80,25,"Control Centre", "Changes game's theme")
 
 local bg = Button:new(203,124,80,25,"Mod Elem.", "")
-local bglab = Label:new(294, 130, 10, 15, "ON")
 
-local autohide= Button:new(203,156,80,25, "Auto Hide HUD", "Hide.")
-local autolb = Label:new(294, 162, 10, 15, "OFF")
+local autohide = Button:new(203,156,80,25, "Auto Hide HUD", "Hide.")
 
 local chud = Button:new(203,188,80,25, "Texter", "for text.")
 
@@ -110,16 +103,12 @@ local brlabel2 = Label:new(358, 208, 10, 15, "("..brightSlider:value()..")")
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
 local shrt = Button:new(396,92,80,25, "Toggle J key", "Nothing")
-local shrtlb = Label:new(487, 98, 10, 15, "ON")
 
 local edito = Button:new(396,124,80,25, "Editor", "Basic element editor.")
 
 local perfm = Button:new(396,156,80,25, "Performance", "For lower spec systems.")
-local perlab = Label:new(487, 162, 10, 15, "OFF")
 
 local passbut = Button:new(396,188,80,25, "Password", "Secure password protection.")
-local passbutlab = Label:new(487, 194, 10, 15, "OFF")
-
 
 local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
 local remtime = Textbox:new(486, 223, 20, 20, '', '10')
@@ -266,9 +255,16 @@ if MANAGER.getsetting("CRK", "passreal2") == nil then
 MANAGER.savesetting("CRK","passreal2","DMND")
 end
 
+local passwordstatus = 0
+function drawpassstat()
+if passvalue == "1" then
+gfx.drawText(43,132,"Status: Running",105,255,105,255)
+else
+gfx.drawText(43,132,"Status: Turned Off",255,105,105,255)
+end
+end
 local passmen = Window:new(-15,-15, 610, 255)
 local pasmenmsg = Label:new(240,5,120, 10,"Welcome to the Password Manager V2.0")
-local pasmenmsg4 = Label:new(15,130,120, 10,"Status: "..passbutlab:text())
 local pasmenmsg2 = Label:new(165,130,120, 10,"Current Password: "..MANAGER.getsetting("CRK","passreal"))
 local pasmenmsg6 = Label:new(365,130,120, 10,"Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
 local pasmenmsg3 = Label:new(308,40,120, 10,"Can be upto 8 character long, case sensitive, blank spaces also count.")
@@ -287,7 +283,6 @@ ui.showWindow(passmen)
 passmen:addComponent(pasmenmsg)
 passmen:addComponent(pasmenmsg2)
 passmen:addComponent(pasmenmsg3)
-passmen:addComponent(pasmenmsg4)
 passmen:addComponent(pasmenmsg5)
 passmen:addComponent(pasmenmsg6)
 passmen:addComponent(doned2)
@@ -299,6 +294,7 @@ passmen:addComponent(doned7)
 passmen:addComponent(passtime2)
 passmen:addComponent(passtime3)
 
+passmen:onDraw(drawpassstat)
 doned2 :action(function(sender)
 passmen:removeComponent(pasmenmsg7)
 if passtime2:text() == "" then
@@ -323,13 +319,12 @@ end
 end)
 
 doned7 :action(function(sender)
-passbutlab:text("OFF")
+passvalue = "0"
 MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "passreal","12345678")
 MANAGER.savesetting("CRK", "passreal2","DMND")
 pasmenmsg2:text("Current Password: "..MANAGER.getsetting("CRK","passreal"))
 pasmenmsg6:text("Favorite element: "..MANAGER.getsetting("CRK","passreal2"))
-pasmenmsg4:text("Status: "..passbutlab:text())
 passtime2:text("")
 passtime3:text("")
 end)
@@ -340,38 +335,28 @@ end)
 
 doned4 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","1")
-passbutlab:text("ON")
-pasmenmsg4:text("Status: "..passbutlab:text())
+passvalue = "1"
 end)
 
 doned5 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","0")
-passbutlab:text("OFF")
-pasmenmsg4:text("Status: "..passbutlab:text())
+passvalue = "0"
 end)
 end)
 
 perfm:action(function(sender)
 clearsb()
-
 if perfmv == "1" then
 tpt.setfpscap(80)
 tpt.setdrawcap(25)
 tpt.unregister_step(theme)
 tpt.unregister_step(colourblender)
 tpt.display_mode(7)
-perlab:text("ON")
-if fplb:text() == "OFF" then
-fplb:text("ON")
-end
-
 if fpsval == "0" then
 fpsval = "1"
 end
 perfmv = "0"
 else
-
-perlab:text("OFF")
 perfmv = "1"
 tpt.setdrawcap(0)
 tpt.setfpscap(60)
@@ -439,13 +424,13 @@ savetime = 0
 saveend = tonumber(barktext:text())*100
 event.unregister(event.tick,autosave)
 event.register(event.tick,autosave)
-savelabs:text("ON")
+stamplb = "1"
 clearsb()
 end)
 
 barkoff:action(function(sender)
 event.unregister(event.tick,autosave)
-savelabs:text("OFF")
+stamplb = "0"
 clearsb()
 end)
 
@@ -669,11 +654,8 @@ shrt:action(function(sender)
 clearsb()
 if shrtv == "1" then
 shrtv = "0"
-shrtlb:text("OFF")
-
 else
 shrtv = "1"
-shrtlb:text("ON")
 end
 end)
 
@@ -1130,11 +1112,11 @@ end)
 --Texter hybrid end
 
 function autohidehud()
-	if tpt.mousey <= 40 then 
+if tpt.mousey <= 40 then 
 tpt.hud(0) 
 gfx.drawText(6,6,"Hidden",255,255,255,200)
 else tpt.hud(1)
-	end
+end
 end
 
 local autoval = "1"
@@ -1145,12 +1127,9 @@ if autoval == "1" then
 event.unregister(event.tick,autohidehud)
 event.register(event.tick,autohidehud)
 autoval = "0"
-autolb:text("ON")
-
 elseif autoval == "0" then
 event.unregister(event.tick,autohidehud)
 autoval = "1"
-autolb:text("OFF")
 tpt.hud(1)
 end
 end)
@@ -1241,13 +1220,11 @@ clearsb()
 if hidval == "1" then 
 hideno()
 MANAGER.savesetting("CRK", "hidestate", "1")
-remlabe:text("ON")
 hidval = "0"
 
 elseif hidval == "0" then
 hideyes()
 MANAGER.savesetting("CRK", "hidestate", "0")
-remlabe:text("OFF")
 hidval = "1"
 end
 
@@ -1410,11 +1387,9 @@ bg:action(function(sender)
 if modelemval == "0" then
 hidemodelem()
 modelemval = "1"
-bglab:text("OFF")
 else
 showmodelem()
 modelemval = "0"
-bglab:text("ON")
 end
 clearsb()
 end)
@@ -1704,7 +1679,7 @@ blb:text(bclr)
 aclr = aSlider:value() 
 alb:text(aclr)
 
-if perlab:text() == "OFF" then
+if perfmv == "1" then
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 end
@@ -1992,21 +1967,19 @@ if MANAGER.getsetting("CRK", "savergb") == nil then
 MANAGER.savesetting("CRK", "savergb",2)
 end 
 
-if MANAGER.getsetting("CRK", "pass") == "1" then
-passbutlab:text("ON")
-passvalue = "1"
-end
-
 if MANAGER.getsetting("CRK", "savergb") == "1" then
 event.register(event.tick,colourblender)
 else
 event.register(event.tick,theme)
 end
 
+if MANAGER.getsetting("CRK", "pass") == "1" then
+passvalue = "1"
+end
+
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 hidval = "0"
-remlabe:text("ON")
 end
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
@@ -2030,12 +2003,10 @@ clearsb()
 if rulval == "1" then
 rulval = "0"
 tpt.setdebug(0X4)
-rulb:text("ON")
 print("Use shift + Drag to use Ruler")
 elseif rulval == "0" then
 tpt.setdebug(0X0)
 rulval = "1"
-rulb:text("OFF")
 end
 end)
 
@@ -2044,16 +2015,6 @@ tpt.fillrect(-1,382,616,42,0,0,0,215)
 tpt.fillrect(612,0,17,424,0,0,0,215)
 end
 
-local unhd = Button:new(315,1,29,18, "Show", "Brings back the interface.")
-
-unhd:action(function(sender)
-tpt.hud(1)
-event.unregister(event.tick,UIhide)
-uival = "1"
-dellb:text("Shown")
-interface.removeComponent(unhd)
-end)
-
 deletesparkButton:action(function(sender)
 clearsb()
 if uival == "1" then
@@ -2061,18 +2022,13 @@ event.unregister(event.tick,UIhide)
 event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
-interface.removeComponent(unhd)
-interface.addComponent(unhd)
-dellb:text("Hidden")
-print("Interface is now out of focus, click show button at top to undo.")
+print("Interface is now out of focus")
 
 elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
 uival = "1"
 barval = "0"
-dellb:text("Shown")
-interface.removeComponent(unhd)
 end
 end)
 
@@ -2081,12 +2037,9 @@ clearsb()
 if fpsval == "1" then
 tpt.setfpscap(2)
 fpsval = "0"
-fplb:text("OFF")
-
 else
 tpt.setfpscap(60)
 fpsval = "1"
-fplb:text("ON")
 end
 end)
 
@@ -2095,10 +2048,8 @@ newmenu:addComponent(reset1)
 newmenu:addComponent(reset2)
 end)
 
-
 reset1:action(function(sender)
 close()
-interface.removeComponent(unhd)
 timerremo()
 timeplus = 255
 backvr = 0
@@ -2108,21 +2059,13 @@ perfmv = "1"
 autoval = "1"
 shrtv = "1"
 modelemval = "0"
+stamplb = "0"
 fpsval = "1"
 uival = "1"
 rulval = "1"
 hidval = "1"
 barval = "2"
 passvalue = "0"
-bglab:text("ON")
-passbutlab:text("OFF")
-autolb:text("OFF")
-perlab:text("OFF")
-shrtlb:text("ON")
-fplb:text("ON")
-rulb:text("OFF")
-dellb:text("Shown")
-remlabe:text("OFF")
 savetime = 0
 barktext:text("5")
 remtime:text("10")
@@ -2139,8 +2082,6 @@ event.unregister(event.tick,autohidehud)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,theme)
 newmenu:removeComponent(remlabel)
-newmenu:removeComponent(remlabe)
-savelabs:text("OFF")
 brlabel:text("OFF")
 brightSlider:value("200")
 MANAGER.savesetting("CRK", "brightness", "200")
@@ -2201,7 +2142,58 @@ end
 end
 
 function drawglitch()
-if perlab:text() == "OFF" then
+if uival == "0" then --Focus Mode
+gfx.drawText(100,37,"ON",105,255,105,255)
+else
+gfx.drawText(100,37,"OFF",255,105,105,255)
+end
+if fpsval == "1" then --Frame limiter
+gfx.drawText(100,69,"ON",105,255,105,255)
+else
+gfx.drawText(100,69,"OFF",255,105,105,255)
+end
+if rulval == "0" then --Ruler
+gfx.drawText(100,165,"ON",105,255,105,255)
+else
+gfx.drawText(100,165,"OFF",255,105,105,255)
+end
+if stamplb == "1" then --Autostamp
+gfx.drawText(100,198,"ON",105,255,105,255)
+else
+gfx.drawText(100,198,"OFF",255,105,105,255)
+end
+if hidval == "0" then --Hidden elements
+gfx.drawText(293,69,"ON",105,255,105,255)
+else
+gfx.drawText(293,69,"OFF",255,105,105,255)
+end
+if modelemval == "0" then --Mod elements
+gfx.drawText(293,133,"ON",105,255,105,255)
+else
+gfx.drawText(293,133,"OFF",255,105,105,255)
+end
+if autoval == "0" then --Auto hide hud
+gfx.drawText(293,165,"ON",105,255,105,255)
+else
+gfx.drawText(293,165,"OFF",255,105,105,255)
+end
+if shrtv == "1" then --J key
+gfx.drawText(486,101,"ON",105,255,105,255)
+else
+gfx.drawText(486,101,"OFF",255,105,105,255)
+end
+if perfmv == "0" then --Performace
+gfx.drawText(486,165,"ON",105,255,105,255)
+else
+gfx.drawText(486,165,"OFF",255,105,105,255)
+end
+if passvalue == "1" then --Password
+gfx.drawText(486,197,"ON",105,255,105,255)
+else
+gfx.drawText(486,197,"OFF",255,105,105,255)
+end
+
+if perfmv == "1" then
 if MANAGER.getsetting("CRK", "savergb") == "2" then
 graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
@@ -2258,19 +2250,9 @@ newmenu:addComponent(brightness)
 newmenu:addComponent(reminder)
 newmenu:addComponent(Help)
 newmenu:addComponent(shrt)
-newmenu:addComponent(shrtlb)
-newmenu:addComponent(remlabe)
-newmenu:addComponent(dellb)
-newmenu:addComponent(fplb)
-newmenu:addComponent(rulb)
-newmenu:addComponent(autolb)
 newmenu:addComponent(edito)
 newmenu:addComponent(perfm)
-newmenu:addComponent(perlab)
 newmenu:addComponent(passbut)
-newmenu:addComponent(passbutlab)
-newmenu:addComponent(savelabs)
-newmenu:addComponent(bglab)
 newmenu:addComponent(upmp)
 end
 
@@ -2301,7 +2283,6 @@ end)
 
 --fontstart
 fonts ={}
-
 fonts['7x10'] = {}
 fonts['7x10']['width'] = 7
 fonts['7x10']['height'] = 10

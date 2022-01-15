@@ -1,5 +1,6 @@
 Changelog for V36 (59)
 
+Visual overhaul of mod menu.
 Fix message length showing along with the message.
 Fix some element descriptions.
 Grph now releases CO2 while burning and also burns for longer.
