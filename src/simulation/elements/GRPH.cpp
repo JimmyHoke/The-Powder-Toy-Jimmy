@@ -51,6 +51,9 @@ void Element::Element_GRPH()
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].tmp3 > 100)
+		parts[i].tmp3--;
+
 	if (parts[i].tmp == 1)
 	{
 		if (RNG::Ref().chance(1, 80))
@@ -113,6 +116,11 @@ static int update(UPDATE_FUNC_ARGS)
 					parts[i].tmp = 1;
 				}
 				break;
+				case PT_SPRK:
+				{
+						parts[i].tmp3 = 255;
+				}
+				break;
 				case PT_O2:
 				{
 					if (RNG::Ref().chance(1, 40))
@@ -137,9 +145,9 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if (cpart->tmp2 > 3)
+	if (cpart->tmp2 > 4)
 	{
-		*colr = 220;
+		*colr = cpart->tmp3;
 		*colg = 50;
 		*colb = 50;
 		*pixel_mode |= PMODE_FLARE;
@@ -156,6 +164,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
-	sim->parts[i].tmp2 = RNG::Ref().between(0, 4);
+	sim->parts[i].tmp2 = RNG::Ref().between(0, 5);
+	sim->parts[i].tmp3 = 100;
 }
 

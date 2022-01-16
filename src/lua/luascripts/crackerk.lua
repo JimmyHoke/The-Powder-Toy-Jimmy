@@ -53,8 +53,6 @@ end
 
 local toggle = Button:new(419,408,50,15, "Settings", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 609, 255)
-local creditstxt1 = Label:new(115,-20,100, 60,"Welcome to the Mod settings. Tip: 'J' can be used as a shortcut.")
-newmenu:addComponent(creditstxt1)
 
 local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI related stuff.")
 
@@ -110,7 +108,6 @@ local passbut = Button:new(396,188,80,25, "Password", "Secure password protectio
 
 local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
 local remtime = Textbox:new(486, 223, 20, 20, '', '10')
-local remlabel = Label:new(380, 2, 10, 15, "Reminder set for 10 mins")
 local remlabel21 = Label:new(538, 205, 20, 15, "1-60 Mins.")
 remtime:text("10")
 local remon2 = Button:new(516,223,30,20,"Set", "Save.")
@@ -144,7 +141,7 @@ newmenu:removeComponent(perfm)
 newmenu:removeComponent(passbut)
 newmenu:removeComponent(upmp)
 end
-
+local remval2 = "0"
 function clearsb()
 newmenu:removeComponent(reset1)
 newmenu:removeComponent(reset2)
@@ -162,6 +159,7 @@ newmenu:removeComponent(barkon)
 newmenu:removeComponent(barkoff)
 newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
+remval2 = "0"
 end
 
 local perfmv = "1"
@@ -699,18 +697,20 @@ end
 
 local startTime
 local entimey
+local remval = "0"
+local endTime = 0
 function remindme()
-
-local endTime = startTime+ tonumber(entimey)*60
+endTime = startTime + tonumber(entimey)*60
 if os.time() >= endTime then
 event.unregister(event.tick,remindme)
-newmenu:removeComponent(remlabel)
+remval = "0"
 tpt.message_box("Activity Reminder!","Simulation has been paused to save resources.                            Click dismiss to continue.")
 end
 end
 
 reminder:action(function(sender)
 clearsb()
+remval2 = "1"
 newmenu:addComponent(remon2)
 newmenu:addComponent(remtime)
 newmenu:addComponent(remoff)
@@ -728,19 +728,18 @@ entimey = tonumber(remtime:text())
 end
 event.unregister(event.tick,remindme)
 event.register(event.tick,remindme)
-newmenu:addComponent(remlabel)
 newmenu:removeComponent(remoff)
 newmenu:removeComponent(remlabel21)
-remlabel:text("Reminder set for "..entimey.." mins.")
+remval = "1"
 end)
 
 remoff:action(function(sender)
 clearsb()
 event.unregister(event.tick,remindme)
-newmenu:removeComponent(remlabel)
 newmenu:removeComponent(remlabel21)
 newmenu:removeComponent(remon2)
 newmenu:removeComponent(remoff)
+remval = "0"
 end)
 
 function cbrightness()
@@ -2032,6 +2031,7 @@ end)
 
 reset1:action(function(sender)
 close()
+remval = "0"
 timerremo()
 timeplus = 255
 backvr = 0
@@ -2062,7 +2062,6 @@ event.unregister(event.tick,UIhide)
 event.unregister(event.tick,autohidehud)
 event.unregister(event.tick,colourblender)
 event.register(event.tick,theme)
-newmenu:removeComponent(remlabel)
 brightSlider:value("255")
 MANAGER.savesetting("CRK", "brightness", "255")
 MANAGER.savesetting("CRK", "pass","0")
@@ -2122,6 +2121,29 @@ end
 end
 
 function drawglitch()
+if motw ~= "." then
+if posix > 600 then
+showmotd()
+end
+graphics.fillRect(2,258,609, 10,20,20,20,200)
+graphics.drawText(posix2,259,motw,255,200,55,255)
+end
+if perfmv == "1" then
+if MANAGER.getsetting("CRK", "savergb") == "2" then
+graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
+graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
+graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
+else
+graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
+graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
+graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
+end
+end
+
+if MANAGER.getsetting("CRK", "brightstate") == "1" then
+cbrightness()
+end
+gfx.drawText(12,7,"Welcome to Mod Settings. Tip: 'J' Key can be used as a shortcut to open and close the menu.",255,255,255,255) --Intro message
 if uival == "0" then --Focus Mode
 gfx.drawText(98,37,"ON",105,255,105,255)
 else
@@ -2177,28 +2199,11 @@ gfx.drawText(484,197,"ON",105,255,105,255)
 else
 gfx.drawText(484,197,"OFF",255,105,105,255)
 end
-
-if perfmv == "1" then
-if MANAGER.getsetting("CRK", "savergb") == "2" then
-graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
-graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
-graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
+if remval2 == "0" then
+if remval == "1" then --Reminder
+gfx.drawText(484,229,"ON ("..entimey..") min.",105,255,105,255)
 else
-graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
-graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
-graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
-end
-
-if motw ~= "." then
-if posix > 600 then
-showmotd()
-end
-graphics.fillRect(2,258,609, 10,20,20,20,200)
-graphics.drawText(posix2,259,motw,255,200,55,255)
-end
-
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-cbrightness()
+gfx.drawText(484,229,"OFF",255,105,105,255)
 end
 end
 end
