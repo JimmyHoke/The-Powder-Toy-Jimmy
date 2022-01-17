@@ -1,8 +1,10 @@
 Changelog for V36 (59)
 
+Pulse theme is now a part of theme function (better switching and more efficient now).
+Remove checks from startup, faster launch speeds.
 Make changes to elements to use tmp3 and tmp4 instead of pavg.
 Visual overhaul of mod menu (new status indicators).
-Changes to hud
+Changes to the hud.
 Reminder status is now shown right after the reminder button.
 Brightness values are now shown in percentage and shown even when settings are turned off.
 Fix message length being displayed along with the message.

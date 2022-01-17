@@ -167,6 +167,7 @@ local fpsval = "1"
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
 local timermp = 0
+local updatedmpval = "0" -- used for showing mp script status in menu
 
 function writefile()
 timermp = timermp + 1
@@ -181,12 +182,10 @@ f = io.open('updatedmp.lua', 'w')
 f:write(ret)
 f:close()
 dofile("updatedmp.lua")
+updatedmpval = "1"
 print("Multiplayer Updated Successfully.")
-if MANAGER.getsetting("CRK", "savergb") == "1" then
-event.register(event.tick,colourblender)
-else
+event.unregister(event.tick,theme)
 event.register(event.tick,theme)
-end
 event.unregister(event.tick,writefile)
 else
 print("Error updating multiplayer, make sure you have internet access!")
@@ -341,8 +340,7 @@ clearsb()
 if perfmv == "1" then
 tpt.setfpscap(80)
 tpt.setdrawcap(25)
-tpt.unregister_step(theme)
-tpt.unregister_step(colourblender)
+event.unregister(event.tick,theme)
 tpt.display_mode(7)
 if fpsval == "0" then
 fpsval = "1"
@@ -352,11 +350,8 @@ else
 perfmv = "1"
 tpt.setdrawcap(0)
 tpt.setfpscap(60)
-if MANAGER.getsetting("CRK", "savergb") == "2" then
-tpt.register_step(theme)
-else
-tpt.register_step(colourblender)
-end
+event.unregister(event.tick,theme)
+event.register(event.tick,theme)
 tpt.display_mode(3)
 end
 end)
@@ -665,7 +660,6 @@ graphics.fillRect(tpt.mousex,tpt.mousey-6,1 ,6,220,220,220,255)
 graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
 end
 
-if MANAGER.getsetting("CRK", "savergb") == "2" then
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,210)
 graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,210)
 
@@ -673,26 +667,10 @@ if tpt.brushx > 0 or tpt.brushy > 0 then
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,210)
 graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,210)
 end
-
 graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,ar,ag,ab,255)
 graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, ar,ag,ab,255)
 graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,ar,ag,ab,255)
 graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, ar,ag,ab,255)
-
-else
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex, colourRED,colourGRN,colourBLU,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey, colourRED,colourGRN,colourBLU,210)
-
-if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx, colourRED,colourGRN,colourBLU,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy, colourRED,colourGRN,colourBLU,210)
-end
-
-graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,colourRED,colourGRN,colourBLU,255)
-graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, colourRED,colourGRN,colourBLU,255)
-graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,colourRED,colourGRN,colourBLU,255)
-graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, colourRED,colourGRN,colourBLU,255)
-end
 end
 
 local startTime
@@ -1410,12 +1388,18 @@ event.register(event.tick,cbrightness)
 end
 end
 
+local frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function theme()
 if uival == "1" then
+if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
 ab = MANAGER.getsetting("CRK", "ab")
-
+elseif MANAGER.getsetting("CRK", "savergb") == "1" then
+ar = colourRED
+ag = colourGRN
+ab = colourBLU
+end
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 al = MANAGER.getsetting("CRK", "al")
 else
@@ -1427,25 +1411,20 @@ barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
-
 if uival == "1" then
-
 if barval == "1" then
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
 end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
-
 elseif barval == "2" then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 end
-
 --Topbarend
 --MP and manager
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
 tpt.drawrect(613,119,14,15,ar,ag,ab,al)
-
 --top
 tpt.drawrect(613,1,14,14,ar,ag,ab,al)
 tpt.drawrect(613,17,14,14,ar,ag,ab,al)
@@ -1453,7 +1432,6 @@ tpt.drawrect(613,33,14,14,ar,ag,ab,al)
 tpt.drawrect(613,49,14,14,ar,ag,ab,al)
 tpt.drawrect(613,65,14,14,ar,ag,ab,al)
 tpt.drawrect(613,81,14,14,ar,ag,ab,al)
-
 --right
 tpt.drawrect(613,136,14,14,ar,ag,ab,al)
 tpt.drawrect(613,152,14,14,ar,ag,ab,al)
@@ -1472,7 +1450,6 @@ tpt.drawrect(613,344,14,14,ar,ag,ab,al)
 tpt.drawrect(613,360,14,14,ar,ag,ab,al)
 tpt.drawrect(613,376,14,14,ar,ag,ab,al)
 tpt.drawrect(613,392,14,14,ar,ag,ab,al)
-
 --bottom
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
 tpt.drawline(612,408,612,421,ar,ag,ab,al)
@@ -1485,18 +1462,8 @@ tpt.drawline(18,408,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,422,ar,ag,ab,al)
 tpt.drawline(596,409,596,422,ar,ag,ab,al)
 tpt.drawline(418,408,418,421,ar,ag,ab,al)
-end
-end
 
-frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
-function colourblender()
- if uival == "1" then 
-if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
-al = MANAGER.getsetting("CRK", "al")
-else
-al = brightSlider:value()
-end
-
+if MANAGER.getsetting("CRK", "savergb") == "1" then
  colourRGB = {colourRED,colourGRN,colourBLU}
  if frameCount > 1529 then frameCount = 0 else frameCount = frameCount + 1 end
  if frameCount > 0 and frameCount < 255 then
@@ -1523,68 +1490,8 @@ end
   colourRED = 255
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
-
---Topbar
-barval = MANAGER.getsetting("CRK","barval")
-if barval == nil then
-tpt.fillrect(2,-1,607,3, colourRED,colourGRN,colourBLU,al)
-end
-if uival == "1" then
-
-if barval == "1" then
-if tonumber(barlength) <= 202 then
-barlength = barlength + "5"
-end
-tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, colourRED,colourGRN,colourBLU,al)
-
-elseif barval == "2" then
-tpt.fillrect(2,-1,607,3, colourRED,colourGRN,colourBLU,al)
-end
-end
-
---Topbarend
---MP and manager
-tpt.drawrect(613,103,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,119,14,15,colourRED,colourGRN,colourBLU,al)
-
---top
-tpt.drawrect(613,1,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,17,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,33,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,49,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,65,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,81,14,14,colourRED,colourGRN,colourBLU,al)
---right
-tpt.drawrect(613,136,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,152,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,168,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,184,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,200,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,216,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,232,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,248,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,264,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,280,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,296,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,312,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,328,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,344,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,360,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,376,14,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawrect(613,392,14,14,colourRED,colourGRN,colourBLU,al)
-
---bottom
-tpt.drawrect(1,408,626,14,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(612,408,612,421,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(187,409,187,422,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(487,408,487,421,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(241,408,241,421,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(469,408,469,421,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(36,408,36,421,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(18,408,18,421,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(580,409,580,422,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(596,409,596,422,colourRED,colourGRN,colourBLU,al)
-tpt.drawline(418,408,418,421,colourRED,colourGRN,colourBLU,al)
+ end
+ 
 end
 end
 
@@ -1641,12 +1548,10 @@ local custlb = Label:new(-10,108,100, 60,"Custom:")
 local bartlb = Label:new(35,232,10, 10,"Topbar:")
 local filtlb = Label:new(37,282,10, 10,"Filters:")
 local bordlb = Label:new(41,328,10, 10,"Crosshair:")
-local pulselb = Label:new(70,20,100, 60,"Pulse theme on, preview not available.")
 local alphalb = Label:new(87,124,100, 60,"Brightness turned on, alpha slider not available.")
 
 function mpnolag()
-newmenuth:removeComponent(pulselb)
-MANAGER.savesetting("CRK","savergb",2)
+MANAGER.savesetting("CRK", "savergb","0")
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
@@ -1663,19 +1568,10 @@ blb:text(bclr)
 
 aclr = aSlider:value() 
 alb:text(aclr)
-
-if perfmv == "1" then
-event.unregister(event.tick,theme)
-event.register(event.tick,theme)
-end
-event.unregister(event.tick,colourblender)
 end
 
 function drawprev()
 graphics.drawRect(20,38,573,26,255,255,255,255)
-if MANAGER.getsetting("CRK", "savergb") == "1" then
-newmenuth:addComponent(pulselb)
-end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then 
 newmenuth:addComponent(alphalb)
@@ -1688,6 +1584,8 @@ if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 40,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
 graphics.drawRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
 graphics.fillRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
+else
+graphics.drawText(30,47, "Preview not available because pulse theme is on.",255,55,55,255)
 end
 end
 newmenuth:onDraw(drawprev)
@@ -1860,9 +1758,6 @@ MANAGER.savesetting("CRK","savergb",1)
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 aclr = aSlider:value() 
 alb:text(aclr)
-event.unregister(event.tick,theme)
-event.unregister(event.tick,colourblender)
-event.register(event.tick,colourblender)
 end)
 
 bg1:action(function(sender)
@@ -1938,7 +1833,10 @@ interface.addComponent(toggle)
 local faz =io.open("updatedmp.lua","r")
 if faz ~= nil then 
 io.close(faz)
+updatedmpval = "1"
 dofile("updatedmp.lua")
+else
+updatedmpval = "0"
 end
 
 if MANAGER.getsetting("CRK","al") == nil then
@@ -1947,16 +1845,8 @@ MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",255)
 end
-
-if MANAGER.getsetting("CRK", "savergb") == nil then
-MANAGER.savesetting("CRK", "savergb",2)
-end 
-
-if MANAGER.getsetting("CRK", "savergb") == "1" then
-event.register(event.tick,colourblender)
-else
+event.unregister(event.tick,theme)
 event.register(event.tick,theme)
-end
 
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
@@ -2060,7 +1950,7 @@ event.unregister(event.tick,backg)
 event.unregister(event.tick,cbrightness)
 event.unregister(event.tick,UIhide)
 event.unregister(event.tick,autohidehud)
-event.unregister(event.tick,colourblender)
+event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 brightSlider:value("255")
 MANAGER.savesetting("CRK", "brightness", "255")
@@ -2076,7 +1966,7 @@ MANAGER.savesetting("CRK","al",255)
 MANAGER.savesetting("CRK","ar",131)
 MANAGER.savesetting("CRK","ag",0)
 MANAGER.savesetting("CRK","ab",255)
-MANAGER.savesetting("CRK", "savergb",2)
+MANAGER.savesetting("CRK", "savergb",0)
 tpt.hud(1)
 hideyes()
 tpt.display_mode(3)
@@ -2129,15 +2019,9 @@ graphics.fillRect(2,258,609, 10,20,20,20,200)
 graphics.drawText(posix2,259,motw,255,200,55,255)
 end
 if perfmv == "1" then
-if MANAGER.getsetting("CRK", "savergb") == "2" then
 graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
 graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
-else
-graphics.drawLine(12, 18,319,18,colourRED,colourGRN,colourBLU,al)
-graphics.drawRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,110)
-graphics.fillRect(1,1, 609, 255,colourRED,colourGRN,colourBLU,10)
-end
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -2205,6 +2089,11 @@ gfx.drawText(484,229,"ON ("..entimey..") min.",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
+end
+if updatedmpval == "1" then --Multiplayer script status
+gfx.drawText(484,37,"New Ver.",105,255,105,255)
+else
+gfx.drawText(484,37,"Stock",105,255,105,255)
 end
 end
 
