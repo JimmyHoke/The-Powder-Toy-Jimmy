@@ -227,6 +227,7 @@ end
 if timeplus <= 0 then
 timeplus = 240
 end
+gfx.drawText(390,364,"You have a new message!",255,200,55,255)
 tpt.fillrect(418,408,51,14,32,250,210,timeplus)
 end
 
@@ -1374,7 +1375,6 @@ end
 if as > 50 then
 as = 50
 end
-
 tpt.drawrect(3,3,605,377,backvr,backvg,backvb,as + 200)
 tpt.fillrect(3,3,605,377,backvr,backvg,backvb,as)
 end
@@ -1405,8 +1405,13 @@ al = MANAGER.getsetting("CRK", "al")
 else
 al = brightSlider:value()
 end
-
+--Borders
+if borderval == "1" then
+tpt.drawrect(3,3,605,377,ar,ag,ab,al)
+tpt.drawrect(2,2,607,379,ar,ag,ab,al)
+end
 --Topbar
+if borderval ~= "1" then
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
@@ -1419,6 +1424,7 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 elseif barval == "2" then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
+end
 end
 end
 --Topbarend
@@ -1491,7 +1497,6 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
  end
- 
 end
 end
 
@@ -1517,38 +1522,35 @@ local bg7 = Button:new(598,3,6,6,"`", "Disable inbuilt scripts")
 
 local bog1 = Button:new(24,345,45,15,"Off", "Default")
 local bog2 = Button:new(74,345,45,15,"On", "on")
-local fanlb = Label:new(77, 325, 10, 15, "OFF")
 
---topbar
+local bogb1 = Button:new(175,345,45,15,"Off", "Default")
+local bogb2 = Button:new(226,345,45,15,"On", "on")
+
 local barlb = Label:new(70, 234, 5, 5, " Long")
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
 local baropd =  Button:new(104,250,35,20,"OFF", "Turn off")
 
-local als = Label:new(325,145, 30, 15, "Alpha")
-local rl = Label:new(321, 166, 30, 15, "Red")
-local gl = Label:new(325,187, 30, 15, "Green")
-local bl = Label:new(323, 208, 30, 15, "Blue")
+local als = Label:new(317,145, 30, 15, "Alpha")
 
 local aSlider = Slider:new(20, 145, 255, 15, 255)
 local rSlider = Slider:new(20, 166, 255, 15, 255)
 local gSlider = Slider:new(20, 187, 255, 15, 255)
 local bSlider = Slider:new(20, 208, 255, 15, 255)
 
-local alb = Label:new(290,145,10, 15)
+local alb = Label:new(290, 145, 10, 15)
 local rlb = Label:new(290, 166, 10, 15)
 local glb = Label:new(290, 187, 10, 15)
 local blb = Label:new(290, 208, 10, 15)
 
 local newmenuth = Window:new(-15,-15, 609, 370)
-local creditsth = Label:new(280,-20,100, 60,"Welcome To The Control Centre.")
 local presetlb = Label:new(-10,58,100, 50,"Presets:")
 local previewlb = Label:new(-10,-5,100, 60,"Preview:")
 local custlb = Label:new(-10,108,100, 60,"Custom:")
 local bartlb = Label:new(35,232,10, 10,"Topbar:")
 local filtlb = Label:new(37,282,10, 10,"Filters:")
 local bordlb = Label:new(41,328,10, 10,"Crosshair:")
-local alphalb = Label:new(87,124,100, 60,"Brightness turned on, alpha slider not available.")
+local bord2lb = Label:new(186,329,10, 10,"Border:")
 
 function mpnolag()
 MANAGER.savesetting("CRK", "savergb","0")
@@ -1565,18 +1567,30 @@ glb:text(gclr)
 
 bclr = bSlider:value() 
 blb:text(bclr)
-
 aclr = aSlider:value() 
 alb:text(aclr)
 end
 
 function drawprev()
+graphics.drawText(255,7, "Welcome to the Control Centre",255,255,255,255)
 graphics.drawRect(20,38,573,26,255,255,255,255)
-
+graphics.drawText(321,171, "Red",255,0,0,255)
+graphics.drawText(321,192, "Green",0,255,0,255)
+graphics.drawText(321,213, "Blue",0,0,255,255)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then 
-newmenuth:addComponent(alphalb)
+graphics.drawText(25,152, "Brightness setting is turned on, alpha slider not available",255,55,55,255)
 end
 
+if MANAGER.getsetting("CRK", "fancurs") == "1" then
+graphics.drawText(76,330, "ON",105,255,105,255)
+else
+graphics.drawText(76,330, "OFF",255,105,105,255)
+end
+if borderval == "1" then
+graphics.drawText(215,331, "ON",105,255,105,255)
+else
+graphics.drawText(215,331, "OFF",255,105,105,255)
+end
 tpt.drawrect(65,282,10,10,backvr,backvg,backvb,255)
 tpt.fillrect(65,282,10,10,backvr,backvg,backvb,100)
 
@@ -1589,10 +1603,6 @@ graphics.drawText(30,47, "Preview not available because pulse theme is on.",255,
 end
 end
 newmenuth:onDraw(drawprev)
-
-if MANAGER.getsetting("CRK", "fancurs") == "1" then
-fanlb:text("ON")
-end
 
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barlb:text("OFF")
@@ -1612,7 +1622,6 @@ end
 
 ui.showWindow(newmenuth)
 
-newmenuth:addComponent(creditsth)
 newmenuth:addComponent(presetlb)
 newmenuth:addComponent(filtlb)
 newmenuth:addComponent(previewlb)
@@ -1635,13 +1644,12 @@ newmenuth:addComponent(bg7)
 
 newmenuth:addComponent(bog1)
 newmenuth:addComponent(bog2)
+newmenuth:addComponent(bogb1)
+newmenuth:addComponent(bogb2)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
 newmenuth:addComponent(bSlider)
-newmenuth:addComponent(rl)
-newmenuth:addComponent(gl)
-newmenuth:addComponent(bl)
 newmenuth:addComponent(rlb)
 newmenuth:addComponent(glb)
 newmenuth:addComponent(blb)
@@ -1652,7 +1660,7 @@ newmenuth:addComponent(baropd)
 newmenuth:addComponent(barlb)
 newmenuth:addComponent(bartlb)
 newmenuth:addComponent(bordlb)
-newmenuth:addComponent(fanlb)
+newmenuth:addComponent(bord2lb)
 
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 newmenuth:addComponent(aSlider)
@@ -1686,7 +1694,6 @@ bSlider:value(MANAGER.getsetting("CRK", "ab"))
 bog2:action(function(sender)
 MANAGER.savesetting("CRK", "fancurs","1") 
 event.register(event.tick,drawcirc)
-fanlb:text("ON")
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 event.unregister(event.tick,cbrightness)
 event.register(event.tick,cbrightness)
@@ -1696,7 +1703,14 @@ end)
 bog1:action(function(sender)
 MANAGER.savesetting("CRK", "fancurs","0") 
 event.unregister(event.tick,drawcirc)
-fanlb:text("OFF")
+end)
+
+bogb2:action(function(sender)
+borderval = "1"
+end)
+
+bogb1:action(function(sender)
+borderval = "0"
 end)
 
 mpop:action(function(sender)
@@ -1937,6 +1951,7 @@ uival = "1"
 rulval = "1"
 hidval = "1"
 barval = "2"
+borderval = "0" 
 savetime = 0
 barktext:text("5")
 remtime:text("10")
@@ -2085,7 +2100,7 @@ gfx.drawText(484,197,"OFF",255,105,105,255)
 end
 if remval2 == "0" then
 if remval == "1" then --Reminder
-gfx.drawText(484,229,"ON ("..entimey..") min.",105,255,105,255)
+gfx.drawText(484,229,"ON ("..entimey.." min.)",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end

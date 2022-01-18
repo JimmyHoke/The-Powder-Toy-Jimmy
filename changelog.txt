@@ -1,6 +1,7 @@
 Changelog for V36 (59)
 
 Pulse theme is now a part of theme function (better switching and more efficient now).
+New border option in control centre.
 Remove checks from startup, faster launch speeds.
 Make changes to elements to use tmp3 and tmp4 instead of pavg.
 Visual overhaul of mod menu (new status indicators).
