@@ -1,7 +1,9 @@
-Changelog for V37 (60)
+Changelog for V36.1 (60)
 
-Reserved for V97.0
-
+Fix BASE catching fire
+Add more reactions to BASE
+Fix bug where closing lua window could crash the game
+Brighten up the hud a bit
 
 
  
