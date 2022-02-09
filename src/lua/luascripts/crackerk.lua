@@ -1,4 +1,4 @@
---cracker1000 mod script v8.0--
+--cracker1000 mod script v9.0--
 local passreal = "12345678"
 local passreal2 = "DMND"
 local motw = "."
@@ -117,6 +117,21 @@ local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
 
 local hide= Button:new(578,5,25,25, "X", "Hide.")
 
+
+--Varoius Variables
+local borderval = "0"
+local rulval = "1"
+local remval2 = "0"
+local timermp = 0
+local perfmv = "1"
+local fpsval = "1"
+local startTime
+local entimey
+local remval = "0"
+local endTime = 0
+local autoval = "1"
+local hidval = "1"
+
 function clearm()
 newmenu:removeComponent(reset)
 newmenu:removeComponent(FPS)
@@ -141,7 +156,7 @@ newmenu:removeComponent(perfm)
 newmenu:removeComponent(passbut)
 newmenu:removeComponent(upmp)
 end
-local remval2 = "0"
+
 function clearsb()
 newmenu:removeComponent(reset1)
 newmenu:removeComponent(reset2)
@@ -162,11 +177,9 @@ newmenu:removeComponent(barklab)
 remval2 = "0"
 end
 
-local perfmv = "1"
-local fpsval = "1"
+
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
-local timermp = 0
 local updatedmpval = "0" -- used for showing mp script status in menu
 
 function writefile()
@@ -227,7 +240,6 @@ end
 if timeplus <= 0 then
 timeplus = 240
 end
-gfx.drawText(390,364,"You have a new message!",255,200,55,255)
 tpt.fillrect(418,408,51,14,32,250,210,timeplus)
 end
 
@@ -339,18 +351,13 @@ end)
 perfm:action(function(sender)
 clearsb()
 if perfmv == "1" then
-tpt.setfpscap(80)
-tpt.setdrawcap(25)
+tpt.setdrawcap(30)
 event.unregister(event.tick,theme)
 tpt.display_mode(7)
-if fpsval == "0" then
-fpsval = "1"
-end
 perfmv = "0"
 else
 perfmv = "1"
 tpt.setdrawcap(0)
-tpt.setfpscap(60)
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 tpt.display_mode(3)
@@ -653,31 +660,6 @@ randsav = math.random(1,2803438)
 sim.loadSave(randsav, 0) 
 end)
 
-function drawcirc()
-if tpt.brushx > 10 and tpt.brushy > 10 then
-graphics.fillRect(tpt.mousex + 1 ,tpt.mousey,6 ,1,220,220,220,255)
-graphics.fillRect(tpt.mousex -6,tpt.mousey,6,1, 220,220,220,255)
-graphics.fillRect(tpt.mousex,tpt.mousey-6,1 ,6,220,220,220,255)
-graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
-end
-
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,210)
-
-if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,210)
-end
-graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,ar,ag,ab,255)
-graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, ar,ag,ab,255)
-graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,ar,ag,ab,255)
-graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, ar,ag,ab,255)
-end
-
-local startTime
-local entimey
-local remval = "0"
-local endTime = 0
 function remindme()
 endTime = startTime + tonumber(entimey)*60
 if os.time() >= endTime then
@@ -1083,7 +1065,6 @@ else tpt.hud(1)
 end
 end
 
-local autoval = "1"
 autohide:action(function(sender)
 clearsb()
 
@@ -1175,10 +1156,8 @@ tpt.el.mort.menu=0
 tpt.el.rfgl.menu=0
 tpt.el.vrss.menu=0
 tpt.el.vrsg.menu=0
-
 end
 
-local hidval = "1"
 bare:action(function(sender)
 clearsb()
 if hidval == "1" then 
@@ -1497,18 +1476,40 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
  end
+ 
+ --Cross-hair
+if MANAGER.getsetting("CRK", "fancurs") == "1" then 
+ if tpt.brushx > 10 and tpt.brushy > 10 then
+graphics.fillRect(tpt.mousex + 1 ,tpt.mousey,6 ,1,220,220,220,255)
+graphics.fillRect(tpt.mousex -6,tpt.mousey,6,1, 220,220,220,255)
+graphics.fillRect(tpt.mousex,tpt.mousey-6,1 ,6,220,220,220,255)
+graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
+end
+
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,210)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,210)
+
+if tpt.brushx > 0 or tpt.brushy > 0 then
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,210)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,210)
+end
+graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,ar,ag,ab,255)
+graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, ar,ag,ab,255)
+graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,ar,ag,ab,255)
+graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, ar,ag,ab,255)
+end
 end
 end
 
 mp:action(function(sender)
 clearsb()
-local mp1 = Button:new(20,92,45,20,"Dark", "Change the theme to default")
-local mp2 = Button:new(70,92,45,20,"Fire", "Change the theme to Blue")
-local mp3 = Button:new(120,92,45,20,"Aqua", "Change the theme to Red")
-local mp4 = Button:new(170,92,45,20,"Forest", "Change the theme to Green")
-local mp7 = Button:new(220,92,45,20,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,92,45,20,"Twilight", "Magnita/Default")
-local mp9 = Button:new(320,92,45,20,"Pulse", "RBG makes everything better.")
+local mp1 = Button:new(20,92,45,25,"Dark", "Change the theme to default")
+local mp2 = Button:new(70,92,45,25,"Fire", "Change the theme to Blue")
+local mp3 = Button:new(120,92,45,25,"Aqua", "Change the theme to Red")
+local mp4 = Button:new(170,92,45,25,"Forest", "Change the theme to Green")
+local mp7 = Button:new(220,92,45,25,"Vanilla", "Change the theme back to Plain white")
+local mp8 = Button:new(270,92,45,25,"Twilight", "Magnita/Default")
+local mp9 = Button:new(320,92,45,25,"Pulse", "RBG makes everything better.")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
 local bg1 = Button:new(24,300,45,15,"Off", "Default")
@@ -1520,13 +1521,10 @@ local bg6 = Button:new(274,300,45,15,"Theme", "Same as set theme")
 
 local bg7 = Button:new(598,3,6,6,"`", "Disable inbuilt scripts")
 
-local bog1 = Button:new(24,345,45,15,"Off", "Default")
-local bog2 = Button:new(74,345,45,15,"On", "on")
+local bog1 = Button:new(24,330,60,30,"Cross-hair", "Draw Cross-hair")
 
-local bogb1 = Button:new(175,345,45,15,"Off", "Default")
-local bogb2 = Button:new(226,345,45,15,"On", "on")
+local bogb1 = Button:new(175,330,60,30,"Borders", "Draw Borders")
 
-local barlb = Label:new(70, 234, 5, 5, " Long")
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
 local baropd =  Button:new(104,250,35,20,"OFF", "Turn off")
@@ -1544,13 +1542,7 @@ local glb = Label:new(290, 187, 10, 15)
 local blb = Label:new(290, 208, 10, 15)
 
 local newmenuth = Window:new(-15,-15, 609, 370)
-local presetlb = Label:new(-10,58,100, 50,"Presets:")
-local previewlb = Label:new(-10,-5,100, 60,"Preview:")
-local custlb = Label:new(-10,108,100, 60,"Custom:")
-local bartlb = Label:new(35,232,10, 10,"Topbar:")
 local filtlb = Label:new(37,282,10, 10,"Filters:")
-local bordlb = Label:new(41,328,10, 10,"Crosshair:")
-local bord2lb = Label:new(186,329,10, 10,"Border:")
 
 function mpnolag()
 MANAGER.savesetting("CRK", "savergb","0")
@@ -1572,6 +1564,7 @@ alb:text(aclr)
 end
 
 function drawprev()
+local barstat = "Long"
 graphics.drawText(255,7, "Welcome to the Control Centre",255,255,255,255)
 graphics.drawRect(20,38,573,26,255,255,255,255)
 graphics.drawText(321,171, "Red",255,0,0,255)
@@ -1581,15 +1574,27 @@ if MANAGER.getsetting("CRK", "brightstate") == "1" then
 graphics.drawText(25,152, "Brightness setting is turned on, alpha slider not available",255,55,55,255)
 end
 
+if MANAGER.getsetting("CRK", "barval") == "4" then
+barstat = "Off"
+elseif MANAGER.getsetting("CRK", "barval") == "1" then
+barstat = "Short"
+elseif MANAGER.getsetting("CRK", "barval") == "2" then
+barstat = "Long"
+end
+gfx.drawText(20,23,"Preview:",32,216,255,255)
+gfx.drawText(24,78,"Presets:",32,216,255,255)
+gfx.drawText(24,133,"Theme Customisation:",32,216,255,255)
+gfx.drawText(24,235,"Topbar: "..barstat,32,216,255,255)
+
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
-graphics.drawText(76,330, "ON",105,255,105,255)
+graphics.drawText(90,342, "ON",105,255,105,255)
 else
-graphics.drawText(76,330, "OFF",255,105,105,255)
+graphics.drawText(90,342, "OFF",255,105,105,255)
 end
 if borderval == "1" then
-graphics.drawText(215,331, "ON",105,255,105,255)
+graphics.drawText(242,342, "ON",105,255,105,255)
 else
-graphics.drawText(215,331, "OFF",255,105,105,255)
+graphics.drawText(242,342, "OFF",255,105,105,255)
 end
 tpt.drawrect(65,282,10,10,backvr,backvg,backvb,255)
 tpt.fillrect(65,282,10,10,backvr,backvg,backvb,100)
@@ -1604,16 +1609,6 @@ end
 end
 newmenuth:onDraw(drawprev)
 
-if MANAGER.getsetting("CRK", "barval") == "4" then
-barlb:text("OFF")
-
-elseif MANAGER.getsetting("CRK", "barval") == "1" then
-barlb:text(" Short")
-
-elseif MANAGER.getsetting("CRK", "barval") == "2" then
-barlb:text(" Long")
-end
-
 function closewindow()
 ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
@@ -1622,10 +1617,7 @@ end
 
 ui.showWindow(newmenuth)
 
-newmenuth:addComponent(presetlb)
 newmenuth:addComponent(filtlb)
-newmenuth:addComponent(previewlb)
-newmenuth:addComponent(custlb)
 newmenuth:addComponent(mp1)
 newmenuth:addComponent(mp2)
 newmenuth:addComponent(mp3)
@@ -1643,9 +1635,7 @@ newmenuth:addComponent(bg6)
 newmenuth:addComponent(bg7)
 
 newmenuth:addComponent(bog1)
-newmenuth:addComponent(bog2)
 newmenuth:addComponent(bogb1)
-newmenuth:addComponent(bogb2)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
@@ -1657,10 +1647,6 @@ newmenuth:addComponent(mpop)
 newmenuth:addComponent(baropa)
 newmenuth:addComponent(baropb)
 newmenuth:addComponent(baropd)
-newmenuth:addComponent(barlb)
-newmenuth:addComponent(bartlb)
-newmenuth:addComponent(bordlb)
-newmenuth:addComponent(bord2lb)
 
 if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 newmenuth:addComponent(aSlider)
@@ -1691,26 +1677,21 @@ rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
 
-bog2:action(function(sender)
+
+bog1:action(function(sender)
+if MANAGER.getsetting("CRK", "fancurs") == "0" then 
 MANAGER.savesetting("CRK", "fancurs","1") 
-event.register(event.tick,drawcirc)
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-event.unregister(event.tick,cbrightness)
-event.register(event.tick,cbrightness)
+elseif MANAGER.getsetting("CRK", "fancurs") == "1" then 
+MANAGER.savesetting("CRK", "fancurs","0") 
 end
 end)
 
-bog1:action(function(sender)
-MANAGER.savesetting("CRK", "fancurs","0") 
-event.unregister(event.tick,drawcirc)
-end)
-
-bogb2:action(function(sender)
-borderval = "1"
-end)
-
 bogb1:action(function(sender)
+if borderval == "0" then
+borderval = "1"
+elseif borderval == "1" then
 borderval = "0"
+end
 end)
 
 mpop:action(function(sender)
@@ -1824,17 +1805,14 @@ platform.restart()
 end)
 
 baropa:action(function(sender)
-barlb:text(" Short")
 MANAGER.savesetting("CRK","barval","1")
 end)
 
 baropb:action(function(sender)
-barlb:text(" Long")
 MANAGER.savesetting("CRK","barval","2")
 end)
 
 baropd:action(function(sender)
-barlb:text("OFF")
 MANAGER.savesetting("CRK","barval","4")
 end)
 
@@ -1861,14 +1839,12 @@ MANAGER.savesetting("CRK","al",255)
 end
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
-
+if MANAGER.getsetting("CRK","fancurs") == nil then
+MANAGER.savesetting("CRK", "fancurs","1")
+end
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 hidval = "0"
-end
-
-if MANAGER.getsetting("CRK", "fancurs") == "1" then
-event.register(event.tick,drawcirc)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -1879,8 +1855,6 @@ MANAGER.savesetting("CRK", "brightness",255)
 end
 end
 startupcheck()
-
-local rulval = "1"
 
 Ruler:action(function(sender)
 clearsb()
@@ -1895,8 +1869,12 @@ end
 end)
 
 function UIhide()
+if tpt.mousey < 380 then
 tpt.fillrect(-1,382,616,42,0,0,0,215)
+end
+if tpt.mousex < 610 then
 tpt.fillrect(612,0,17,424,0,0,0,215)
+end
 end
 
 deletesparkButton:action(function(sender)
@@ -1959,7 +1937,6 @@ showmodelem()
 event.unregister(event.tick,writefile)
 event.unregister(event.tick,showmotdnot)
 event.unregister(event.tick,autosave)
-event.unregister(event.tick,drawcirc)
 event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
 event.unregister(event.tick,cbrightness)
@@ -1973,7 +1950,7 @@ MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK", "brightstate", "0")
 MANAGER.savesetting("CRK","savergb",1)
 MANAGER.savesetting("CRK","hidestate", "0")
-MANAGER.savesetting("CRK", "fancurs","0")
+MANAGER.savesetting("CRK", "fancurs","1")
 MANAGER.savesetting("CRK", "barval", "2")
 MANAGER.savesetting("CRK", "passreal","12345678")
 MANAGER.savesetting("CRK", "passreal2","DMND")

@@ -1,10 +1,10 @@
 Changelog for V36 (59)
 
-Pulse theme is now a part of theme function (better switching and more efficient now).
-New border option in control centre.
-Remove checks from startup, faster launch speeds.
-Make changes to elements to use tmp3 and tmp4 instead of pavg.
-Visual overhaul of mod menu (new status indicators).
+Pulse theme, Crosshair and Borders are now a part of theme function (better switching and more efficient now).
+New border options in control centre.
+Remove various checks from startup, faster launch time.
+Optimise elements and HUD to use new tmp3 and tmp4 properties.
+Visual overhaul of mod menu (new real time status indicators).
 Changes to the hud.
 Reminder status is now shown right after the reminder button.
 Brightness values are now shown in percentage and shown even when settings are turned off.
@@ -14,10 +14,11 @@ Grph now releases CO2 while burning and also burns for longer.
 Improved PHOS burning code.
 Add some missing element information to wiki. 
 Mod menu now can be closed using the same J key shortcut.
-Crackerk.lua Script lenght is now greatly reduced.
+Various optimisations to script.
 Texter support placing text using enter key.
 Add some missing texter fonts.
 Normal fonts look better and previews for same are more accurate now.
+
  
 
  
