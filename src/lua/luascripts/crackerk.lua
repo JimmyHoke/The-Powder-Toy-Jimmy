@@ -98,7 +98,7 @@ local brlabel2 = Label:new(344, 225, 10, 15, "("..brightSlider:value()..")")
 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
-local shrt = Button:new(396,92,80,25, "Toggle J key", "Nothing")
+local shrtpre = Button:new(396,92,80,25, "Reserved", "Nothing")
 
 local edito = Button:new(396,124,80,25, "Editor", "Basic element editor.")
 
@@ -131,6 +131,8 @@ local remval = "0"
 local endTime = 0
 local autoval = "1"
 local hidval = "1"
+local shrtv = "1"
+local focustime = 170
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -150,7 +152,7 @@ newmenu:removeComponent(chud)
 newmenu:removeComponent(brightness)
 newmenu:removeComponent(reminder)
 newmenu:removeComponent(Help)
-newmenu:removeComponent(shrt)
+newmenu:removeComponent(shrtpre)
 newmenu:removeComponent(edito)
 newmenu:removeComponent(perfm)
 newmenu:removeComponent(passbut)
@@ -346,6 +348,11 @@ end)
 doned5 :action(function(sender)
 MANAGER.savesetting("CRK", "pass","0")
 end)
+end)
+
+shrtpre:action(function(sender)
+clearsb()
+tpt.menu_enabled(4)
 end)
 
 perfm:action(function(sender)
@@ -642,16 +649,6 @@ end)
 cancel:action(function(sender)
 ui.closeWindow(editomenu)
 end)
-end)
-
-local shrtv = "1"
-shrt:action(function(sender)
-clearsb()
-if shrtv == "1" then
-shrtv = "0"
-else
-shrtv = "1"
-end
 end)
 
 Help:action(function(sender)
@@ -1512,18 +1509,20 @@ local mp8 = Button:new(270,92,45,25,"Twilight", "Magnita/Default")
 local mp9 = Button:new(320,92,45,25,"Pulse", "RBG makes everything better.")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
-local bg1 = Button:new(24,300,45,15,"Off", "Default")
-local bg2 = Button:new(74,300,45,15,"Blue", "Blue background")
-local bg3 = Button:new(124,300,45,15,"Red", "Red background")
-local bg4 = Button:new(174,300,45,15,"Green", "Green background")
-local bg5 = Button:new(224,300,45,15,"Orange", "Yellow background")
-local bg6 = Button:new(274,300,45,15,"Theme", "Same as set theme")
+local bg1 = Button:new(24,300,45,20,"Off", "Default")
+local bg2 = Button:new(74,300,45,20,"Blue", "Blue background")
+local bg3 = Button:new(124,300,45,20,"Red", "Red background")
+local bg4 = Button:new(174,300,45,20,"Green", "Green background")
+local bg5 = Button:new(224,300,45,20,"Orange", "Yellow background")
+local bg6 = Button:new(274,300,45,20,"Theme", "Same as set theme")
 
 local bg7 = Button:new(598,3,6,6,"`", "Disable inbuilt scripts")
 
-local bog1 = Button:new(24,330,60,30,"Cross-hair", "Draw Cross-hair")
+local bog1 = Button:new(24,330,60,30,"Cross-Hair", "Draw Cross-hair")
 
 local bogb1 = Button:new(175,330,60,30,"Borders", "Draw Borders")
+
+local jkey = Button:new(326,330,60,30,"J-Shortcut", "Toggle Shortcut")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
@@ -1542,7 +1541,6 @@ local glb = Label:new(290, 187, 10, 15)
 local blb = Label:new(290, 208, 10, 15)
 
 local newmenuth = Window:new(-15,-15, 609, 370)
-local filtlb = Label:new(37,282,10, 10,"Filters:")
 
 function mpnolag()
 MANAGER.savesetting("CRK", "savergb","0")
@@ -1581,23 +1579,29 @@ barstat = "Short"
 elseif MANAGER.getsetting("CRK", "barval") == "2" then
 barstat = "Long"
 end
-gfx.drawText(20,23,"Preview:",32,216,255,255)
-gfx.drawText(24,78,"Presets:",32,216,255,255)
-gfx.drawText(24,133,"Theme Customisation:",32,216,255,255)
-gfx.drawText(24,235,"Topbar: "..barstat,32,216,255,255)
+gfx.drawText(20,23,"Preview:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
+gfx.drawText(24,78,"Presets:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
+gfx.drawText(24,133,"Theme Customisation:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
+gfx.drawText(24,235,"Topbar: "..barstat,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
+gfx.drawText(25,285,"Filters:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
 graphics.drawText(90,342, "ON",105,255,105,255)
 else
 graphics.drawText(90,342, "OFF",255,105,105,255)
 end
+if shrtv == "1" then
+gfx.drawText(392,342,"ON",105,255,105,255)
+else
+gfx.drawText(392,342,"OFF",255,105,105,255)
+end
 if borderval == "1" then
 graphics.drawText(242,342, "ON",105,255,105,255)
 else
 graphics.drawText(242,342, "OFF",255,105,105,255)
 end
-tpt.drawrect(65,282,10,10,backvr,backvg,backvb,255)
-tpt.fillrect(65,282,10,10,backvr,backvg,backvb,100)
+tpt.drawrect(65,283,10,10,backvr,backvg,backvb,255)
+tpt.fillrect(65,283,10,10,backvr,backvg,backvb,100)
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 40,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
@@ -1616,8 +1620,6 @@ barlength = 1
 end
 
 ui.showWindow(newmenuth)
-
-newmenuth:addComponent(filtlb)
 newmenuth:addComponent(mp1)
 newmenuth:addComponent(mp2)
 newmenuth:addComponent(mp3)
@@ -1636,6 +1638,7 @@ newmenuth:addComponent(bg7)
 
 newmenuth:addComponent(bog1)
 newmenuth:addComponent(bogb1)
+newmenuth:addComponent(jkey)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
@@ -1694,6 +1697,15 @@ borderval = "0"
 end
 end)
 
+jkey:action(function(sender)
+clearsb()
+if shrtv == "1" then
+shrtv = "0"
+else
+shrtv = "1"
+end
+end)
+
 mpop:action(function(sender)
 ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
@@ -1748,6 +1760,9 @@ mpnolag()
 end)
 
 mp9:action(function(sender)
+MANAGER.savesetting("CRK","ar",131)
+MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",210)
 MANAGER.savesetting("CRK","savergb",1)
 aSlider:value(MANAGER.getsetting("CRK", "al"))
@@ -1869,12 +1884,18 @@ end
 end)
 
 function UIhide()
-if tpt.mousey < 380 then
-tpt.fillrect(-1,382,616,42,0,0,0,215)
+if focustime < 170 then
+focustime = focustime + 2
 end
-if tpt.mousex < 610 then
-tpt.fillrect(612,0,17,424,0,0,0,215)
+
+if tpt.mousey > 380 or tpt.mousex > 610 then
+if focustime > 15 then
+focustime = focustime - 8
 end
+end
+
+tpt.fillrect(-1,382,616,42,0,0,0,focustime)
+tpt.fillrect(612,0,17,424,0,0,0,focustime)
 end
 
 deletesparkButton:action(function(sender)
@@ -2060,11 +2081,6 @@ gfx.drawText(291,229,"ON",105,255,105,255)
 else
 gfx.drawText(291,229,"OFF",255,105,105,255)
 end
-if shrtv == "1" then --J key
-gfx.drawText(484,101,"ON",105,255,105,255)
-else
-gfx.drawText(484,101,"OFF",255,105,105,255)
-end
 if perfmv == "0" then --Performace
 gfx.drawText(484,165,"ON",105,255,105,255)
 else
@@ -2120,7 +2136,7 @@ newmenu:addComponent(chud)
 newmenu:addComponent(brightness)
 newmenu:addComponent(reminder)
 newmenu:addComponent(Help)
-newmenu:addComponent(shrt)
+newmenu:addComponent(shrtpre)
 newmenu:addComponent(edito)
 newmenu:addComponent(perfm)
 newmenu:addComponent(passbut)
