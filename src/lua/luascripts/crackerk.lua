@@ -2,6 +2,8 @@
 local passreal = "12345678"
 local passreal2 = "DMND"
 local motw = "."
+--Default theme for initial launch and resets
+local dr, dg, db, da = 131,0,255,255
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -98,7 +100,7 @@ local brlabel2 = Label:new(344, 225, 10, 15, "("..brightSlider:value()..")")
 
 local Help = Button:new(396,60,80,25, "Random save", "Opens random save.")
 
-local shrtpre = Button:new(396,92,80,25, "Reserved", "Nothing")
+local shrtpre = Button:new(396,92,80,25, "Invert-tool", "Selects opposite tool")
 
 local edito = Button:new(396,124,80,25, "Editor", "Basic element editor.")
 
@@ -132,7 +134,8 @@ local endTime = 0
 local autoval = "1"
 local hidval = "1"
 local shrtv = "1"
-local focustime = 170
+local invtoolv = "1"
+local focustime = 180
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -350,9 +353,43 @@ MANAGER.savesetting("CRK", "pass","0")
 end)
 end)
 
+function inverttool()
+if tpt.selectedl == "DEFAULT_TOOL_HEAT" then
+tpt.selectedr = "DEFAULT_TOOL_COOL"
+elseif tpt.selectedl == "DEFAULT_TOOL_COOL" then
+tpt.selectedr = "DEFAULT_TOOL_HEAT"
+elseif tpt.selectedl == "DEFAULT_TOOL_AIR" then
+tpt.selectedr = "DEFAULT_TOOL_VAC"
+elseif tpt.selectedl == "DEFAULT_TOOL_VAC" then
+tpt.selectedr = "DEFAULT_TOOL_AIR"
+elseif tpt.selectedl == "DEFAULT_TOOL_PGRV" then
+tpt.selectedr = "DEFAULT_TOOL_NGRV"
+elseif tpt.selectedl == "DEFAULT_TOOL_NGRV" then
+tpt.selectedr = "DEFAULT_TOOL_PGRV"
+elseif tpt.selectedl == "DEFAULT_TOOL_AMBM" then
+tpt.selectedr = "DEFAULT_TOOL_AMBP"
+elseif tpt.selectedl == "DEFAULT_TOOL_AMBP" then
+tpt.selectedr = "DEFAULT_TOOL_AMBM"
+elseif tpt.selectedl == "DEFAULT_TOOL_AMBP" then
+tpt.selectedr = "DEFAULT_TOOL_AMBM"
+elseif tpt.selectedl == "DEFAULT_UI_WIND" then
+tpt.selectedr = "DEFAULT_TOOL_CYCL"
+elseif tpt.selectedl == "DEFAULT_TOOL_CYCL" then
+tpt.selectedr = "DEFAULT_UI_WIND"
+end
+end
+
 shrtpre:action(function(sender)
 clearsb()
-tpt.menu_enabled(4)
+if invtoolv == "1" then
+print("Invert-Tool: Automatically selects the opposite tool")
+event.unregister(event.tick,inverttool)
+event.register(event.tick,inverttool)
+invtoolv = "0"
+elseif invtoolv == "0" then
+event.unregister(event.tick,inverttool)
+invtoolv = "1"
+end
 end)
 
 perfm:action(function(sender)
@@ -1473,7 +1510,6 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
   if colourBLU == 0 then else colourBLU = colourBLU - 1 end
  end
  end
- 
  --Cross-hair
 if MANAGER.getsetting("CRK", "fancurs") == "1" then 
  if tpt.brushx > 10 and tpt.brushy > 10 then
@@ -1482,10 +1518,8 @@ graphics.fillRect(tpt.mousex -6,tpt.mousey,6,1, 220,220,220,255)
 graphics.fillRect(tpt.mousex,tpt.mousey-6,1 ,6,220,220,220,255)
 graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
 end
-
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,210)
 graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,210)
-
 if tpt.brushx > 0 or tpt.brushy > 0 then
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,210)
 graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,210)
@@ -1528,17 +1562,17 @@ local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
 local baropd =  Button:new(104,250,35,20,"OFF", "Turn off")
 
-local als = Label:new(317,145, 30, 15, "Alpha")
+local als = Label:new(317,147, 30, 15, "Alpha")
 
-local aSlider = Slider:new(20, 145, 255, 15, 255)
-local rSlider = Slider:new(20, 166, 255, 15, 255)
-local gSlider = Slider:new(20, 187, 255, 15, 255)
-local bSlider = Slider:new(20, 208, 255, 15, 255)
+local aSlider = Slider:new(20, 145, 255, 17, 255)
+local rSlider = Slider:new(20, 166, 255, 17, 255)
+local gSlider = Slider:new(20, 187, 255, 17, 255)
+local bSlider = Slider:new(20, 208, 255, 17, 255)
 
-local alb = Label:new(290, 145, 10, 15)
-local rlb = Label:new(290, 166, 10, 15)
-local glb = Label:new(290, 187, 10, 15)
-local blb = Label:new(290, 208, 10, 15)
+local alb = Label:new(290, 147, 10, 15)
+local rlb = Label:new(290, 168, 10, 15)
+local glb = Label:new(290, 189, 10, 15)
+local blb = Label:new(290, 210, 10, 15)
 
 local newmenuth = Window:new(-15,-15, 609, 370)
 
@@ -1565,9 +1599,9 @@ function drawprev()
 local barstat = "Long"
 graphics.drawText(255,7, "Welcome to the Control Centre",255,255,255,255)
 graphics.drawRect(20,38,573,26,255,255,255,255)
-graphics.drawText(321,171, "Red",255,0,0,255)
-graphics.drawText(321,192, "Green",0,255,0,255)
-graphics.drawText(321,213, "Blue",0,0,255,255)
+graphics.drawText(321,173, "Red",255,0,0,255)
+graphics.drawText(321,194, "Green",0,255,0,255)
+graphics.drawText(321,215, "Blue",0,0,255,255)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then 
 graphics.drawText(25,152, "Brightness setting is turned on, alpha slider not available",255,55,55,255)
 end
@@ -1847,10 +1881,10 @@ updatedmpval = "0"
 end
 
 if MANAGER.getsetting("CRK","al") == nil then
-MANAGER.savesetting("CRK","ar",131)
-MANAGER.savesetting("CRK","ag",0)
-MANAGER.savesetting("CRK","ab",255)
-MANAGER.savesetting("CRK","al",255)
+MANAGER.savesetting("CRK","ar",dr)
+MANAGER.savesetting("CRK","ag",dg)
+MANAGER.savesetting("CRK","ab",db)
+MANAGER.savesetting("CRK","al",da)
 end
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
@@ -1884,13 +1918,13 @@ end
 end)
 
 function UIhide()
-if focustime < 170 then
+if focustime < 180 then
 focustime = focustime + 2
 end
 
 if tpt.mousey > 380 or tpt.mousex > 610 then
 if focustime > 15 then
-focustime = focustime - 8
+focustime = focustime - 7
 end
 end
 
@@ -1905,7 +1939,7 @@ event.unregister(event.tick,UIhide)
 event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
-print("Interface is now out of focus")
+print("Interface will now be out of focus when working in simulation area")
 
 elseif uival == "0" then
 tpt.hud(1)
@@ -1942,6 +1976,7 @@ backvg = 0
 backvb = 0
 perfmv = "1"
 autoval = "1"
+invtoolv = "1"
 shrtv = "1"
 modelemval = "0"
 stamplb = "0"
@@ -1960,6 +1995,7 @@ event.unregister(event.tick,showmotdnot)
 event.unregister(event.tick,autosave)
 event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
+event.unregister(event.tick,inverttool)
 event.unregister(event.tick,cbrightness)
 event.unregister(event.tick,UIhide)
 event.unregister(event.tick,autohidehud)
@@ -1975,10 +2011,10 @@ MANAGER.savesetting("CRK", "fancurs","1")
 MANAGER.savesetting("CRK", "barval", "2")
 MANAGER.savesetting("CRK", "passreal","12345678")
 MANAGER.savesetting("CRK", "passreal2","DMND")
-MANAGER.savesetting("CRK","al",255)
-MANAGER.savesetting("CRK","ar",131)
-MANAGER.savesetting("CRK","ag",0)
-MANAGER.savesetting("CRK","ab",255)
+MANAGER.savesetting("CRK","al",da)
+MANAGER.savesetting("CRK","ar",dr)
+MANAGER.savesetting("CRK","ag",dg)
+MANAGER.savesetting("CRK","ab",db)
 MANAGER.savesetting("CRK", "savergb",0)
 tpt.hud(1)
 hideyes()
@@ -2102,6 +2138,11 @@ if updatedmpval == "1" then --Multiplayer script status
 gfx.drawText(484,37,"New Ver.",105,255,105,255)
 else
 gfx.drawText(484,37,"Stock",105,255,105,255)
+end
+if invtoolv == "0" then --Invert-tool
+gfx.drawText(484,101,"ON",105,255,105,255)
+else
+gfx.drawText(484,101,"OFF",255,105,105,255)
 end
 end
 

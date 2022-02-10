@@ -1,8 +1,9 @@
 Changelog for V36 (59)
 
+New option: Inver-Tool mode (automatically selects the opposite tool.)
 Pulse theme, Crosshair and Borders are now a part of theme function (better switching and more efficient now).
 New border options in control centre.
-New focus mode, replaces interface option
+New "focus mode", replaces interface option.
 Remove various checks from startup, faster launch time.
 Optimise elements and HUD to use new tmp3 and tmp4 properties.
 Visual overhaul of mod menu (new real time status indicators).
@@ -18,6 +19,7 @@ Mod menu now can be closed using the same J key shortcut.
 Various optimisations to script.
 Texter support placing text using enter key.
 Add some missing texter fonts.
+Performance mode is now less aggressive and doesn't alter the default FPS.
 Normal fonts look better and previews for same are more accurate now.
 
  
