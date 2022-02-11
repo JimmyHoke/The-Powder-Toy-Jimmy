@@ -1,5 +1,7 @@
 Changelog for V36 (59)
-New element: Base (what else in this world is better than a strong base)
+
+New element: Base (Read wiki for details.)
+Changes to preset themes.
 New option: Inver-Tool mode (automatically selects the opposite tool.)
 Pulse theme, Crosshair and Borders are now a part of theme function (better switching and more efficient now).
 New border options in control centre.
