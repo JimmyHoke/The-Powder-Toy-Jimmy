@@ -1,27 +1,8 @@
-Changelog for V36 (59)
+Changelog for V37 (60)
 
-New element: Base (Read wiki for details.)
-Changes to preset themes.
-New option: Inver-Tool mode (automatically selects the opposite tool.)
-Pulse theme, Crosshair and Borders are now a part of theme function (better switching and more efficient now).
-New border options in control centre.
-New "focus mode", replaces interface option.
-Remove various checks from startup, faster launch time.
-Visual overhaul of mod menu (new real time status indicators).
-Changes to the hud.
-Reminder status is now shown right after the reminder button.
-Brightness values are now shown in percentage and shown even when settings are turned off.
-Fix message length being displayed along with the message.
-Fix some element descriptions.
-Grph now releases CO2 while burning and also burns for longer.
-Improved PHOS burning code.
-Add some missing element information to wiki. 
-Mod menu now can be closed using the same J key shortcut.
-Various optimisations to script.
-Texter support placing text using enter key.
-Add some missing texter fonts.
-Performance mode is now less aggressive and doesn't alter the default FPS.
-Normal fonts look better and previews for same are more accurate now.
+Reserved for V97.0
+
+
 
  
 
