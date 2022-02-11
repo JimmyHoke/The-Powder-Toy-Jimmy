@@ -38,7 +38,7 @@ void Element::Element_BASE()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 573.15f;
+	HighTemperature = 403.15f;
 	HighTemperatureTransition = PT_WTRV;
 
 	DefaultProperties.tmp = 10;

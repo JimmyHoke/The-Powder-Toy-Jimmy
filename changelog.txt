@@ -5,7 +5,6 @@ Pulse theme, Crosshair and Borders are now a part of theme function (better swit
 New border options in control centre.
 New "focus mode", replaces interface option.
 Remove various checks from startup, faster launch time.
-Optimise elements and HUD to use new tmp3 and tmp4 properties.
 Visual overhaul of mod menu (new real time status indicators).
 Changes to the hud.
 Reminder status is now shown right after the reminder button.
