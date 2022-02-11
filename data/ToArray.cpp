@@ -20,8 +20,6 @@ int main(int argc, char *argv[])
 	auto dataLen = 0U;
 	while (true)
 	{
-		char ch;
-		inputAny.read(&ch, 1);
 		if (inputAny.eof())
 		{
 			break;
@@ -30,6 +28,8 @@ int main(int argc, char *argv[])
 		{
 			return 3;
 		}
+		char ch;
+		inputAny.read(&ch, 1);
 		outputCpp << (unsigned int)(unsigned char)(ch) << ", ";
 		dataLen += 1;
 	}
