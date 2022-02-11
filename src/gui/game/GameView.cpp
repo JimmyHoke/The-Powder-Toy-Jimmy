@@ -2302,8 +2302,8 @@ void GameView::OnDraw()
 							sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
 						}
 						sampleInfo << Format::Dec();
-						sampleInfo << ", t3: " << sample.particle.tmp3;
-						sampleInfo << ", t4: " << sample.particle.tmp4;
+						sampleInfo << ", P0: " << sample.particle.pavg[0];
+						sampleInfo << ", P1: " << sample.particle.pavg[1];
 						sampleInfo << ", #" << sample.ParticleID;
 					}
 

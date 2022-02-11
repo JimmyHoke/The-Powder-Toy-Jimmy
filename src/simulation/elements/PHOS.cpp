@@ -48,8 +48,8 @@ void Element::Element_PHOS()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].tmp3 > 0)
-		parts[i].tmp3--;
+	if (parts[i].pavg[0] > 0)
+		parts[i].pavg[0]--;
 
 	if (parts[i].tmp2 == 1)
 	{
@@ -118,7 +118,7 @@ static int update(UPDATE_FUNC_ARGS)
 	int rp = sim->photons[y + ry][x + rx];
 	if (TYP(rp) == PT_UVRD)
 	{
-		parts[i].tmp3 = parts[i].tmp3+2;
+		parts[i].pavg[0] = parts[i].pavg[0]+2;
 	}
 	return 0;
 }
@@ -136,7 +136,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	*colg -= cpart->tmp/2;
 	*colb -= cpart->tmp/2;
 
-	if (cpart->tmp3 > 0)
+	if (cpart->pavg[0] > 0)
 	{
 		*firea = 55;
 		*firer = *colr;
