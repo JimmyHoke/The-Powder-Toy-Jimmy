@@ -2190,13 +2190,13 @@ void GameView::OnDraw()
 				}
 				if (showDebug)
 				{
-					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C/ ";
-					sampleInfo << sample.particle.temp << " K" << "/ ";
-					sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << " F";
+					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << "C/ ";
+					sampleInfo << sample.particle.temp << "K" << "/ ";
+					sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << "F";
 				}
 				else
 				{
-					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << " C";
+					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << "C";
 				}
 				sampleInfo << ", Life: " << sample.particle.life;
 				if (sample.particle.type != PT_RFRG && sample.particle.type != PT_RFGL && sample.particle.type != PT_LIFE)
@@ -2224,7 +2224,7 @@ void GameView::OnDraw()
 			else
 			{
 				sampleInfo << c->BasicParticleInfo(sample.particle);
-				sampleInfo << ", Temp: " << sample.particle.temp - 273.15f << " C";
+				sampleInfo << ", Temp: " << sample.particle.temp - 273.15f << "C";
 				sampleInfo << ", Pressure: " << sample.AirPressure;
 			}
 		}
@@ -2315,7 +2315,7 @@ void GameView::OnDraw()
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
 				g->fillrect(6, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(8, 37, sampleInfo.Build(), 255, 12, 12, alpha*0.95f);
+				g->drawtext(8, 37, sampleInfo.Build(), 32, 216, 200, alpha*0.85f);
 			}
 	}
 	if(showHud && introText < 51)

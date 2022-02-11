@@ -61,7 +61,7 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		parts[i].tmp++;
 	}
-	if (parts[i].tmp2 == 6 && parts[i].tmp == 1000)
+	else if (parts[i].tmp2 == 6 && parts[i].tmp == 1000)
 	{
 		parts[i].tmp = 1;
 	}

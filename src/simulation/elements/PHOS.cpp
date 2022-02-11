@@ -29,7 +29,7 @@ void Element::Element_PHOS()
 	Weight = 75;
 
 	HeatConduct = 110;
-	Description = "Phosphorus, slowly turns red, melts at 45C and reacts violently with O2. Glows under UV.";
+	Description = "Phosphorus, slowly turns red, melts at 45C and reacts violently with O2. Glows under UV. Acts as a fertiliser for PLNT.";
 
 	Properties = TYPE_PART;
 
@@ -51,7 +51,16 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].pavg[0] > 0)
 		parts[i].pavg[0]--;
 
-	if (parts[i].tmp < 250 && (RNG::Ref().chance(1, 5)))
+	if (parts[i].tmp2 == 1)
+	{
+		if (RNG::Ref().chance(1, 500))
+		{
+			parts[i].life = 150;
+			sim->part_change_type(i, x, y, PT_FIRE);
+		}
+	}
+
+	if (parts[i].tmp < 255 && (RNG::Ref().chance(1, 8)))
 	{
 		parts[i].tmp++;
 	}
@@ -85,7 +94,13 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_FIRE:
 				case PT_PLSM:
 				{
-					sim->create_part(i, x, y, PT_FIRE);
+					parts[i].tmp2 = 1;
+				}
+				break;
+				case PT_PHOS:
+				{
+					if (parts[ID(r)].tmp2 > 0)
+						parts[i].tmp2 = 1;
 				}
 				break;
 				case PT_PLNT:
