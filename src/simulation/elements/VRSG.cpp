@@ -44,7 +44,7 @@ void Element::Element_VRSG()
 	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
 
-	DefaultProperties.tmp4 = 250;
+	DefaultProperties.pavg[1] = 250;
 
 	Update = &Element_VIRS_update;
 	Graphics = &graphics;
