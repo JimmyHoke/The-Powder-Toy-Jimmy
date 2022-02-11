@@ -4405,6 +4405,7 @@ LuaScriptInterface::~LuaScriptInterface() {
 		luacon_ci->Window->RemoveComponent(component_and_ref.first->GetComponent());
 		component_and_ref.second.Clear();
 		component_and_ref.first->owner_ref = component_and_ref.second;
+		component_and_ref.first->SetParentWindow(nullptr);
 	}
 	luaChangeTypeHandlers.clear();
 	luaCreateAllowedHandlers.clear();
