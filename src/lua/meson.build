@@ -10,14 +10,10 @@ luaconsole_files = files(
 	'LuaScriptInterface.cpp',
 	'LuaSlider.cpp',
 	'LuaSmartRef.cpp',
+	'LuaTCPSocket.cpp',
 	'LuaTextbox.cpp',
 	'LuaWindow.cpp',
 )
-if uopt_http
-	luaconsole_files += files(
-		'LuaTCPSocket.cpp',
-	)
-endif
 
 subdir('luascripts')
 

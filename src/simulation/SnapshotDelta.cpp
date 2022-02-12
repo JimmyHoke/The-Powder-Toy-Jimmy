@@ -1,5 +1,6 @@
 #include "SnapshotDelta.h"
 
+#include "common/tpt-compat.h"
 #include "common/tpt-minmax.h"
 
 #include <utility>
