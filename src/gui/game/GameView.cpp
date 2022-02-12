@@ -2315,7 +2315,7 @@ void GameView::OnDraw()
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
 				g->fillrect(6, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(8, 37, sampleInfo.Build(), 32, 216, 200, alpha*0.85f);
+				g->drawtext(8, 37, sampleInfo.Build(), 32, 216, 255, alpha*0.95f);
 			}
 	}
 	if(showHud && introText < 51)

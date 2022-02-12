@@ -22,14 +22,14 @@ void Element::Element_BASE()
 	HotAir = 0.000f	* CFDS;
 	Falldown = 2;
 
-	Flammable = 40;
+	Flammable = 0;
 	Explosive = 0;
 	Meltable = 0;
 	Hardness = 0;
 	PhotonReflectWavelengths = 0x5C5CFF;
 	HeatConduct = 44;
 	Weight = 34;
-	Description = "Base, neutralisation reaction with acid. Dissolves certain metals. Strength reduces when reacting with acid/ watr.";
+	Description = "Base, neutralisation rxn with acid. Dissolves certain metals, releases CO2 with COAL, GRPH, etc. Dilutes with acid/ watr.";
 
 	Properties = TYPE_LIQUID;
 	LowPressure = IPL;
@@ -67,7 +67,7 @@ static int update(UPDATE_FUNC_ARGS)
 						if (RNG::Ref().chance(1, parts[i].tmp*4))
 						{
 							parts[i].tmp += 20;
-							sim->pv[(y / CELL) + ry][(x / CELL) + rx] = 0.5f;
+							sim->pv[(y / CELL) + ry][(x / CELL) + rx] = 0.3f;
 							sim->kill_part(ID(r));
 						}
 						parts[i].temp = parts[i].temp + 1.15f;
@@ -83,6 +83,8 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_GOLD:
 				case PT_BRMT:
 				case PT_MERC:
+				case PT_IRON:
+				case PT_BREC:
 				{
 					if (parts[i].tmp < 130)
 					{
@@ -109,6 +111,23 @@ static int update(UPDATE_FUNC_ARGS)
 						{
 							sim->part_change_type(ID(r), x, y, PT_BASE);
 
+						}
+					}
+				}
+				break;
+				case PT_GRPH:
+				case PT_COAL:
+				case PT_BCOL:
+				{
+					if (parts[i].tmp < 200)
+					{
+						if (RNG::Ref().chance(1, 100))
+						{
+							parts[i].tmp += 55;
+						}
+						if (RNG::Ref().chance(1, 250))
+						{
+							sim->part_change_type(ID(r), x, y, PT_CO2);
 						}
 					}
 				}
