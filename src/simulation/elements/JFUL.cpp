@@ -2,11 +2,11 @@
 
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
-void Element::Element_BASE()
+void Element::Element_JFUL()
 {
 
-	Identifier = "DEFAULT_PT_BASE";
-	Name = "BASE";
+	Identifier = "DEFAULT_PT_JFUL";
+	Name = "JFUL";
 	Colour = PIXPACK(0x5C5CFF);
 	MenuVisible = 1;
 	MenuSection = SC_LIQUID;
@@ -22,14 +22,14 @@ void Element::Element_BASE()
 	HotAir = 0.000f	* CFDS;
 	Falldown = 2;
 
-	Flammable = 0;
+	Flammable = 40;
 	Explosive = 0;
 	Meltable = 0;
 	Hardness = 0;
 	PhotonReflectWavelengths = 0x5C5CFF;
 	HeatConduct = 44;
 	Weight = 34;
-	Description = "Base, neutralisation rxn with acid. Dissolves certain metals, releases CO2 with COAL, GRPH, etc. Dilutes with acid/ watr.";
+	Description = "JFuel, light infinitly replicating water-based fuel!";
 
 	Properties = TYPE_LIQUID;
 	LowPressure = IPL;
@@ -60,43 +60,6 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				switch (TYP(r))
 				{
-				case PT_ACID:
-				{
-					if (parts[i].tmp < 150)
-					{
-						if (RNG::Ref().chance(1, parts[i].tmp*4))
-						{
-							parts[i].tmp += 20;
-							sim->pv[(y / CELL) + ry][(x / CELL) + rx] = 0.3f;
-							sim->kill_part(ID(r));
-						}
-						parts[i].temp = parts[i].temp + 1.15f;
-						if (RNG::Ref().chance(1, parts[i].tmp * 8))
-						{
-							sim->part_change_type(i, x, y, PT_SALT);
-						}
-					}
-				}
-				break;
-				case PT_BMTL:
-				case PT_METL:
-				case PT_GOLD:
-				case PT_BRMT:
-				case PT_MERC:
-				case PT_IRON:
-				case PT_BREC:
-				{
-					if (parts[i].tmp < 130)
-					{
-						if (RNG::Ref().chance(1, parts[i].tmp * 3))
-						{
-							parts[i].tmp += 40;
-							sim->kill_part(ID(r));
-						}
-							parts[i].temp = parts[i].temp + 1.15f;
-						}
-				}
-				break;
 				case PT_WATR:
 				case PT_DSTW:
 				case PT_SLTW:
@@ -109,25 +72,8 @@ static int update(UPDATE_FUNC_ARGS)
 						}
 						if (RNG::Ref().chance(1, 250))
 						{
-							sim->part_change_type(ID(r), x, y, PT_BASE);
+							sim->part_change_type(ID(r), x, y, PT_JFUL);
 
-						}
-					}
-				}
-				break;
-				case PT_GRPH:
-				case PT_COAL:
-				case PT_BCOL:
-				{
-					if (parts[i].tmp < 200)
-					{
-						if (RNG::Ref().chance(1, 100))
-						{
-							parts[i].tmp += 55;
-						}
-						if (RNG::Ref().chance(1, 250))
-						{
-							sim->part_change_type(ID(r), x, y, PT_CO2);
 						}
 					}
 				}
@@ -143,7 +89,7 @@ static int update(UPDATE_FUNC_ARGS)
 			r = pmap[y + ry][x + rx];
 			if (!r)
 				continue;
-			if (TYP(r) == PT_BASE && (parts[i].tmp > parts[ID(r)].tmp) && parts[i].tmp > 0)//diffusion
+			if (TYP(r) == PT_JFUL && (parts[i].tmp > parts[ID(r)].tmp) && parts[i].tmp > 0)//diffusion
 			{
 				int temp = parts[i].tmp - parts[ID(r)].tmp;
 				if (temp == 1)
