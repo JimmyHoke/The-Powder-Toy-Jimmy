@@ -1,8 +1,11 @@
 Changelog for V36.2 (61)
 
-Fix BASE turning BCOL into BHOL
-Add Macticzpl's notifications feature to the mod:
+*Texter now supports changing lines with arrow keys
+*Add Macticzpl's notifications feature to the mod:
 Notifies about votes/ comments/ fp status every 10 minutes. Turned on by default.
+(Note: Checks for only first 30 saves, also you need to be logged in for it to work!)
+*Fix BASE turning BCOL into BHOL
+*Correct some texter fonts
 
 
  

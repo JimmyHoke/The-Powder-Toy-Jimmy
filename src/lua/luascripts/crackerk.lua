@@ -821,6 +821,22 @@ end
 function keyclicky23(key23)
 if (key23 == 13) then
 placetext()
+elseif (key23 == 1073741906) and linenumber > 1  then
+if ffix == "1" then
+yvalue = yvalue - 14
+linenumber = linenumber - 1
+elseif ffix == "0" then
+yvalue = yvalue - 10
+linenumber = linenumber - 1
+end
+elseif (key23 == 1073741905) and yvalue < ylimit then
+if ffix == "1" then
+yvalue = yvalue + 14
+linenumber = linenumber + 1
+elseif ffix == "0" then
+yvalue = yvalue + 10
+linenumber = linenumber + 1
+end
 end
 end
 newmenu4:onKeyPress(keyclicky23)
@@ -6323,7 +6339,7 @@ chars_light = {
         matrix = {
             {0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0},
-            {3, 2, 1, 2, 1},
+            {1, 3, 1, 3, 1},
             {3, 1, 3, 1, 3},
             {3, 0, 3, 0, 3},
             {3, 0, 2, 0, 3},
