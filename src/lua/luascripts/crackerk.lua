@@ -1,4 +1,4 @@
---cracker1000 mod script v9.0--
+--cracker1000 mod script v10.0--
 local passreal = "12345678"
 local passreal2 = "DMND"
 local motw = "."
@@ -88,8 +88,6 @@ local bg = Button:new(203,92,80,25,"Mod Elem.", "")
 
 local mp = Button:new(203,124,80,25,"Control Centre", "Changes game's theme")
 
-
-
 local autohide = Button:new(203,156,80,25, "Auto Hide HUD", "Hide.")
 
 local chud = Button:new(203,188,80,25, "Texter", "for text.")
@@ -110,34 +108,26 @@ local perfm = Button:new(396,156,80,25, "Performance", "For lower spec systems."
 
 local passbut = Button:new(396,188,80,25, "Password", "Secure password protection.")
 
-local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
-local remtime = Textbox:new(486, 223, 20, 20, '', '10')
-local remlabel21 = Label:new(538, 205, 20, 15, "1-60 Mins.")
-remtime:text("10")
-local remon2 = Button:new(516,223,30,20,"Set", "Save.")
-local remoff  = Button:new(546,223,30,20,"Off", "Cancel.")
+local reminder = Button:new(396,220,80,25, "Notifications", "Maticzpl's notification stuff")
 
 local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
 
 local hide= Button:new(578,5,25,25, "X", "Hide.")
 
-
 --Varoius Variables
 local borderval = "0"
 local rulval = "1"
-local remval2 = "0"
 local timermp = 0
 local perfmv = "1"
 local fpsval = "1"
 local startTime
 local entimey
-local remval = "0"
 local endTime = 0
 local autoval = "1"
 local hidval = "1"
 local shrtv = "1"
 local invtoolv = "1"
-local focustime = 180
+local focustime = 190
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -173,15 +163,10 @@ newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brightSlider)
-newmenu:removeComponent(remon2)
-newmenu:removeComponent(remoff)
-newmenu:removeComponent(remtime)
-newmenu:removeComponent(remlabel21) 
 newmenu:removeComponent(barkon)
 newmenu:removeComponent(barkoff)
 newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
-remval2 = "0"
 end
 
 
@@ -698,47 +683,15 @@ randsav = math.random(1,2803438)
 sim.loadSave(randsav, 0) 
 end)
 
-function remindme()
-endTime = startTime + tonumber(entimey)*60
-if os.time() >= endTime then
-event.unregister(event.tick,remindme)
-remval = "0"
-tpt.message_box("Activity Reminder!","Simulation has been paused to save resources.                            Click dismiss to continue.")
-end
-end
-
 reminder:action(function(sender)
 clearsb()
-remval2 = "1"
-newmenu:addComponent(remon2)
-newmenu:addComponent(remtime)
-newmenu:addComponent(remoff)
-newmenu:addComponent(remlabel21)
-end)
-
-remon2:action(function(sender)
-clearsb()
-startTime = os.time()
-if tonumber(remtime:text()) < 1 or tonumber(remtime:text()) > 60 then
-entimey = "10"
-remtime:text("10")
-else
-entimey = tonumber(remtime:text())
+if MANAGER.getsetting("CRK","notifval") == "0" then
+MANAGER.savesetting("CRK","notifval","1")
+notificationscript()
+elseif MANAGER.getsetting("CRK","notifval") == "1" then
+MANAGER.savesetting("CRK","notifval","0")
+platform.restart()
 end
-event.unregister(event.tick,remindme)
-event.register(event.tick,remindme)
-newmenu:removeComponent(remoff)
-newmenu:removeComponent(remlabel21)
-remval = "1"
-end)
-
-remoff:action(function(sender)
-clearsb()
-event.unregister(event.tick,remindme)
-newmenu:removeComponent(remlabel21)
-newmenu:removeComponent(remon2)
-newmenu:removeComponent(remoff)
-remval = "0"
 end)
 
 function cbrightness()
@@ -1901,7 +1854,9 @@ if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 hidval = "0"
 end
-
+if MANAGER.getsetting("CRK","notifval") == nil then
+MANAGER.savesetting("CRK","notifval","1")
+end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
 event.register(event.tick,cbrightness)
@@ -1924,16 +1879,14 @@ end
 end)
 
 function UIhide()
-if focustime < 180 then
+if focustime < 190 then
 focustime = focustime + 2
 end
-
 if tpt.mousey > 380 or tpt.mousex > 610 then
 if focustime > 15 then
 focustime = focustime - 7
 end
 end
-
 tpt.fillrect(-1,382,616,42,0,0,0,focustime)
 tpt.fillrect(612,0,17,424,0,0,0,focustime)
 end
@@ -1974,7 +1927,6 @@ end)
 
 reset1:action(function(sender)
 close()
-remval = "0"
 timerremo()
 timeplus = 255
 backvr = 0
@@ -1994,12 +1946,10 @@ barval = "2"
 borderval = "0" 
 savetime = 0
 barktext:text("5")
-remtime:text("10")
 showmodelem()
 event.unregister(event.tick,writefile)
 event.unregister(event.tick,showmotdnot)
 event.unregister(event.tick,autosave)
-event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
 event.unregister(event.tick,inverttool)
 event.unregister(event.tick,cbrightness)
@@ -2022,6 +1972,10 @@ MANAGER.savesetting("CRK","ar",dr)
 MANAGER.savesetting("CRK","ag",dg)
 MANAGER.savesetting("CRK","ab",db)
 MANAGER.savesetting("CRK", "savergb",0)
+if MANAGER.getsetting("CRK","notifval") == "0" then
+MANAGER.savesetting("CRK", "notifval","1")
+platform.restart()
+end
 tpt.hud(1)
 hideyes()
 tpt.display_mode(3)
@@ -2133,12 +2087,10 @@ gfx.drawText(484,197,"ON",105,255,105,255)
 else
 gfx.drawText(484,197,"OFF",255,105,105,255)
 end
-if remval2 == "0" then
-if remval == "1" then --Reminder
-gfx.drawText(484,229,"ON ("..entimey.." min.)",105,255,105,255)
+if MANAGER.getsetting("CRK","notifval") == "1" then --Notifications
+gfx.drawText(484,229,"ON",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
-end
 end
 if updatedmpval == "1" then --Multiplayer script status
 gfx.drawText(484,37,"New Ver.",105,255,105,255)
@@ -7020,3 +6972,552 @@ chars_light = {
         }
     }
 }
+function notificationscript()
+--Maticzpl's notification script
+if MANAGER.getsetting("CRK","notifval") == "1" then
+-- Prevent multiple instances of the script running and choose the newer one
+if MaticzplNotifications ~= nil and MaticzplNotifications.version > 1 then
+    return
+end
+MaticzplNotifications = {
+    lastTimeChecked = nil,
+    request = nil,
+    byDateRequest = nil,
+    FPrequest = nil,
+    saveCache = {},
+    notifications = {},
+    hoveringOnButton = false,
+    windowOpen = false,
+    scrolled = 0,
+    version = 1
+}
+local json = {}
+local notif = MaticzplNotifications
+local MANAGER = rawget(_G, "MANAGER")    
+--Ik this code is awful but interface from tpt api is very limiting
+local mouseX = 0
+local mouseY = 0
+local justClicked = false
+local holdingScroll = false
+local scrollLimit = 0
+function MaticzplNotifications.DrawMenuContent()
+    local function hover(x,y,dx,dy)       
+        mouseX = x
+        mouseY = y        
+    end
+    local function click(x,y,button)
+        -- inside window
+        if x > 418 and y > 250 and x < 418 + 193 and y < 250 + 155 and notif.windowOpen then
+            justClicked = true
+            
+            if x > 418 and x < 418 + 12 and y > 261 and y < 250 + 155 then
+                holdingScroll = true
+            end
+            return false
+        end
+    end
+    local function unclick(x,y,button,reason)
+        justClicked = false
+        holdingScroll = false
+    end
+    --Window
+    gfx.fillRect(418,250,193,155,   0,0,0)
+    gfx.drawRect(418,250,193,155,   255,255,255)
+    
+    --Exit button
+    local exitIsHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 250 and mouseY < 250 + 12 and notif.windowOpen
+    if exitIsHovering then
+        gfx.fillRect(418,250,12,12, 128,128,128)        
+    end
+    gfx.drawRect(418,250,12,12,     255,255,255)
+    gfx.drawText(418+3,250+2,"X")
+
+    --Read All button
+    local readAllHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 261 and mouseY < 261 + 12 and notif.windowOpen
+    if readAllHovering then
+        gfx.fillRect(418,261,12,12, 128,128,128)        
+    end
+    gfx.drawRect(418,261,12,12,     255,255,255)
+    gfx.drawText(418+4,261+2,"A")
+    
+    --Scroll Bar
+    local scrollY = 275
+    local scrollFieldHeight = 250 + 155 - scrollY
+    local barRatio = math.min(1 - (scrollLimit * -5 / 155),1)
+    local barHeight = math.max(scrollFieldHeight * barRatio,10)
+    if holdingScroll and barHeight + scrollY ~= 404 and scrollLimit ~= 0 then
+        -- Wolfram alpha saved me here xd
+        notif.scrolled = (scrollLimit*(-(mouseY - barHeight/2) + scrollY - 1)) / (barHeight + scrollY - 404)
+    end
+    if notif.scrolled > 0 then
+        notif.scrolled = 0
+    end    
+    if notif.scrolled < scrollLimit then
+        notif.scrolled = scrollLimit
+    end
+    if scrollLimit ~= 0 then      
+        local scrollFraction = notif.scrolled / scrollLimit
+        local barPos = scrollY + ((250 + 154 - barHeight - scrollY) * scrollFraction) - 1
+        gfx.fillRect(420,barPos,8,barHeight, 128,128,128)    
+    else
+        gfx.fillRect(420,scrollY - 1,8,155 - 26, 128,128,128)    
+    end    
+    --Vertical line
+    gfx.drawLine(418+11,250,418+11,250 + 154)
+    
+    local y = 252 + notif.scrolled * 5
+    local lastTitleY = y
+    
+    for i, n in ipairs(notif.notifications) do      
+        local prev = notif.notifications[i-1]
+        
+        local saveID = n.save
+        local title = n.title
+        local msg = n.message
+        --Group title
+        if prev == nil or prev.title ~= title then
+            lastTitleY = y
+            if y >= 252 and y <= 250+155 - 10 then         
+                gfx.drawLine(418+12,y - 2,418 + 192,y - 2)     
+                gfx.drawText(418+15,y,title)
+            end
+            local sx,sy = gfx.textSize(title)
+            y = y + sy
+        end
+        --Message
+        if y >= 252 and y <= 250+155 - 10 then         
+            gfx.drawText(418+22,y,msg,200,200,200)    
+        end    
+        local sx,sy = gfx.textSize(msg)
+        y = y + sy
+        
+        local next = notif.notifications[i+1]
+        if next == nil or next.title ~= title then
+            if mouseX > 418 + 12 and mouseX < 418 + 193 and mouseY > lastTitleY and mouseY < y and mouseY > 250 and mouseY < 250 + 156 then
+                
+                local boxY = math.max(lastTitleY-1,251)
+                local height = math.min(y - boxY - 2,boxY + 155 - 253)
+                if height + boxY > 404 then --this is confusing
+                    height = height - (height + boxY - 404)
+                end
+                gfx.drawRect(418 + 12,boxY,193 - 13,height)
+                
+                if justClicked then
+                    local removing = i
+                    while notif.notifications[removing].title == title do
+                        table.remove(notif.notifications,removing)    
+                        removing = removing - 1
+                        if notif.notifications[removing] == nil then
+                            break
+                        end
+                    end
+                    notif.SaveNotifications()
+                    
+                    sim.loadSave(saveID)
+                end
+            end
+        end
+        
+        scrollLimit = -math.max((y - 250 - 154) / 5 - notif.scrolled, 0) 
+    end
+    event.register(event.mousedown,click)
+    event.register(event.mousemove,hover)
+    event.register(event.mouseup,unclick)
+    
+    if exitIsHovering and justClicked then        
+        notif.windowOpen = false
+        notif.SaveNotifications()
+        return false
+    end    
+    if readAllHovering and justClicked then      
+        notif.notifications = {} 
+        notif.SaveNotifications()
+        return false
+    end    
+    justClicked = false
+end
+-- Request save data from the server
+-- Called automatically every 10 minutes
+function MaticzplNotifications.CheckForChanges()
+    local name = tpt.get_name()
+    if name ~= "" then          
+        notif.byDateRequest = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate user%3A"..name)
+        notif.request = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=user%3A"..name)
+        notif.FPrequest = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=16")
+    end 
+end
+
+-- Called when recieved response from teh server after calling CheckForUpdates()
+function MaticzplNotifications.OnResponse(response,fpresponse,byDateResponse)
+    local function split (input, sep)
+        if sep == nil then
+            sep = "%s"
+        end
+        local t={}
+        for str in string.gmatch(input, "([^"..sep.."]+)") do
+            table.insert(t, str)
+        end
+        return t
+    end
+    
+    local success, savesVotes = pcall(json.parse,response  )
+    if not success then
+        print("Error while fetching saves from server. Try again later")
+        return
+    end
+    local success, savesDate = pcall(json.parse,byDateResponse  )
+    if not success then
+        print("Error while fetching saves from server. Try again later")
+        return
+    end
+    local success, fp  =   pcall(json.parse,fpresponse)
+    if not success then
+        print("Error while fetching saves from server. Try again later")
+        return
+    end
+    
+    savesVotes = savesVotes.Saves
+    savesDate = savesDate.Saves
+    fp = fp.Saves
+    
+    -- Combine saves by date and by votes in a set
+    local saves = {}
+    for k, v in pairs(savesVotes) do
+        saves[v.ID] = v
+    end
+    for k, v in pairs(savesDate) do
+        saves[v.ID] = v
+    end
+    
+    
+    if notif.saveCache ~= nil then
+        for id, save in pairs(saves) do
+            local isFP = 0
+            for _, fpSave in pairs(fp) do
+                if fpSave.ID == save.ID then
+                    isFP = 1
+                end
+            end
+            saves[id].FP = isFP
+            
+            local cached = notif.saveCache[save.ID]
+            if cached == nil then
+                local saved = MANAGER.getsetting("MaticzplNotifications",""..save.ID)
+                if saved == nil then
+                    notif.saveCache[save.ID] = {}
+                    notif.saveCache[save.ID].ScoreUp = save.ScoreUp
+                    notif.saveCache[save.ID].ScoreDown = save.ScoreDown
+                    notif.saveCache[save.ID].Comments = save.Comments    
+                    notif.saveCache[save.ID].FP = isFP
+                    notif.saveCache[save.ID].ID = save.ID
+                    cached = notif.saveCache[save.ID]              
+                else
+                    local saved = split(saved,"|")
+                    notif.saveCache[save.ID] = {}
+                    notif.saveCache[save.ID].ID = save.ID
+                    notif.saveCache[save.ID].ScoreUp = saved[2]
+                    notif.saveCache[save.ID].ScoreDown = saved[3]
+                    notif.saveCache[save.ID].Comments = saved[4]
+                    notif.saveCache[save.ID].FP = saved[5]
+                    cached = notif.saveCache[save.ID]
+                end
+            end
+            
+            if tonumber(isFP) ~= tonumber(cached.FP) then
+                if tonumber(isFP) == 1 then
+                    notif.AddNotification("This save is now on FP!!!",save.ShortName,save.ID)   
+                end 
+                if tonumber(cached.FP) == 1 then                
+                    notif.AddNotification("This save went off FP.",   save.ShortName,save.ID)  
+                end            
+            end
+            local new = save.ScoreUp - cached.ScoreUp
+            if new > 0 then
+                notif.AddNotification(new.." new Upvotes!\x0F\1\255\1\238\129\139",save.ShortName,save.ID)            
+            end
+            new = save.ScoreDown - cached.ScoreDown
+            if new > 0 then
+                notif.AddNotification(new.." new Downvotes\br\238\129\138",save.ShortName,save.ID)                
+            end
+            new = save.Comments - cached.Comments
+            if new > 0 then
+                notif.AddNotification(new.." new Comments",save.ShortName,save.ID)               
+            end
+            MANAGER.savesetting("MaticzplNotifications",save.ID,notif.SaveToString(save))  
+            notif.saveCache[save.ID] = save
+        end
+    else
+        notif.saveCache = {}
+    end
+    
+    notif.SaveNotifications()
+end
+-- Message to display in notification
+-- Title by which multiple notifications will be grouped
+-- saveID optional to open save on click
+function MaticzplNotifications.AddNotification(message,title,saveID)    
+    local notification = {
+        ["save"] = saveID,
+        ["title"] = title,
+        ["message"] = message
+    }
+    table.insert(notif.notifications, notification)   
+end
+
+function MaticzplNotifications.SaveNotifications()
+    MANAGER.savesetting("MaticzplNotifications","Notifications",string.gsub(json.stringify(notif.notifications),"\"","~"))    
+end
+-- Draws the red circle notification button. Called every frame
+local timerfornot = 255 -- Blinking not. dot
+function MaticzplNotifications.DrawNotifications()
+    local number = #notif.notifications
+    
+    if number > 99 then
+        number = "99"
+    end
+    
+    local posX = 572
+    local posY = 415
+    if tpt.version.jacob1s_mod ~= nil then
+        posX = 584
+    end
+    if tpt.version.modid == 7 then --TPT Ultimata
+        posX = 573
+        posY = 435
+    end
+    
+    local w,h = gfx.textSize(number)
+    
+    local nw,nh = gfx.textSize(tpt.get_name())
+    
+    if nw > 58 then
+        gfx.fillRect(507,409,72,13,0,0,0,150)            
+    end
+    if number == 0 then
+        gfx.fillCircle(posX,posY,5,5,50,50,50)
+        gfx.fillCircle(posX,posY,4,4,60,60,60)
+        gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,128,128,128)
+        return
+    end
+    
+    local brig = 0
+    if notif.hoveringOnButton then
+        brig = 80
+    end
+    if timerfornot > 0 then
+        timerfornot = timerfornot - 2
+    elseif timerfornot <= 0 then
+        timerfornot = 255
+    end
+    
+    gfx.fillCircle(posX,posY,6,6,120,brig,brig,timerfornot)
+    gfx.fillCircle(posX,posY,5,5,255,brig,brig,timerfornot)
+    gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,255,255,255)
+end
+-- Used for saving current state of saves
+function MaticzplNotifications.SaveToString(save)
+    local separator = "|"
+
+    return save.ID..separator..save.ScoreUp..separator..save.ScoreDown..separator..save.Comments..separator..save.FP
+end
+function MaticzplNotifications.Mouse(x,y,dx,dy)
+    local posX = 572
+    local posY = 415
+    if tpt.version.jacob1s_mod ~= nil then
+        posX = 585
+    end
+    
+    notif.hoveringOnButton = math.abs(posX - x) < 5 and math.abs(posY - y) < 5 and #notif.notifications > 0
+end
+
+function MaticzplNotifications.OnClick(x,y,button)
+    if notif.hoveringOnButton then
+        notif.scrolled = 0
+        notif.windowOpen = true
+        
+        notif.DrawMenuContent()
+        return false
+    end
+end
+
+function MaticzplNotifications.Scroll(x,y,d)
+    d = d / math.abs(d) --clamp to 1 / -1
+    
+    --In window
+    if x > 418 and y > 250 and x < 418 + 193 and y < 250 + 155 and notif.windowOpen then
+        notif.scrolled = notif.scrolled + d
+        return false
+    end
+end
+function MaticzplNotifications.Tick()
+    local time = os.time(os.date("!*t"))
+    
+    if time - notif.lastTimeChecked > (10 * 60) then
+        notif.lastTimeChecked = time
+        
+        notif.CheckForChanges()
+    end
+    
+    if notif.request ~= nil        and notif.request:status()          == "done" and 
+    notif.FPrequest ~= nil      and notif.FPrequest:status()        == "done" and
+    notif.byDateRequest ~= nil  and notif.byDateRequest:status()    == "done" then
+        
+        notif.OnResponse(notif.request:finish(),notif.FPrequest:finish(),notif.byDateRequest:finish())
+        notif.request = nil
+        notif.FPrequest = nil
+        notif.byDateRequest = nil
+        MANAGER.savesetting("MaticzplNotifications","lastTime",notif.lastTimeChecked)                    
+    end
+    
+    
+    notif.DrawNotifications()
+    
+    if notif.windowOpen then
+        notif.DrawMenuContent()
+    end
+end
+---------------------------------------------------------------------------------
+-- JSON parsing from https://gist.github.com/tylerneylon/59f4bcf316be525b30ab  --
+-- Credit to tylerneylon                                                       --
+-- Stated to be public domain by the author (check comments in the link)       --
+---------------------------------------------------------------------------------
+--#region
+local function kind_of(obj)
+    if type(obj) ~= 'table' then return type(obj) end
+    local i = 1
+    for _ in pairs(obj) do
+        if obj[i] ~= nil then i = i + 1 else return 'table' end
+    end
+    if i == 1 then return 'table' else return 'array' end
+end
+local function escape_str(s)
+    local in_char  = {'\\', '"', '/', '\b', '\f', '\n', '\r', '\t'}
+    local out_char = {'\\', '"', '/',  'b',  'f',  'n',  'r',  't'}
+    for i, c in ipairs(in_char) do
+        s = s:gsub(c, '\\' .. out_char[i])
+    end
+    return s
+end
+local function skip_delim(str, pos, delim, err_if_missing)
+    pos = pos + #str:match('^%s*', pos)
+    if str:sub(pos, pos) ~= delim then
+        if err_if_missing then
+            error('Expected ' .. delim .. ' near position ' .. pos)
+        end
+        return pos, false
+    end
+    return pos + 1, true
+end
+local function parse_str_val(str, pos, val)
+    val = val or ''
+    local early_end_error = 'End of input found while parsing string.'
+    if pos > #str then error(early_end_error) end
+    local c = str:sub(pos, pos)
+    if c == '"'  then return val, pos + 1 end
+    if c ~= '\\' then return parse_str_val(str, pos + 1, val .. c) end
+    -- We must have a \ character.
+    local esc_map = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t'}
+    local nextc = str:sub(pos + 1, pos + 1)
+    if not nextc then error(early_end_error) end
+    return parse_str_val(str, pos + 2, val .. (esc_map[nextc] or nextc))
+end
+local function parse_num_val(str, pos)
+    local num_str = str:match('^-?%d+%.?%d*[eE]?[+-]?%d*', pos)
+    local val = tonumber(num_str)
+    if not val then error('Error parsing number at position ' .. pos .. '.') end
+    return val, pos + #num_str
+end
+function json.stringify(obj, as_key)
+    local s = {}  
+    local kind = kind_of(obj)
+    if kind == 'array' then
+        if as_key then error('Can\'t encode array as key.') end
+        s[#s + 1] = '['
+        for i, val in ipairs(obj) do
+            if i > 1 then s[#s + 1] = ', ' end
+            s[#s + 1] = json.stringify(val)
+        end
+        s[#s + 1] = ']'
+    elseif kind == 'table' then
+        if as_key then error('Can\'t encode table as key.') end
+        s[#s + 1] = '{'
+        for k, v in pairs(obj) do
+            if #s > 1 then s[#s + 1] = ', ' end
+            s[#s + 1] = json.stringify(k, true)
+            s[#s + 1] = ':'
+            s[#s + 1] = json.stringify(v)
+        end
+        s[#s + 1] = '}'
+    elseif kind == 'string' then
+        return '"' .. escape_str(obj) .. '"'
+    elseif kind == 'number' then
+        if as_key then return '"' .. tostring(obj) .. '"' end
+        return tostring(obj)
+    elseif kind == 'boolean' then
+        return tostring(obj)
+    elseif kind == 'nil' then
+        return 'null'
+    else
+        error('Unjsonifiable type: ' .. kind .. '.')
+    end
+    return table.concat(s)
+end
+json.null = {}
+function json.parse(str, pos, end_delim)
+    pos = pos or 1
+    if pos > #str then error('Reached unexpected end of input.') end
+    local pos = pos + #str:match('^%s*', pos)
+    local first = str:sub(pos, pos)
+    if first == '{' then
+        local obj, key, delim_found = {}, true, true
+        pos = pos + 1
+        while true do
+            key, pos = json.parse(str, pos, '}')
+            if key == nil then return obj, pos end
+            if not delim_found then error('Comma missing between object items.') end
+            pos = skip_delim(str, pos, ':', true)
+            obj[key], pos = json.parse(str, pos)
+            pos, delim_found = skip_delim(str, pos, ',')
+        end
+    elseif first == '[' then 
+        local arr, val, delim_found = {}, true, true
+        pos = pos + 1
+        while true do
+            val, pos = json.parse(str, pos, ']')
+            if val == nil then return arr, pos end
+            if not delim_found then error('Comma missing between array items.') end
+            arr[#arr + 1] = val
+            pos, delim_found = skip_delim(str, pos, ',')
+        end
+    elseif first == '"' then 
+        return parse_str_val(str, pos + 1)
+    elseif first == '-' or first:match('%d') then
+        return parse_num_val(str, pos)
+    elseif first == end_delim then 
+        return nil, pos + 1
+    else
+        local literals = {['true'] = true, ['false'] = false, ['null'] = json.null}
+        for lit_str, lit_val in pairs(literals) do
+            local lit_end = pos + #lit_str - 1
+            if str:sub(pos, lit_end) == lit_str then return lit_val, lit_end + 1 end
+        end
+        local pos_info_str = 'position ' .. pos .. ': ' .. str:sub(pos, pos + 10)
+        error('Invalid json syntax starting at ' .. pos_info_str)
+    end
+end
+--#endregion
+
+-- On launch
+notif.lastTimeChecked = MANAGER.getsetting("MaticzplNotifications","lastTime") or 0
+local notifJson = MANAGER.getsetting("MaticzplNotifications","Notifications")
+if notifJson then
+    local jsonStr = string.gsub(notifJson,"~","\"")
+    notif.notifications = json.parse(jsonStr)  
+end
+event.register(event.tick,notif.Tick)
+event.register(event.mousemove,notif.Mouse)
+event.register(event.mousedown,notif.OnClick)
+event.register(event.mousewheel,notif.Scroll)
+end
+end
+notificationscript()

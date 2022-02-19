@@ -1,9 +1,8 @@
-Changelog for V36.1 (60)
+Changelog for V36.2 (61)
 
-Fix BASE catching fire
-Add more reactions to BASE
-Fix bug where closing lua window could crash the game
-Brighten up the hud a bit
+Fix BASE turning BCOL into BHOL
+Add Macticzpl's notifications feature to the mod:
+Notifies about votes/ comments/ fp status every 10 minutes. Turned on by default.
 
 
  

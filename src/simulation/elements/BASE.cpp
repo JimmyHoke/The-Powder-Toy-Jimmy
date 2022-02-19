@@ -127,7 +127,7 @@ static int update(UPDATE_FUNC_ARGS)
 						}
 						if (RNG::Ref().chance(1, 250))
 						{
-							sim->part_change_type(ID(r), x, y, PT_CO2);
+							sim->part_change_type(ID(r), x+rx, y+ry, PT_CO2);
 						}
 					}
 				}
