@@ -698,7 +698,7 @@ end)
 
 reminderhelp:action(function(sender)
 close()
-tpt.message_box(" Notification help", "Turning it on will notify you when:\n*someone votes/ comments on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 10 minutes and works for only first 30 saves.\nYou need to be logged in.")
+tpt.message_box(" Notification help", "Turning it on will notify you when:\n*someone votes/ comments on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 10 minutes and works for only first 30 saves (by votes + dates).\nYou need to be logged in.")
 end)
 
 function cbrightness()
