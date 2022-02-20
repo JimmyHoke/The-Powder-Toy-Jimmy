@@ -821,7 +821,7 @@ elseif ffix == "1" then
 yval2 = 14
 end
 end
-graphics.drawText(10,6,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+graphics.drawText(10,6,"Tip: Up and Down Arrow keys to change line, Enter to place text.  ||  Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
 graphics.drawRect(drawpos,363,42,19,32,216,255,255)
 end
 
@@ -836,7 +836,7 @@ elseif ffix == "0" then
 yvalue = yvalue - 10
 linenumber = linenumber - 1
 end
-elseif (key23 == 1073741905) and yvalue < ylimit then
+elseif (key23 == 1073741905) and linenumber < 31 then
 if ffix == "1" then
 yvalue = yvalue + 14
 linenumber = linenumber + 1
