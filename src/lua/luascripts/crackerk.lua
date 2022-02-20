@@ -109,6 +109,7 @@ local perfm = Button:new(396,156,80,25, "Performance", "For lower spec systems."
 local passbut = Button:new(396,188,80,25, "Password", "Secure password protection.")
 
 local reminder = Button:new(396,220,80,25, "Notifications", "Maticzpl's notification stuff")
+local reminderhelp = Button:new(506,224,15,15, "?", "Help")
 
 local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
 
@@ -152,6 +153,7 @@ newmenu:removeComponent(edito)
 newmenu:removeComponent(perfm)
 newmenu:removeComponent(passbut)
 newmenu:removeComponent(upmp)
+newmenu:removeComponent(reminderhelp)
 end
 
 function clearsb()
@@ -692,6 +694,11 @@ elseif MANAGER.getsetting("CRK","notifval") == "1" then
 MANAGER.savesetting("CRK","notifval","0")
 platform.restart()
 end
+end)
+
+reminderhelp:action(function(sender)
+close()
+tpt.message_box(" Notification help", "Turning it on will notify you when:\n*someone votes/ comments on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 10 minutes and works for only first 30 saves.\nYou need to be logged in.")
 end)
 
 function cbrightness()
@@ -2156,6 +2163,7 @@ newmenu:addComponent(edito)
 newmenu:addComponent(perfm)
 newmenu:addComponent(passbut)
 newmenu:addComponent(upmp)
+newmenu:addComponent(reminderhelp)
 end
 
 hide:action(function(sender)
@@ -7315,7 +7323,6 @@ function MaticzplNotifications.DrawNotifications()
         gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,128,128,128)
         return
     end
-    
     local brig = 0
     if notif.hoveringOnButton then
         brig = 80
@@ -7325,7 +7332,6 @@ function MaticzplNotifications.DrawNotifications()
     elseif timerfornot <= 0 then
         timerfornot = 255
     end
-    
     gfx.fillCircle(posX,posY,6,6,120,brig,brig,timerfornot)
     gfx.fillCircle(posX,posY,5,5,255,brig,brig,timerfornot)
     gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,255,255,255)
