@@ -698,7 +698,7 @@ end)
 
 reminderhelp:action(function(sender)
 close()
-tpt.message_box(" Notification help", "Turning it on will notify you when:\n*someone votes/ comments on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 10 minutes and works for only first 30 saves (by votes + dates).\nYou need to be logged in.")
+tpt.message_box(" Notification help", "Turning it on will notify you when:\n*someone votes/ comments on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 10 minutes and works for only first 30 saves (by votes + dates).\nYou need to be logged in.\n\nSpecial Credit: @Maticzpl")
 end)
 
 function cbrightness()
@@ -7000,9 +7000,6 @@ function notificationscript()
 --Maticzpl's notification script
 if MANAGER.getsetting("CRK","notifval") == "1" then
 -- Prevent multiple instances of the script running and choose the newer one
-if MaticzplNotifications ~= nil and MaticzplNotifications.version > 1 then
-    return
-end
 MaticzplNotifications = {
     lastTimeChecked = nil,
     request = nil,
@@ -7013,8 +7010,12 @@ MaticzplNotifications = {
     hoveringOnButton = false,
     windowOpen = false,
     scrolled = 0,
-    version = 1
+    version = 1000
 }
+if MaticzplNotifications ~= nil and MaticzplNotifications.version ~= 1000 then --update it when maticzpl releases a new version
+print("Inbuilt notifications script disabled, contact @Cracker1000.")
+    return
+end
 local json = {}
 local notif = MaticzplNotifications
 local MANAGER = rawget(_G, "MANAGER")    
@@ -7045,8 +7046,10 @@ function MaticzplNotifications.DrawMenuContent()
         holdingScroll = false
     end
     --Window
-    gfx.fillRect(418,250,193,155,   0,0,0)
-    gfx.drawRect(418,250,193,155,   255,255,255)
+	gfx.fillRect(418,237,193,12,ar,ag,ab,150)
+	gfx.drawText(480,239,"Notification panel",255,255,255,255)
+    gfx.fillRect(418,250,193,155,0,0,0)
+    gfx.drawRect(418,250,193,155,ar,ag,ab,255)
     
     --Exit button
     local exitIsHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 250 and mouseY < 250 + 12 and notif.windowOpen
