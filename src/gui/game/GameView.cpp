@@ -2149,13 +2149,13 @@ void GameView::OnDraw()
 				}
 				else if ((type == PT_PIPE || type == PT_PPIP) && c->IsValidElement(ctype))
 				{
-					if (ctype == PT_LAVA && c->IsValidElement((int)sample.particle.pavg[1]))
+					if (ctype == PT_LAVA && c->IsValidElement(sample.particle.tmp4))
 					{
-						sampleInfo << c->ElementResolve(type, 0) << " with molten " << c->ElementResolve((int)sample.particle.pavg[1], -1);
+						sampleInfo << c->ElementResolve(type, 0) << " with molten " << c->ElementResolve(sample.particle.tmp4, -1);
 					}
 					else
 					{
-						sampleInfo << c->ElementResolve(type, 0) << " with " << c->ElementResolve(ctype, (int)sample.particle.pavg[1]);
+						sampleInfo << c->ElementResolve(type, 0) << " with " << c->ElementResolve(ctype, sample.particle.tmp4);
 					}
 				}
 				else if (type == PT_LIFE)
@@ -2302,8 +2302,8 @@ void GameView::OnDraw()
 							sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
 						}
 						sampleInfo << Format::Dec();
-						sampleInfo << ", P0: " << sample.particle.pavg[0];
-						sampleInfo << ", P1: " << sample.particle.pavg[1];
+						sampleInfo << ", t3: " << sample.particle.tmp3;
+						sampleInfo << ", t4: " << sample.particle.tmp4;
 						sampleInfo << ", #" << sample.ParticleID;
 					}
 

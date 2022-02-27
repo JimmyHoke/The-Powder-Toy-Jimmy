@@ -1235,8 +1235,8 @@ for prev,v in pairs(running) do
 	end
 end
 save_last()
+tpt.register_mouseevent(mouseclick)
+tpt.register_keypress(keypress)
 if started~="" then
 	MANAGER.print("Auto started"..started)
 end
-tpt.register_mouseevent(mouseclick)
-tpt.register_keypress(keypress)
