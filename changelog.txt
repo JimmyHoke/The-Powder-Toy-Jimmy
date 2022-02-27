@@ -1,7 +1,12 @@
 Changelog for V37.0 (63)
 
-Detect if user is running a new version of notification script
+Detect and auto disable if user is running a new version of notification script
+Improved Invert-tool mode
+Notifications follow themes properly
+
 todo:
+Merge v97.0
+Turn off notifications without a restart
 Fix texter error
 
 

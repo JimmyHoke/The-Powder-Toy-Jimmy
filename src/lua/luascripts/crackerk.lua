@@ -343,30 +343,33 @@ end)
 end)
 
 function inverttool()
-if tpt.selectedl == "DEFAULT_TOOL_HEAT" then
+local selc = tpt.selectedl
+if selc == "DEFAULT_TOOL_HEAT" then
 tpt.selectedr = "DEFAULT_TOOL_COOL"
-elseif tpt.selectedl == "DEFAULT_TOOL_COOL" then
+elseif selc == "DEFAULT_TOOL_COOL" then
 tpt.selectedr = "DEFAULT_TOOL_HEAT"
-elseif tpt.selectedl == "DEFAULT_TOOL_AIR" then
+elseif selc == "DEFAULT_TOOL_AIR" then
 tpt.selectedr = "DEFAULT_TOOL_VAC"
-elseif tpt.selectedl == "DEFAULT_TOOL_VAC" then
+elseif selc == "DEFAULT_TOOL_VAC" then
 tpt.selectedr = "DEFAULT_TOOL_AIR"
-elseif tpt.selectedl == "DEFAULT_TOOL_PGRV" then
+elseif selc == "DEFAULT_TOOL_PGRV" then
 tpt.selectedr = "DEFAULT_TOOL_NGRV"
-elseif tpt.selectedl == "DEFAULT_TOOL_NGRV" then
+elseif selc == "DEFAULT_TOOL_NGRV" then
 tpt.selectedr = "DEFAULT_TOOL_PGRV"
-elseif tpt.selectedl == "DEFAULT_TOOL_AMBM" then
+elseif selc == "DEFAULT_TOOL_AMBM" then
 tpt.selectedr = "DEFAULT_TOOL_AMBP"
-elseif tpt.selectedl == "DEFAULT_TOOL_AMBP" then
+elseif selc == "DEFAULT_TOOL_AMBP" then
 tpt.selectedr = "DEFAULT_TOOL_AMBM"
-elseif tpt.selectedl == "DEFAULT_TOOL_AMBP" then
+elseif selc == "DEFAULT_TOOL_AMBP" then
 tpt.selectedr = "DEFAULT_TOOL_AMBM"
-elseif tpt.selectedl == "DEFAULT_UI_WIND" then
+elseif selc == "DEFAULT_UI_WIND" then
 tpt.selectedr = "DEFAULT_TOOL_CYCL"
-elseif tpt.selectedl == "DEFAULT_TOOL_CYCL" then
+elseif selc == "DEFAULT_TOOL_CYCL" then
 tpt.selectedr = "DEFAULT_UI_WIND"
+elseif selc == "DEFAULT_WL_ERASE" or selc == "DEFAULT_WL_DTECT" or selc == "DEFAULT_WL_CNDT" or selc == "DEFAULT_WL_EWALL" or selc == "DEFAULT_WL_STRM"  or selc == "DEFAULT_WL_FAN" or selc == "DEFAULT_WL_LIQD" or selc == "DEFAULT_WL_ABSRB" or selc == "DEFAULT_WL_WALL" or selc ==" DEFAULT_WL_AIR" or selc =="DEFAULT_WL_POWDR" or selc =="DEFAULT_WL_CNDTR" or selc =="DEFAULT_WL_EHOLE" or selc =="DEFAULT_WL_GAS" or selc =="DEFAULT_WL_GRVTY" or selc =="DEFAULT_WL_ENRGY" or selc =="DEFAULT_WL_NOAIR" or selc =="DEFAULT_WL_STASIS"  or selc =="DEFAULT_WL_CNDTW" then
+tpt.selectedr = "DEFAULT_WL_ERASE"
 else
-tpt.selectedr = "DEFAULT_WL_ERASEA"
+tpt.selectedr = "DEFAULT_PT_NONE"
 end
 end
 
@@ -7067,7 +7070,7 @@ function MaticzplNotifications.DrawMenuContent()
     if exitIsHovering then
         gfx.fillRect(418,250,12,12, 128,128,128)        
     end
-    gfx.drawRect(418,250,12,12,     255,255,255)
+    gfx.drawRect(418,250,12,12,ar,ag,ab)
     gfx.drawText(418+3,250+2,"X")
 
     --Read All button
@@ -7075,7 +7078,7 @@ function MaticzplNotifications.DrawMenuContent()
     if readAllHovering then
         gfx.fillRect(418,261,12,12, 128,128,128)        
     end
-    gfx.drawRect(418,261,12,12,     255,255,255)
+    gfx.drawRect(418,261,12,12,ar,ag,ab)
     gfx.drawText(418+4,261+2,"A")
     
     --Scroll Bar
@@ -7103,7 +7106,7 @@ function MaticzplNotifications.DrawMenuContent()
     end    
     
     --Vertical line
-    gfx.drawLine(418+11,250,418+11,250 + 154)
+    gfx.drawLine(418+11,250,418+11,250 + 154,ar,ag,ab)
     
     local y = 252 + notif.scrolled * 5
     local lastTitleY = y
@@ -7119,15 +7122,15 @@ function MaticzplNotifications.DrawMenuContent()
         if prev == nil or prev.title ~= title then
             lastTitleY = y
             if y >= 252 and y <= 250+155 - 10 then         
-                gfx.drawLine(418+12,y - 2,418 + 192,y - 2)     
-                gfx.drawText(418+15,y,title)
+                gfx.drawLine(418+12,y - 2,418 + 192,y - 2,ar,ag,ab)
+                gfx.drawText(418+15,y,title,ar,ag,ab)
             end
             local sx,sy = gfx.textSize(title)
             y = y + sy
         end
         --Message
         if y >= 252 and y <= 250+155 - 10 then         
-            gfx.drawText(418+22,y,msg,200,200,200)    
+            gfx.drawText(418+22,y,msg,200,200,200)
         end    
         local sx,sy = gfx.textSize(msg)
         y = y + sy
