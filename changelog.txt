@@ -1,13 +1,8 @@
-Changelog for V36.2 (62)
+Changelog for V37.0 (63)
 
-*Texter now supports changing lines with arrow keys
-*Add Macticzpl's notification feature to the mod:
-Notifies about votes/ comments/ fp status every 10 minutes. Turned on by default.
-(Note: Checks for only first 30 saves, also you need to be logged in for it to work!)
-
-*Fix BASE turning BCOL into BHOL
-*Correct some texter fonts
-*Remove Reminder option
+Detect if user is running a new version of notification script
+todo:
+Fix texter error
 
 
  

@@ -6997,9 +6997,20 @@ chars_light = {
     }
 }
 function notificationscript()
---Maticzpl's notification script
+--Special handling when detecting a new version.
 if MANAGER.getsetting("CRK","notifval") == "1" then
--- Prevent multiple instances of the script running and choose the newer one
+local notifsc =io.open('scripts/downloaded/219 Maticzpl-Notifications.lua',"r")
+if notifsc ~= nil then 
+io.close(notifsc)
+print("New version of Macitzpl's Notifications script detected, in-built script will be turned off.")
+MANAGER.savesetting("CRK","notifval","0")
+return
+end
+-- Prevent multiple instances of the script running
+if MaticzplNotifications ~= nil then
+    return
+end
+
 MaticzplNotifications = {
     lastTimeChecked = nil,
     request = nil,
@@ -7010,15 +7021,13 @@ MaticzplNotifications = {
     hoveringOnButton = false,
     windowOpen = false,
     scrolled = 0,
-    version = 1000
+    version = 1
 }
-if MaticzplNotifications ~= nil and MaticzplNotifications.version ~= 1000 then --update it when maticzpl releases a new version
-print("Inbuilt notifications script disabled, contact @Cracker1000.")
-    return
-end
+
 local json = {}
 local notif = MaticzplNotifications
 local MANAGER = rawget(_G, "MANAGER")    
+
 --Ik this code is awful but interface from tpt api is very limiting
 local mouseX = 0
 local mouseY = 0
@@ -7045,11 +7054,13 @@ function MaticzplNotifications.DrawMenuContent()
         justClicked = false
         holdingScroll = false
     end
+    
+    
     --Window
-	gfx.fillRect(418,237,193,12,ar,ag,ab,150)
-	gfx.drawText(480,239,"Notification panel",255,255,255,255)
+	gfx.fillRect(418,237,193,12,ar,ag,ab,al)
+	gfx.drawText(480,239,"Notification panel",255,255,255,al+50)
     gfx.fillRect(418,250,193,155,0,0,0)
-    gfx.drawRect(418,250,193,155,ar,ag,ab,255)
+    gfx.drawRect(418,250,193,155,ar,ag,ab,al)
     
     --Exit button
     local exitIsHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 250 and mouseY < 250 + 12 and notif.windowOpen
@@ -7076,6 +7087,7 @@ function MaticzplNotifications.DrawMenuContent()
         -- Wolfram alpha saved me here xd
         notif.scrolled = (scrollLimit*(-(mouseY - barHeight/2) + scrollY - 1)) / (barHeight + scrollY - 404)
     end
+    
     if notif.scrolled > 0 then
         notif.scrolled = 0
     end    
@@ -7089,6 +7101,7 @@ function MaticzplNotifications.DrawMenuContent()
     else
         gfx.fillRect(420,scrollY - 1,8,155 - 26, 128,128,128)    
     end    
+    
     --Vertical line
     gfx.drawLine(418+11,250,418+11,250 + 154)
     
@@ -7101,6 +7114,7 @@ function MaticzplNotifications.DrawMenuContent()
         local saveID = n.save
         local title = n.title
         local msg = n.message
+        
         --Group title
         if prev == nil or prev.title ~= title then
             lastTitleY = y
@@ -7147,6 +7161,8 @@ function MaticzplNotifications.DrawMenuContent()
         
         scrollLimit = -math.max((y - 250 - 154) / 5 - notif.scrolled, 0) 
     end
+    
+    
     event.register(event.mousedown,click)
     event.register(event.mousemove,hover)
     event.register(event.mouseup,unclick)
@@ -7163,6 +7179,10 @@ function MaticzplNotifications.DrawMenuContent()
     end    
     justClicked = false
 end
+
+
+
+
 -- Request save data from the server
 -- Called automatically every 10 minutes
 function MaticzplNotifications.CheckForChanges()
@@ -7279,6 +7299,7 @@ function MaticzplNotifications.OnResponse(response,fpresponse,byDateResponse)
     
     notif.SaveNotifications()
 end
+
 -- Message to display in notification
 -- Title by which multiple notifications will be grouped
 -- saveID optional to open save on click
@@ -7294,6 +7315,7 @@ end
 function MaticzplNotifications.SaveNotifications()
     MANAGER.savesetting("MaticzplNotifications","Notifications",string.gsub(json.stringify(notif.notifications),"\"","~"))    
 end
+
 -- Draws the red circle notification button. Called every frame
 local timerfornot = 255 -- Blinking not. dot
 function MaticzplNotifications.DrawNotifications()
@@ -7326,6 +7348,7 @@ function MaticzplNotifications.DrawNotifications()
         gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,128,128,128)
         return
     end
+    
     local brig = 0
     if notif.hoveringOnButton then
         brig = 80
@@ -7335,16 +7358,21 @@ function MaticzplNotifications.DrawNotifications()
     elseif timerfornot <= 0 then
         timerfornot = 255
     end
+    
     gfx.fillCircle(posX,posY,6,6,120,brig,brig,timerfornot)
     gfx.fillCircle(posX,posY,5,5,255,brig,brig,timerfornot)
     gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,255,255,255)
 end
+
+
 -- Used for saving current state of saves
 function MaticzplNotifications.SaveToString(save)
     local separator = "|"
 
     return save.ID..separator..save.ScoreUp..separator..save.ScoreDown..separator..save.Comments..separator..save.FP
 end
+
+
 function MaticzplNotifications.Mouse(x,y,dx,dy)
     local posX = 572
     local posY = 415
@@ -7374,6 +7402,7 @@ function MaticzplNotifications.Scroll(x,y,d)
         return false
     end
 end
+
 function MaticzplNotifications.Tick()
     local time = os.time(os.date("!*t"))
     
@@ -7401,12 +7430,14 @@ function MaticzplNotifications.Tick()
         notif.DrawMenuContent()
     end
 end
+
 ---------------------------------------------------------------------------------
 -- JSON parsing from https://gist.github.com/tylerneylon/59f4bcf316be525b30ab  --
 -- Credit to tylerneylon                                                       --
 -- Stated to be public domain by the author (check comments in the link)       --
 ---------------------------------------------------------------------------------
 --#region
+
 local function kind_of(obj)
     if type(obj) ~= 'table' then return type(obj) end
     local i = 1
@@ -7531,7 +7562,6 @@ function json.parse(str, pos, end_delim)
     end
 end
 --#endregion
-
 -- On launch
 notif.lastTimeChecked = MANAGER.getsetting("MaticzplNotifications","lastTime") or 0
 local notifJson = MANAGER.getsetting("MaticzplNotifications","Notifications")
@@ -7539,6 +7569,7 @@ if notifJson then
     local jsonStr = string.gsub(notifJson,"~","\"")
     notif.notifications = json.parse(jsonStr)  
 end
+
 event.register(event.tick,notif.Tick)
 event.register(event.mousemove,notif.Mouse)
 event.register(event.mousedown,notif.OnClick)
