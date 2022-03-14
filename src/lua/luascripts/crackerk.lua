@@ -1,4 +1,4 @@
---cracker1000 mod script v10.0--
+--cracker1000 mod script v36.2--
 local passreal = "12345678"
 local passreal2 = "DMND"
 local motw = "."
@@ -7409,13 +7409,13 @@ end
 function MaticzplNotifications.Tick()
     local time = os.time(os.date("!*t"))
     
-    if time - notif.lastTimeChecked > (10 * 60) then
+    if time - notif.lastTimeChecked > (5 * 60) then
         notif.lastTimeChecked = time
         
         notif.CheckForChanges()
     end
     
-    if notif.request ~= nil        and notif.request:status()          == "done" and 
+    if notif.request ~= nil        and notif.request:status()       == "done" and 
     notif.FPrequest ~= nil      and notif.FPrequest:status()        == "done" and
     notif.byDateRequest ~= nil  and notif.byDateRequest:status()    == "done" then
         
@@ -7425,22 +7425,13 @@ function MaticzplNotifications.Tick()
         notif.byDateRequest = nil
         MANAGER.savesetting("MaticzplNotifications","lastTime",notif.lastTimeChecked)                    
     end
-    
-    
+   
     notif.DrawNotifications()
     
     if notif.windowOpen then
         notif.DrawMenuContent()
     end
 end
-
----------------------------------------------------------------------------------
--- JSON parsing from https://gist.github.com/tylerneylon/59f4bcf316be525b30ab  --
--- Credit to tylerneylon                                                       --
--- Stated to be public domain by the author (check comments in the link)       --
----------------------------------------------------------------------------------
---#region
-
 local function kind_of(obj)
     if type(obj) ~= 'table' then return type(obj) end
     local i = 1
@@ -7572,11 +7563,10 @@ if notifJson then
     local jsonStr = string.gsub(notifJson,"~","\"")
     notif.notifications = json.parse(jsonStr)  
 end
-
 event.register(event.tick,notif.Tick)
 event.register(event.mousemove,notif.Mouse)
 event.register(event.mousedown,notif.OnClick)
 event.register(event.mousewheel,notif.Scroll)
 end
 end
-notificationscript()
+notificationscript()--Run notifications function once the script is loaded.
