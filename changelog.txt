@@ -1,8 +1,10 @@
 Changelog for V37.0 (63)
 
+Update LED to support Dcolour. Now you can set any colour to LED instead of limited presets.
 Detect and auto disable if user is running a new version of notification script
 Improved Invert-tool mode
-Notifications now follow themes properly and update every 5 minutes instead of 10.
+Notifications now follow themes properly
+Double the notification check limit to 60 saves.
 Reduce fps drop colour change length
 
 todo:

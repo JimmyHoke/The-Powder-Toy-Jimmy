@@ -1200,7 +1200,7 @@ local nextpg = Button:new(342, 400, 40, 15, "Next")
 local close2 = Button:new(570, 400, 50, 15, "Close")
 
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
-local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
+local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C."
 
@@ -1211,7 +1211,7 @@ creditw:addComponent(prevpg)
 function drawwikitext()
 local wcontent
 if pgno == 1 then
-gfx.drawText(250,8,"Welcome To In Game WIKI",255,255,55,255)
+gfx.drawText(250,8,"Welcome To The WIKI",255,255,55,255)
 wcontent = wpage1
 elseif pgno == 2 then
 wcontent = wpage2
@@ -6978,13 +6978,13 @@ chars_light = {
     },
     ["/"] = {
         matrix = {
-            {0, 0, 0, 2, 2},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 3},
             {0, 0, 0, 3, 0},
-            {0, 0, 2, 2, 0},
             {0, 0, 3, 0, 0},
-            {0, 2, 2, 0, 0},
-            {0, 3, 0, 0, 0},
-            {2, 2, 0, 0, 0}
+			{0, 3, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
         }
     },
     ["?"] = {
@@ -7000,18 +7000,13 @@ chars_light = {
     }
 }
 function notificationscript()
---Special handling when detecting a new version.
-if MANAGER.getsetting("CRK","notifval") == "1" then
-local notifsc =io.open('scripts/downloaded/219 Maticzpl-Notifications.lua',"r")
-if notifsc ~= nil then 
-io.close(notifsc)
-print("New version of Macitzpl's Notifications script detected, in-built script will be turned off.")
-MANAGER.savesetting("CRK","notifval","0")
-return
-end
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
+end
+
+if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker100's Mod
+return
 end
 
 MaticzplNotifications = {
@@ -7030,6 +7025,14 @@ MaticzplNotifications = {
 local json = {}
 local notif = MaticzplNotifications
 local MANAGER = rawget(_G, "MANAGER")    
+local colorR, colorG, colorB, colorA = 148,148,148,200 --Default colours
+
+function getcrackertheme() -- Reserved for Cracker1000's Mod
+	colorR = ar
+	colorG = ag
+	colorB = ab
+	colorA = al
+end --End
 
 --Ik this code is awful but interface from tpt api is very limiting
 local mouseX = 0
@@ -7057,28 +7060,28 @@ function MaticzplNotifications.DrawMenuContent()
         justClicked = false
         holdingScroll = false
     end
-    
-    
+    --Notification Banner
+	gfx.fillRect(418,238,193,11,colorR, colorG, colorB, colorA)
+	gfx.drawText(480,240,"Notification panel",255,255,255,tonumber(colorA)+50)
+	
     --Window
-	gfx.fillRect(418,237,193,12,ar,ag,ab,al)
-	gfx.drawText(480,239,"Notification panel",255,255,255,al+50)
-    gfx.fillRect(418,250,193,155,0,0,0)
-    gfx.drawRect(418,250,193,155,ar,ag,ab,al)
-    
+    gfx.fillRect(418,250,193,155,0,0,0,200)
+    gfx.drawRect(418,250,193,155,colorR, colorG, colorB, colorA)
+
     --Exit button
     local exitIsHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 250 and mouseY < 250 + 12 and notif.windowOpen
     if exitIsHovering then
-        gfx.fillRect(418,250,12,12, 128,128,128)        
+        gfx.fillRect(418,250,12,12,128,128,128,colorA)      
     end
-    gfx.drawRect(418,250,12,12,ar,ag,ab)
+    gfx.drawRect(418,250,12,12,colorR, colorG, colorB, colorA)
     gfx.drawText(418+3,250+2,"X")
 
     --Read All button
     local readAllHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 261 and mouseY < 261 + 12 and notif.windowOpen
     if readAllHovering then
-        gfx.fillRect(418,261,12,12, 128,128,128)        
+        gfx.fillRect(418,261,12,12,128,128,128)        
     end
-    gfx.drawRect(418,261,12,12,ar,ag,ab)
+    gfx.drawRect(418,261,12,12,colorR, colorG, colorB, colorA) 
     gfx.drawText(418+4,261+2,"A")
     
     --Scroll Bar
@@ -7100,13 +7103,13 @@ function MaticzplNotifications.DrawMenuContent()
     if scrollLimit ~= 0 then      
         local scrollFraction = notif.scrolled / scrollLimit
         local barPos = scrollY + ((250 + 154 - barHeight - scrollY) * scrollFraction) - 1
-        gfx.fillRect(420,barPos,8,barHeight, 128,128,128)    
+        gfx.fillRect(420,barPos,8,barHeight,colorR, colorG, colorB, colorA)
     else
-        gfx.fillRect(420,scrollY - 1,8,155 - 26, 128,128,128)    
+        gfx.fillRect(420,scrollY - 1,8,155 - 26, colorR, colorG, colorB, colorA)  
     end    
     
     --Vertical line
-    gfx.drawLine(418+11,250,418+11,250 + 154,ar,ag,ab)
+    gfx.drawLine(418+11,250,418+11,250 + 154,colorR, colorG, colorB, colorA)
     
     local y = 252 + notif.scrolled * 5
     local lastTitleY = y
@@ -7122,15 +7125,15 @@ function MaticzplNotifications.DrawMenuContent()
         if prev == nil or prev.title ~= title then
             lastTitleY = y
             if y >= 252 and y <= 250+155 - 10 then         
-                gfx.drawLine(418+12,y - 2,418 + 192,y - 2,ar,ag,ab)
-                gfx.drawText(418+15,y,title,ar,ag,ab)
+                gfx.drawLine(418+12,y - 2,418 + 192,y - 2,colorR,colorG,colorB,colorA)     
+                gfx.drawText(418+15,y,title)
             end
             local sx,sy = gfx.textSize(title)
             y = y + sy
         end
         --Message
         if y >= 252 and y <= 250+155 - 10 then         
-            gfx.drawText(418+22,y,msg,200,200,200)
+            gfx.drawText(418+22,y,msg,200,200,200)    
         end    
         local sx,sy = gfx.textSize(msg)
         y = y + sy
@@ -7164,8 +7167,7 @@ function MaticzplNotifications.DrawMenuContent()
         
         scrollLimit = -math.max((y - 250 - 154) / 5 - notif.scrolled, 0) 
     end
-    
-    
+  
     event.register(event.mousedown,click)
     event.register(event.mousemove,hover)
     event.register(event.mouseup,unclick)
@@ -7182,9 +7184,6 @@ function MaticzplNotifications.DrawMenuContent()
     end    
     justClicked = false
 end
-
-
-
 
 -- Request save data from the server
 -- Called automatically every 10 minutes
@@ -7327,7 +7326,7 @@ function MaticzplNotifications.DrawNotifications()
     if number > 99 then
         number = "99"
     end
-    
+
     local posX = 572
     local posY = 415
     if tpt.version.jacob1s_mod ~= nil then
@@ -7337,7 +7336,9 @@ function MaticzplNotifications.DrawNotifications()
         posX = 573
         posY = 435
     end
-    
+	if tpt.version.modid == 6 then --Cracker1000's Mod
+          getcrackertheme()
+    end
     local w,h = gfx.textSize(number)
     
     local nw,nh = gfx.textSize(tpt.get_name())
@@ -7409,13 +7410,13 @@ end
 function MaticzplNotifications.Tick()
     local time = os.time(os.date("!*t"))
     
-    if time - notif.lastTimeChecked > (5 * 60) then
+    if time - notif.lastTimeChecked > (10 * 60) then
         notif.lastTimeChecked = time
         
         notif.CheckForChanges()
     end
     
-    if notif.request ~= nil        and notif.request:status()       == "done" and 
+    if notif.request ~= nil        and notif.request:status()          == "done" and 
     notif.FPrequest ~= nil      and notif.FPrequest:status()        == "done" and
     notif.byDateRequest ~= nil  and notif.byDateRequest:status()    == "done" then
         
@@ -7425,13 +7426,22 @@ function MaticzplNotifications.Tick()
         notif.byDateRequest = nil
         MANAGER.savesetting("MaticzplNotifications","lastTime",notif.lastTimeChecked)                    
     end
-   
+    
+    
     notif.DrawNotifications()
     
     if notif.windowOpen then
         notif.DrawMenuContent()
     end
 end
+
+---------------------------------------------------------------------------------
+-- JSON parsing from https://gist.github.com/tylerneylon/59f4bcf316be525b30ab  --
+-- Credit to tylerneylon                                                       --
+-- Stated to be public domain by the author (check comments in the link)       --
+---------------------------------------------------------------------------------
+--#region
+
 local function kind_of(obj)
     if type(obj) ~= 'table' then return type(obj) end
     local i = 1
@@ -7568,5 +7578,4 @@ event.register(event.mousemove,notif.Mouse)
 event.register(event.mousedown,notif.OnClick)
 event.register(event.mousewheel,notif.Scroll)
 end
-end
-notificationscript()--Run notifications function once the script is loaded.
+notificationscript()
