@@ -2343,10 +2343,10 @@ void GameView::OnDraw()
 		fpsInfo << Format::Precision(0)<< ui::Engine::Ref().GetFps();
 		if (showDebug)
 		{
-		 al = 48;
+		 al = 49;
 		 fpsInfo <<" ("<<(ui::Engine::Ref().GetFps()) / 60 * 100 << "%), ";
 		}
-		else al = 16;
+		else al = 17;
 		time_t rawtime;
 		struct tm * timeinfo;
 		char buffer[80];
@@ -2376,7 +2376,10 @@ void GameView::OnDraw()
 		int alpha = 255 - introText * 5;
 		g->fillrect(6, 3, textWidth + 6, 15, 40, 40, 40, alpha*0.5f);
 		if (fpsfake < 35)
-		g->fillrect(6, 3, al, 15, ar, ag, ab, alpha*0.85);
+		{
+			g->drawrect(6, 3, al, 15, ar, ag, ab, alpha*0.95);
+			g->fillrect(6, 3, al, 15, ar, ag, ab, alpha*0.75);
+		}
 		g->drawtext(8, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
 	}
 
