@@ -63,7 +63,7 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		sim->pv[(y / CELL)][(x / CELL)] = 270;
 		parts[i].life = 1;
-		parts[i].tmp = 200;
+		parts[i].tmp = 250;
 		sim->part_change_type(i, x, y, PT_SING);
 	}
 	

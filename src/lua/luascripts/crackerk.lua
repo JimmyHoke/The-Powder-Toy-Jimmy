@@ -1,5 +1,6 @@
---cracker1000 mod script v36.2--
+--Cracker1000 mod interface script--
 local passreal = "12345678"
+local crackversion = 37.0
 local passreal2 = "DMND"
 local motw = "."
 --Default theme for initial launch and resets
@@ -1535,13 +1536,12 @@ local bg4 = Button:new(174,300,45,20,"Green", "Green background")
 local bg5 = Button:new(224,300,45,20,"Orange", "Yellow background")
 local bg6 = Button:new(274,300,45,20,"Theme", "Same as set theme")
 
-local bg7 = Button:new(598,3,6,6,"`", "Disable inbuilt scripts")
+local bog1 = Button:new(24,333,60,25,"Cross-Hair", "Draw Cross-hair")
 
-local bog1 = Button:new(24,330,60,30,"Cross-Hair", "Draw Cross-hair")
+local bogb1 = Button:new(124,333,60,25,"Borders", "Draw Borders")
 
-local bogb1 = Button:new(175,330,60,30,"Borders", "Draw Borders")
-
-local jkey = Button:new(326,330,60,30,"J-Shortcut", "Toggle Shortcut")
+local jkey = Button:new(224,333,60,25,"J-Shortcut", "Toggle Shortcut")
+local bg7 = Button:new(324,333,60,25,"Admin", "Disable inbuilt scripts")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
@@ -1579,10 +1579,10 @@ blb:text(bclr)
 aclr = aSlider:value() 
 alb:text(aclr)
 end
-
+local adminval = 0
 function drawprev()
 local barstat = "Long"
-graphics.drawText(255,7, "Welcome to the Control Centre",255,255,255,255)
+graphics.drawText(255,7, "Welcome to the Control Centre V"..crackversion,255,255,255,255)
 graphics.drawRect(20,38,573,26,255,255,255,255)
 graphics.drawText(321,173, "Red",255,0,0,255)
 graphics.drawText(321,194, "Green",0,255,0,255)
@@ -1590,7 +1590,9 @@ graphics.drawText(321,215, "Blue",0,0,255,255)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then 
 graphics.drawText(25,152, "Brightness setting is turned on, alpha slider not available",255,55,55,255)
 end
-
+if adminval == 1 then
+graphics.fillRect(320,330,160,32,255,40,40,210)
+end
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barstat = "Off"
 elseif MANAGER.getsetting("CRK", "barval") == "1" then
@@ -1609,16 +1611,17 @@ graphics.drawText(90,342, "ON",105,255,105,255)
 else
 graphics.drawText(90,342, "OFF",255,105,105,255)
 end
-if shrtv == "1" then
-gfx.drawText(392,342,"ON",105,255,105,255)
-else
-gfx.drawText(392,342,"OFF",255,105,105,255)
-end
 if borderval == "1" then
-graphics.drawText(242,342, "ON",105,255,105,255)
+graphics.drawText(190,342, "ON",105,255,105,255)
 else
-graphics.drawText(242,342, "OFF",255,105,105,255)
+graphics.drawText(190,342, "OFF",255,105,105,255)
 end
+if shrtv == "1" then
+gfx.drawText(290,342,"ON",105,255,105,255)
+else
+gfx.drawText(290,342,"OFF",255,105,105,255)
+end
+
 tpt.drawrect(65,283,10,10,backvr,backvg,backvb,255)
 tpt.fillrect(65,283,10,10,backvr,backvg,backvb,100)
 
@@ -1698,7 +1701,6 @@ aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
-
 
 bog1:action(function(sender)
 if MANAGER.getsetting("CRK", "fancurs") == "0" then 
@@ -1832,10 +1834,41 @@ clearback()
 end)
 
 bg7:action(function(sender)
-local fdlf3 = io.open('deleteme.txt', 'w')
-fdlf3:write("Message from Cracker1000: This file disables the inbuilt scripts in Cracker1000's Mod, delete this and then restart to make it load scripts again.")
+adminval = 1
+local adminpass = Textbox:new(390, 336, 55, 20, '', 'Password..')
+local admincan = Button:new(450,336,20,20,"X", "cancle admin mode")
+newmenuth:removeComponent(adminpass)
+newmenuth:addComponent(adminpass)
+newmenuth:removeComponent(admincan)
+newmenuth:addComponent(admincan)
+admincan:action(function(sender)
+newmenuth:removeComponent(adminpass)
+newmenuth:removeComponent(admincan)
+adminval = 0
+end)
+adminpass:onTextChanged(function(sender)
+if adminpass:text() == "911" then
+newmenuth:removeComponent(adminpass)
+newmenuth:removeComponent(admincan)
+local admincan1 = Button:new(395,336,30,20,"Cr1k", "Disable crackerk.lua")
+local admincan2 = Button:new(435,336,30,20,"All","Disable all embedded scripts")
+newmenuth:addComponent(admincan1)
+newmenuth:addComponent(admincan2)
+admincan1:action(function(sender)
+local fdlf3 = io.open('dlf3.txt', 'w')
 fdlf3:close()
+local fdlf3at = io.open('autorun.lua', 'w')
+fdlf3at:close()
 platform.restart()
+end)
+admincan2:action(function(sender)
+local fdlf3a = io.open('deleteme.txt', 'w')
+fdlf3a:write("Message from Cracker1000: This file disables the embedded scripts in Cracker1000's Mod, delete this file and then restart to make it load the scripts again.")
+fdlf3a:close()
+platform.restart()
+end)
+end
+end)
 end)
 
 baropa:action(function(sender)

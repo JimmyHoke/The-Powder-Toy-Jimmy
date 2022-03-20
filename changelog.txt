@@ -6,6 +6,7 @@ Improved Invert-tool mode
 Notifications now follow themes properly
 Double the notification check limit to 60 saves.
 Reduce fps drop colour change length
+Admin mode (do not attempt to use it unless you know what you are doing!).
 
 todo:
 Merge v97.0
