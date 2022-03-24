@@ -393,6 +393,7 @@ if perfmv == "1" then
 tpt.setdrawcap(30)
 event.unregister(event.tick,theme)
 tpt.display_mode(7)
+print("Themes are disabled because performance mode is on.")
 perfmv = "0"
 else
 perfmv = "1"
@@ -832,7 +833,7 @@ end
 function keyclicky23(key23)
 if (key23 == 13) then
 placetext()
-elseif (key23 == 1073741906) and linenumber > 1  then
+elseif (key23 == 1073741906) and tonumber(linenumber) > 1  then
 if ffix == "1" then
 yvalue = yvalue - 14
 linenumber = linenumber - 1
@@ -840,7 +841,7 @@ elseif ffix == "0" then
 yvalue = yvalue - 10
 linenumber = linenumber - 1
 end
-elseif (key23 == 1073741905) and linenumber < 31 then
+elseif (key23 == 1073741905) and tonumber(linenumber) < 31 then
 if ffix == "1" then
 yvalue = yvalue + 14
 linenumber = linenumber + 1
@@ -879,8 +880,8 @@ local lno2  = Label:new(180, 20, 10, 17, "Fonts:")
 local smalf = Button:new(210,20,40,17,"Normal", "5x7.")
 local bigf = Button:new(262,20,40,17,"Title", "7x10.")
 local titf = Button:new(314,20,40,17,"Bold", "7x10, Bold")
-local clrsc = Button:new(448,20,84,17,"Clear Textbox", "Clear text")
-local clrsc2 = Button:new(536,20,65,17,"Clear Screen", "Clear text")
+local clrsc = Button:new(448,20,80,17,"Clear Textbox", "Clear text")
+local clrsc2 = Button:new(536,20,60,17,"Clear Screen", "Clear text")
 local titf2 = Button:new(366,20,40,17,"Real.", "7x10, Bold")
 
 newmenu4:addComponent(textTextbox)
@@ -1592,6 +1593,10 @@ graphics.drawText(25,152, "Brightness setting is turned on, alpha slider not ava
 end
 if adminval == 1 then
 graphics.fillRect(320,330,160,32,255,40,40,210)
+graphics.drawText(333,315,"Warning: Proceed at your own risk!",255,40,40,210)
+elseif adminval == 2 then
+graphics.fillRect(320,330,160,32,40,255,40,210)
+graphics.drawText(333,315,"Select the script to disable:",40,255,40,210)
 end
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barstat = "Off"
@@ -1848,10 +1853,12 @@ adminval = 0
 end)
 adminpass:onTextChanged(function(sender)
 if adminpass:text() == "911" then
+adminval = 2
+newmenuth:removeComponent(bg7)
 newmenuth:removeComponent(adminpass)
 newmenuth:removeComponent(admincan)
-local admincan1 = Button:new(395,336,30,20,"Cr1k", "Disable crackerk.lua")
-local admincan2 = Button:new(435,336,30,20,"All","Disable all embedded scripts")
+local admincan1 = Button:new(325,336,70,20,"Crackerk.lua", "Disable crackerk.lua")
+local admincan2 = Button:new(400,336,70,20,"All scripts","Disable all embedded scripts")
 newmenuth:addComponent(admincan1)
 newmenuth:addComponent(admincan2)
 admincan1:action(function(sender)
@@ -1957,7 +1964,7 @@ event.unregister(event.tick,UIhide)
 event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
-print("Interface will now be out of focus when working in simulation area")
+print("Interface will now be out of focus when working in simulation area.")
 
 elseif uival == "0" then
 tpt.hud(1)
@@ -2136,7 +2143,7 @@ gfx.drawText(291,229,"ON",105,255,105,255)
 else
 gfx.drawText(291,229,"OFF",255,105,105,255)
 end
-if perfmv == "0" then --Performace
+if perfmv == "0" then --Performance
 gfx.drawText(484,165,"ON",105,255,105,255)
 else
 gfx.drawText(484,165,"OFF",255,105,105,255)
