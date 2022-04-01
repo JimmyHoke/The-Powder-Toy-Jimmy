@@ -205,6 +205,7 @@ end
 local timermotd = 0
 local timeplus = 240
 local posix = 0
+local onlinestatus = 0 
 
 function writefile2()
 timermotd = timermotd + 1
@@ -215,7 +216,7 @@ if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
 motw = ret2
-
+onlinestatus = 1 
 if motw ~= "." then
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
@@ -1407,8 +1408,8 @@ al = brightSlider:value()
 end
 --Borders
 if borderval == "1" then
-tpt.drawrect(3,3,605,377,ar,ag,ab,al)
 tpt.drawrect(2,2,607,379,ar,ag,ab,al)
+tpt.drawrect(1,1,609,381,ar,ag,ab,al)
 end
 --Topbar
 if borderval ~= "1" then
@@ -2102,7 +2103,12 @@ end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
 end
-gfx.drawText(12,7,"Welcome to Mod Settings. Tip: 'J' Key can be used as a shortcut to open and close the menu.",255,255,255,255) --Intro message
+gfx.drawText(12,7,"Welcome to Mod Settings. Tip: 'J' Key can be used as a shortcut to open and close the menu. Status:",255,255,255,255) --Intro message
+if onlinestatus == 1 then --Online status
+gfx.drawText(500,7,"Online",0,255,0,255)
+else
+gfx.drawText(500,7,"Offline",255,0,0,255)
+end
 if uival == "0" then --Focus Mode
 gfx.drawText(98,37,"ON",105,255,105,255)
 else
