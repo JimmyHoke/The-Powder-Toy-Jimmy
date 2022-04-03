@@ -4,12 +4,13 @@ Update LED to support Dcolour. Now you can set any colour to LED instead of limi
 Detect and auto disable if user is running a new version of notification script
 Improved Invert-tool mode
 Remove the colour changes for fps counter
-Notifications now follow themes properly
-Double the notification check limit to 60 saves
 Add network status indicator
 Reduce fps drop colour change length
 Admin mode (do not attempt to use it unless you know what you are doing!).
 Fix some texter errors
+Update Maticzpl's notification script:
+Notifications now follow themes properly
+Double the notification check limit to 60 saves
 
 Todo:
 Try to add proper support for updating internal scripts

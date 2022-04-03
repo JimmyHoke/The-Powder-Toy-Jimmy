@@ -30,7 +30,7 @@ void Element::Element_WHEL()
 	Weight = 100;
 
 	HeatConduct = 0;
-	Description = "Wheel. Spins when powered with PSCN, .tmp sets wheel size (5-50).";
+	Description = "Wheel. Spins when powered with PSCN, .tmp sets wheel size (5-50). Use deco for spoke colour.";
 
 	Properties = TYPE_SOLID;
 
@@ -53,7 +53,7 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].tmp < 5 || parts[i].tmp > 50)
 		parts[i].tmp = 5;
-	if (parts[i].life >= 300)
+	if (parts[i].life >= 400)
 		parts[i].life -= 40;
 
 	if (parts[i].tmp2 > 0)
@@ -78,7 +78,7 @@ static int update(UPDATE_FUNC_ARGS)
 				}
 				if (parts[i].tmp2 > 0)
 				{
-					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life/5;
+					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life/10;
 					parts[i].life += 1.0;
 				}
 				}
@@ -87,19 +87,23 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
+	*colr = ((cpart->dcolour >> 16) & 0xFF);
+	*colg = ((cpart->dcolour >> 8) & 0xFF);
+	*colb = ((cpart->dcolour) & 0xFF);
 	int angle = 0;
 	angle = cpart->life/13;
-	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 2, cpart->tmp + 2, 90, 90, 90, 255);
-	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 3, cpart->tmp + 3, 90, 90, 90, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(angle*cpart->life/13), cpart->y + cpart->tmp * sin(angle*cpart->life/13), 255, 255, 255, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(20+angle*cpart->life/13), cpart->y + cpart->tmp * sin(20+angle*cpart->life/13), 255, 255, 255, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(40 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(40 + angle * cpart->life / 13), 255, 255, 255, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(60 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(60 + angle * cpart->life / 13), 255, 255, 255, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(80 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(80 + angle * cpart->life / 13), 255, 255, 255, 255);
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 2, cpart->tmp + 2, 70, 70, 70, 255);
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 3, cpart->tmp + 3, 70, 70, 70, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(angle*cpart->life/13), cpart->y + cpart->tmp * sin(angle*cpart->life/13), *colr, *colg, *colb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(10+angle*cpart->life/13), cpart->y + cpart->tmp * sin(10+angle*cpart->life/13), *colr, *colg, *colb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(20 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(20 + angle * cpart->life / 13), *colr, *colg, *colb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(30 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(30 + angle * cpart->life / 13), *colr, *colg, *colb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(40 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(40 + angle * cpart->life / 13), *colr, *colg, *colb, 255);
 	return 0;
 }
 
 static void create(ELEMENT_CREATE_FUNC_ARGS) //Default length.
 {
+	sim->parts[i].dcolour = 0xFFFFFF;
 	sim->parts[i].tmp = 8;
 }
