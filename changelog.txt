@@ -1,5 +1,6 @@
 Changelog for V36.4 (63)
-New element: Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
+
+New element: Napalm and Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
 Update LED to support Dcolour. Now you can set any colour to LED instead of limited presets.
 Include bug fixes from latest snapshot.
 Detect and auto disable if user is running a new version of notification script.
