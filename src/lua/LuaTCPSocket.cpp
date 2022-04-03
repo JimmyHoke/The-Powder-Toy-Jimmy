@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <algorithm>
 #ifdef WIN
-# include <windows.h>
+# include <Windows.h>
 # include <float.h>
 #else
 # include <sys/time.h>

@@ -168,7 +168,7 @@ bool Client::DoInstallation()
 	IShellLinkW *shellLink = NULL;
 	IPersistFile *shellLinkPersist = NULL;
 
-	int returnval = 0;
+	int returnval;
 	LONG rresult;
 	HKEY newkey;
 	ByteString currentfilename = Platform::ExecutableName();
@@ -188,16 +188,19 @@ bool Client::DoInstallation()
 	//Create protocol entry
 	rresult = createKey("Software\\Classes\\ptsave", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, "Powder Toy Save");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = RegSetValueExW(newkey, (LPWSTR)L"URL Protocol", 0, REG_SZ, (LPBYTE)L"", 1);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
@@ -205,11 +208,13 @@ bool Client::DoInstallation()
 	//Set Protocol DefaultIcon
 	rresult = createKey("Software\\Classes\\ptsave\\DefaultIcon", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, iconname);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
@@ -217,11 +222,13 @@ bool Client::DoInstallation()
 	//Set Protocol Launch command
 	rresult = createKey("Software\\Classes\\ptsave\\shell\\open\\command", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, protocolcommand);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
@@ -229,22 +236,26 @@ bool Client::DoInstallation()
 	//Create extension entry
 	rresult = createKey("Software\\Classes\\.cps", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, "PowderToySave");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
 
 	rresult = createKey("Software\\Classes\\.stm", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, "PowderToySave");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
@@ -252,11 +263,13 @@ bool Client::DoInstallation()
 	//Create program entry
 	rresult = createKey("Software\\Classes\\PowderToySave", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, "Powder Toy Save");
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
@@ -264,11 +277,13 @@ bool Client::DoInstallation()
 	//Set DefaultIcon
 	rresult = createKey("Software\\Classes\\PowderToySave\\DefaultIcon", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, iconname);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
@@ -276,11 +291,13 @@ bool Client::DoInstallation()
 	//Set Launch command
 	rresult = createKey("Software\\Classes\\PowderToySave\\shell\\open\\command", newkey);
 	if (rresult != ERROR_SUCCESS) {
+		returnval = 0;
 		goto finalise;
 	}
 	rresult = setValue(newkey, opencommand);
 	if (rresult != ERROR_SUCCESS) {
 		RegCloseKey(newkey);
+		returnval = 0;
 		goto finalise;
 	}
 	RegCloseKey(newkey);
