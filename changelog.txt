@@ -1,5 +1,5 @@
 Changelog for V37.0 (63)
-
+New element: Wheel! (spins when powered with PSCN)
 Update LED to support Dcolour. Now you can set any colour to LED instead of limited presets.
 Detect and auto disable if user is running a new version of notification script
 Improved Invert-tool mode
