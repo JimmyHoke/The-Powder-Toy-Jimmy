@@ -1,10 +1,11 @@
 Changelog for V37.0 (63)
-New element: Wheel! (spins when powered with PSCN)
+New element: Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
 Update LED to support Dcolour. Now you can set any colour to LED instead of limited presets.
 Detect and auto disable if user is running a new version of notification script
 Improved Invert-tool mode
 Remove the colour changes for fps counter
 Notifications now follow themes properly
+Double the notification check limit to 60 saves
 Add network status indicator
 Reduce fps drop colour change length
 Admin mode (do not attempt to use it unless you know what you are doing!).
@@ -12,7 +13,6 @@ Fix some texter errors
 
 Todo:
 Try to add proper support for updating internal scripts
-Double the notification check limit to 60 saves
 Turn off notifications without a restart
 Fix texter fonts
 Fix texter error

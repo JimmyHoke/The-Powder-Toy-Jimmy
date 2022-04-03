@@ -7053,15 +7053,13 @@ if MaticzplNotifications ~= nil then
     return
 end
 
-if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker100's Mod
-return
+if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
+    return
 end
 
 MaticzplNotifications = {
     lastTimeChecked = nil,
-    request = nil,
-    byDateRequest = nil,
-    FPrequest = nil,
+    requests = {},
     saveCache = {},
     notifications = {},
     hoveringOnButton = false,
@@ -7075,7 +7073,7 @@ local notif = MaticzplNotifications
 local MANAGER = rawget(_G, "MANAGER")    
 local colorR, colorG, colorB, colorA = 148,148,148,200 --Default colours
 
-function getcrackertheme() -- Reserved for Cracker1000's Mod
+local function getcrackertheme() -- Reserved for Cracker1000's Mod
 	colorR = ar
 	colorG = ag
 	colorB = ab
@@ -7238,14 +7236,21 @@ end
 function MaticzplNotifications.CheckForChanges()
     local name = tpt.get_name()
     if name ~= "" then          
-        notif.byDateRequest = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate user%3A"..name)
-        notif.request = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=user%3A"..name)
-        notif.FPrequest = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=16")
+        -- FP
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=16"))
+        -- By date
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=sort%3Adate user%3A"..name))
+        -- By votes
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=user%3A"..name))
+    else
+        print("You need to be logged in to use the notifications script.")
     end 
 end
 
 -- Called when recieved response from teh server after calling CheckForUpdates()
-function MaticzplNotifications.OnResponse(response,fpresponse,byDateResponse)
+function MaticzplNotifications.OnResponse()
     local function split (input, sep)
         if sep == nil then
             sep = "%s"
@@ -7257,33 +7262,25 @@ function MaticzplNotifications.OnResponse(response,fpresponse,byDateResponse)
         return t
     end
     
-    local success, savesVotes = pcall(json.parse,response  )
-    if not success then
-        print("Error while fetching saves from server. Try again later")
-        return
-    end
-    local success, savesDate = pcall(json.parse,byDateResponse  )
-    if not success then
-        print("Error while fetching saves from server. Try again later")
-        return
-    end
-    local success, fp  =   pcall(json.parse,fpresponse)
-    if not success then
-        print("Error while fetching saves from server. Try again later")
-        return
-    end
-    
-    savesVotes = savesVotes.Saves
-    savesDate = savesDate.Saves
-    fp = fp.Saves
-    
-    -- Combine saves by date and by votes in a set
     local saves = {}
-    for k, v in pairs(savesVotes) do
-        saves[v.ID] = v
-    end
-    for k, v in pairs(savesDate) do
-        saves[v.ID] = v
+    local fp = {}
+    for id, req in ipairs(notif.requests) do
+        local res = req:finish()
+        
+        local success, found = pcall(json.parse,res  )
+        if not success then
+            print("Error while fetching saves from server.")
+            return
+        end
+        for k, v in pairs(found) do
+            saves[v.ID] = v
+        end
+
+        if id == 1 then
+            for k, v in pairs(found) do
+                fp[v.ID] = v
+            end            
+        end
     end
     
     
@@ -7458,20 +7455,23 @@ end
 function MaticzplNotifications.Tick()
     local time = os.time(os.date("!*t"))
     
-    if time - notif.lastTimeChecked > (10 * 60) then
+    if time - notif.lastTimeChecked > (3 * 60) then
         notif.lastTimeChecked = time
         
         notif.CheckForChanges()
     end
     
-    if notif.request ~= nil        and notif.request:status()          == "done" and 
-    notif.FPrequest ~= nil      and notif.FPrequest:status()        == "done" and
-    notif.byDateRequest ~= nil  and notif.byDateRequest:status()    == "done" then
-        
-        notif.OnResponse(notif.request:finish(),notif.FPrequest:finish(),notif.byDateRequest:finish())
-        notif.request = nil
-        notif.FPrequest = nil
-        notif.byDateRequest = nil
+    local allDone = true;
+    for _, req in ipairs(notif.requests) do
+        if req:status() ~= "done" then
+            allDone = false
+            break
+        end
+    end    
+
+    if allDone then        
+        notif.OnResponse()
+        notif.requests = {}
         MANAGER.savesetting("MaticzplNotifications","lastTime",notif.lastTimeChecked)                    
     end
     

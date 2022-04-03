@@ -7,7 +7,7 @@ void Element::Element_WHEL()
 {
 	Identifier = "DEFAULT_PT_WHEL";
 	Name = "WHEL";
-	Colour = PIXPACK(0x800080);
+	Colour = PIXPACK(0x202020);
 	MenuVisible = 1;
 	MenuSection = SC_FORCE;
 	Enabled = 1;
@@ -30,7 +30,7 @@ void Element::Element_WHEL()
 	Weight = 100;
 
 	HeatConduct = 0;
-	Description = "Wheel. Spins when powered by PSCN and NSCN. .tmp sets wheel size (5-50).";
+	Description = "Wheel. Spins when powered with PSCN, .tmp sets wheel size (5-50).";
 
 	Properties = TYPE_SOLID;
 
@@ -42,7 +42,7 @@ void Element::Element_WHEL()
 	LowTemperatureTransition = NT;
 	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
-	DefaultProperties.temp = R_TEMP + 30.0f;
+	DefaultProperties.temp = 293.15f;
 
 	Update = &update;
 	Graphics = &graphics;
@@ -53,51 +53,49 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].tmp < 5 || parts[i].tmp > 50)
 		parts[i].tmp = 5;
-	if (parts[i].life > 360)
-		parts[i].life = 300;
+	if (parts[i].life >= 300)
+		parts[i].life -= 40;
 
 	if (parts[i].tmp2 > 0)
 		parts[i].tmp2 -= 1;
 	if (parts[i].tmp2 > 20)
 		parts[i].tmp2 = 20;
-	if (parts[i].life > 0 && parts[i].tmp2 == 0)
-		parts[i].life-= 7;
+	if (parts[i].life > 0 && parts[i].tmp2 < 4)
+		parts[i].life -= 1;
+	if (parts[i].life < 0)
+		parts[i].life = 0;
 
-	for (int rx = -parts[i].tmp; rx <= parts[i].tmp; rx++)
-		for (int ry = -parts[i].tmp; ry <= parts[i].tmp; ry++)
+	for (int rx = -2; rx <=2; rx++)
+		for (int ry = -2; ry <= 2; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				int r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (parts[ID(r)].type != PT_SPRK && parts[ID(r)].type != PT_PSCN && parts[ID(r)].type != PT_BTRY && parts[ID(r)].type != PT_NSCN)
-				{
-					sim->kill_part(ID(r));
-				}
-
 				if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_PSCN)
 				{
-					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life / 5;
-					parts[i].life += 1.0;
-					parts[i].tmp2 += 4;
+					parts[i].tmp2 += 7;
 				}
-
+				if (parts[i].tmp2 > 0)
+				{
+					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life/5;
+					parts[i].life += 1.0;
+				}
 				}
 	return 0;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	float angle = 0;
-		for (angle = 0; angle < 3.1415f; angle += 0.01f)
-		{
-			ren->drawcircle(cpart->x, cpart->y, cpart->tmp, cpart->tmp, 140, 140, 140, 255);
-		}
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * sin(angle*cpart->life/13), cpart->y + cpart->tmp * cos(angle*cpart->life/13), 255, 255, 255, 250);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * sin(20+angle*cpart->life/13), cpart->y + cpart->tmp * cos(20+angle*cpart->life/13), 255, 255, 255, 250);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * sin(40 + angle * cpart->life / 13), cpart->y + cpart->tmp * cos(40 + angle * cpart->life / 13), 255, 255, 255, 250);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * sin(60 + angle * cpart->life / 13), cpart->y + cpart->tmp * cos(60 + angle * cpart->life / 13), 255, 255, 255, 250);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * sin(80 + angle * cpart->life / 13), cpart->y + cpart->tmp * cos(80 + angle * cpart->life / 13), 255, 255, 255, 250);
+	int angle = 0;
+	angle = cpart->life/13;
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 2, cpart->tmp + 2, 90, 90, 90, 255);
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 3, cpart->tmp + 3, 90, 90, 90, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(angle*cpart->life/13), cpart->y + cpart->tmp * sin(angle*cpart->life/13), 255, 255, 255, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(20+angle*cpart->life/13), cpart->y + cpart->tmp * sin(20+angle*cpart->life/13), 255, 255, 255, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(40 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(40 + angle * cpart->life / 13), 255, 255, 255, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(60 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(60 + angle * cpart->life / 13), 255, 255, 255, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(80 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(80 + angle * cpart->life / 13), 255, 255, 255, 255);
 	return 0;
 }
 
