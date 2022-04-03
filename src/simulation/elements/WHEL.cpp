@@ -30,7 +30,7 @@ void Element::Element_WHEL()
 	Weight = 100;
 
 	HeatConduct = 0;
-	Description = "Wheel. Spins when powered with PSCN, .tmp sets wheel size (5-50). Use deco for spoke colour.";
+	Description = "Wheel. SPRK with PSCN and NSCN to make it spin and stop respectively, .tmp sets wheel size (5-50). Deco = spoke colour.";
 
 	Properties = TYPE_SOLID;
 
@@ -76,6 +76,14 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					parts[i].tmp2 += 7;
 				}
+				else if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_NSCN)
+				{
+					parts[i].tmp2 == 0;
+					if (parts[i].life > 0)
+					{
+						parts[i].life -= 20;
+					}
+				}
 				if (parts[i].tmp2 > 0)
 				{
 					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life/10;
@@ -92,8 +100,9 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	*colb = ((cpart->dcolour) & 0xFF);
 	int angle = 0;
 	angle = cpart->life/13;
-	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 2, cpart->tmp + 2, 70, 70, 70, 255);
-	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 3, cpart->tmp + 3, 70, 70, 70, 255);
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 3, cpart->tmp + 3, *colr, *colg, *colb, 255);
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 4, cpart->tmp + 4, 60, 60, 60, 255);
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 5, cpart->tmp + 5, 60, 60, 60, 255);
 	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(angle*cpart->life/13), cpart->y + cpart->tmp * sin(angle*cpart->life/13), *colr, *colg, *colb, 255);
 	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(10+angle*cpart->life/13), cpart->y + cpart->tmp * sin(10+angle*cpart->life/13), *colr, *colg, *colb, 255);
 	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(20 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(20 + angle * cpart->life / 13), *colr, *colg, *colb, 255);
@@ -104,6 +113,6 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 
 static void create(ELEMENT_CREATE_FUNC_ARGS) //Default length.
 {
-	sim->parts[i].dcolour = 0xFFFFFF;
+	sim->parts[i].dcolour = 0xFF0000;
 	sim->parts[i].tmp = 8;
 }
