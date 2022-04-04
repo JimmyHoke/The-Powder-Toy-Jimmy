@@ -16,7 +16,7 @@ void Element::Element_NAPM()
 	AirLoss = 0.77f;
 	Loss = 0.60f;
 	Collision = 0.0f;
-	Gravity = 0.5f;
+	Gravity = 0.6f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
 	Falldown = 1;
@@ -28,7 +28,7 @@ void Element::Element_NAPM()
 
 	Weight = 20;
 	HeatConduct = 255;
-	Description = "Napalm, sticky liquid that burns around 1200C. Once ignited cannot be extinguished.";
+	Description = "Napalm, sticky liquid that burns around 1200C. Cannot be extinguished once ignited.";
 
 	Properties = TYPE_LIQUID | PROP_LIFE_DEC;
 
@@ -51,23 +51,27 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vx = 0;
 		parts[i].vy = 0;
 	}
+	if (parts[i].temp > 374.15f)
+	{
+		parts[i].tmp = 1;
+	}
 
 	if (parts[i].tmp == 1)
 	{
-		sim->pv[(y / CELL)][(x / CELL)] = 2.0f;
+		sim->pv[(y / CELL)][(x / CELL)] = 3.0f;
 		if (parts[i].temp < 1200 + 273.15f)
 		{
-			parts[i].temp += 23.15f;
+			parts[i].temp += 30.15f;
 		}
-		if (RNG::Ref().chance(1, 25))
+		if (RNG::Ref().chance(1, 15))
 		{
 			sim->create_part(-1, x, y - 1, PT_FIRE);
 		}
-		if (RNG::Ref().chance(1, 300))
+		if (RNG::Ref().chance(1, 5))
 		{
-			sim->create_part(-1, x, y - 1, PT_SMKE);
+			sim->create_part(-1, x, y - 1, PT_EMBR);
 		}
-		if (RNG::Ref().chance(1, 700))
+		if (RNG::Ref().chance(1, 800))
 		{
 			sim->part_change_type(i, x, y, PT_FIRE);
 		}
@@ -82,7 +86,7 @@ static int update(UPDATE_FUNC_ARGS)
 					r = sim->photons[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (parts[ID(r)].type != PT_NAPM && parts[ID(r)].type != PT_FIRE)
+				if (parts[ID(r)].type != PT_NAPM && parts[ID(r)].type != PT_FIRE && parts[ID(r)].type != PT_EMBR)
 				{
 					parts[i].life = 4;
 				}

@@ -1,20 +1,27 @@
 Changelog for V36.4 (63)
 
-New element: Napalm and Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
-Update LED to support Dcolour. Now you can set any colour to LED instead of limited presets.
-Include bug fixes from latest snapshot.
+New elements: Napalm and Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
+Update LED to support Dcolour. Now you can set any colour to LED instead of just a few limited presets.
 Detect and auto disable if user is running a new version of notification script.
 Improved Invert-tool mode.
 Remove the colour changes for fps counter.
 Add network status indicator.
 Admin mode (do not attempt to use it unless you know what you are doing!).
 Fix some texter errors.
+Fix normal texter fonts
 Update Maticzpl's notification script.
 refreshes every 3 minutes instead of 10.
 Notifications now follow themes properly.
 Double the notification check limit to 60 saves.
 Add proper support for updating internal scripts.
 
+Include bug fixes from latest snapshot:
+Redo code that makes SOAP float on OIL
+Prevent SaveRenderer from calling into Lua
+Fix crash when trying to render an empty stamp
+Fix TRON being unable to pathfind to the top and left edges of the screen
+Handle SDL_CreateWindow failure slightly betterFix crash on exit if any modern particle callback is registered
+Fix pipe mirroring
  
 
  
