@@ -30,7 +30,7 @@ void Element::Element_WHEL()
 	Weight = 100;
 
 	HeatConduct = 0;
-	Description = "Wheel. SPRK with PSCN and NSCN to make it spin and stop respectively, .tmp sets wheel size (5-50). Deco = spoke colour.";
+	Description = "Wheel. Use with PSCN and NSCN, .tmp sets wheel size while temp. sets the speed. Deco = spoke colour. Read wiki!";
 
 	Properties = TYPE_SOLID;
 
@@ -42,7 +42,7 @@ void Element::Element_WHEL()
 	LowTemperatureTransition = NT;
 	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
-	DefaultProperties.temp = 293.15f;
+	DefaultProperties.temp = 400 + 273.15f;
 
 	Update = &update;
 	Graphics = &graphics;
@@ -51,9 +51,11 @@ void Element::Element_WHEL()
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].temp < 100 + 273.15f || parts[i].temp> 1000 + 273.15f)
+		parts[i].temp = 400 + 273.15f;
 	if (parts[i].tmp < 5 || parts[i].tmp > 50)
 		parts[i].tmp = 5;
-	if (parts[i].life >= 400)
+	if (parts[i].life >= parts[i].temp-273.15f)
 		parts[i].life -= 40;
 
 	if (parts[i].tmp2 > 0)
@@ -86,7 +88,7 @@ static int update(UPDATE_FUNC_ARGS)
 				}
 				if (parts[i].tmp2 > 0)
 				{
-					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life/10;
+					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life/14;
 					parts[i].life += 1.0;
 				}
 				}
