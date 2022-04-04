@@ -129,7 +129,6 @@ local autoval = "1"
 local hidval = "1"
 local shrtv = "1"
 local invtoolv = "1"
-local allowupdates = "0"
 local focustime = 190
 
 function clearm()
@@ -172,7 +171,6 @@ newmenu:removeComponent(barkoff)
 newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
 end
-
 
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
@@ -220,9 +218,11 @@ motw = ret2
 onlinestatus = 1 
 if motw ~= "." then
 if motw == "update" then
-allowupdates = "1"
+close()
+tpt.message_box("Update notification","An update for internal script is available click settings> update mp button now! Ignore if already updated")
 motw = "New updates for internal multiplayer scripts available, click update mp button now."
 end
+
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
@@ -246,16 +246,11 @@ end
 
 upmp:action(function(sender)
 close()
-if allowupdates == "1" then
 timermp = 0
 print("Attempting To Update Multiplayer...")
 fs.makeDirectory("scripts/downloaded")
 event.unregister(event.tick,writefile)
 event.register(event.tick,writefile)
-elseif allowupdates == "0" then
-close()
-tpt.message_box("Update denied!","You will get notified whenever a new update for embedded scripts is available.")
-end
 end)
 
 passbut:action(function(sender)
@@ -714,7 +709,7 @@ end)
 
 reminderhelp:action(function(sender)
 close()
-tpt.message_box(" Notification feature help", "Turning it on will notify you when:\n*There's a new vote or comment on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 3 minutes and works for first 60 saves (by votes + by dates).\n\nYou need to be logged in.\n\nCredit: @Maticzpl")
+tpt.message_box(" Notification feature help", "Turning it on will notify you when:\n*There's a new vote or comment on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 5 minutes and works for first 60 saves (by votes + by dates).\n\nYou need to be logged in.\n\nCredit: @Maticzpl")
 end)
 
 function cbrightness()
@@ -7474,7 +7469,7 @@ end
 function MaticzplNotifications.Tick()
     local time = os.time(os.date("!*t"))
     
-    if time - notif.lastTimeChecked > (3 * 60) then
+    if time - notif.lastTimeChecked > (5 * 60) then
         notif.lastTimeChecked = time
         
         notif.CheckForChanges()

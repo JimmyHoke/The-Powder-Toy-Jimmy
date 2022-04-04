@@ -16,10 +16,10 @@ void Element::Element_NAPM()
 	AirLoss = 0.77f;
 	Loss = 0.60f;
 	Collision = 0.0f;
-	Gravity = 0.6f;
+	Gravity = 0.4f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
-	Falldown = 1;
+	Falldown = 2;
 
 	Flammable = 0;
 	Explosive = 0;
@@ -63,15 +63,15 @@ static int update(UPDATE_FUNC_ARGS)
 		{
 			parts[i].temp += 30.15f;
 		}
-		if (RNG::Ref().chance(1, 15))
+		if (RNG::Ref().chance(1, 25))
 		{
 			sim->create_part(-1, x, y - 1, PT_FIRE);
 		}
-		if (RNG::Ref().chance(1, 5))
+		if (RNG::Ref().chance(1, 8))
 		{
 			sim->create_part(-1, x, y - 1, PT_EMBR);
 		}
-		if (RNG::Ref().chance(1, 800))
+		if (RNG::Ref().chance(1, 900))
 		{
 			sim->part_change_type(i, x, y, PT_FIRE);
 		}
@@ -86,7 +86,7 @@ static int update(UPDATE_FUNC_ARGS)
 					r = sim->photons[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (parts[ID(r)].type != PT_NAPM && parts[ID(r)].type != PT_FIRE && parts[ID(r)].type != PT_EMBR)
+				if (sim->elements[TYP(r)].Properties&TYPE_SOLID)
 				{
 					parts[i].life = 4;
 				}
