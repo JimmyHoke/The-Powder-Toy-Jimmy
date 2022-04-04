@@ -83,7 +83,7 @@ static int update(UPDATE_FUNC_ARGS)
 					parts[i].tmp2 == 0;
 					if (parts[i].life > 0)
 					{
-						parts[i].life -= 20;
+						parts[i].life -= 14;
 					}
 				}
 				if (parts[i].tmp2 > 0)
