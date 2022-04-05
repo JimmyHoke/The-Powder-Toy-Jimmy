@@ -10,7 +10,7 @@ Admin mode (do not attempt to use it unless you know what you are doing!).
 Fix some texter errors.
 Fix normal texter fonts
 Update Maticzpl's notification script.
-refreshes every 3 minutes instead of 10.
+refreshes every 5 minutes instead of 10.
 Notifications now follow themes properly.
 Double the notification check limit to 60 saves.
 Add proper support for updating internal scripts.
