@@ -6,15 +6,15 @@ Detect and auto disable if user is running a new version of notification script.
 Improved Invert-tool mode.
 Remove the colour changes for fps counter.
 Add network status indicator.
-Admin mode (do not attempt to use it unless you know what you are doing!).
+Developer mode (do not attempt to use it unless you know what you are doing!).
 Fix some texter errors.
 Fix normal texter fonts
 Update Maticzpl's notification script.
 refreshes every 5 minutes instead of 10.
 Notifications now follow themes properly.
 Double the notification check limit to 60 saves.
-Add proper support for updating internal scripts.
-
+Disabling notifications does not require a restart anymore.
+>>
 Include bug fixes from latest snapshot:
 Redo code that makes SOAP float on OIL
 Prevent SaveRenderer from calling into Lua

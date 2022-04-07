@@ -6,7 +6,7 @@ void Element::Element_NAPM()
 
 	Identifier = "DEFAULT_PT_NAPM";
 	Name = "NAPM";
-	Colour = PIXPACK(0xFF8C00);
+	Colour = PIXPACK(0xFF7518);
 	MenuVisible = 1;
 	MenuSection = SC_EXPLOSIVE;
 	Enabled = 1;
@@ -16,7 +16,7 @@ void Element::Element_NAPM()
 	AirLoss = 0.77f;
 	Loss = 0.60f;
 	Collision = 0.0f;
-	Gravity = 0.4f;
+	Gravity = 0.3f;
 	Diffusion = 0.00f;
 	HotAir = 0.000f	* CFDS;
 	Falldown = 2;
@@ -28,7 +28,7 @@ void Element::Element_NAPM()
 
 	Weight = 20;
 	HeatConduct = 255;
-	Description = "Napalm, sticky liquid that burns around 1200C. Cannot be extinguished once ignited.";
+	Description = "Napalm, liquid that sticks to solids and can reach temp. around 1200C while burning. Cannot be extinguished once ignited.";
 
 	Properties = TYPE_LIQUID | PROP_LIFE_DEC;
 
@@ -48,8 +48,10 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].life > 1)
 	{
-		parts[i].vx = 0;
-		parts[i].vy = 0;
+		if (RNG::Ref().chance(1, 2))
+		{
+			parts[i].vy = -0.25;
+		}
 	}
 	if (parts[i].temp > 374.15f)
 	{
@@ -63,11 +65,11 @@ static int update(UPDATE_FUNC_ARGS)
 		{
 			parts[i].temp += 30.15f;
 		}
-		if (RNG::Ref().chance(1, 25))
+		if (RNG::Ref().chance(1, 35))
 		{
-			sim->create_part(-1, x, y - 1, PT_FIRE);
+			sim->create_part(-1, x, y-1, PT_FIRE);
 		}
-		if (RNG::Ref().chance(1, 8))
+		if (RNG::Ref().chance(1, 10))
 		{
 			sim->create_part(-1, x, y - 1, PT_EMBR);
 		}
@@ -88,7 +90,7 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (sim->elements[TYP(r)].Properties&TYPE_SOLID)
 				{
-					parts[i].life = 4;
+					parts[i].life = 3;
 				}
 				switch (TYP(r))
 				{
