@@ -2,6 +2,8 @@ Changelog for V36.4 (63)
 
 New elements: Napalm and Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
 Update LED to support Dcolour. Now you can set any colour to LED instead of just a few limited presets.
+Changes to crosshair
+Fix start screen version info
 Detect and auto disable if user is running a new version of notification script.
 Improved Invert-tool mode.
 Remove the colour changes for fps counter.

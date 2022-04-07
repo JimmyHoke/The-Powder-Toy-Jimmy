@@ -1414,7 +1414,6 @@ end
 
 local frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function theme()
-if uival == "1" then
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
@@ -1440,7 +1439,6 @@ barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
-if uival == "1" then
 if barval == "1" then
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
@@ -1448,7 +1446,6 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 elseif barval == "2" then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
-end
 end
 end
 --Topbarend
@@ -1523,22 +1520,14 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  --Cross-hair
 if MANAGER.getsetting("CRK", "fancurs") == "1" then 
- if tpt.brushx > 10 and tpt.brushy > 10 then
-graphics.fillRect(tpt.mousex + 1 ,tpt.mousey,6 ,1,220,220,220,255)
-graphics.fillRect(tpt.mousex -6,tpt.mousey,6,1, 220,220,220,255)
-graphics.fillRect(tpt.mousex,tpt.mousey-6,1 ,6,220,220,220,255)
-graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
-end
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,210)
+graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al)
+graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al)
+
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,al-50)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,al-50)
 if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,210)
-end
-graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,ar,ag,ab,255)
-graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, ar,ag,ab,255)
-graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,ar,ag,ab,255)
-graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, ar,ag,ab,255)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,al-50)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,al-50)
 end
 end
 end
@@ -1990,7 +1979,6 @@ event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
 print("Interface will now be out of focus when working in simulation area.")
-
 elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
