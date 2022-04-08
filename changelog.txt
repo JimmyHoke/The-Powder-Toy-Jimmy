@@ -1,4 +1,4 @@
-Changelog for V36.4 (66)
+Changelog for V36.4 (67)
 
 New elements: Napalm and Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
 Update LED to support Dcolour. Now you can set any colour to LED instead of just a few limited presets.
@@ -11,7 +11,7 @@ Add network status indicator.
 Developer mode (do not attempt to use it unless you know what you are doing!).
 Fix some texter fonts and errors.
 Update Maticzpl's notification script.
-refreshes every 5 minutes instead of 10.
+refreshes every 05 minutes instead of 10.
 Notifications now follow themes properly.
 Double the notification check limit to 60 saves.
 Disabling notifications does not require a restart anymore.
