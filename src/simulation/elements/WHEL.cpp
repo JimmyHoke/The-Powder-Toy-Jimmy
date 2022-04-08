@@ -30,7 +30,7 @@ void Element::Element_WHEL()
 	Weight = 100;
 
 	HeatConduct = 0;
-	Description = "Wheel. Use with PSCN and NSCN, .tmp sets wheel size while temp. sets the speed. Deco = spoke colour. Read wiki!";
+	Description = "Wheel. Use with PSCN and NSCN, .tmp sets wheel size while temp. sets the speed. Deco = spoke colourour. Read wiki!";
 
 	Properties = TYPE_SOLID;
 
@@ -57,8 +57,8 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp = 5;
 	if (parts[i].life >= parts[i].temp-273.15f)
 		parts[i].life -= 40;
-
-	if (parts[i].tmp2 > 0)
+	if (parts[i].dcolour == 0|| parts[i].dcolour == 0xFF000000)
+	if (parts[i].dcolour = 0xFFFF0000)
 		parts[i].tmp2 -= 1;
 	if (parts[i].tmp2 > 20)
 		parts[i].tmp2 = 20;
@@ -80,7 +80,7 @@ static int update(UPDATE_FUNC_ARGS)
 				}
 				else if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_NSCN)
 				{
-					parts[i].tmp2 == 0;
+					parts[i].tmp2 = 0;
 					if (parts[i].life > 0)
 					{
 						parts[i].life -= 14;
@@ -93,8 +93,8 @@ static int update(UPDATE_FUNC_ARGS)
 					parts[i].life += 1.0;
 				}
 				}
-	for (int rx = -1*(parts[i].tmp+4); rx <= (parts[i].tmp+4); rx++)
-		for (int ry = -1*(parts[i].tmp+4); ry <= (parts[i].tmp+4); ry++)
+	for (int rx = -1*(parts[i].tmp+8); rx <= (parts[i].tmp+8); rx++)
+		for (int ry = -1*(parts[i].tmp+8); ry <= (parts[i].tmp+8); ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				int r = pmap[y + ry][x + rx];
@@ -112,19 +112,19 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	*colr = ((cpart->dcolour >> 16) & 0xFF);
-	*colg = ((cpart->dcolour >> 8) & 0xFF);
-	*colb = ((cpart->dcolour) & 0xFF);
+	int colourr = ((cpart->dcolour >> 16) & 0xFF);
+	int colourg = ((cpart->dcolour >> 8) & 0xFF);
+	int colourb = ((cpart->dcolour) & 0xFF);
 	int angle = 0;
 	angle = cpart->life/13;
-	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 3, cpart->tmp + 3, *colr, *colg, *colb, 255);
+	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 3, cpart->tmp + 3, colourr, colourg, colourb, 255);
 	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 4, cpart->tmp + 4, 60, 60, 60, 255);
 	ren->drawcircle(cpart->x, cpart->y, cpart->tmp + 5, cpart->tmp + 5, 60, 60, 60, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(angle*cpart->life/13), cpart->y + cpart->tmp * sin(angle*cpart->life/13), *colr, *colg, *colb, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(10+angle*cpart->life/13), cpart->y + cpart->tmp * sin(10+angle*cpart->life/13), *colr, *colg, *colb, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(20 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(20 + angle * cpart->life / 13), *colr, *colg, *colb, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(30 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(30 + angle * cpart->life / 13), *colr, *colg, *colb, 255);
-	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(40 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(40 + angle * cpart->life / 13), *colr, *colg, *colb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(angle*cpart->life/13), cpart->y + cpart->tmp * sin(angle*cpart->life/13), colourr, colourg, colourb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(10+angle*cpart->life/13), cpart->y + cpart->tmp * sin(10+angle*cpart->life/13), colourr, colourg, colourb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(20 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(20 + angle * cpart->life / 13), colourr, colourg, colourb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(30 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(30 + angle * cpart->life / 13), colourr, colourg, colourb, 255);
+	ren->draw_line(cpart->x, cpart->y, cpart->x + cpart->tmp * cos(40 + angle * cpart->life / 13), cpart->y + cpart->tmp * sin(40 + angle * cpart->life / 13), colourr, colourg, colourb, 255);
 	return 0;
 }
 
