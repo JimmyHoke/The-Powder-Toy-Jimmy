@@ -2079,6 +2079,8 @@ end)
 reset2:action(function(sender)
 os.remove("updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
 os.remove("scripts/autorunsettings.txt")
 platform.restart()
@@ -7061,12 +7063,14 @@ chars_light = {
     }
 }
 local function notificationscriptvcheck()
+if MANAGER.getsetting("CRK","notifval") == "1" then
 local fazer =io.open("scripts/downloaded/219 Maticzpl-Notifications.lua","r")
 if fazer ~= nil then 
 io.close(fazer)
 MANAGER.savesetting("CRK","notifval","0")
-print("Notification script detected in scripts folder, turning off the embedded one.")
+print("Notification script detected in scripts folder, Click Reset > Hard to turn on the embedded one.")
 return
+end
 end
 end
 
@@ -7080,7 +7084,7 @@ end
 if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
     return
 end
-
+notificationscriptvcheck()
 MaticzplNotifications = {
     lastTimeChecked = nil,
     fpCompare = nil,
@@ -7299,7 +7303,8 @@ function MaticzplNotifications.OnResponse()
         end
     end
 
-    local success, fpsaves = pcall(json.parse,notif.fpCompare:finish())
+    local fpRes = notif.fpCompare:finish()
+    local success, fpsaves = pcall(json.parse,fpRes)
     if not success then
         print("Error while fetching FP from server.")
         return
