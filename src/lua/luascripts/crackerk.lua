@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 36.4
+local crackversion = 36.5
 local passreal2 = "DMND"
 local motw = "."
 --Default theme for initial launch and resets
