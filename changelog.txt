@@ -1,4 +1,4 @@
-Changelog for V36.4 (63)
+Changelog for V36.4 (66)
 
 New elements: Napalm and Wheel! (spins when powered with PSCN). Set wheel size with .tmp.
 Update LED to support Dcolour. Now you can set any colour to LED instead of just a few limited presets.
@@ -9,8 +9,7 @@ Improved Invert-tool mode.
 Remove the colour changes for fps counter.
 Add network status indicator.
 Developer mode (do not attempt to use it unless you know what you are doing!).
-Fix some texter errors.
-Fix normal texter fonts
+Fix some texter fonts and errors.
 Update Maticzpl's notification script.
 refreshes every 5 minutes instead of 10.
 Notifications now follow themes properly.
