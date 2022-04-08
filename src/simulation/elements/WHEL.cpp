@@ -86,12 +86,27 @@ static int update(UPDATE_FUNC_ARGS)
 						parts[i].life -= 14;
 					}
 				}
+				
 				if (parts[i].tmp2 > 0)
 				{
 					sim->pv[(y / CELL)][(x / CELL)] = parts[i].life/14;
 					parts[i].life += 1.0;
 				}
 				}
+	for (int rx = -1*(parts[i].tmp+4); rx <= (parts[i].tmp+4); rx++)
+		for (int ry = -1*(parts[i].tmp+4); ry <= (parts[i].tmp+4); ry++)
+			if (BOUNDS_CHECK && (rx || ry))
+			{
+				int r = pmap[y + ry][x + rx];
+				if (!r)
+					continue;
+				{
+					if (parts[ID(r)].type == PT_WHEL)
+					{
+						sim->kill_part(ID(r));
+					}
+				}
+			}
 	return 0;
 }
 
@@ -115,6 +130,6 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 
 static void create(ELEMENT_CREATE_FUNC_ARGS) //Default length.
 {
-	sim->parts[i].dcolour = 0xFF0000;
+	sim->parts[i].dcolour = 0xFFFF0000;
 	sim->parts[i].tmp = 8;
 }
