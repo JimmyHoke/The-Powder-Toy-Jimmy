@@ -39,7 +39,7 @@ void Element::Element_JFUL()
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
 	HighTemperature = 403.15f;
-	HighTemperatureTransition = PT_WTRV;
+	HighTemperatureTransition = PT_FUEL;
 
 	DefaultProperties.tmp = 10;
 	Update = &update;
