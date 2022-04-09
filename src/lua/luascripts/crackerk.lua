@@ -714,11 +714,11 @@ reminder:action(function(sender)
 clearsb()
 if MANAGER.getsetting("CRK","notifval") == "0" then
 MANAGER.savesetting("CRK","notifval","1")
+notificationscript()
 event.register(event.tick,MaticzplNotifications.Tick)
 event.register(event.mousemove,MaticzplNotifications.Mouse)
 event.register(event.mousedown,MaticzplNotifications.OnClick)
 event.register(event.mousewheel,MaticzplNotifications.Scroll)
-notificationscript()
 elseif MANAGER.getsetting("CRK","notifval") == "1" then
 MANAGER.savesetting("CRK","notifval","0")
 event.unregister(event.tick,MaticzplNotifications.Tick)

@@ -3,6 +3,7 @@ Changelog for V36.56 (69)
 Fix potential crash when using certain elements near edge
 Fix Whel not stopping once rotated
 Fix Texter errors when reaching max line limit
+Fix error when turning on notifications after a restart
 Update version to 36.6
 
 
