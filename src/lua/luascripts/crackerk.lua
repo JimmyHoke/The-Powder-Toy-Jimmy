@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 36.5
+local crackversion = 36.6
 local passreal2 = "DMND"
 local motw = "."
 --Default theme for initial launch and resets
@@ -843,6 +843,7 @@ local fsize = "Normal"
 local linenumber = 01
 local drawpos = 211
 local drawpos2 = 500
+local disabletype = 0
 
 function drawprev2()
 if yvalue < ylimit then
@@ -853,11 +854,16 @@ elseif ffix == "1" then
 yval2 = 14
 end
 end
+if disabletype == 0 then
 graphics.drawText(10,6,"Tip: Up and Down Arrow keys to change line, Enter to place text.  ||  Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+elseif disabletype == 1 then
+graphics.drawText(10,6,"Max Lines Reached.",255,55,55,255)
+end
 graphics.drawRect(drawpos,363,42,19,32,216,255,255)
 end
 
 function keyclicky23(key23)
+if disabletype == 0 then
 if (key23 == 13) then
 placetext()
 elseif (key23 == 1073741906) and tonumber(linenumber) > 1  then
@@ -878,9 +884,11 @@ linenumber = linenumber + 1
 end
 end
 end
+end
 newmenu4:onKeyPress(keyclicky23)
 
 chud:action(function(sender)
+disabletype = 0
 drawpos = 213
 tpt.set_pause(1)
 tr = 255
@@ -1005,6 +1013,7 @@ yvalue = 10
 yval2= 10
 ffix2 = "0"
 linenumber = "1"
+disabletype = 0
 texttext = "Screen Cleared"
 sim.clearSim()
 ui.closeWindow(newmenu4)
@@ -1094,7 +1103,7 @@ text = textTextbox:text()
 
 end
 if yvalue >= ylimit then
-linenumber = "Max lines reached!"
+disabletype = 1
 end
 end 
 place:action(function(sender)
@@ -6425,7 +6434,7 @@ chars_light = {
             {3, 1, 0, 0, 0, 3},
             {3, 3, 0, 0, 0, 3},
             {3, 1, 3, 0, 0, 3},
-            {3, 0, 2, 2, 0, 3},
+            {3, 0, 2, 3, 0, 3},
             {3, 0, 0, 3, 1, 3},
             {3, 0, 0, 0, 3, 3},
             {3, 0, 0, 0, 1, 3}
@@ -6545,7 +6554,7 @@ chars_light = {
             {3, 1, 0, 0, 0},
             {1, 3, 3, 3, 0},
             {0, 0, 1, 2, 3},
-            {2, 0, 0, 1, 3},
+            {3, 0, 0, 1, 3},
             {2, 3, 3, 3, 1}
         }
     },
@@ -6590,8 +6599,8 @@ chars_light = {
             {3, 0, 0, 0, 0, 3},
             {3, 0, 0, 0, 0, 3},
             {3, 0, 0, 0, 1, 3},
-            {3, 2, 0, 1, 3, 1},
-            {1, 3, 3, 3, 1, 0}
+            {3, 2, 0, 1, 1, 3},
+            {1, 3, 3, 3, 3, 0}
         }
     },
     ["u"] = {

@@ -138,7 +138,7 @@ static int update(UPDATE_FUNC_ARGS)
 
 	for (int rx = -70; rx < 70; rx++)
 		for (int ry = -30; ry < 5; ry++)
-			if (BOUNDS_CHECK && (rx || ry))
+			if (x + rx >= 0 && y + ry >= 0 && x + rx < XRES && y + ry < YRES && (rx || ry))
 			{
 				int r = pmap[y + ry][x + rx];
 				if (!r)

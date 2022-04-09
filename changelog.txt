@@ -1,5 +1,9 @@
-Changelog for V36.5 (68)
-Fix Wheel losing it's default decoration upon reloading
-Place checks to prevent creatiion of multiple wheels in the same location.
+Changelog for V36.56 (69)
+
+Fix potential crash when using certain elements near edge
+Fix Whel not stopping once rotated
+Fix Texter errors when reaching max line limit
+Update version to 36.6
+
 
  
