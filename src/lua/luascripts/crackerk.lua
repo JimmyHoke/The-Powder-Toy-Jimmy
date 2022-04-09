@@ -1,5 +1,6 @@
---cracker1000 mod script v9.0--
+--Cracker1000 mod interface script--
 local passreal = "12345678"
+local crackversion = 36.6
 local passreal2 = "DMND"
 local motw = "."
 --Default theme for initial launch and resets
@@ -88,8 +89,6 @@ local bg = Button:new(203,92,80,25,"Mod Elem.", "")
 
 local mp = Button:new(203,124,80,25,"Control Centre", "Changes game's theme")
 
-
-
 local autohide = Button:new(203,156,80,25, "Auto Hide HUD", "Hide.")
 
 local chud = Button:new(203,188,80,25, "Texter", "for text.")
@@ -110,34 +109,27 @@ local perfm = Button:new(396,156,80,25, "Performance", "For lower spec systems."
 
 local passbut = Button:new(396,188,80,25, "Password", "Secure password protection.")
 
-local reminder = Button:new(396,220,80,25, "Reminder", "reminds after 30 mins.")
-local remtime = Textbox:new(486, 223, 20, 20, '', '10')
-local remlabel21 = Label:new(538, 205, 20, 15, "1-60 Mins.")
-remtime:text("10")
-local remon2 = Button:new(516,223,30,20,"Set", "Save.")
-local remoff  = Button:new(546,223,30,20,"Off", "Cancel.")
+local reminder = Button:new(396,220,80,25, "Notifications", "Maticzpl's notification stuff")
+local reminderhelp = Button:new(506,224,15,15, "?", "Help")
 
 local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
 
 local hide= Button:new(578,5,25,25, "X", "Hide.")
 
-
 --Varoius Variables
 local borderval = "0"
 local rulval = "1"
-local remval2 = "0"
 local timermp = 0
 local perfmv = "1"
 local fpsval = "1"
 local startTime
 local entimey
-local remval = "0"
 local endTime = 0
 local autoval = "1"
 local hidval = "1"
 local shrtv = "1"
 local invtoolv = "1"
-local focustime = 180
+local focustime = 190
 
 function clearm()
 newmenu:removeComponent(reset)
@@ -162,6 +154,7 @@ newmenu:removeComponent(edito)
 newmenu:removeComponent(perfm)
 newmenu:removeComponent(passbut)
 newmenu:removeComponent(upmp)
+newmenu:removeComponent(reminderhelp)
 end
 
 function clearsb()
@@ -173,17 +166,11 @@ newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brightSlider)
-newmenu:removeComponent(remon2)
-newmenu:removeComponent(remoff)
-newmenu:removeComponent(remtime)
-newmenu:removeComponent(remlabel21) 
 newmenu:removeComponent(barkon)
 newmenu:removeComponent(barkoff)
 newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
-remval2 = "0"
 end
-
 
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
@@ -203,7 +190,7 @@ f:write(ret)
 f:close()
 dofile("updatedmp.lua")
 updatedmpval = "1"
-print("Multiplayer Updated Successfully.")
+print("Multiplayer Script has been updated to match latest version.")
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 event.unregister(event.tick,writefile)
@@ -217,6 +204,7 @@ end
 local timermotd = 0
 local timeplus = 240
 local posix = 0
+local onlinestatus = 0 
 
 function writefile2()
 timermotd = timermotd + 1
@@ -227,8 +215,28 @@ if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
 motw = ret2
-
+onlinestatus = 1 
 if motw ~= "." then
+if motw == "lock" then
+local lockmenu = Window:new(100,150, 330, 70)
+local lockclose = Button:new(311,2,15,15,"X", "Close.")
+lockmenu:addComponent(lockclose)
+local function drawlocktext()
+graphics.drawText(110,155,"Level 2 Message: The Cracker1000's Mod has been locked.",255,0,0,255)
+graphics.drawText(110,172,"Please update to a newer version using forum thread links.\nContact @Cracker1000 if the problem persists.\n\nClick the X button to open forum thread.",255,255,255,255)
+end
+local function lockedmod()
+ui.showWindow(lockmenu)
+lockmenu:onDraw(drawlocktext)
+end
+tpt.register_step(lockedmod)
+lockclose:action(function(sender)
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+os.exit()
+end)
+
+end
+
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
@@ -356,30 +364,33 @@ end)
 end)
 
 function inverttool()
-if tpt.selectedl == "DEFAULT_TOOL_HEAT" then
+local selc = tpt.selectedl
+if selc == "DEFAULT_TOOL_HEAT" then
 tpt.selectedr = "DEFAULT_TOOL_COOL"
-elseif tpt.selectedl == "DEFAULT_TOOL_COOL" then
+elseif selc == "DEFAULT_TOOL_COOL" then
 tpt.selectedr = "DEFAULT_TOOL_HEAT"
-elseif tpt.selectedl == "DEFAULT_TOOL_AIR" then
+elseif selc == "DEFAULT_TOOL_AIR" then
 tpt.selectedr = "DEFAULT_TOOL_VAC"
-elseif tpt.selectedl == "DEFAULT_TOOL_VAC" then
+elseif selc == "DEFAULT_TOOL_VAC" then
 tpt.selectedr = "DEFAULT_TOOL_AIR"
-elseif tpt.selectedl == "DEFAULT_TOOL_PGRV" then
+elseif selc == "DEFAULT_TOOL_PGRV" then
 tpt.selectedr = "DEFAULT_TOOL_NGRV"
-elseif tpt.selectedl == "DEFAULT_TOOL_NGRV" then
+elseif selc == "DEFAULT_TOOL_NGRV" then
 tpt.selectedr = "DEFAULT_TOOL_PGRV"
-elseif tpt.selectedl == "DEFAULT_TOOL_AMBM" then
+elseif selc == "DEFAULT_TOOL_AMBM" then
 tpt.selectedr = "DEFAULT_TOOL_AMBP"
-elseif tpt.selectedl == "DEFAULT_TOOL_AMBP" then
+elseif selc == "DEFAULT_TOOL_AMBP" then
 tpt.selectedr = "DEFAULT_TOOL_AMBM"
-elseif tpt.selectedl == "DEFAULT_TOOL_AMBP" then
+elseif selc == "DEFAULT_TOOL_AMBP" then
 tpt.selectedr = "DEFAULT_TOOL_AMBM"
-elseif tpt.selectedl == "DEFAULT_UI_WIND" then
+elseif selc == "DEFAULT_UI_WIND" then
 tpt.selectedr = "DEFAULT_TOOL_CYCL"
-elseif tpt.selectedl == "DEFAULT_TOOL_CYCL" then
+elseif selc == "DEFAULT_TOOL_CYCL" then
 tpt.selectedr = "DEFAULT_UI_WIND"
+elseif selc == "DEFAULT_WL_ERASE" or selc == "DEFAULT_WL_DTECT" or selc == "DEFAULT_WL_CNDT" or selc == "DEFAULT_WL_EWALL" or selc == "DEFAULT_WL_STRM"  or selc == "DEFAULT_WL_FAN" or selc == "DEFAULT_WL_LIQD" or selc == "DEFAULT_WL_ABSRB" or selc == "DEFAULT_WL_WALL" or selc ==" DEFAULT_WL_AIR" or selc =="DEFAULT_WL_POWDR" or selc =="DEFAULT_WL_CNDTR" or selc =="DEFAULT_WL_EHOLE" or selc =="DEFAULT_WL_GAS" or selc =="DEFAULT_WL_GRVTY" or selc =="DEFAULT_WL_ENRGY" or selc =="DEFAULT_WL_NOAIR" or selc =="DEFAULT_WL_STASIS"  or selc =="DEFAULT_WL_CNDTW" then
+tpt.selectedr = "DEFAULT_WL_ERASE"
 else
-tpt.selectedr = "DEFAULT_WL_ERASEA"
+tpt.selectedr = "DEFAULT_PT_NONE"
 end
 end
 
@@ -402,6 +413,7 @@ if perfmv == "1" then
 tpt.setdrawcap(30)
 event.unregister(event.tick,theme)
 tpt.display_mode(7)
+print("Themes are disabled because performance mode is on.")
 perfmv = "0"
 else
 perfmv = "1"
@@ -694,51 +706,31 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2803438)
+randsav = math.random(1,2880229)
 sim.loadSave(randsav, 0) 
 end)
 
-function remindme()
-endTime = startTime + tonumber(entimey)*60
-if os.time() >= endTime then
-event.unregister(event.tick,remindme)
-remval = "0"
-tpt.message_box("Activity Reminder!","Simulation has been paused to save resources.                            Click dismiss to continue.")
-end
-end
-
 reminder:action(function(sender)
 clearsb()
-remval2 = "1"
-newmenu:addComponent(remon2)
-newmenu:addComponent(remtime)
-newmenu:addComponent(remoff)
-newmenu:addComponent(remlabel21)
-end)
-
-remon2:action(function(sender)
-clearsb()
-startTime = os.time()
-if tonumber(remtime:text()) < 1 or tonumber(remtime:text()) > 60 then
-entimey = "10"
-remtime:text("10")
-else
-entimey = tonumber(remtime:text())
+if MANAGER.getsetting("CRK","notifval") == "0" then
+MANAGER.savesetting("CRK","notifval","1")
+notificationscript()
+event.register(event.tick,MaticzplNotifications.Tick)
+event.register(event.mousemove,MaticzplNotifications.Mouse)
+event.register(event.mousedown,MaticzplNotifications.OnClick)
+event.register(event.mousewheel,MaticzplNotifications.Scroll)
+elseif MANAGER.getsetting("CRK","notifval") == "1" then
+MANAGER.savesetting("CRK","notifval","0")
+event.unregister(event.tick,MaticzplNotifications.Tick)
+event.unregister(event.mousemove,MaticzplNotifications.Mouse)
+event.unregister(event.mousedown,MaticzplNotifications.OnClick)
+event.unregister(event.mousewheel,MaticzplNotifications.Scroll)
 end
-event.unregister(event.tick,remindme)
-event.register(event.tick,remindme)
-newmenu:removeComponent(remoff)
-newmenu:removeComponent(remlabel21)
-remval = "1"
 end)
 
-remoff:action(function(sender)
-clearsb()
-event.unregister(event.tick,remindme)
-newmenu:removeComponent(remlabel21)
-newmenu:removeComponent(remon2)
-newmenu:removeComponent(remoff)
-remval = "0"
+reminderhelp:action(function(sender)
+close()
+tpt.message_box(" Notification feature help", "Turning it on will notify you when:\n*There's a new vote or comment on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 5 minutes and works for first 60 saves (by votes + by dates).\n\nYou need to be logged in.\n\nCredit: @Maticzpl")
 end)
 
 function cbrightness()
@@ -851,6 +843,7 @@ local fsize = "Normal"
 local linenumber = 01
 local drawpos = 211
 local drawpos2 = 500
+local disabletype = 0
 
 function drawprev2()
 if yvalue < ylimit then
@@ -861,18 +854,41 @@ elseif ffix == "1" then
 yval2 = 14
 end
 end
-graphics.drawText(10,6,"Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+if disabletype == 0 then
+graphics.drawText(10,6,"Tip: Up and Down Arrow keys to change line, Enter to place text.  ||  Font: "..fsize..", Line No: "..linenumber,255,255,255,255)
+elseif disabletype == 1 then
+graphics.drawText(10,6,"Max Lines Reached.",255,55,55,255)
+end
 graphics.drawRect(drawpos,363,42,19,32,216,255,255)
 end
 
 function keyclicky23(key23)
+if disabletype == 0 then
 if (key23 == 13) then
 placetext()
+elseif (key23 == 1073741906) and tonumber(linenumber) > 1  then
+if ffix == "1" then
+yvalue = yvalue - 14
+linenumber = linenumber - 1
+elseif ffix == "0" then
+yvalue = yvalue - 10
+linenumber = linenumber - 1
+end
+elseif (key23 == 1073741905) and tonumber(linenumber) < 31 then
+if ffix == "1" then
+yvalue = yvalue + 14
+linenumber = linenumber + 1
+elseif ffix == "0" then
+yvalue = yvalue + 10
+linenumber = linenumber + 1
+end
+end
 end
 end
 newmenu4:onKeyPress(keyclicky23)
 
 chud:action(function(sender)
+disabletype = 0
 drawpos = 213
 tpt.set_pause(1)
 tr = 255
@@ -899,8 +915,8 @@ local lno2  = Label:new(180, 20, 10, 17, "Fonts:")
 local smalf = Button:new(210,20,40,17,"Normal", "5x7.")
 local bigf = Button:new(262,20,40,17,"Title", "7x10.")
 local titf = Button:new(314,20,40,17,"Bold", "7x10, Bold")
-local clrsc = Button:new(448,20,84,17,"Clear Textbox", "Clear text")
-local clrsc2 = Button:new(536,20,65,17,"Clear Screen", "Clear text")
+local clrsc = Button:new(448,20,80,17,"Clear Textbox", "Clear text")
+local clrsc2 = Button:new(536,20,60,17,"Clear Screen", "Clear text")
 local titf2 = Button:new(366,20,40,17,"Real.", "7x10, Bold")
 
 newmenu4:addComponent(textTextbox)
@@ -997,6 +1013,7 @@ yvalue = 10
 yval2= 10
 ffix2 = "0"
 linenumber = "1"
+disabletype = 0
 texttext = "Screen Cleared"
 sim.clearSim()
 ui.closeWindow(newmenu4)
@@ -1086,7 +1103,7 @@ text = textTextbox:text()
 
 end
 if yvalue >= ylimit then
-linenumber = "Max lines reached!"
+disabletype = 1
 end
 end 
 place:action(function(sender)
@@ -1221,9 +1238,9 @@ local nextpg = Button:new(342, 400, 40, 15, "Next")
 local close2 = Button:new(570, 400, 50, 15, "Close")
 
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
-local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp sets the brightness.\n    Different .tmp2 modes: 0 = white, 1= red, 2= green, 3 =blue, 4= yellow, 5 = pink and 6 = Flash mode.\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
+local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C."
+local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows green) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1232,7 +1249,7 @@ creditw:addComponent(prevpg)
 function drawwikitext()
 local wcontent
 if pgno == 1 then
-gfx.drawText(250,8,"Welcome To In Game WIKI",255,255,55,255)
+gfx.drawText(250,8,"Welcome To The WIKI",255,255,55,255)
 wcontent = wpage1
 elseif pgno == 2 then
 wcontent = wpage2
@@ -1316,6 +1333,8 @@ tpt.el.elex.menu=0
 tpt.el.radn.menu=0
 tpt.el.grph.menu=0
 tpt.el.base.menu=0
+tpt.el.whel.menu=0
+tpt.el.napm.menu=0
 end
 
 function showmodelem()
@@ -1364,6 +1383,8 @@ tpt.el.elex.menu=1
 tpt.el.radn.menu=1
 tpt.el.grph.menu=1
 tpt.el.base.menu=1
+tpt.el.whel.menu=1
+tpt.el.napm.menu=1
 end
 local modelemval = "0"
 bg:action(function(sender)
@@ -1409,7 +1430,6 @@ end
 
 local frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function theme()
-if uival == "1" then
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
@@ -1426,8 +1446,8 @@ al = brightSlider:value()
 end
 --Borders
 if borderval == "1" then
-tpt.drawrect(3,3,605,377,ar,ag,ab,al)
 tpt.drawrect(2,2,607,379,ar,ag,ab,al)
+tpt.drawrect(1,1,609,381,ar,ag,ab,al)
 end
 --Topbar
 if borderval ~= "1" then
@@ -1435,7 +1455,6 @@ barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
-if uival == "1" then
 if barval == "1" then
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
@@ -1443,7 +1462,6 @@ end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 elseif barval == "2" then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
-end
 end
 end
 --Topbarend
@@ -1518,22 +1536,13 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  --Cross-hair
 if MANAGER.getsetting("CRK", "fancurs") == "1" then 
- if tpt.brushx > 10 and tpt.brushy > 10 then
-graphics.fillRect(tpt.mousex + 1 ,tpt.mousey,6 ,1,220,220,220,255)
-graphics.fillRect(tpt.mousex -6,tpt.mousey,6,1, 220,220,220,255)
-graphics.fillRect(tpt.mousex,tpt.mousey-6,1 ,6,220,220,220,255)
-graphics.fillRect(tpt.mousex,tpt.mousey,1 ,6,220,220,220,255)
-end
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,210)
+graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
+graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,al)
 if tpt.brushx > 0 or tpt.brushy > 0 then
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,210)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,210)
-end
-graphics.fillRect(tpt.mousex + 2 + tpt.brushx,tpt.mousey,6 ,1,ar,ag,ab,255)
-graphics.fillRect(tpt.mousex - 7 -  tpt.brushx,tpt.mousey,6,1, ar,ag,ab,255)
-graphics.fillRect(tpt.mousex,tpt.mousey -7- tpt.brushy,1 ,6,ar,ag,ab,255)
-graphics.fillRect(tpt.mousex,tpt.mousey+2+ tpt.brushy,1 ,6, ar,ag,ab,255)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,al)
 end
 end
 end
@@ -1556,13 +1565,12 @@ local bg4 = Button:new(174,300,45,20,"Green", "Green background")
 local bg5 = Button:new(224,300,45,20,"Orange", "Yellow background")
 local bg6 = Button:new(274,300,45,20,"Theme", "Same as set theme")
 
-local bg7 = Button:new(598,3,6,6,"`", "Disable inbuilt scripts")
+local bog1 = Button:new(24,333,60,25,"Cross-Hair", "Draw Cross-hair")
 
-local bog1 = Button:new(24,330,60,30,"Cross-Hair", "Draw Cross-hair")
+local bogb1 = Button:new(124,333,60,25,"Borders", "Draw Borders")
 
-local bogb1 = Button:new(175,330,60,30,"Borders", "Draw Borders")
-
-local jkey = Button:new(326,330,60,30,"J-Shortcut", "Toggle Shortcut")
+local jkey = Button:new(224,333,60,25,"J-Shortcut", "Toggle Shortcut")
+local bg7 = Button:new(324,333,60,25,"Developer", "Disable inbuilt scripts")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
@@ -1600,10 +1608,10 @@ blb:text(bclr)
 aclr = aSlider:value() 
 alb:text(aclr)
 end
-
+local adminval = 0
 function drawprev()
 local barstat = "Long"
-graphics.drawText(255,7, "Welcome to the Control Centre",255,255,255,255)
+graphics.drawText(255,7, "Welcome to the Control Centre V"..crackversion,255,255,255,255)
 graphics.drawRect(20,38,573,26,255,255,255,255)
 graphics.drawText(321,173, "Red",255,0,0,255)
 graphics.drawText(321,194, "Green",0,255,0,255)
@@ -1611,7 +1619,14 @@ graphics.drawText(321,215, "Blue",0,0,255,255)
 if MANAGER.getsetting("CRK", "brightstate") == "1" then 
 graphics.drawText(25,152, "Brightness setting is turned on, alpha slider not available",255,55,55,255)
 end
-
+if adminval == 1 then
+graphics.fillRect(321,330,160,31,255,40,40,210)
+graphics.drawRect(320,330,160,32,255,0,0,255)
+graphics.drawText(333,315,"Warning: Proceed at your own risk!",255,5,5,255)
+elseif adminval == 2 then
+graphics.fillRect(320,330,160,32,40,255,40,210)
+graphics.drawText(333,315,"Select the script to disable:",40,255,40,210)
+end
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barstat = "Off"
 elseif MANAGER.getsetting("CRK", "barval") == "1" then
@@ -1630,16 +1645,17 @@ graphics.drawText(90,342, "ON",105,255,105,255)
 else
 graphics.drawText(90,342, "OFF",255,105,105,255)
 end
-if shrtv == "1" then
-gfx.drawText(392,342,"ON",105,255,105,255)
-else
-gfx.drawText(392,342,"OFF",255,105,105,255)
-end
 if borderval == "1" then
-graphics.drawText(242,342, "ON",105,255,105,255)
+graphics.drawText(190,342, "ON",105,255,105,255)
 else
-graphics.drawText(242,342, "OFF",255,105,105,255)
+graphics.drawText(190,342, "OFF",255,105,105,255)
 end
+if shrtv == "1" then
+gfx.drawText(290,342,"ON",105,255,105,255)
+else
+gfx.drawText(290,342,"OFF",255,105,105,255)
+end
+
 tpt.drawrect(65,283,10,10,backvr,backvg,backvb,255)
 tpt.fillrect(65,283,10,10,backvr,backvg,backvb,100)
 
@@ -1719,7 +1735,6 @@ aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
-
 
 bog1:action(function(sender)
 if MANAGER.getsetting("CRK", "fancurs") == "0" then 
@@ -1853,10 +1868,43 @@ clearback()
 end)
 
 bg7:action(function(sender)
-local fdlf3 = io.open('deleteme.txt', 'w')
-fdlf3:write("Message from Cracker1000: This file disables the inbuilt scripts in Cracker1000's Mod, delete this and then restart to make it load scripts again.")
+adminval = 1
+local adminpass = Textbox:new(390, 336, 55, 20, '', 'Password..')
+local admincan = Button:new(450,336,20,20,"X", "cancle admin mode")
+newmenuth:removeComponent(adminpass)
+newmenuth:addComponent(adminpass)
+newmenuth:removeComponent(admincan)
+newmenuth:addComponent(admincan)
+admincan:action(function(sender)
+newmenuth:removeComponent(adminpass)
+newmenuth:removeComponent(admincan)
+adminval = 0
+end)
+adminpass:onTextChanged(function(sender)
+if adminpass:text() == "911" then
+adminval = 2
+newmenuth:removeComponent(bg7)
+newmenuth:removeComponent(adminpass)
+newmenuth:removeComponent(admincan)
+local admincan1 = Button:new(325,336,70,20,"Crackerk.lua", "Disable crackerk.lua")
+local admincan2 = Button:new(400,336,70,20,"All scripts","Disable all embedded scripts")
+newmenuth:addComponent(admincan1)
+newmenuth:addComponent(admincan2)
+admincan1:action(function(sender)
+local fdlf3 = io.open('dlf3.txt', 'w')
 fdlf3:close()
+local fdlf3at = io.open('autorun.lua', 'w')
+fdlf3at:close()
 platform.restart()
+end)
+admincan2:action(function(sender)
+local fdlf3a = io.open('deleteme.txt', 'w')
+fdlf3a:write("Message from Cracker1000: This file disables the embedded scripts in Cracker1000's Mod, delete this file and then restart to make it load the scripts again.")
+fdlf3a:close()
+platform.restart()
+end)
+end
+end)
 end)
 
 baropa:action(function(sender)
@@ -1901,7 +1949,9 @@ if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 hidval = "0"
 end
-
+if MANAGER.getsetting("CRK","notifval") == nil then
+MANAGER.savesetting("CRK","notifval","1")
+end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
 event.register(event.tick,cbrightness)
@@ -1924,16 +1974,14 @@ end
 end)
 
 function UIhide()
-if focustime < 180 then
+if focustime < 190 then
 focustime = focustime + 2
 end
-
 if tpt.mousey > 380 or tpt.mousex > 610 then
 if focustime > 15 then
 focustime = focustime - 7
 end
 end
-
 tpt.fillrect(-1,382,616,42,0,0,0,focustime)
 tpt.fillrect(612,0,17,424,0,0,0,focustime)
 end
@@ -1945,8 +1993,7 @@ event.unregister(event.tick,UIhide)
 event.register(event.tick,UIhide)
 tpt.hud(0)
 uival = "0"
-print("Interface will now be out of focus when working in simulation area")
-
+print("Interface will now be out of focus when working in simulation area.")
 elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
@@ -1974,7 +2021,6 @@ end)
 
 reset1:action(function(sender)
 close()
-remval = "0"
 timerremo()
 timeplus = 255
 backvr = 0
@@ -1994,12 +2040,10 @@ barval = "2"
 borderval = "0" 
 savetime = 0
 barktext:text("5")
-remtime:text("10")
 showmodelem()
 event.unregister(event.tick,writefile)
 event.unregister(event.tick,showmotdnot)
 event.unregister(event.tick,autosave)
-event.unregister(event.tick,remindme)
 event.unregister(event.tick,backg)
 event.unregister(event.tick,inverttool)
 event.unregister(event.tick,cbrightness)
@@ -2022,6 +2066,7 @@ MANAGER.savesetting("CRK","ar",dr)
 MANAGER.savesetting("CRK","ag",dg)
 MANAGER.savesetting("CRK","ab",db)
 MANAGER.savesetting("CRK", "savergb",0)
+MANAGER.savesetting("CRK", "notifval","1")
 tpt.hud(1)
 hideyes()
 tpt.display_mode(3)
@@ -2043,6 +2088,8 @@ end)
 reset2:action(function(sender)
 os.remove("updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
 os.remove("scripts/autorunsettings.txt")
 platform.restart()
@@ -2082,7 +2129,12 @@ end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 cbrightness()
 end
-gfx.drawText(12,7,"Welcome to Mod Settings. Tip: 'J' Key can be used as a shortcut to open and close the menu.",255,255,255,255) --Intro message
+gfx.drawText(12,7,"Welcome to Mod Settings. Tip: 'J' Key can be used as a shortcut to open and close the menu. Status:",255,255,255,255) --Intro message
+if onlinestatus == 1 then --Online status
+gfx.drawText(498,7,"Online",95,255,95,255)
+else
+gfx.drawText(498,7,"Offline",255,95,95,255)
+end
 if uival == "0" then --Focus Mode
 gfx.drawText(98,37,"ON",105,255,105,255)
 else
@@ -2123,7 +2175,7 @@ gfx.drawText(291,229,"ON",105,255,105,255)
 else
 gfx.drawText(291,229,"OFF",255,105,105,255)
 end
-if perfmv == "0" then --Performace
+if perfmv == "0" then --Performance
 gfx.drawText(484,165,"ON",105,255,105,255)
 else
 gfx.drawText(484,165,"OFF",255,105,105,255)
@@ -2133,15 +2185,13 @@ gfx.drawText(484,197,"ON",105,255,105,255)
 else
 gfx.drawText(484,197,"OFF",255,105,105,255)
 end
-if remval2 == "0" then
-if remval == "1" then --Reminder
-gfx.drawText(484,229,"ON ("..entimey.." min.)",105,255,105,255)
+if MANAGER.getsetting("CRK","notifval") == "1" then --Notifications
+gfx.drawText(484,229,"ON",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
-end
 if updatedmpval == "1" then --Multiplayer script status
-gfx.drawText(484,37,"New Ver.",105,255,105,255)
+gfx.drawText(484,37,"Updated",105,255,105,255)
 else
 gfx.drawText(484,37,"Stock",105,255,105,255)
 end
@@ -2188,6 +2238,7 @@ newmenu:addComponent(edito)
 newmenu:addComponent(perfm)
 newmenu:addComponent(passbut)
 newmenu:addComponent(upmp)
+newmenu:addComponent(reminderhelp)
 end
 
 hide:action(function(sender)
@@ -6108,7 +6159,7 @@ chars_light = {
     },
     ["B"] = {
         matrix = {
-            {3, 3, 3, 2, 0},
+            {3, 3, 3, 3, 0},
             {3, 0, 0, 2, 3},
             {3, 0, 0, 1, 3},
             {3, 3, 3, 3, 1},
@@ -6371,7 +6422,7 @@ chars_light = {
         matrix = {
             {0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0},
-            {3, 2, 1, 2, 1},
+            {1, 3, 1, 3, 1},
             {3, 1, 3, 1, 3},
             {3, 0, 3, 0, 3},
             {3, 0, 2, 0, 3},
@@ -6383,7 +6434,7 @@ chars_light = {
             {3, 1, 0, 0, 0, 3},
             {3, 3, 0, 0, 0, 3},
             {3, 1, 3, 0, 0, 3},
-            {3, 0, 2, 2, 0, 3},
+            {3, 0, 2, 3, 0, 3},
             {3, 0, 0, 3, 1, 3},
             {3, 0, 0, 0, 3, 3},
             {3, 0, 0, 0, 1, 3}
@@ -6503,7 +6554,7 @@ chars_light = {
             {3, 1, 0, 0, 0},
             {1, 3, 3, 3, 0},
             {0, 0, 1, 2, 3},
-            {2, 0, 0, 1, 3},
+            {3, 0, 0, 1, 3},
             {2, 3, 3, 3, 1}
         }
     },
@@ -6548,8 +6599,8 @@ chars_light = {
             {3, 0, 0, 0, 0, 3},
             {3, 0, 0, 0, 0, 3},
             {3, 0, 0, 0, 1, 3},
-            {3, 2, 0, 1, 3, 1},
-            {1, 3, 3, 3, 1, 0}
+            {3, 2, 0, 1, 1, 3},
+            {1, 3, 3, 3, 3, 0}
         }
     },
     ["u"] = {
@@ -6999,13 +7050,13 @@ chars_light = {
     },
     ["/"] = {
         matrix = {
-            {0, 0, 0, 2, 2},
+            {0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 3},
             {0, 0, 0, 3, 0},
-            {0, 0, 2, 2, 0},
             {0, 0, 3, 0, 0},
-            {0, 2, 2, 0, 0},
-            {0, 3, 0, 0, 0},
-            {2, 2, 0, 0, 0}
+			{0, 3, 0, 0, 0},
+            {3, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
         }
     },
     ["?"] = {
@@ -7020,3 +7071,601 @@ chars_light = {
         }
     }
 }
+local function notificationscriptvcheck()
+if MANAGER.getsetting("CRK","notifval") == "1" then
+local fazer =io.open("scripts/downloaded/219 Maticzpl-Notifications.lua","r")
+if fazer ~= nil then 
+io.close(fazer)
+MANAGER.savesetting("CRK","notifval","0")
+print("Notification script detected in scripts folder, Click Reset > Hard to turn on the embedded one.")
+return
+end
+end
+end
+
+function notificationscript()
+notificationscriptvcheck()
+-- Prevent multiple instances of the script running
+if MaticzplNotifications ~= nil then
+    return
+end
+
+if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
+    return
+end
+notificationscriptvcheck()
+MaticzplNotifications = {
+    lastTimeChecked = nil,
+    fpCompare = nil,
+    requests = {},
+    saveCache = {},
+    notifications = {},
+    hoveringOnButton = false,
+    windowOpen = false,
+    scrolled = 0,
+    version = 1
+}
+
+local json = {}
+local notif = MaticzplNotifications
+local MANAGER = rawget(_G, "MANAGER")    
+local colorR, colorG, colorB, colorA = 148,148,148,200 --Default colours
+
+local function getcrackertheme() -- Reserved for Cracker1000's Mod
+	colorR = ar
+	colorG = ag
+	colorB = ab
+	colorA = al
+end --End
+
+--Ik this code is awful but interface from tpt api is very limiting
+local mouseX = 0
+local mouseY = 0
+local justClicked = false
+local holdingScroll = false
+local scrollLimit = 0
+function MaticzplNotifications.DrawMenuContent()
+    local function hover(x,y,dx,dy)       
+        mouseX = x
+        mouseY = y        
+    end
+    local function click(x,y,button)
+        -- inside window
+        if x > 418 and y > 250 and x < 418 + 193 and y < 250 + 155 and notif.windowOpen then
+            justClicked = true
+            
+            if x > 418 and x < 418 + 12 and y > 261 and y < 250 + 155 then
+                holdingScroll = true
+            end
+            return false
+        end
+    end
+    local function unclick(x,y,button,reason)
+        justClicked = false
+        holdingScroll = false
+    end
+    --Notification Banner
+	gfx.fillRect(418,238,193,11,colorR, colorG, colorB, colorA)
+	gfx.drawText(480,240,"Notification panel",255,255,255,tonumber(colorA)+50)
+	
+    --Window
+    gfx.fillRect(418,250,193,155,0,0,0,200)
+    gfx.drawRect(418,250,193,155,colorR, colorG, colorB, colorA)
+
+    --Exit button
+    local exitIsHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 250 and mouseY < 250 + 12 and notif.windowOpen
+    if exitIsHovering then
+        gfx.fillRect(418,250,12,12,128,128,128,colorA)      
+    end
+    gfx.drawRect(418,250,12,12,colorR, colorG, colorB, colorA)
+    gfx.drawText(418+3,250+2,"X")
+
+    --Read All button
+    local readAllHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 261 and mouseY < 261 + 12 and notif.windowOpen
+    if readAllHovering then
+        gfx.fillRect(418,261,12,12,128,128,128)        
+    end
+    gfx.drawRect(418,261,12,12,colorR, colorG, colorB, colorA) 
+    gfx.drawText(418+4,261+2,"A")
+    
+    --Scroll Bar
+    local scrollY = 275
+    local scrollFieldHeight = 250 + 155 - scrollY
+    local barRatio = math.min(1 - (scrollLimit * -5 / 155),1)
+    local barHeight = math.max(scrollFieldHeight * barRatio,10)
+    if holdingScroll and barHeight + scrollY ~= 404 and scrollLimit ~= 0 then
+        -- Wolfram alpha saved me here xd
+        notif.scrolled = (scrollLimit*(-(mouseY - barHeight/2) + scrollY - 1)) / (barHeight + scrollY - 404)
+    end
+    
+    if notif.scrolled > 0 then
+        notif.scrolled = 0
+    end    
+    if notif.scrolled < scrollLimit then
+        notif.scrolled = scrollLimit
+    end
+    if scrollLimit ~= 0 then      
+        local scrollFraction = notif.scrolled / scrollLimit
+        local barPos = scrollY + ((250 + 154 - barHeight - scrollY) * scrollFraction) - 1
+        gfx.fillRect(420,barPos,8,barHeight,colorR, colorG, colorB, colorA)
+    else
+        gfx.fillRect(420,scrollY - 1,8,155 - 26, colorR, colorG, colorB, colorA)  
+    end    
+    
+    --Vertical line
+    gfx.drawLine(418+11,250,418+11,250 + 154,colorR, colorG, colorB, colorA)
+    
+    local y = 252 + notif.scrolled * 5
+    local lastTitleY = y
+    
+    for i, n in ipairs(notif.notifications) do      
+        local prev = notif.notifications[i-1]
+        
+        local saveID = n.save
+        local title = n.title
+        local msg = n.message
+        
+        --Group title
+        if prev == nil or prev.title ~= title then
+            lastTitleY = y
+            if y >= 252 and y <= 250+155 - 10 then         
+                gfx.drawLine(418+12,y - 2,418 + 192,y - 2,colorR,colorG,colorB,colorA)     
+                gfx.drawText(418+15,y,title)
+            end
+            local sx,sy = gfx.textSize(title)
+            y = y + sy
+        end
+        --Message
+        if y >= 252 and y <= 250+155 - 10 then         
+            gfx.drawText(418+22,y,msg,200,200,200)    
+        end    
+        local sx,sy = gfx.textSize(msg)
+        y = y + sy
+        
+        local next = notif.notifications[i+1]
+        if next == nil or next.title ~= title then
+            if mouseX > 418 + 12 and mouseX < 418 + 193 and mouseY > lastTitleY and mouseY < y and mouseY > 250 and mouseY < 250 + 156 then
+                
+                local boxY = math.max(lastTitleY-1,251)
+                local height = math.min(y - boxY - 2,boxY + 155 - 253)
+                if height + boxY > 404 then --this is confusing
+                    height = height - (height + boxY - 404)
+                end
+                gfx.drawRect(418 + 12,boxY,193 - 13,height)
+                
+                if justClicked then
+                    local removing = i
+                    while notif.notifications[removing].title == title do
+                        table.remove(notif.notifications,removing)    
+                        removing = removing - 1
+                        if notif.notifications[removing] == nil then
+                            break
+                        end
+                    end
+                    notif.SaveNotifications()
+                    
+                    sim.loadSave(saveID)
+                end
+            end
+        end
+        
+        scrollLimit = -math.max((y - 250 - 154) / 5 - notif.scrolled, 0) 
+    end
+  
+    event.register(event.mousedown,click)
+    event.register(event.mousemove,hover)
+    event.register(event.mouseup,unclick)
+    
+    if exitIsHovering and justClicked then        
+        notif.windowOpen = false
+        notif.SaveNotifications()
+        return false
+    end    
+    if readAllHovering and justClicked then      
+        notif.notifications = {} 
+        notif.SaveNotifications()
+        return false
+    end    
+    justClicked = false
+end
+
+-- Request save data from the server
+-- Called automatically every 5 minutes
+function MaticzplNotifications.CheckForChanges()
+    local name = tpt.get_name()
+    if name ~= "" then          
+        -- FP
+        notif.fpCompare = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=16");
+        -- By date
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=sort%3Adate user%3A"..name))
+        -- By votes
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=user%3A"..name))
+    end 
+end
+
+-- Called when recieved response from teh server after calling CheckForUpdates()
+function MaticzplNotifications.OnResponse()
+    local function split (input, sep)
+        if sep == nil then
+            sep = "%s"
+        end
+        local t={}
+        for str in string.gmatch(input, "([^"..sep.."]+)") do
+            table.insert(t, str)
+        end
+        return t
+    end
+    
+    local saves = {}
+    for id, req in ipairs(notif.requests) do
+        local res = req:finish()
+        
+        local success, found = pcall(json.parse,res)
+        if not success then
+            print("Error while fetching saves from server.")
+            return
+        end
+        for k, v in pairs(found.Saves) do
+            saves[v.ID] = v            
+        end
+    end
+
+    local fpRes = notif.fpCompare:finish()
+    local success, fpsaves = pcall(json.parse,fpRes)
+    if not success then
+        print("Error while fetching FP from server.")
+        return
+    end
+    fpsaves = fpsaves.Saves
+
+    if notif.saveCache ~= nil then
+        for id, save in pairs(saves) do
+            local isFP = 0
+            for _, fpSave in pairs(fpsaves) do
+                if fpSave.ID == save.ID then
+                    isFP = 1
+                end
+            end
+            saves[id].FP = isFP
+            
+            local cached = notif.saveCache[save.ID]
+            if cached == nil then
+                local saved = MANAGER.getsetting("MaticzplNotifications",""..save.ID)
+                if saved == nil then
+                    notif.saveCache[save.ID] = {}
+                    notif.saveCache[save.ID].ScoreUp = save.ScoreUp
+                    notif.saveCache[save.ID].ScoreDown = save.ScoreDown
+                    notif.saveCache[save.ID].Comments = save.Comments    
+                    notif.saveCache[save.ID].FP = isFP
+                    notif.saveCache[save.ID].ID = save.ID
+                    cached = notif.saveCache[save.ID]              
+                else
+                    local saved = split(saved,"|")
+                    notif.saveCache[save.ID] = {}
+                    notif.saveCache[save.ID].ID = save.ID
+                    notif.saveCache[save.ID].ScoreUp = saved[2]
+                    notif.saveCache[save.ID].ScoreDown = saved[3]
+                    notif.saveCache[save.ID].Comments = saved[4]
+                    notif.saveCache[save.ID].FP = saved[5]
+                    cached = notif.saveCache[save.ID]
+                end
+            end
+            
+            if tonumber(isFP) ~= tonumber(cached.FP) then
+                if tonumber(isFP) == 1 then
+                    notif.AddNotification("This save is now on FP!!!",save.ShortName,save.ID)   
+                end 
+                if tonumber(cached.FP) == 1 then                
+                    notif.AddNotification("This save went off FP.",   save.ShortName,save.ID)  
+                end            
+            end
+            local new = save.ScoreUp - cached.ScoreUp
+            if new > 0 then
+                notif.AddNotification(new.." new Upvotes!\x0F\1\255\1\238\129\139",save.ShortName,save.ID)            
+            end
+            new = save.ScoreDown - cached.ScoreDown
+            if new > 0 then
+                notif.AddNotification(new.." new Downvotes\br\238\129\138",save.ShortName,save.ID)                
+            end
+            new = save.Comments - cached.Comments
+            if new > 0 then
+                notif.AddNotification(new.." new Comments",save.ShortName,save.ID)               
+            end
+            MANAGER.savesetting("MaticzplNotifications",save.ID,notif.SaveToString(save))  
+            notif.saveCache[save.ID] = save
+        end
+    else
+        notif.saveCache = {}
+    end
+    
+    notif.SaveNotifications()
+end
+
+-- Message to display in notification
+-- Title by which multiple notifications will be grouped
+-- saveID optional to open save on click
+function MaticzplNotifications.AddNotification(message,title,saveID)    
+    local notification = {
+        ["save"] = saveID,
+        ["title"] = title,
+        ["message"] = message
+    }
+    table.insert(notif.notifications, notification)   
+end
+
+function MaticzplNotifications.SaveNotifications()
+    MANAGER.savesetting("MaticzplNotifications","Notifications",string.gsub(json.stringify(notif.notifications),"\"","~"))    
+end
+
+-- Draws the red circle notification button. Called every frame
+local timerfornot = 255 -- Blinking not. dot
+function MaticzplNotifications.DrawNotifications()
+    local number = #notif.notifications
+    
+    if number > 99 then
+        number = "99"
+    end
+
+    local posX = 572
+    local posY = 415
+    if tpt.version.jacob1s_mod ~= nil then
+        posX = 584
+    end
+    if tpt.version.modid == 7 then --TPT Ultimata
+        posX = 573
+        posY = 435
+    end
+	if tpt.version.modid == 6 then --Cracker1000's Mod
+          getcrackertheme()
+    end
+    local w,h = gfx.textSize(number)
+    
+    local nw,nh = gfx.textSize(tpt.get_name())
+    
+    if nw > 58 then
+        gfx.fillRect(507,409,72,13,0,0,0,150)            
+    end
+    if number == 0 then
+        gfx.fillCircle(posX,posY,5,5,50,50,50)
+        gfx.fillCircle(posX,posY,4,4,60,60,60)
+        gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,128,128,128)
+        return
+    end
+    
+    local brig = 0
+    if notif.hoveringOnButton then
+        brig = 80
+    end
+    if timerfornot > 0 then
+        timerfornot = timerfornot - 2
+    elseif timerfornot <= 0 then
+        timerfornot = 255
+    end
+    
+    gfx.fillCircle(posX,posY,6,6,120,brig,brig,timerfornot)
+    gfx.fillCircle(posX,posY,5,5,255,brig,brig,timerfornot)
+    gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,255,255,255)
+end
+
+
+-- Used for saving current state of saves
+function MaticzplNotifications.SaveToString(save)
+    local separator = "|"
+
+    return save.ID..separator..save.ScoreUp..separator..save.ScoreDown..separator..save.Comments..separator..save.FP
+end
+
+
+function MaticzplNotifications.Mouse(x,y,dx,dy)
+    local posX = 572
+    local posY = 415
+    if tpt.version.jacob1s_mod ~= nil then
+        posX = 585
+    end
+    
+    notif.hoveringOnButton = math.abs(posX - x) < 5 and math.abs(posY - y) < 5 and #notif.notifications > 0
+end
+
+function MaticzplNotifications.OnClick(x,y,button)
+    if notif.hoveringOnButton then
+        notif.scrolled = 0
+        notif.windowOpen = true
+        
+        notif.DrawMenuContent()
+        return false
+    end
+end
+
+function MaticzplNotifications.Scroll(x,y,d)
+    d = d / math.abs(d) --clamp to 1 / -1
+    
+    --In window
+    if x > 418 and y > 250 and x < 418 + 193 and y < 250 + 155 and notif.windowOpen then
+        notif.scrolled = notif.scrolled + d
+        return false
+    end
+end
+
+function MaticzplNotifications.Tick()
+    local time = os.time(os.date("!*t"))
+    
+    if time - notif.lastTimeChecked > (5 * 60) then
+        notif.lastTimeChecked = time
+        
+        notif.CheckForChanges()
+    end
+    
+    local allDone = true;
+    for _, req in ipairs(notif.requests) do
+        if req:status() ~= "done" then
+            allDone = false
+            break
+        end
+    end    
+
+    if allDone and notif.fpCompare ~= nil and notif.fpCompare:status() == "done" then   
+        notif.OnResponse()
+        notif.requests = {}
+        notif.fpCompare = nil
+        MANAGER.savesetting("MaticzplNotifications","lastTime",notif.lastTimeChecked)                    
+    end
+    
+    
+    notif.DrawNotifications()
+    
+    if notif.windowOpen then
+        notif.DrawMenuContent()
+    end
+end
+
+---------------------------------------------------------------------------------
+-- JSON parsing from https://gist.github.com/tylerneylon/59f4bcf316be525b30ab  --
+-- Credit to tylerneylon                                                       --
+-- Stated to be public domain by the author (check comments in the link)       --
+---------------------------------------------------------------------------------
+--#region
+
+local function kind_of(obj)
+    if type(obj) ~= 'table' then return type(obj) end
+    local i = 1
+    for _ in pairs(obj) do
+        if obj[i] ~= nil then i = i + 1 else return 'table' end
+    end
+    if i == 1 then return 'table' else return 'array' end
+end
+local function escape_str(s)
+    local in_char  = {'\\', '"', '/', '\b', '\f', '\n', '\r', '\t'}
+    local out_char = {'\\', '"', '/',  'b',  'f',  'n',  'r',  't'}
+    for i, c in ipairs(in_char) do
+        s = s:gsub(c, '\\' .. out_char[i])
+    end
+    return s
+end
+local function skip_delim(str, pos, delim, err_if_missing)
+    pos = pos + #str:match('^%s*', pos)
+    if str:sub(pos, pos) ~= delim then
+        if err_if_missing then
+            error('Expected ' .. delim .. ' near position ' .. pos)
+        end
+        return pos, false
+    end
+    return pos + 1, true
+end
+local function parse_str_val(str, pos, val)
+    val = val or ''
+    local early_end_error = 'End of input found while parsing string.'
+    if pos > #str then error(early_end_error) end
+    local c = str:sub(pos, pos)
+    if c == '"'  then return val, pos + 1 end
+    if c ~= '\\' then return parse_str_val(str, pos + 1, val .. c) end
+    -- We must have a \ character.
+    local esc_map = {b = '\b', f = '\f', n = '\n', r = '\r', t = '\t'}
+    local nextc = str:sub(pos + 1, pos + 1)
+    if not nextc then error(early_end_error) end
+    return parse_str_val(str, pos + 2, val .. (esc_map[nextc] or nextc))
+end
+local function parse_num_val(str, pos)
+    local num_str = str:match('^-?%d+%.?%d*[eE]?[+-]?%d*', pos)
+    local val = tonumber(num_str)
+    if not val then error('Error parsing number at position ' .. pos .. '.') end
+    return val, pos + #num_str
+end
+function json.stringify(obj, as_key)
+    local s = {}  
+    local kind = kind_of(obj)
+    if kind == 'array' then
+        if as_key then error('Can\'t encode array as key.') end
+        s[#s + 1] = '['
+        for i, val in ipairs(obj) do
+            if i > 1 then s[#s + 1] = ', ' end
+            s[#s + 1] = json.stringify(val)
+        end
+        s[#s + 1] = ']'
+    elseif kind == 'table' then
+        if as_key then error('Can\'t encode table as key.') end
+        s[#s + 1] = '{'
+        for k, v in pairs(obj) do
+            if #s > 1 then s[#s + 1] = ', ' end
+            s[#s + 1] = json.stringify(k, true)
+            s[#s + 1] = ':'
+            s[#s + 1] = json.stringify(v)
+        end
+        s[#s + 1] = '}'
+    elseif kind == 'string' then
+        return '"' .. escape_str(obj) .. '"'
+    elseif kind == 'number' then
+        if as_key then return '"' .. tostring(obj) .. '"' end
+        return tostring(obj)
+    elseif kind == 'boolean' then
+        return tostring(obj)
+    elseif kind == 'nil' then
+        return 'null'
+    else
+        error('Unjsonifiable type: ' .. kind .. '.')
+    end
+    return table.concat(s)
+end
+json.null = {}
+function json.parse(str, pos, end_delim)
+    pos = pos or 1
+    if pos > #str then error('Reached unexpected end of input.') end
+    local pos = pos + #str:match('^%s*', pos)
+    local first = str:sub(pos, pos)
+    if first == '{' then
+        local obj, key, delim_found = {}, true, true
+        pos = pos + 1
+        while true do
+            key, pos = json.parse(str, pos, '}')
+            if key == nil then return obj, pos end
+            if not delim_found then error('Comma missing between object items.') end
+            pos = skip_delim(str, pos, ':', true)
+            obj[key], pos = json.parse(str, pos)
+            pos, delim_found = skip_delim(str, pos, ',')
+        end
+    elseif first == '[' then 
+        local arr, val, delim_found = {}, true, true
+        pos = pos + 1
+        while true do
+            val, pos = json.parse(str, pos, ']')
+            if val == nil then return arr, pos end
+            if not delim_found then error('Comma missing between array items.') end
+            arr[#arr + 1] = val
+            pos, delim_found = skip_delim(str, pos, ',')
+        end
+    elseif first == '"' then 
+        return parse_str_val(str, pos + 1)
+    elseif first == '-' or first:match('%d') then
+        return parse_num_val(str, pos)
+    elseif first == end_delim then 
+        return nil, pos + 1
+    else
+        local literals = {['true'] = true, ['false'] = false, ['null'] = json.null}
+        for lit_str, lit_val in pairs(literals) do
+            local lit_end = pos + #lit_str - 1
+            if str:sub(pos, lit_end) == lit_str then return lit_val, lit_end + 1 end
+        end
+        local pos_info_str = 'position ' .. pos .. ': ' .. str:sub(pos, pos + 10)
+        error('Invalid json syntax starting at ' .. pos_info_str)
+    end
+end
+--#endregion
+-- On launch
+notif.lastTimeChecked = MANAGER.getsetting("MaticzplNotifications","lastTime") or 0
+local notifJson = MANAGER.getsetting("MaticzplNotifications","Notifications")
+if notifJson then
+    local jsonStr = string.gsub(notifJson,"~","\"")
+    notif.notifications = json.parse(jsonStr)  
+end
+event.register(event.tick,notif.Tick)
+event.register(event.mousemove,notif.Mouse)
+event.register(event.mousedown,notif.OnClick)
+event.register(event.mousewheel,notif.Scroll)
+
+local name = tpt.get_name()
+if name == "" then          
+    print("You need to be logged in to use the notifications script.")
+end
+end
+notificationscript()

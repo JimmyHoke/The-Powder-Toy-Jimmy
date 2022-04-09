@@ -2,6 +2,7 @@
 
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
+static void create(ELEMENT_CREATE_FUNC_ARGS);
 void Element::Element_LED()
 {
 	Identifier = "DEFAULT_PT_LED";
@@ -28,7 +29,7 @@ void Element::Element_LED()
 
 	Weight = 100;
 	HeatConduct = 0;
-	Description = "Light emitting diode, .tmp2 changes colours. Temp sets brightness, use with PSCN.";
+	Description = "Light emitting diode, use decorations to set the glow colour. Activates with PSCN.";
 	DefaultProperties.temp = 35.0f + 273.15f;
 
 	Properties = TYPE_SOLID;
@@ -44,6 +45,7 @@ void Element::Element_LED()
 
 	Update = &update;
 	Graphics = &graphics;
+	Create = &create;
 }
 
 static int update(UPDATE_FUNC_ARGS)
@@ -57,20 +59,6 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].life > 0)
 		parts[i].life--;
 
-	if (parts[i].tmp2 == 6 && parts[i].tmp < 1000)
-	{
-		parts[i].tmp++;
-	}
-	else if (parts[i].tmp2 == 6 && parts[i].tmp == 1000)
-	{
-		parts[i].tmp = 1;
-	}
-
-	if (parts[i].tmp2 > 6 || parts[i].tmp2 <= 0)
-	{
-		parts[i].tmp2 = 0;
-	}
-	
 		int r, rx, ry;
 			for (rx = -2; rx < 2; rx++)
 				for (ry = -2; ry < 2; ry++)
@@ -83,7 +71,7 @@ static int update(UPDATE_FUNC_ARGS)
 						{
 							{
 								PropertyValue value;
-								value.Integer = 10;
+								value.Integer = 8;
 								sim->flood_prop(x, y, offsetof(Particle, life), value, StructProperty::Integer);
 							}
 						}
@@ -93,59 +81,22 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-		if (cpart->life > 0)
-		{
-			if (cpart->tmp2 == 1)                            // Different tmp modes change colour of glow.
-			{
-				*firer = 250;
-				*fireg = 0;
-				*fireb = 0;
-			}
-			else if (cpart->tmp2 == 2)
-			{
-				*firer = 0;
-				*fireg = 250;
-				*fireb = 0;
-			}
-			else if (cpart->tmp2 == 3)
-			{
-				*firer = 0;
-				*fireg = 0;
-				*fireb = 250;
-			}
-
-			else if (cpart->tmp2 == 4)
-			{
-				*firer = 250;
-				*fireg = 250;
-				*fireb = 0;
-			}
-
-			else if (cpart->tmp2 == 5)
-			{
-				*firer = 250;
-				*fireg = 0;
-				*fireb = 250;
-			}
-			else if (cpart->tmp2 == 6)
-			{
-					float frequency = 0.04045;
-					*firer = (sin(frequency* cpart->tmp + 4) * 127 + 150);
-					*fireg = (sin(frequency* cpart->tmp + 6) * 127 + 150);
-					*fireb = (sin(frequency* cpart->tmp + 8) * 127 + 150);
-			}
-			else if (cpart->tmp2 == 0)
-			{
-				*firer = 250;
-				*fireg = 250;
-				*fireb = 250;
-				*firea = 35;
-			}
+	*colr = ((cpart->dcolour >> 16) & 0xFF)/5;
+	*colg = ((cpart->dcolour >> 8) & 0xFF)/5;
+	*colb = ((cpart->dcolour) & 0xFF)/5;
+	if (cpart->life > 0)
+	{
+			*firer = (cpart->dcolour >> 16) & 0xFF;
+			*fireg = (cpart->dcolour >> 8) & 0xFF;
+			*fireb = (cpart->dcolour) & 0xFF;
 			*firea = cpart->temp - 273.15f;
-			*colr += *firer;
-			*colg += *fireg;
-			*colb += *fireb;
 			*pixel_mode |= FIRE_ADD;
-		}
+	}
+	*pixel_mode |= NO_DECO;
 		return 0;
 }
+static void create(ELEMENT_CREATE_FUNC_ARGS)
+{
+	sim->parts[i].dcolour = 0xFFFFFF;
+}
+

@@ -235,6 +235,8 @@ simulation_elem_ids = [
 	['RADN', 233],
 	['GRPH', 234],
 	['BASE', 235],
+	['WHEL', 236],
+	['NAPM', 237],
 	['JRAY', 500],
 	['EBCL', 501],
 	['GGOO', 502],

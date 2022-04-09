@@ -61,7 +61,7 @@ static int update(UPDATE_FUNC_ARGS)
 		for (rx = -ar; rx <= ar; rx++)
 			for (ry = -ar; ry <= ar; ry++)
 			{
-				if (BOUNDS_CHECK && (rx || ry))
+				if (x + rx >= 0 && y + ry >= 0 && x + rx < XRES && y + ry < YRES && (rx || ry))
 				{
 					sim->hv[(y / CELL) + ry][(x / CELL) + rx] = parts[i].temp;
 				}

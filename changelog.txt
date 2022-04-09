@@ -1,6 +1,10 @@
-Changelog for 2.0.0
+Changelog for V36.56 (69)
 
-Fix BASE catching fire
-Add more reactions to BASE
-Fix bug where closing lua window could crash the game
-Brighten up the hud a bit
+Fix potential crash when using certain elements near edge
+Fix Whel not stopping once rotated
+Fix Texter errors when reaching max line limit
+Fix error when turning on notifications after a restart
+Update version to 36.6
+
+
+ 

@@ -2322,25 +2322,6 @@ void GameView::OnDraw()
 	{
 		//FPS and some version info
 		StringBuilder fpsInfo;
-
-		int fpsfake = ui::Engine::Ref().GetFps();
-		int ar = 0;
-		int ag = 0;
-		int ab = 0;
-
-		if (fpsfake <= 15)
-		{
-			ar = 255;
-			ag = 0;
-			ab = 0;
-		}
-		else if (fpsfake < 35 && fpsfake > 15)
-		{
-			ar = 255;
-			ag = 150;
-			ab = 0;
-		}
-
 		fpsInfo << Format::Precision(0)<< ui::Engine::Ref().GetFps();
 		if (showDebug)
 		{
@@ -2373,7 +2354,7 @@ void GameView::OnDraw()
 	
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
-		g->fillrect(6, 3, textWidth + 6, 15, ar, ag, ab, alpha*0.65);
+		g->fillrect(6, 3, textWidth + 6, 15, 40, 40, 40, alpha*0.5f);
 		g->drawtext(8, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
 	}
 

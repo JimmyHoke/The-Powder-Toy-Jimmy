@@ -56,7 +56,7 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[i].temp > R_TEMP + 50.0f + 273.15f)
 				{
-					parts[i].temp = 1990.15f;
+					parts[i].temp = 2000.15f;
 					parts[i].life = 130;
 					parts[i].type = PT_PLSM;
 					sim->pv[(y / CELL) + ry][(x / CELL) + rx] = 10.0f;
