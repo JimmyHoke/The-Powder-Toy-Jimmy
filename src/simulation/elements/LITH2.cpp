@@ -180,6 +180,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 
 	return 0;
 }
+
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
 	sim->parts[i].life = 100;

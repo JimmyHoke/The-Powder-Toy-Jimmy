@@ -83,12 +83,11 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-
-  if (cpart->tmp != 0)
-{
-	*colr -=  cpart->tmp / 3;
-	*colg -=  cpart->tmp / 3;
-	*colb -=  cpart->tmp / 3;
-}
+	if (cpart->tmp != 0)
+	{
+		*colr -=  cpart->tmp / 3;
+		*colg -=  cpart->tmp / 3;
+		*colb -=  cpart->tmp / 3;
+	}
 	return 0;
 }

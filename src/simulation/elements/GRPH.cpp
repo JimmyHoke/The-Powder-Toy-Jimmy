@@ -147,7 +147,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp2 > 4)
 	{
-		*colr = cpart->pavg[0];
+		*colr = (int)(cpart->pavg[0]);
 		*colg = 50;
 		*colb = 50;
 		*pixel_mode |= PMODE_FLARE;
@@ -167,4 +167,3 @@ static void create(ELEMENT_CREATE_FUNC_ARGS)
 	sim->parts[i].tmp2 = RNG::Ref().between(0, 5);
 	sim->parts[i].pavg[0] = 100;
 }
-

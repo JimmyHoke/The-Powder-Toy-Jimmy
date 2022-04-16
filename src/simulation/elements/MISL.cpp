@@ -145,27 +145,27 @@ static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 
 	if (cpart->pavg[0] == 0)//Up
 	{
-		ren->drawrect(cpart->x - 1, cpart->y - 4, 3, 1, cr, cg, cb, 255);
-		ren->drawrect(cpart->x, cpart->y - 5, 1, 5, 255, 255, 255, 255);
-		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x - 1.0f), (int)(cpart->y - 4.0f), 3, 1, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x), (int)(cpart->y - 5.0f), 1, 5, 255, 255, 255, 255);
+		ren->drawrect((int)(cpart->x - 2.0f), (int)(cpart->y), 5, 1, cr, cg, cb, 255);
 	}
 	else if (cpart->pavg[0] == 1)//Left
 	{
-		ren->drawrect(cpart->x - 4, cpart->y - 1, 1, 3, cr, cg, cb, 255);
-		ren->drawrect(cpart->x-5, cpart->y, 5, 1, 255, 255, 255, 255);
-		ren->drawrect(cpart->x, cpart->y-2, 1, 5, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x - 4.0f), (int)(cpart->y - 1.0f), 1, 3, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x - 5.0f), (int)(cpart->y), 5, 1, 255, 255, 255, 255);
+		ren->drawrect((int)(cpart->x), (int)(cpart->y - 2.0f), 1, 5, cr, cg, cb, 255);
 	}
 	else if (cpart->pavg[0] == 2)//Right
 	{
-		ren->drawrect(cpart->x + 4, cpart->y - 1, 1, 3, cr, cg, cb, 255);
-		ren->drawrect(cpart->x+1, cpart->y, 5, 1, 255, 255, 255, 255);
-		ren->drawrect(cpart->x, cpart->y-2, 1, 5, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x + 4.0f), (int)(cpart->y - 1.0f), 1, 3, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x + 1.0f), (int)(cpart->y), 5, 1, 255, 255, 255, 255);
+		ren->drawrect((int)(cpart->x), (int)(cpart->y - 2.0f), 1, 5, cr, cg, cb, 255);
 	}
 	else if (cpart->pavg[0] == 3)//Down
 	{
-		ren->drawrect(cpart->x - 2, cpart->y, 5, 1, cr, cg, cb, 255);
-		ren->drawrect(cpart->x, cpart->y+1, 1, 5, 255, 255, 255, 255);
-		ren->drawrect(cpart->x - 1, cpart->y + 4, 3, 1, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x - 2.0f), (int)(cpart->y), 5, 1, cr, cg, cb, 255);
+		ren->drawrect((int)(cpart->x), (int)(cpart->y + 1.0f), 1, 5, 255, 255, 255, 255);
+		ren->drawrect((int)(cpart->x - 1.0f), (int)(cpart->y + 4.0f), 3, 1, cr, cg, cb, 255);
 	}
 	return 0;
 }

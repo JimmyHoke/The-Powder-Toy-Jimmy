@@ -44,6 +44,7 @@ void Element::Element_NTRG()
 
 	Update = &update;
 }
+
 static int update(UPDATE_FUNC_ARGS)
 {
 	int r, rx, ry, np;

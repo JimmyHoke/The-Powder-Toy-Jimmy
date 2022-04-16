@@ -131,4 +131,3 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	*pixel_mode |= NO_DECO;
 	return 0;
 }
-

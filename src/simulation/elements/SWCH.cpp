@@ -96,7 +96,7 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if(cpart->life >= 10)
+	if (cpart->life >= 10)
 	{
 		*colr = 17;
 		*colg = 217;

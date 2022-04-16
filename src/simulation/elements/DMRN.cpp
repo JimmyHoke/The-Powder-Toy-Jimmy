@@ -39,4 +39,3 @@ void Element::Element_DMRN()
 	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
 }
-

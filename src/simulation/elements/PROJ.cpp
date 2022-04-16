@@ -66,10 +66,10 @@ static int update(UPDATE_FUNC_ARGS)
 				int r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if(parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_PSCN && parts[ID(r)].life == 3) //Check for a sprk with ctype PSCN to activate and store the direction.
+				if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_PSCN && parts[ID(r)].life == 3) //Check for a sprk with ctype PSCN to activate and store the direction.
 				{
-					parts[i].pavg[1] = -rx;
-					parts[i].pavg[2] = -ry;
+					parts[i].pavg[1] = (float)(-rx);
+					parts[i].pavg[2] = (float)(-ry);
 					parts[i].life = 10;
 				}
 			}
@@ -100,7 +100,7 @@ static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 {
 	if (cpart->life == 10)
 	{
-		ren->drawcircle(cpart->x, cpart->y, 4, 4, 255, 100, 0, 255);
+		ren->drawcircle((int)(cpart->x), (int)(cpart->y), 4, 4, 255, 100, 0, 255);
 		*pixel_mode |= PMODE_LFLARE;
 	}
 	return 0;
@@ -111,6 +111,7 @@ static void create(ELEMENT_CREATE_FUNC_ARGS) //Default range and ctype settings.
 	sim->parts[i].tmp = 10;
 	sim->parts[i].ctype = PT_BOMB;
 }
+
 static bool ctypeDraw(CTYPEDRAW_FUNC_ARGS) //For enabling ctype Draw.
 {
 	if (!Element::ctypeDrawVInCtype(CTYPEDRAW_FUNC_SUBCALL_ARGS))
