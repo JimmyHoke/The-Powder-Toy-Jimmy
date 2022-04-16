@@ -1,11 +1,11 @@
 project('the-powder-toy', [ 'c', 'cpp' ], version: 'the.cake.is.a.lie', default_options: [
-	'cpp_std=c++11',
+	'cpp_std=c++17',
 ])
 
 to_array = generator(
-	import('python').find_installation('python3'),
+	executable('toarray', sources: 'data/ToArray.cpp', native: true),
 	output: [ '@PLAINNAME@.cpp', '@PLAINNAME@.h' ],
-	arguments: [ join_paths(meson.current_source_dir(), 'to_array.py'), '@BUILD_DIR@', '@OUTPUT0@', '@OUTPUT1@', '@INPUT@', '@EXTRA_ARGS@' ]
+	arguments: [ '@OUTPUT0@', '@OUTPUT1@', '@INPUT@', '@EXTRA_ARGS@' ]
 )
 
 cpp_compiler = meson.get_compiler('cpp')
@@ -53,7 +53,7 @@ endif
 
 uopt_static = get_option('static')
 use_tpt_libs = 'no'
-tpt_libs_vtag = 'v20211022224519'
+tpt_libs_vtag = 'v20211224205921'
 if uopt_static == 'system'
 	if copt_platform == 'win'
 		error('no way to find static system libraries on windows')

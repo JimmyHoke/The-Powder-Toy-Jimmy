@@ -75,7 +75,7 @@ static Particle* getNeighbor(Simulation* sim, int x, int y)
 static void collapse(Particle* self)
 {
 	//This delays the collapse upon creation so all particles can update (cause particle update order)
-	if (self->pavg[0] < defaultSupportStrenght)
+	if (self->tmp3 < defaultSupportStrenght)
 		return;
 	
 	self->type = PT_STNE;
@@ -150,8 +150,8 @@ static int update(UPDATE_FUNC_ARGS)
 	else
 		collapse(&parts[i]);
 
-	if (parts[i].pavg[0] < defaultSupportStrenght)
-		parts[i].pavg[0] += 1;
+	if (parts[i].tmp3 < defaultSupportStrenght)
+		parts[i].tmp3 += 1;
 
 	return 0;
 }

@@ -151,6 +151,8 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 				parts[i].tmp3 = (float)(rx * 3);
 				parts[i].tmp4 = (float)(ry * 3);
+				parts[i].tmp3 = rx*3;
+				parts[i].tmp4 = ry*3;
 				parts[i].vx = parts[i].tmp3;
 				parts[i].vy = parts[i].tmp4;
 				sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -4.0f;
@@ -170,6 +172,8 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					parts[i].tmp3 = (float)(-rx);
 					parts[i].tmp4 = (float)(-ry);
+					parts[i].tmp3 = -rx;
+					parts[i].tmp4 = -ry;
 					parts[i].vx = parts[i].tmp3;
 					parts[i].vy = parts[i].tmp4;
 				}
@@ -182,6 +186,8 @@ static int update(UPDATE_FUNC_ARGS)
 					{
 						parts[i].tmp3 = (float)(-rx);
 						parts[i].tmp4 = (float)(-ry);
+						parts[i].tmp3 = -rx;
+						parts[i].tmp4 = -ry;
 						parts[i].vx = parts[i].tmp3 * 2;
 						parts[i].vy = parts[i].tmp4 * 2;
 					}
@@ -200,6 +206,8 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					parts[i].tmp3 = (float)(-rx);
 					parts[i].tmp4 = (float)(-ry);
+					parts[i].tmp3 = -rx;
+					parts[i].tmp4 = -ry;
 					parts[i].vx = parts[i].tmp3*2;
 					parts[i].vy = parts[i].tmp4*2;
 				}

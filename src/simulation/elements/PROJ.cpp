@@ -69,7 +69,9 @@ static int update(UPDATE_FUNC_ARGS)
 				if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_PSCN && parts[ID(r)].life == 3) //Check for a sprk with ctype PSCN to activate and store the direction.
 				{
 					parts[i].tmp4 = (float)(-rx);
-					parts[i].pavg[2] = (float)(-ry);
+					parts[i].tmp3 = (float)(-ry);
+					parts[i].tmp4 = -rx;
+					parts[i].tmp3 = -ry;
 					parts[i].life = 10;
 				}
 			}
@@ -91,7 +93,8 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		parts[i].tmp2+= 1;
 		parts[i].vx = parts[i].tmp4*((parts[i].temp-273.15f)/10);
-		parts[i].vy = parts[i].pavg[2] + 0.2*(parts[i].tmp2/parts[i].tmp);
+		parts[i].vy = parts[i].tmp3 + 0.2*(parts[i].tmp2/parts[i].tmp);
+		parts[i].vy = parts[i].tmp3 + 0.2*(parts[i].tmp2/parts[i].tmp);
 	}
 	return 0;
 }
