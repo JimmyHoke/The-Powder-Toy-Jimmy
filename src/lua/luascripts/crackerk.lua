@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 36.6
+local crackversion = 37.0
 local passreal2 = "DMND"
 local motw = "."
 --Default theme for initial launch and resets
@@ -120,6 +120,7 @@ local hide= Button:new(578,5,25,25, "X", "Hide.")
 local borderval = "0"
 local rulval = "1"
 local timermp = 0
+local filterval = 0
 local perfmv = "1"
 local fpsval = "1"
 local startTime
@@ -734,7 +735,7 @@ tpt.message_box(" Notification feature help", "Turning it on will notify you whe
 end)
 
 function cbrightness()
-tpt.fillrect(-1,-1,629,424,0,0,0,255-MANAGER.getsetting("CRK", "brightness"))
+tpt.fillrect(-1,-1,630,425,0,0,0,255-MANAGER.getsetting("CRK", "brightness"))
 end
 
 brightness:action(function(sender)
@@ -1401,32 +1402,6 @@ end)
 local barval = MANAGER.getsetting("CRK","barval")
 local barlength = "1"
 local uival = "1"
-local backvr = 0
-local backvg = 0
-local backvb = 0
-
-function backg()
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-as = brightSlider:value()
-else
-as = 50
-end
-
-if as > 50 then
-as = 50
-end
-tpt.drawrect(3,3,605,377,backvr,backvg,backvb,as + 200)
-tpt.fillrect(3,3,605,377,backvr,backvg,backvb,as)
-end
-
-function clearback()
-event.unregister(event.tick,backg)
-event.register(event.tick,backg)
-if MANAGER.getsetting("CRK", "brightstate") == "1" then
-event.unregister(event.tick,cbrightness)
-event.register(event.tick,cbrightness)
-end
-end
 
 local frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function theme()
@@ -1443,6 +1418,11 @@ if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 al = MANAGER.getsetting("CRK", "al")
 else
 al = brightSlider:value()
+end
+--Filters
+if filterval == 1 then
+tpt.drawrect(2,2,607,379,ar,ag,ab,50)
+tpt.fillrect(1,1,609,381,ar,ag,ab,50)
 end
 --Borders
 if borderval == "1" then
@@ -1558,18 +1538,13 @@ local mp8 = Button:new(270,92,45,25,defaultheme, "Magnita/Default")
 local mp9 = Button:new(320,92,45,25,"Pulse", "RBG makes everything better.")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
-local bg1 = Button:new(24,300,45,20,"Off", "Default")
-local bg2 = Button:new(74,300,45,20,"Blue", "Blue background")
-local bg3 = Button:new(124,300,45,20,"Red", "Red background")
-local bg4 = Button:new(174,300,45,20,"Green", "Green background")
-local bg5 = Button:new(224,300,45,20,"Orange", "Yellow background")
-local bg6 = Button:new(274,300,45,20,"Theme", "Same as set theme")
+local bg1 = Button:new(24,300,60,25,"Filters", "Toggle filters")
 
 local bog1 = Button:new(24,333,60,25,"Cross-Hair", "Draw Cross-hair")
 
 local bogb1 = Button:new(124,333,60,25,"Borders", "Draw Borders")
 
-local jkey = Button:new(224,333,60,25,"J-Shortcut", "Toggle Shortcut")
+local jkey = Button:new(124,300,60,25,"J-Shortcut", "Toggle Shortcut")
 local bg7 = Button:new(324,333,60,25,"Developer", "Disable inbuilt scripts")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
@@ -1638,12 +1613,17 @@ gfx.drawText(20,23,"Preview:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting
 gfx.drawText(24,78,"Presets:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,133,"Theme Customisation:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,235,"Topbar: "..barstat,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
-gfx.drawText(25,285,"Filters:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
+gfx.drawText(25,285,"Other Options:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
 graphics.drawText(90,342, "ON",105,255,105,255)
 else
 graphics.drawText(90,342, "OFF",255,105,105,255)
+end
+if filterval == 1 then
+graphics.drawText(90,309, "ON",105,255,105,255)
+else
+graphics.drawText(90,309, "OFF",255,105,105,255)
 end
 if borderval == "1" then
 graphics.drawText(190,342, "ON",105,255,105,255)
@@ -1651,13 +1631,10 @@ else
 graphics.drawText(190,342, "OFF",255,105,105,255)
 end
 if shrtv == "1" then
-gfx.drawText(290,342,"ON",105,255,105,255)
+gfx.drawText(190,309,"ON",105,255,105,255)
 else
-gfx.drawText(290,342,"OFF",255,105,105,255)
+gfx.drawText(190,309,"OFF",255,105,105,255)
 end
-
-tpt.drawrect(65,283,10,10,backvr,backvg,backvb,255)
-tpt.fillrect(65,283,10,10,backvr,backvg,backvb,100)
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 graphics.fillRect(22, 40,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
@@ -1685,11 +1662,6 @@ newmenuth:addComponent(mp8)
 newmenuth:addComponent(mp9)
 
 newmenuth:addComponent(bg1)
-newmenuth:addComponent(bg2)
-newmenuth:addComponent(bg3)
-newmenuth:addComponent(bg4)
-newmenuth:addComponent(bg5)
-newmenuth:addComponent(bg6)
 newmenuth:addComponent(bg7)
 
 newmenuth:addComponent(bog1)
@@ -1826,45 +1798,11 @@ alb:text(aclr)
 end)
 
 bg1:action(function(sender)
-backvr = 0
-backvg = 0
-backvb = 0
-event.unregister(event.tick,backg)
-end)
-
-bg2:action(function(sender)
-backvr = 0
-backvg = 0
-backvb = 200
-clearback()
-end)
-
-bg3:action(function(sender)
-backvr = 200
-backvg = 0
-backvb = 0
-clearback()
-end)
-
-bg4:action(function(sender)
-backvr = 0
-backvg = 200
-backvb = 0
-clearback()
-end)
-
-bg5:action(function(sender)
-backvr = 250
-backvg = 111
-backvb = 0
-clearback()
-end)
-
-bg6:action(function(sender)
-backvr = MANAGER.getsetting("CRK","ar")
-backvg = MANAGER.getsetting("CRK","ag")
-backvb = MANAGER.getsetting("CRK","ab")
-clearback()
+if filterval == 0 then
+filterval = 1
+elseif filterval == 1 then
+filterval = 0
+end
 end)
 
 bg7:action(function(sender)
@@ -2023,12 +1961,10 @@ reset1:action(function(sender)
 close()
 timerremo()
 timeplus = 255
-backvr = 0
-backvg = 0
-backvb = 0
 perfmv = "1"
 autoval = "1"
 invtoolv = "1"
+filterval = 0
 shrtv = "1"
 modelemval = "0"
 stamplb = "0"
@@ -2044,7 +1980,6 @@ showmodelem()
 event.unregister(event.tick,writefile)
 event.unregister(event.tick,showmotdnot)
 event.unregister(event.tick,autosave)
-event.unregister(event.tick,backg)
 event.unregister(event.tick,inverttool)
 event.unregister(event.tick,cbrightness)
 event.unregister(event.tick,UIhide)
