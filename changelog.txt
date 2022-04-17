@@ -1,10 +1,10 @@
-Changelog for V36.56 (69)
+Changelog for V36.7 (71)
 
-Fix potential crash when using certain elements near edge
-Fix Whel not stopping once rotated
-Fix Texter errors when reaching max line limit
-Fix error when turning on notifications after a restart
-Update version to 36.6
-
+Fix int to float conversion errors while compiling
+New Icon for mod (Thanks to Xphere07)
+Remove some unnecessary checks in BEE element
+Update version number to 37.0
+Merge changes from vanilla master branch
+Fix potential crash when using PET around edges
 
  
