@@ -149,12 +149,8 @@ static int update(UPDATE_FUNC_ARGS)
 						continue;
 					if (TYP(r) == PT_PLNT)
 				{
-				parts[i].tmp3 = (float)(rx * 3);
-				parts[i].tmp4 = (float)(ry * 3);
-				parts[i].tmp3 = rx*3;
-				parts[i].tmp4 = ry*3;
-				parts[i].vx = parts[i].tmp3;
-				parts[i].vy = parts[i].tmp4;
+				parts[i].vx = (float)(rx * 3);
+				parts[i].vy = (float)(ry * 3);
 				sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -4.0f;
 				}
 				}
@@ -170,12 +166,8 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[ID(r)].temp > 373.15f)
 				{
-					parts[i].tmp3 = (float)(-rx);
-					parts[i].tmp4 = (float)(-ry);
-					parts[i].tmp3 = -rx;
-					parts[i].tmp4 = -ry;
-					parts[i].vx = parts[i].tmp3;
-					parts[i].vy = parts[i].tmp4;
+					parts[i].vx = (float)(-rx);
+					parts[i].vy = (float)(-ry);
 				}
 
 				switch (TYP(r))
@@ -184,12 +176,8 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					if (parts[i].life > 90)
 					{
-						parts[i].tmp3 = (float)(-rx);
-						parts[i].tmp4 = (float)(-ry);
-						parts[i].tmp3 = -rx;
-						parts[i].tmp4 = -ry;
-						parts[i].vx = parts[i].tmp3 * 2;
-						parts[i].vy = parts[i].tmp4 * 2;
+						parts[i].vx = (float)(-rx) * 2;
+						parts[i].vy = (float)(-ry) * 2;
 					}
 				}
 				break;
@@ -204,12 +192,8 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_LAVA:
 				case PT_CFLM:
 				{
-					parts[i].tmp3 = (float)(-rx);
-					parts[i].tmp4 = (float)(-ry);
-					parts[i].tmp3 = -rx;
-					parts[i].tmp4 = -ry;
-					parts[i].vx = parts[i].tmp3*2;
-					parts[i].vy = parts[i].tmp4*2;
+					parts[i].vx = (float)(-rx)*2;
+					parts[i].vy = (float)(-ry)*2;
 				}
 				break;
 				case PT_PLNT:
