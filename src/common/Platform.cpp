@@ -532,15 +532,17 @@ int main(int argc, char *argv[]);
 int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	int argc;
-	std::vector<ByteString> argv;
-	std::vector<char *> argp;
 	wchar_t **wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
+	std::vector<ByteString> argv;
 	for (auto i = 0; i < argc; ++i)
 	{
 		argv.push_back(Platform::WinNarrow(std::wstring(wargv[i])));
-		argp.push_back(&argv.back()[0]);
 	}
-	LocalFree(wargv);
+	std::vector<char *> argp;
+	for (auto &arg : argv)
+	{
+		argp.push_back(&arg[0]);
+	}
 	return main(argc, &argp[0]);
 }
 #endif
