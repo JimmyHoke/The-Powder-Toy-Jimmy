@@ -68,10 +68,8 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_PSCN && parts[ID(r)].life == 3) //Check for a sprk with ctype PSCN to activate and store the direction.
 				{
-					parts[i].tmp4 = (float)(-rx);
-					parts[i].tmp3 = (float)(-ry);
-					parts[i].tmp4 = -rx;
-					parts[i].tmp3 = -ry;
+					parts[i].tmp4 = (int)(-rx);
+					parts[i].tmp3 = (int)(-ry);
 					parts[i].life = 10;
 				}
 			}

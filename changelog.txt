@@ -1,4 +1,4 @@
-Changelog for V36.7 (71)
+Changelog for V37.0 (71)
 
 Fix int to float conversion errors while compiling
 New Icon for mod (Thanks to Xphere07)
