@@ -2,10 +2,8 @@ Changelog for V37.0 (71)
 
 Changes to filter option and brightness settings
 Fix int to float conversion errors while compiling
-New Icon for mod (thanks to xphere07)
+New Icon for mod (Thanks to xphere07)
 Remove some unnecessary checks in BEE element
 Update version number to 37.0
 Merge changes from vanilla master branch
 Fix potential crash when using PET around edges
-
- 
