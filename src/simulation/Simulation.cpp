@@ -4389,11 +4389,11 @@ killed:
 							if (parts[ID(r)].ctype <= 30)
 								parts[i].ctype &= 0xFF000000;
 							else if (parts[ID(r)].ctype > 30 && parts[ID(r)].ctype <= 60)
-								parts[i].ctype &= 0x00FF0000;
-							else if (parts[ID(r)].ctype > 60 && parts[ID(r)].ctype <= 90)
 								parts[i].ctype &= 0x0000FF00;
-							else if (parts[ID(r)].ctype > 90)
+							else if (parts[ID(r)].ctype > 60 && parts[ID(r)].ctype <= 90)
 								parts[i].ctype &= 0x0000003E;
+							else if (parts[ID(r)].ctype > 90)
+							    parts[i].ctype &= 0x00FF0000;
 						}
 						else
 						{
