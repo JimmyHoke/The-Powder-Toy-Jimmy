@@ -59,50 +59,53 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp4 < 1)
 		parts[i].tmp4 = 1;
 	//Explosion
-	if (((parts[i].x == parts[i].tmp) && (parts[i].y == parts[i].tmp2)) || parts[i].tmp4 > 300 || parts[i].temp >= 873.15f)
+	if (((abs(parts[i].x - parts[i].tmp) <= 2 ) && abs(parts[i].y - parts[i].tmp2) <= 2) || parts[i].tmp4 > 300 || parts[i].temp >= 873.15f)
 	{
 		sim->pv[(y / CELL)][(x / CELL)] = 270;
 		parts[i].life = 1;
-		parts[i].tmp = 250;
+		parts[i].tmp = 400;
 		sim->part_change_type(i, x, y, PT_SING);
 	}
 	
 	if (parts[i].life == 20)
 	{
-		if (parts[i].y > parts[i].tmp2)
+		float velaccuracy = 0;
+		if ((abs(parts[i].y - parts[i].tmp2) > 6))
 		{
-			parts[i].vy = -1;
+			velaccuracy = 3;
 		}
-		else if (parts[i].y <= parts[i].tmp2)
+		else if ((abs(parts[i].y - parts[i].tmp2) <= 6))
 		{
-			parts[i].life = 10;
+			velaccuracy = 1;
 		}
-		sim->create_part(-1, x, y + 1, PT_BRAY); //Trail Up
-	}
+
+			if (parts[i].y > parts[i].tmp2)
+			{
+				parts[i].vy = -1*(velaccuracy);
+				sim->create_part(-1, x, y + 1, PT_BRAY); //Trail Up
+			}
+			else if (parts[i].y < parts[i].tmp2)
+			{
+				parts[i].vy = velaccuracy;
+				sim->create_part(-1, x, y - 1, PT_BRAY); //Trail Down
+			}
+			if (parts[i].y == parts[i].tmp2)
+			{
+				parts[i].life = 10;
+			}
+		}
 	// Motion path
-	//tmp3 1 = Left , 2 = Right, 3 = Down.
 	else if (parts[i].life == 10) //For motion
 	{
 		if (parts[i].x < parts[i].tmp)
 		{
-			parts[i].tmp3 = 2;
-			parts[i].vx = 1.0;
+			parts[i].vx = 3.0;
 			sim->create_part(-1, x-1, y, PT_BRAY); //Trail Left
 		}
 		else if (parts[i].x > parts[i].tmp)
 		{
-			parts[i].tmp3 = 1;
-			parts[i].vx = -1.0;
+			parts[i].vx = -3.0;
 			sim->create_part(-1, x+1, y, PT_BRAY); //Trail Right
-		}
-		if (parts[i].x == parts[i].tmp)
-		{
-			if (parts[i].y < parts[i].tmp2)
-			{
-				parts[i].tmp3 = 3;
-				parts[i].vy = 1.0;
-				sim->create_part(-1, x, y - 2, PT_BRAY); //Trail Down
-			}
 		}
 	}
 
@@ -124,7 +127,7 @@ static int update(UPDATE_FUNC_ARGS)
 					}
 				if (parts[i].life > 0)
 				{
-					if (TYP(r) && TYP(r) != PT_BRAY)
+					if (TYP(r))
 						parts[i].tmp4++;
 				}
 			}
@@ -142,30 +145,29 @@ static int graphics(GRAPHICS_FUNC_ARGS) //Flare when activated.
 		ren->drawrect(cpart->tmp - 2, cpart->tmp2, 5, 1, cr, cg, cb, 255);
 		ren->drawrect(cpart->tmp, cpart->tmp2 - 2, 1, 5, cr, cg, cb, 255);
 	}
-
-	if (cpart->tmp3 == 0)//Up
+	//Body
+	if (cpart->life == 0)
 	{
-		ren->drawrect((int)(cpart->x - 1.0f), (int)(cpart->y - 4.0f), 3, 1, cr, cg, cb, 255);
-		ren->drawrect((int)(cpart->x), (int)(cpart->y - 5.0f), 1, 5, 255, 255, 255, 255);
-		ren->drawrect((int)(cpart->x - 2.0f), (int)(cpart->y), 5, 1, cr, cg, cb, 255);
+		ren->draw_line((int)(cpart->x), (int)(cpart->y - 1), (int)(cpart->x), (int)(cpart->y - 4), cr, cg, cb, 255);
 	}
-	else if (cpart->tmp3 == 1)//Left
+	else
 	{
-		ren->drawrect((int)(cpart->x - 4.0f), (int)(cpart->y - 1.0f), 1, 3, cr, cg, cb, 255);
-		ren->drawrect((int)(cpart->x - 5.0f), (int)(cpart->y), 5, 1, 255, 255, 255, 255);
-		ren->drawrect((int)(cpart->x), (int)(cpart->y - 2.0f), 1, 5, cr, cg, cb, 255);
-	}
-	else if (cpart->tmp3 == 2)//Right
-	{
-		ren->drawrect((int)(cpart->x + 4.0f), (int)(cpart->y - 1.0f), 1, 3, cr, cg, cb, 255);
-		ren->drawrect((int)(cpart->x + 1.0f), (int)(cpart->y), 5, 1, 255, 255, 255, 255);
-		ren->drawrect((int)(cpart->x), (int)(cpart->y - 2.0f), 1, 5, cr, cg, cb, 255);
-	}
-	else if (cpart->tmp3 == 3)//Down
-	{
-		ren->drawrect((int)(cpart->x - 2.0f), (int)(cpart->y), 5, 1, cr, cg, cb, 255);
-		ren->drawrect((int)(cpart->x), (int)(cpart->y + 1.0f), 1, 5, 255, 255, 255, 255);
-		ren->drawrect((int)(cpart->x - 1.0f), (int)(cpart->y + 4.0f), 3, 1, cr, cg, cb, 255);
+		if (cpart->vy < 0)
+		{
+			ren->draw_line((int)(cpart->x), (int)(cpart->y - 1), (int)(cpart->x), (int)(cpart->y - 4), cr, cg, cb, 255);
+		}
+		else if (cpart->vy > 0)
+		{
+			ren->draw_line((int)(cpart->x), (int)(cpart->y - 1), (int)(cpart->x), (int)(cpart->y + 4), cr, cg, cb, 255);
+		}
+		if (cpart->vx < 0)
+		{
+			ren->draw_line((int)(cpart->x+1), (int)(cpart->y), (int)(cpart->x + 4),(int)(cpart->y), cr, cg, cb, 255);
+		}
+		else if (cpart->vx > 0)
+		{
+			ren->draw_line((int)(cpart->x - 1), (int)(cpart->y), (int)(cpart->x - 4), (int)(cpart->y), cr, cg, cb, 255);
+		}
 	}
 	return 0;
 }

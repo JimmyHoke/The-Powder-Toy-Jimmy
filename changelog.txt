@@ -1,6 +1,8 @@
 Changelog for V37.0 (71)
 
 Changes to filter option and brightness settings
+New fail detection that checks for script errors.
+Improved MISL
 Fix int to float conversion errors while compiling
 New Icon for mod (Thanks to xphere07)
 Remove some unnecessary checks in BEE element
@@ -12,6 +14,5 @@ todo:
 Proper internal updates support
 small fonts for texter
 Stack editor mode
-Improve MISL
 Fix MISL and other pseudo solid elements from being affected by gravity
 Make a development branch
