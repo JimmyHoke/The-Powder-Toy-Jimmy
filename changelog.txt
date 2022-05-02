@@ -7,3 +7,11 @@ Remove some unnecessary checks in BEE element
 Update version number to 37.0
 Merge changes from vanilla master branch
 Fix potential crash when using PET around edges
+
+todo:
+Proper internal updates support
+small fonts for texter
+Stack editor mode
+Improve MISL
+Fix MISL and other pseudo solid elements from being affected by gravity
+Make a development branch
