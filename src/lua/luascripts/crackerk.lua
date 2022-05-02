@@ -1,4 +1,5 @@
 --Cracker1000 mod interface script--
+failsafe = 1
 local passreal = "12345678"
 local crackversion = 37.0
 local passreal2 = "DMND"

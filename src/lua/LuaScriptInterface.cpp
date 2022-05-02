@@ -64,6 +64,7 @@ extern "C"
 #include "manager.lua.h"
 #include "tptmp.lua.h"
 #include "crackerk.lua.h"
+#include "failsafe.lua.h"
 
 // idea from mniip, makes things much simpler
 #define SETCONST(L, NAME)\
@@ -397,6 +398,10 @@ tpt.partsdata = nil");
 			{
 				//Ignore;
 			}
+		}
+		if (luaL_loadbuffer(l, (const char *)failsafe_lua, failsafe_lua_size, "@[built-in failsafe.lua]") || lua_pcall(l, 0, 0, 0))
+		{
+			//Ignore;
 		}
 	}
 }
