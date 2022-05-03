@@ -1,5 +1,5 @@
 --Cracker1000 mod interface script--
-failsafe = 1
+failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
 local crackversion = 37.0
 local passreal2 = "DMND"
@@ -1388,7 +1388,7 @@ tpt.el.grph.menu=1
 tpt.el.base.menu=1
 tpt.el.whel.menu=1
 tpt.el.napm.menu=1
-tpt.el.gsns.menu=0
+tpt.el.gsns.menu=1
 end
 local modelemval = "0"
 bg:action(function(sender)

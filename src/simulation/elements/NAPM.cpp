@@ -48,10 +48,8 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].life > 1)
 	{
-		if (RNG::Ref().chance(1, 2))
-		{
-			parts[i].vy = -0.25;
-		}
+		parts[i].vy = 0;
+		parts[i].vx = 0;
 	}
 	if (parts[i].temp > 374.15f)
 	{
@@ -90,7 +88,7 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (sim->elements[TYP(r)].Properties&TYPE_SOLID)
 				{
-					parts[i].life = 3;
+					parts[i].life = 5;
 				}
 				switch (TYP(r))
 				{

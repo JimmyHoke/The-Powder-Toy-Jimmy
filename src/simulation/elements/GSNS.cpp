@@ -6,7 +6,7 @@ void Element::Element_GSNS()
 {
 	Identifier = "DEFAULT_PT_GSNS";
 	Name = "GSNS";
-	Colour = PIXPACK(0x420075);
+	Colour = PIXPACK(0x840777);
 	MenuVisible = 1;
 	MenuSection = SC_SENSOR;
 	Enabled = 1;
