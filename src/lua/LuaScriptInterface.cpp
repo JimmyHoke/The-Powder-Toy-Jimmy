@@ -398,10 +398,10 @@ tpt.partsdata = nil");
 			{
 				//Ignore;
 			}
-		}
-		if (luaL_loadbuffer(l, (const char *)failsafe_lua, failsafe_lua_size, "@[built-in failsafe.lua]") || lua_pcall(l, 0, 0, 0))
-		{
-			//Ignore;
+			if (luaL_loadbuffer(l, (const char *)failsafe_lua, failsafe_lua_size, "@[built-in failsafe.lua]") || lua_pcall(l, 0, 0, 0))
+			{
+				//Ignore;
+			}
 		}
 	}
 }

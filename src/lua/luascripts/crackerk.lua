@@ -190,6 +190,7 @@ if code == 200 then
 f = io.open('updatedmp.lua', 'w')
 f:write(ret)
 f:close()
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 dofile("updatedmp.lua")
 updatedmpval = "1"
 print("Multiplayer Script has been updated to match latest version.")
@@ -1808,14 +1809,17 @@ filterval = 0
 end
 end)
 
-bg7:action(function(sender)
-adminval = 1
 local adminpass = Textbox:new(290, 336, 55, 20, '', 'Password..')
 local admincan = Button:new(350,336,20,20,"X", "cancle admin mode")
+local admincan1 = Button:new(225,336,70,20,"Debug mode", "Disables crackerk.lua and fail check")
+local admincan2 = Button:new(298,336,76,20,"Disable scripts","Disables all embedded scripts")
+
+bg7:action(function(sender)
+adminval = 1
 newmenuth:removeComponent(adminpass)
-newmenuth:addComponent(adminpass)
 newmenuth:removeComponent(admincan)
 newmenuth:addComponent(admincan)
+newmenuth:addComponent(adminpass)
 admincan:action(function(sender)
 newmenuth:removeComponent(adminpass)
 newmenuth:removeComponent(admincan)
@@ -1827,8 +1831,6 @@ adminval = 2
 newmenuth:removeComponent(bg7)
 newmenuth:removeComponent(adminpass)
 newmenuth:removeComponent(admincan)
-local admincan1 = Button:new(225,336,70,20,"Crackerk.lua", "Disable crackerk.lua")
-local admincan2 = Button:new(300,336,70,20,"All scripts","Disable all embedded scripts")
 newmenuth:addComponent(admincan1)
 newmenuth:addComponent(admincan2)
 admincan1:action(function(sender)
@@ -2025,7 +2027,6 @@ end)
 
 reset2:action(function(sender)
 os.remove("updatedmp.lua")
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
