@@ -1,5 +1,6 @@
 Changelog for V37.0 (71)
 
+Update to v97.0
 Changes to filter option and brightness settings
 New fail detection that checks for script errors.
 Improved MISL
