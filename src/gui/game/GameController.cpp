@@ -1549,6 +1549,11 @@ String GameController::WallName(int type)
 		return String();
 }
 
+ByteString GameController::TakeScreenshot(int captureUI, int fileType)
+{
+	return gameView->TakeScreenshot(captureUI, fileType);
+}
+
 int GameController::Record(bool record)
 {
 	return gameView->Record(record);
