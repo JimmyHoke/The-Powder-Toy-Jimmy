@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 37.0
+local crackversion = 38.0
 local passreal2 = "DMND"
 local motw = "."
 --Default theme for initial launch and resets
@@ -190,7 +190,6 @@ if code == 200 then
 f = io.open('updatedmp.lua', 'w')
 f:write(ret)
 f:close()
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 dofile("updatedmp.lua")
 updatedmpval = "1"
 print("Multiplayer Script has been updated to match latest version.")
@@ -237,7 +236,6 @@ lockclose:action(function(sender)
 platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
 os.exit()
 end)
-
 end
 
 posix = graphics.textSize(motw)
@@ -1834,7 +1832,8 @@ newmenuth:removeComponent(admincan)
 newmenuth:addComponent(admincan1)
 newmenuth:addComponent(admincan2)
 admincan1:action(function(sender)
-local fdlf3 = io.open('dlf3.txt', 'w')
+local fdlf3 = io.open('debugmode.txt', 'w')
+fdlf3:write("Message from Cracker1000: This file disables the embedded scripts in Cracker1000's Mod for debugging purposes, delete this to restore the mod to original state.")
 fdlf3:close()
 local fdlf3at = io.open('autorun.lua', 'w')
 fdlf3at:close()
@@ -1868,6 +1867,8 @@ function startupcheck()
 fs.makeDirectory("scripts")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
+os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 local faz =io.open("updatedmp.lua","r")
 if faz ~= nil then 
 io.close(faz)
@@ -7010,20 +7011,8 @@ chars_light = {
         }
     }
 }
-local function notificationscriptvcheck()
-if MANAGER.getsetting("CRK","notifval") == "1" then
-local fazer =io.open("scripts/downloaded/219 Maticzpl-Notifications.lua","r")
-if fazer ~= nil then 
-io.close(fazer)
-MANAGER.savesetting("CRK","notifval","0")
-print("Notification script detected in scripts folder, Click Reset > Hard to turn on the embedded one.")
-return
-end
-end
-end
 
 function notificationscript()
-notificationscriptvcheck()
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
@@ -7032,7 +7021,6 @@ end
 if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
     return
 end
-notificationscriptvcheck()
 MaticzplNotifications = {
     lastTimeChecked = nil,
     fpCompare = nil,
