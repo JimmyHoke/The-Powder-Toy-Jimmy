@@ -1,19 +1,14 @@
 Changelog for V37.0 (71)
 
 Update to v97.0
-Changes to filter option and brightness settings
+Changes to filter and brightness settings
 New fail detection that checks for script errors.
-Improved MISL
+Faster and more accurate MISL
 Fix int to float conversion errors while compiling
 New Icon for mod (Thanks to xphere07)
-Remove some unnecessary checks in BEE element
-Update version number to 37.0
-Merge changes from vanilla master branch
+Remove some unnecessary checks from BEE element
 Fix potential crash when using PET around edges
+Improved update function for internal multiplayer script.
 
 todo:
-Proper internal updates support
-small fonts for texter
-Stack editor mode
-Fix MISL and other pseudo solid elements from being affected by gravity
-Make a development branch
+none

@@ -1,8 +1,9 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 38.0
+local crackversion = 37.0
 local passreal2 = "DMND"
+local multiplayerversion = 26
 local motw = "."
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaultheme = 131,0,255,255, "Twilight"
@@ -187,15 +188,25 @@ end
 if req:status() == "done" then
 local ret, code = req:finish()
 if code == 200 then
-f = io.open('updatedmp.lua', 'w')
+if MANAGER.getsetting("CRK","mpversion") == nil then
+MANAGER.savesetting("CRK","mpversion",multiplayerversion)--Multiplayer internal version
+end
+
+if MANAGER.scriptinfo(2).version > tonumber(MANAGER.getsetting("CRK","mpversion")) then
+f = io.open('scripts/updatedmp.lua', 'w')
 f:write(ret)
 f:close()
-dofile("updatedmp.lua")
+dofile("scripts/updatedmp.lua")
 updatedmpval = "1"
+MANAGER.savesetting("CRK","mpversion",MANAGER.scriptinfo(2).version)
 print("Multiplayer Script has been updated to match latest version.")
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 event.unregister(event.tick,writefile)
+else
+tpt.unregister_step(writefile)
+print("You are already running the latest version of tptmp script..")
+end
 else
 print("Error updating multiplayer, make sure you have internet access!")
 event.unregister(event.tick,writefile)
@@ -1869,11 +1880,11 @@ event.register(event.tick,writefile2)
 interface.addComponent(toggle)
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
-local faz =io.open("updatedmp.lua","r")
+local faz =io.open("scripts/updatedmp.lua","r")
 if faz ~= nil then 
 io.close(faz)
 updatedmpval = "1"
-dofile("updatedmp.lua")
+dofile("scripts/updatedmp.lua")
 else
 updatedmpval = "0"
 end
@@ -2027,7 +2038,7 @@ sim.clearSim()
 end)
 
 reset2:action(function(sender)
-os.remove("updatedmp.lua")
+os.remove("scripts/updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
