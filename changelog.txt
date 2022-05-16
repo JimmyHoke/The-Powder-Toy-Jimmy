@@ -1,10 +1,12 @@
 Changelog for V37.0 (71)
 
 Update to v97.0
+Updated internal notifications script
 Changes to filter and brightness settings
 New fail detection that checks for script errors.
 Faster and more accurate MISL
 Fix int to float conversion errors while compiling
+New message indicator
 New Icon for mod (Thanks to xphere07)
 Remove some unnecessary checks from BEE element
 Fix potential crash when using PET around edges

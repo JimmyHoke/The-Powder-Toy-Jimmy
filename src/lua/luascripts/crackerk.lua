@@ -267,6 +267,8 @@ end
 if timeplus <= 0 then
 timeplus = 240
 end
+tpt.drawrect(399,366,138,14,32,250,210,255)
+gfx.drawText(404,370,"You have an unread message",32,250,210,255)
 tpt.fillrect(418,408,51,14,32,250,210,timeplus)
 end
 
@@ -2074,7 +2076,7 @@ end
 if perfmv == "1" then
 graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
-graphics.fillRect(1,1, 609, 255,ar,ag,ab,10)
+graphics.fillRect(1,1, 609, 255,ar,ag,ab,15)
 end
 
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
@@ -7032,6 +7034,7 @@ end
 if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
     return
 end
+
 MaticzplNotifications = {
     lastTimeChecked = nil,
     fpCompare = nil,
@@ -7041,6 +7044,7 @@ MaticzplNotifications = {
     hoveringOnButton = false,
     windowOpen = false,
     scrolled = 0,
+    specialMessage = "",
     version = 1
 }
 
@@ -7065,7 +7069,7 @@ local scrollLimit = 0
 function MaticzplNotifications.DrawMenuContent()
     local function hover(x,y,dx,dy)       
         mouseX = x
-        mouseY = y        
+        mouseY = y     
     end
     local function click(x,y,button)
         -- inside window
@@ -7132,62 +7136,69 @@ function MaticzplNotifications.DrawMenuContent()
     
     --Vertical line
     gfx.drawLine(418+11,250,418+11,250 + 154,colorR, colorG, colorB, colorA)
-    
-    local y = 252 + notif.scrolled * 5
-    local lastTitleY = y
-    
-    for i, n in ipairs(notif.notifications) do      
-        local prev = notif.notifications[i-1]
         
-        local saveID = n.save
-        local title = n.title
-        local msg = n.message
+	if #notif.notifications == 0 or notif.specialMessage ~= "" then
+        local msg = "No notifications to show";
+        msg = msg.."\n"..notif.specialMessage
+
+        gfx.drawText(438,257,msg,228,228,228,255)
+    else  
+        local y = 252 + notif.scrolled * 5
+        local lastTitleY = y
         
-        --Group title
-        if prev == nil or prev.title ~= title then
-            lastTitleY = y
+        for i, n in ipairs(notif.notifications) do      
+            local prev = notif.notifications[i-1]
+            
+            local saveID = n.save
+            local title = n.title
+            local msg = n.message
+            
+            --Group title
+            if prev == nil or prev.title ~= title then
+                lastTitleY = y
+                if y >= 252 and y <= 250+155 - 10 then         
+                    gfx.drawLine(418+12,y - 2,418 + 192,y - 2,colorR,colorG,colorB,colorA)     
+                    gfx.drawText(418+15,y,title)
+                end
+                local sx,sy = gfx.textSize(title)
+                y = y + sy
+            end
+            --Message
             if y >= 252 and y <= 250+155 - 10 then         
-                gfx.drawLine(418+12,y - 2,418 + 192,y - 2,colorR,colorG,colorB,colorA)     
-                gfx.drawText(418+15,y,title)
-            end
-            local sx,sy = gfx.textSize(title)
+                gfx.drawText(418+22,y,msg,200,200,200)    
+            end    
+            local sx,sy = gfx.textSize(msg)
             y = y + sy
-        end
-        --Message
-        if y >= 252 and y <= 250+155 - 10 then         
-            gfx.drawText(418+22,y,msg,200,200,200)    
-        end    
-        local sx,sy = gfx.textSize(msg)
-        y = y + sy
-        
-        local next = notif.notifications[i+1]
-        if next == nil or next.title ~= title then
-            if mouseX > 418 + 12 and mouseX < 418 + 193 and mouseY > lastTitleY and mouseY < y and mouseY > 250 and mouseY < 250 + 156 then
-                
-                local boxY = math.max(lastTitleY-1,251)
-                local height = math.min(y - boxY - 2,boxY + 155 - 253)
-                if height + boxY > 404 then --this is confusing
-                    height = height - (height + boxY - 404)
-                end
-                gfx.drawRect(418 + 12,boxY,193 - 13,height)
-                
-                if justClicked then
-                    local removing = i
-                    while notif.notifications[removing].title == title do
-                        table.remove(notif.notifications,removing)    
-                        removing = removing - 1
-                        if notif.notifications[removing] == nil then
-                            break
-                        end
-                    end
-                    notif.SaveNotifications()
+            
+            local next = notif.notifications[i+1]
+            if next == nil or next.title ~= title then
+                if mouseX > 418 + 12 and mouseX < 418 + 193 and mouseY > lastTitleY and mouseY < y and mouseY > 250 and mouseY < 250 + 156 then
                     
-                    sim.loadSave(saveID)
+                    local boxY = math.max(lastTitleY-1,251)
+                    local height = math.min(y - boxY - 2,boxY + 155 - 253)
+                    if height + boxY > 404 then --this is confusing
+                        height = height - (height + boxY - 404)
+                    end
+                    gfx.drawRect(418 + 12,boxY,193 - 13,height)
+                    
+                    if justClicked then
+                        local removing = i
+                        while notif.notifications[removing].title == title do
+                            table.remove(notif.notifications,removing)    
+                            removing = removing - 1
+                            if notif.notifications[removing] == nil then
+                                break
+                            end
+                        end
+                        notif.SaveNotifications()
+                        
+                        sim.loadSave(saveID)
+                    end
                 end
             end
+            
+            scrollLimit = -math.max((y - 250 - 154) / 5 - notif.scrolled, 0) 
         end
-        
-        scrollLimit = -math.max((y - 250 - 154) / 5 - notif.scrolled, 0) 
     end
   
     event.register(event.mousedown,click)
@@ -7196,6 +7207,7 @@ function MaticzplNotifications.DrawMenuContent()
     
     if exitIsHovering and justClicked then        
         notif.windowOpen = false
+        notif.specialMessage = ""
         notif.SaveNotifications()
         return false
     end    
@@ -7205,6 +7217,11 @@ function MaticzplNotifications.DrawMenuContent()
         return false
     end    
     justClicked = false
+end
+
+function MaticzplNotifications.ShowSpecialMesasge(msg)
+    notif.specialMessage = msg;
+    notif.windowOpen = true;
 end
 
 -- Request save data from the server
@@ -7242,7 +7259,7 @@ function MaticzplNotifications.OnResponse()
         
         local success, found = pcall(json.parse,res)
         if not success then
-            print("Error while fetching saves from server.")
+            notif.ShowSpecialMesasge("Error while fetching saves\nfrom the server.")
             return
         end
         for k, v in pairs(found.Saves) do
@@ -7253,7 +7270,7 @@ function MaticzplNotifications.OnResponse()
     local fpRes = notif.fpCompare:finish()
     local success, fpsaves = pcall(json.parse,fpRes)
     if not success then
-        print("Error while fetching FP from server.")
+        notif.ShowSpecialMesasge("Error while fetching FP from server.")
         return
     end
     fpsaves = fpsaves.Saves
@@ -7403,7 +7420,7 @@ function MaticzplNotifications.Mouse(x,y,dx,dy)
         posX = 585
     end
     
-    notif.hoveringOnButton = math.abs(posX - x) < 5 and math.abs(posY - y) < 5 and #notif.notifications > 0
+    notif.hoveringOnButton = math.abs(posX - x) < 5 and math.abs(posY - y) < 5
 end
 
 function MaticzplNotifications.OnClick(x,y,button)
@@ -7603,7 +7620,7 @@ event.register(event.mousewheel,notif.Scroll)
 
 local name = tpt.get_name()
 if name == "" then          
-    print("You need to be logged in to use the notifications script.")
+    notif.ShowSpecialMesasge("You need to be logged in\nto use the notifications script.")
 end
 end
 notificationscript()
