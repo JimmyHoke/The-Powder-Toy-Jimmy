@@ -6,7 +6,7 @@ local passreal2 = "DMND"
 local multiplayerversion = 26
 local motw = "."
 --Default theme for initial launch and resets
-local dr, dg, db, da, defaultheme = 131,0,255,255, "Twilight"
+local dr, dg, db, da, defaulttheme = 131,0,255,255,"Twilight"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -161,8 +161,6 @@ newmenu:removeComponent(reminderhelp)
 end
 
 function clearsb()
-newmenu:removeComponent(reset1)
-newmenu:removeComponent(reset2)
 newmenu:removeComponent(bug1)
 newmenu:removeComponent(bug2)
 newmenu:removeComponent(brop)
@@ -235,8 +233,9 @@ local lockmenu = Window:new(100,150, 330, 70)
 local lockclose = Button:new(311,2,15,15,"X", "Close.")
 lockmenu:addComponent(lockclose)
 local function drawlocktext()
+gfx.fillRect(1,1,610,380,255,0,0,90)
 graphics.drawText(110,155,"Level 2 Message: The Cracker1000's Mod has been locked.",255,0,0,255)
-graphics.drawText(110,172,"Please update to a newer version using forum thread links.\nContact @Cracker1000 if the problem persists.\n\nClick the X button to open forum thread.",255,255,255,255)
+graphics.drawText(110,172,"Please update to a newer version, if available, using forum thread.\nContact @Cracker1000 if the problem persists.\n\nClick the X button to open forum thread.",255,255,255,255)
 end
 local function lockedmod()
 ui.showWindow(lockmenu)
@@ -503,56 +502,75 @@ stamplb = "0"
 clearsb()
 end)
 
-local timerad = Button:new(10,356,20,15, "S", "Stacks the elements present on screen.")
-local timerao = Button:new(30,356,20,15, "R", "Removes just the top most particle from stack.")
-local timeraf = Button:new(50,356,20,15, "D", "Leaves top particle and PHOT but remove everything else under it.")
-local timerax = Button:new(70,356,20,15, "X", "Exit.")
+local stackposx, stackposy, stackposval = 99, 99, 0
 
-function timeradd()
-interface.addComponent(timerao)
-interface.addComponent(timeraf)
-interface.addComponent(timerax)
-interface.addComponent(timerad)
+function drawstack()
+gfx.fillRect(15,367,35,13,25,255,25,170)
+gfx.drawText(20,370,"Stack",255,255,255)
+
+gfx.fillRect(55,367,50,13,25,25,255,170)
+gfx.drawText(60,370,"De-Stack",255,255,255)
+
+gfx.fillRect(110,367,55,13,255,255,25,170)
+gfx.drawText(115,370,"Stack pos.",255,255,255)
+
+gfx.fillRect(170,367,30,13,255,25,25,170)
+gfx.drawText(175,370,"Exit",255,255,255)
+
+gfx.fillCircle(stackposx, stackposy,5,5,0,255,0,100)
+
+if stackposval == 1 then
+gfx.fillCircle(tpt.mousex, tpt.mousey,10,10,20,255,20,200)
+end
 end
 
-function timerremo()
-interface.removeComponent(timerao)
-interface.removeComponent(timeraf)
-interface.removeComponent(timerax)
-interface.removeComponent(timerad)
+function getclick()
+if tpt.mousex >10 and tpt.mousex < 50 and tpt.mousey > 365 and tpt.mousey < 378 then
+  tpt.set_property("x", stackposx, "NONE")
+  tpt.set_property("y", stackposy, "NONE")
+  	print("Stacked the particles")
+return false
 end
 
-info:action(function(sender)
-close()
-tpt.selectedl = "DEFAULT_PT_SPRK"
-timerremo()
-timeradd()
+if tpt.mousex >170 and tpt.mousex < 190 and tpt.mousey > 365 and tpt.mousey < 378 then
+event.unregister(event.mousedown,getclick)
+event.unregister(event.tick,drawstack)
+  	print("Stack mode turned off")
+return false
+end
 
-timerao:action(function(sender)
+if tpt.mousex >111 and tpt.mousex < 164 and tpt.mousey > 365 and tpt.mousey < 378 then
+stackposval = 1
+print("Click where you want to stack the particles")
+return false
+end
+
+if stackposval == 1 then
+stackposx = tpt.mousex
+stackposy = tpt.mousey
+gfx.fillCircle(stackposx, stackposy,20,20,20,255,20,255)
+stackposval = 0
+return false
+end
+
+if tpt.mousex >56 and tpt.mousex < 102 and tpt.mousey > 365 and tpt.mousey < 378 then
 for i in sim.parts() do
 		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
 		if sim.pmap (x, y) == i then 
                                 tpt.delete(i)
 		end
 	end
-end)
+	print("Destacked the particles")
+return false
+end
+end
 
-timeraf:action(function(sender)
-for i in sim.parts() do
-		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
-		if sim.pmap(x, y) ~= i and bit.band(elem.property(sim.partProperty(i, sim.FIELD_TYPE), "Properties"), elem.TYPE_ENERGY) == 0 then
-			tpt.delete(i)
-		end
-	end
-end)
-
-timerad:action(function(sender)
- tpt.set_property("x", 99, "NONE")
-end)
-
-timerax:action(function(sender)
-timerremo()
-end)
+info:action(function(sender)
+close()
+event.unregister(event.mousedown,getclick)
+event.register(event.mousedown,getclick)
+event.unregister(event.tick,drawstack)
+event.register(event.tick,drawstack)
 end)
 
 edito:action(function(sender)
@@ -1254,7 +1272,7 @@ local close2 = Button:new(570, 400, 50, 15, "Close")
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settels down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation)."
+local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation)."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1417,7 +1435,6 @@ end)
 local barval = MANAGER.getsetting("CRK","barval")
 local barlength = "1"
 local uival = "1"
-
 local frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function theme()
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
@@ -1460,9 +1477,7 @@ tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 end
 --Topbarend
---MP and manager
-tpt.drawrect(613,103,14,14,ar,ag,ab,al)
-tpt.drawrect(613,119,14,15,ar,ag,ab,al)
+
 --top
 tpt.drawrect(613,1,14,14,ar,ag,ab,al)
 tpt.drawrect(613,17,14,14,ar,ag,ab,al)
@@ -1470,6 +1485,9 @@ tpt.drawrect(613,33,14,14,ar,ag,ab,al)
 tpt.drawrect(613,49,14,14,ar,ag,ab,al)
 tpt.drawrect(613,65,14,14,ar,ag,ab,al)
 tpt.drawrect(613,81,14,14,ar,ag,ab,al)
+--MP and manager
+tpt.drawrect(613,103,14,14,ar,ag,ab,al)
+tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 --right
 tpt.drawrect(613,136,14,14,ar,ag,ab,al)
 tpt.drawrect(613,152,14,14,ar,ag,ab,al)
@@ -1544,12 +1562,12 @@ end
 
 mp:action(function(sender)
 clearsb()
-local mp1 = Button:new(20,92,45,25,"Dark", "Change the theme to default")
+local mp1 = Button:new(20,92,45,25,"Dark", "Change the theme to Dark")
 local mp2 = Button:new(70,92,45,25,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,92,45,25,"Aqua", "Change the theme to Red")
 local mp4 = Button:new(170,92,45,25,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,92,45,25,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,92,45,25,defaultheme, "Magnita/Default")
+local mp8 = Button:new(270,92,45,25,defaulttheme, "Resets back to default")
 local mp9 = Button:new(320,92,45,25,"Pulse", "RBG makes everything better.")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
@@ -1971,75 +1989,6 @@ end
 end)
 
 reset:action(function(sender)
-clearsb()
-newmenu:addComponent(reset1)
-newmenu:addComponent(reset2)
-end)
-
-reset1:action(function(sender)
-close()
-timerremo()
-timeplus = 255
-perfmv = "1"
-autoval = "1"
-invtoolv = "1"
-filterval = 0
-shrtv = "1"
-modelemval = "0"
-stamplb = "0"
-fpsval = "1"
-uival = "1"
-rulval = "1"
-hidval = "1"
-barval = "2"
-borderval = "0" 
-savetime = 0
-barktext:text("5")
-showmodelem()
-event.unregister(event.tick,writefile)
-event.unregister(event.tick,showmotdnot)
-event.unregister(event.tick,autosave)
-event.unregister(event.tick,inverttool)
-event.unregister(event.tick,cbrightness)
-event.unregister(event.tick,UIhide)
-event.unregister(event.tick,autohidehud)
-event.unregister(event.tick,theme)
-event.register(event.tick,theme)
-brightSlider:value("255")
-MANAGER.savesetting("CRK", "brightness", "255")
-MANAGER.savesetting("CRK", "pass","0")
-MANAGER.savesetting("CRK", "brightstate", "0")
-MANAGER.savesetting("CRK","savergb",1)
-MANAGER.savesetting("CRK","hidestate", "0")
-MANAGER.savesetting("CRK", "fancurs","1")
-MANAGER.savesetting("CRK", "barval", "2")
-MANAGER.savesetting("CRK", "passreal","12345678")
-MANAGER.savesetting("CRK", "passreal2","DMND")
-MANAGER.savesetting("CRK","al",da)
-MANAGER.savesetting("CRK","ar",dr)
-MANAGER.savesetting("CRK","ag",dg)
-MANAGER.savesetting("CRK","ab",db)
-MANAGER.savesetting("CRK", "savergb",0)
-MANAGER.savesetting("CRK", "notifval","1")
-tpt.hud(1)
-hideyes()
-tpt.display_mode(3)
-tpt.watertest(0)
-sim.edgeMode(0) 
-tpt.setfpscap(60)
-tpt.setdrawcap(0)
-tpt.setwindowsize(1)
-tpt.newtonian_gravity(0)
-tpt.decorations_enable(0)
-sim.resetPressure()
-tpt.ambient_heat(0)
-sim.resetTemp()
-tpt.reset_velocity(1,380,300,300)
-tpt.setdebug(0X0)
-sim.clearSim()
-end)
-
-reset2:action(function(sender)
 os.remove("scripts/updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
