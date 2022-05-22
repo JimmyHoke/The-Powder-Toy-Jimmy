@@ -505,22 +505,24 @@ end)
 local stackposx, stackposy, stackposval = 99, 99, 0
 
 function drawstack()
-gfx.fillRect(15,367,35,13,25,255,25,170)
+gfx.fillRect(15,367,35,13,25,255,25,200)
 gfx.drawText(20,370,"Stack",255,255,255)
 
-gfx.fillRect(55,367,50,13,25,25,255,170)
+gfx.fillRect(55,367,50,13,25,25,255,200)
 gfx.drawText(60,370,"De-Stack",255,255,255)
 
-gfx.fillRect(110,367,55,13,255,255,25,170)
+gfx.fillRect(110,367,55,13,255,255,25,200)
 gfx.drawText(115,370,"Stack pos.",255,255,255)
 
-gfx.fillRect(170,367,30,13,255,25,25,170)
+gfx.fillRect(170,367,30,13,255,25,25,200)
 gfx.drawText(175,370,"Exit",255,255,255)
 
-gfx.fillCircle(stackposx, stackposy,5,5,0,255,0,100)
-
 if stackposval == 1 then
-gfx.fillCircle(tpt.mousex, tpt.mousey,10,10,20,255,20,200)
+gfx.drawLine(tpt.mousex-7, tpt.mousey,tpt.mousex+7,tpt.mousey,0,255,0,255)
+gfx.drawLine(tpt.mousex, tpt.mousey-7,tpt.mousex,tpt.mousey+7,0,255,0,255)
+else
+gfx.drawLine(stackposx-5, stackposy,stackposx+5,stackposy,0,255,0,200)
+gfx.drawLine(stackposx, stackposy-5,stackposx,stackposy+5,0,255,0,200)
 end
 end
 
@@ -532,14 +534,14 @@ if tpt.mousex >10 and tpt.mousex < 50 and tpt.mousey > 365 and tpt.mousey < 378 
 return false
 end
 
-if tpt.mousex >170 and tpt.mousex < 190 and tpt.mousey > 365 and tpt.mousey < 378 then
+if tpt.mousex >170 and tpt.mousex < 200 and tpt.mousey > 365 and tpt.mousey < 378 then
 event.unregister(event.mousedown,getclick)
 event.unregister(event.tick,drawstack)
-  	print("Stack mode turned off")
+  	print("Stack mode turned OFF")
 return false
 end
 
-if tpt.mousex >111 and tpt.mousex < 164 and tpt.mousey > 365 and tpt.mousey < 378 then
+if tpt.mousex >111 and tpt.mousex < 164 and tpt.mousey > 365 and tpt.mousey < 380 then
 stackposval = 1
 print("Click where you want to stack the particles")
 return false
@@ -548,7 +550,6 @@ end
 if stackposval == 1 then
 stackposx = tpt.mousex
 stackposy = tpt.mousey
-gfx.fillCircle(stackposx, stackposy,20,20,20,255,20,255)
 stackposval = 0
 return false
 end
@@ -560,7 +561,7 @@ for i in sim.parts() do
                                 tpt.delete(i)
 		end
 	end
-	print("Destacked the particles")
+	print("Removed the outermost particle from stack")
 return false
 end
 end
@@ -858,7 +859,7 @@ function drawText(text, x, y, element, font)
         end
 end
 
-local newmenu4 = Window:new(4,344,604,42)
+local newmenu4 = Window:new(4,344,606,42)
 
 function drawblip()
 ui.closeWindow(newmenu4)
@@ -878,6 +879,7 @@ local drawpos2 = 500
 local disabletype = 0
 
 function drawprev2()
+gfx.fillRect(4,344,606,42,ar,ag,ab,120)
 if yvalue < ylimit then
 graphics.drawText(10,yvalue+yval2,texttext..".",tr,tg,tb,255)
 if ffix == "0" then
@@ -948,7 +950,7 @@ local smalf = Button:new(210,20,40,17,"Normal", "5x7.")
 local bigf = Button:new(262,20,40,17,"Title", "7x10.")
 local titf = Button:new(314,20,40,17,"Bold", "7x10, Bold")
 local clrsc = Button:new(448,20,80,17,"Clear Textbox", "Clear text")
-local clrsc2 = Button:new(536,20,60,17,"Clear Screen", "Clear text")
+local clrsc2 = Button:new(532,20,70,17,"Clear Screen", "Clear text")
 local titf2 = Button:new(366,20,40,17,"Real.", "7x10, Bold")
 
 newmenu4:addComponent(textTextbox)
