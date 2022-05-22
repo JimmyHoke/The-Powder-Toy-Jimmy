@@ -213,7 +213,6 @@ end
 end
 
 local timermotd = 0
-local timeplus = 240
 local posix = 0
 local onlinestatus = 0 
 
@@ -252,6 +251,8 @@ posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
 event.register(event.tick,showmotdnot)
+event.unregister(event.mousedown, clicktomsg)
+event.register(event.mousedown, clicktomsg)
 end
 end
 event.unregister(event.tick,writefile2)
@@ -259,16 +260,23 @@ end
 end
 end
 
+function clicktomsg()
+if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 367 and tpt.mousey < 380 then
+open()
+return false
+end
+end
+
 function showmotdnot()
-if timeplus > 0 then
-timeplus = timeplus - 2
+if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 367 and tpt.mousey < 380 then
+tpt.fillrect(390,366,138,14,32,250,210,120)
+else
+tpt.fillrect(390,366,138,14,32,250,210,20)
 end
-if timeplus <= 0 then
-timeplus = 240
-end
-tpt.drawrect(399,366,138,14,32,250,210,255)
-gfx.drawText(404,370,"You have an unread message",32,250,210,255)
-tpt.fillrect(418,408,51,14,32,250,210,timeplus)
+
+tpt.drawrect(390,366,138,14,32,250,210,255)
+tpt.drawrect(418,408,51,14,32,250,210,255)
+gfx.drawText(395,370,"You have an unread message",32,250,210,255)
 end
 
 upmp:action(function(sender)
@@ -520,10 +528,9 @@ gfx.drawText(175,370,"Exit",255,255,255)
 if stackposval == 1 then
 gfx.drawLine(tpt.mousex-7, tpt.mousey,tpt.mousex+7,tpt.mousey,0,255,0,255)
 gfx.drawLine(tpt.mousex, tpt.mousey-7,tpt.mousex,tpt.mousey+7,0,255,0,255)
-else
+end
 gfx.drawLine(stackposx-5, stackposy,stackposx+5,stackposy,0,255,0,200)
 gfx.drawLine(stackposx, stackposy-5,stackposx,stackposy+5,0,255,0,200)
-end
 end
 
 function getclick()
@@ -2022,7 +2029,7 @@ if posix > 600 then
 showmotd()
 end
 graphics.fillRect(2,258,609, 10,20,20,20,200)
-graphics.drawText(posix2,259,motw,255,200,55,255)
+graphics.drawText(posix2,259,motw,32,250,210,255)
 end
 if perfmv == "1" then
 graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
@@ -2114,11 +2121,11 @@ function open()
 ui.showWindow(newmenu) 
 newmenu:onDraw(drawglitch)
 newmenu:onKeyPress(keyclicky2)
-
 if motw ~= "." then
 MANAGER.savesetting("CRK","storedmotd",motw)
 end
 event.unregister(event.tick,showmotdnot)
+event.unregister(event.mousedown, clicktomsg)
 newmenu:onTryExit(close)
 newmenu:addComponent(deletesparkButton)
 newmenu:addComponent(FPS)
