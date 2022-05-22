@@ -20,6 +20,7 @@ Fix potential crash when using PET around edges
 Improved update function for internal multiplayer script.
 
 Changes from snapshot 234:
+Let NEUT pass through BGLA element
 Fix cryptic Lua error built-in elements could sometimes produce
 Added chemically strengthening GLAS (expose GLAS to molten SALT)
 Element scroll bars no longer show in menus that don't scroll
