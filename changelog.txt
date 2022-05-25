@@ -1,7 +1,5 @@
 Changelog for V37.0 (71)
 
-Important: Please note that this update is built on snapshot 234 and users with stable version won't be able to load saves published with this version.
-<blank>
 New element: GSNS (gravity sensor)
 Revamped stack tools with better controls
 Updated internal notification script

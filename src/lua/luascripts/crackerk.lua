@@ -513,17 +513,20 @@ end)
 local stackposx, stackposy, stackposval = 99, 99, 0
 
 function drawstack()
-gfx.fillRect(15,367,35,13,25,255,25,200)
-gfx.drawText(20,370,"Stack",255,255,255)
+gfx.fillRect(13,367,28,13,25,255,25,200)
+gfx.drawText(15,370,"Stack",255,255,255)
 
-gfx.fillRect(55,367,50,13,25,25,255,200)
-gfx.drawText(60,370,"De-Stack",255,255,255)
+gfx.fillRect(47,367,45,13,25,25,255,200)
+gfx.drawText(50,370,"De-Stack",255,255,255)
 
-gfx.fillRect(110,367,55,13,255,255,25,200)
-gfx.drawText(115,370,"Stack pos.",255,255,255)
+gfx.fillRect(98,367,43,13,32,200,125,200)
+gfx.drawText(100,370,"Top only",255,255,255)
 
-gfx.fillRect(170,367,30,13,255,25,25,200)
-gfx.drawText(175,370,"Exit",255,255,255)
+gfx.fillRect(146,367,52,13,255,255,25,200)
+gfx.drawText(148,370,"Stack pos.",255,255,255)
+
+gfx.fillRect(204,367,23,13,255,25,25,200)
+gfx.drawText(206,370,"Exit",255,255,255)
 
 if stackposval == 1 then
 gfx.drawLine(tpt.mousex-7, tpt.mousey,tpt.mousex+7,tpt.mousey,0,255,0,255)
@@ -534,21 +537,26 @@ gfx.drawLine(stackposx, stackposy-5,stackposx,stackposy+5,0,255,0,200)
 end
 
 function getclick()
-if tpt.mousex >10 and tpt.mousex < 50 and tpt.mousey > 365 and tpt.mousey < 378 then
+if tpt.mousex >13 and tpt.mousex < 40 and tpt.mousey > 365 and tpt.mousey < 378 then
   tpt.set_property("x", stackposx, "NONE")
   tpt.set_property("y", stackposy, "NONE")
   	print("Stacked the particles")
 return false
 end
 
-if tpt.mousex >170 and tpt.mousex < 200 and tpt.mousey > 365 and tpt.mousey < 378 then
+if tpt.mousex >204 and tpt.mousex < 226 and tpt.mousey > 365 and tpt.mousey < 378 then
 event.unregister(event.mousedown,getclick)
 event.unregister(event.tick,drawstack)
   	print("Stack mode turned OFF")
 return false
 end
 
-if tpt.mousex >111 and tpt.mousex < 164 and tpt.mousey > 365 and tpt.mousey < 380 then
+if tpt.mousex >98 and tpt.mousex < 140 and tpt.mousey > 365 and tpt.mousey < 378 then
+print("Removed all the particles except top one.")
+return false
+end
+
+if tpt.mousex >147 and tpt.mousex < 197 and tpt.mousey > 365 and tpt.mousey < 380 then
 stackposval = 1
 print("Click where you want to stack the particles")
 return false
@@ -561,7 +569,7 @@ stackposval = 0
 return false
 end
 
-if tpt.mousex >56 and tpt.mousex < 102 and tpt.mousey > 365 and tpt.mousey < 378 then
+if tpt.mousex >47 and tpt.mousex < 91 and tpt.mousey > 365 and tpt.mousey < 378 then
 for i in sim.parts() do
 		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
 		if sim.pmap (x, y) == i then 
@@ -886,7 +894,7 @@ local drawpos2 = 500
 local disabletype = 0
 
 function drawprev2()
-gfx.fillRect(4,344,606,42,ar,ag,ab,120)
+gfx.fillRect(4,344,606,42,ar,ag,ab,100)
 if yvalue < ylimit then
 graphics.drawText(10,yvalue+yval2,texttext..".",tr,tg,tb,255)
 if ffix == "0" then
