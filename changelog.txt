@@ -2,10 +2,11 @@ Changelog for V37.0 (71)
 
 New element: GSNS (gravity sensor)
 Revamped stack tools with better controls
+Fix developer button stacking if clicked multiple times
 Updated internal notification script
 Changes to filter and brightness settings
 New fail detection that checks for script errors.
-Faster and more accurate MISL
+Faster and more accurate MISL also fix MISL getting displaced by gravity.
 LITH now reflects PHOT with varying wavelengths based on its charge levels
 Make Texter follow theme colours
 Fix typos in WIKI

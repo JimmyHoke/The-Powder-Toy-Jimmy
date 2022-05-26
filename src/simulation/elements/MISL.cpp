@@ -58,6 +58,11 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp2 = 100;
 	if (parts[i].tmp4 < 1)
 		parts[i].tmp4 = 1;
+	if (parts[i].life == 0)// Prevent it from being displaced by gravity.
+	{
+		parts[i].vx = 0;
+		parts[i].vy = 0;
+	}
 	//Explosion
 	if (((abs(parts[i].x - parts[i].tmp) <= 3 ) && abs(parts[i].y - parts[i].tmp2) <= 2) || parts[i].tmp4 > 300 || parts[i].temp >= 873.15f)
 	{

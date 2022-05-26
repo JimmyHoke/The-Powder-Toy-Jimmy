@@ -552,6 +552,12 @@ return false
 end
 
 if tpt.mousex >98 and tpt.mousex < 140 and tpt.mousey > 365 and tpt.mousey < 378 then
+for i in sim.parts() do
+		local x,y = sim.partProperty(i, sim.FIELD_X),sim.partProperty(i, sim.FIELD_Y)
+		if sim.pmap(x, y) ~= i and sim.photons(x,y) ~= i then
+			tpt.delete(i)
+		end
+	end
 print("Removed all the particles except top one.")
 return false
 end
@@ -778,7 +784,7 @@ end)
 
 reminderhelp:action(function(sender)
 close()
-tpt.message_box(" Notification feature help", "Turning it on will notify you when:\n*There's a new vote or comment on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 5 minutes and works for first 60 saves (by votes + by dates).\n\nYou need to be logged in.\n\nCredit: @Maticzpl")
+tpt.message_box(" Notification feature help", "Turning it on will notify you when:\n*There's a new vote or comment on your save\n*When your save reaches/ leaves FP.\n\nRefreshes every 5 minutes and works for first 60 saves (by votes + by dates).\n\nShows a red cross if something goes wrong.\n\nCredit: @Maticzpl")
 end)
 
 function cbrightness()
@@ -7017,7 +7023,7 @@ MaticzplNotifications = {
 local json = {}
 local notif = MaticzplNotifications
 local MANAGER = rawget(_G, "MANAGER")    
-local colorR, colorG, colorB, colorA = 148,148,148,200 --Default colours
+local warning, colorR, colorG, colorB, colorA = 0, 148,148,148,200 --Default colours
 
 local function getcrackertheme() -- Reserved for Cracker1000's Mod
 	colorR = ar
@@ -7063,7 +7069,8 @@ function MaticzplNotifications.DrawMenuContent()
     --Exit button
     local exitIsHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 250 and mouseY < 250 + 12 and notif.windowOpen
     if exitIsHovering then
-        gfx.fillRect(418,250,12,12,128,128,128,colorA)      
+        gfx.fillRect(418,250,12,12,128,128,128,colorA) 
+		gfx.drawText(395,252,"Exit",colorR, colorG, colorB, colorA)	
     end
     gfx.drawRect(418,250,12,12,colorR, colorG, colorB, colorA)
     gfx.drawText(418+3,250+2,"X")
@@ -7071,7 +7078,8 @@ function MaticzplNotifications.DrawMenuContent()
     --Read All button
     local readAllHovering = mouseX > 418 and mouseX < 418 + 12 and mouseY > 261 and mouseY < 261 + 12 and notif.windowOpen
     if readAllHovering then
-        gfx.fillRect(418,261,12,12,128,128,128)        
+        gfx.fillRect(418,261,12,12,128,128,128)   
+		gfx.drawText(375,263,"Read all",colorR, colorG, colorB, colorA)			
     end
     gfx.drawRect(418,261,12,12,colorR, colorG, colorB, colorA) 
     gfx.drawText(418+4,261+2,"A")
@@ -7175,6 +7183,7 @@ function MaticzplNotifications.DrawMenuContent()
         notif.windowOpen = false
         notif.specialMessage = ""
         notif.SaveNotifications()
+		warning = 0
         return false
     end    
     if readAllHovering and justClicked then      
@@ -7184,10 +7193,9 @@ function MaticzplNotifications.DrawMenuContent()
     end    
     justClicked = false
 end
-
 function MaticzplNotifications.ShowSpecialMesasge(msg)
     notif.specialMessage = msg;
-    notif.windowOpen = true;
+	warning = 1
 end
 
 -- Request save data from the server
@@ -7323,6 +7331,7 @@ end
 -- Draws the red circle notification button. Called every frame
 local timerfornot = 255 -- Blinking not. dot
 function MaticzplNotifications.DrawNotifications()
+
     local number = #notif.notifications
     
     if number > 99 then
@@ -7352,9 +7361,12 @@ function MaticzplNotifications.DrawNotifications()
         gfx.fillCircle(posX,posY,5,5,50,50,50)
         gfx.fillCircle(posX,posY,4,4,60,60,60)
         gfx.drawText(posX + 1 -(w / 2),posY + 2 -(h / 2),number,128,128,128)
+		    if warning == 1 then
+gfx.drawText(570,412,"X",255,0,0,255)
+end
         return
     end
-    
+
     local brig = 0
     if notif.hoveringOnButton then
         brig = 80
