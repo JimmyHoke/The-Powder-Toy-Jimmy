@@ -306,19 +306,10 @@ int Simulation::Load(const GameSave * originalSave, bool includePressure, int fu
 		case PT_SOAP:
 			soapList.insert(std::pair<unsigned int, unsigned int>(n, i));
 			break;
-
-		// List of elements that load pavg with a multiplicative bias of 2**6
-		// (or not at all if pressure is not loaded).
-		// If you change this list, change it in GameSave::serialiseOPS and GameSave::readOPS too!
-		case PT_QRTZ:
-		case PT_GLAS:
-		case PT_TUNG:
-			if (!includePressure)
-			{
-				parts[i].pavg[0] = 0;
-				parts[i].pavg[1] = 0;
-			}
-			break;
+		}
+		if (GameSave::PressureInTmp3(parts[i].type) && !includePressure)
+		{
+			parts[i].tmp3 = 0;
 		}
 	}
 	parts_lastActiveIndex = NPART-1;
@@ -3414,7 +3405,8 @@ void Simulation::create_gain_photon(int pp)//photons from PHOT going through GLO
 	parts[i].vy = parts[pp].vy;
 	parts[i].temp = parts[ID(pmap[ny][nx])].temp;
 	parts[i].tmp = 0;
-	parts[i].pavg[0] = parts[i].pavg[1] = 0.0f;
+	parts[i].tmp3 = 0;
+	parts[i].tmp4 = 0;
 	photons[ny][nx] = PMAP(i, PT_PHOT);
 
 	temp_bin = (int)((parts[i].temp-273.0f)*0.25f);
@@ -3452,7 +3444,8 @@ void Simulation::create_cherenkov_photon(int pp)//photons from NEUT going throug
 	parts[i].y = parts[pp].y;
 	parts[i].temp = parts[ID(pmap[ny][nx])].temp;
 	parts[i].tmp = 0;
-	parts[i].pavg[0] = parts[i].pavg[1] = 0.0f;
+	parts[i].tmp3 = 0;
+	parts[i].tmp4 = 0;
 	photons[ny][nx] = PMAP(i, PT_PHOT);
 
 	if (lr) {
@@ -4131,40 +4124,13 @@ void Simulation::UpdateParticles(int start, int end)
 			}
 
 			//call the particle update function, if there is one
-#if !defined(RENDERER) && defined(LUACONSOLE)
-			if (lua_el_mode[parts[i].type] == 3)
-			{
-				if (luacon_elementReplacement(this, i, x, y, surround_space, nt, parts, pmap) || t != parts[i].type)
-					continue;
-				// Need to update variables, in case they've been changed by Lua
-				x = (int)(parts[i].x+0.5f);
-				y = (int)(parts[i].y+0.5f);
-			}
-
-			if (elements[t].Update && lua_el_mode[t] != 2)
-#else
 			if (elements[t].Update)
-#endif
 			{
 				if ((*(elements[t].Update))(this, i, x, y, surround_space, nt, parts, pmap))
 					continue;
-				else if (t==PT_WARP)
-				{
-					// Warp does some movement in its update func, update variables to avoid incorrect data in pmap
-					x = (int)(parts[i].x+0.5f);
-					y = (int)(parts[i].y+0.5f);
-				}
-			}
-#if !defined(RENDERER) && defined(LUACONSOLE)
-			if (lua_el_mode[parts[i].type] && lua_el_mode[parts[i].type] != 3)
-			{
-				if (luacon_elementReplacement(this, i, x, y, surround_space, nt, parts, pmap) || t != parts[i].type)
-					continue;
-				// Need to update variables, in case they've been changed by Lua
 				x = (int)(parts[i].x+0.5f);
 				y = (int)(parts[i].y+0.5f);
 			}
-#endif
 
 			if(legacy_enable)//if heat sim is off
 				Element::legacyUpdate(this, i,x,y,surround_space,nt, parts, pmap);
@@ -4412,14 +4378,24 @@ killed:
 						parts[ID(r)].ctype =  parts[i].type;
 						parts[ID(r)].temp = parts[i].temp;
 						parts[ID(r)].tmp2 = parts[i].life;
-						parts[ID(r)].pavg[0] = float(parts[i].tmp);
-						parts[ID(r)].pavg[1] = float(parts[i].ctype);
+						parts[ID(r)].tmp3 = parts[i].tmp;
+						parts[ID(r)].tmp4 = parts[i].ctype;
 						kill_part(i);
 						continue;
 					}
 
-					if (TYP(r))
-						parts[i].ctype &= elements[TYP(r)].PhotonReflectWavelengths;
+					if (t == PT_PHOT)
+					{
+						auto mask = elements[TYP(r)].PhotonReflectWavelengths;
+						if (TYP(r) == PT_LITH)
+						{
+							int wl_bin = parts[ID(r)].ctype / 4;
+							if (wl_bin < 0) wl_bin = 0;
+							if (wl_bin > 25) wl_bin = 25;
+							mask = (0x1F << wl_bin);
+						}
+						parts[i].ctype &= mask;
+					}
 
 					if (get_normal_interp(t, parts[i].x, parts[i].y, parts[i].vx, parts[i].vy, &nrx, &nry))
 					{
@@ -5447,20 +5423,20 @@ String Simulation::BasicParticleInfo(Particle const &sample_part) const
 	StringBuilder sampleInfo;
 	int type = sample_part.type;
 	int ctype = sample_part.ctype;
-	int pavg1int = (int)sample_part.pavg[1];
+	int storedCtype = sample_part.tmp4;
 	if (type == PT_LAVA && IsElement(ctype))
 	{
 		sampleInfo << "Molten " << ElementResolve(ctype, -1);
 	}
 	else if ((type == PT_PIPE || type == PT_PPIP) && IsElement(ctype))
 	{
-		if (ctype == PT_LAVA && IsElement(pavg1int))
+		if (ctype == PT_LAVA && IsElement(storedCtype))
 		{
-			sampleInfo << ElementResolve(type, -1) << " with molten " << ElementResolve(pavg1int, -1);
+			sampleInfo << ElementResolve(type, -1) << " with molten " << ElementResolve(storedCtype, -1);
 		}
 		else
 		{
-			sampleInfo << ElementResolve(type, -1) << " with " << ElementResolve(ctype, pavg1int);
+			sampleInfo << ElementResolve(type, -1) << " with " << ElementResolve(ctype, storedCtype);
 		}
 	}
 	else

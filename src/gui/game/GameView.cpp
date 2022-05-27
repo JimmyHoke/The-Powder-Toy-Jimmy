@@ -193,7 +193,9 @@ GameView::GameView():
 	introTextMessage(ByteString(introTextData).FromUtf8()),
 
 	doScreenshot(false),
-	screenshotIndex(0),
+	screenshotIndex(1),
+	lastScreenshotTime(0),
+	recordingIndex(0),
 	recording(false),
 	recordingFolder(0),
 	currentPoint(ui::Point(0, 0)),
@@ -889,9 +891,53 @@ void GameView::NotifyBrushChanged(GameModel * sender)
 	activeBrush = sender->GetBrush();
 }
 
-void GameView::screenshot()
+ByteString GameView::TakeScreenshot(int captureUI, int fileType)
 {
-	doScreenshot = true;
+	VideoBuffer *screenshot;
+	std::vector<char> data;
+	time_t screenshotTime = time(nullptr);
+	std::string extension;
+
+	if (captureUI)
+		screenshot = new VideoBuffer(ren->DumpFrame());
+	else
+		screenshot = new VideoBuffer(ui::Engine::Ref().g->DumpFrame());
+
+	if (fileType == 1)
+	{
+		data = format::VideoBufferToBMP(screenshot);
+		extension = ".bmp";
+	}
+	else if (fileType == 2)
+	{
+		data = format::VideoBufferToPPM(screenshot);
+		extension = ".ppm";
+	}
+	else
+	{
+		data = format::VideoBufferToPNG(screenshot);
+		extension = ".png";
+	}
+
+	// Optional suffix to distinguish screenshots taken at the exact same time
+	ByteString suffix = "";
+	if (screenshotTime == lastScreenshotTime)
+	{
+		screenshotIndex++;
+		suffix = ByteString::Build(" (", screenshotIndex, ")");
+	}
+	else
+	{
+		screenshotIndex = 1;
+	}
+	std::string date = format::UnixtimeToDate(screenshotTime, "%Y-%m-%d %H.%M.%S");
+	ByteString filename = ByteString::Build("screenshot ", date, suffix, extension);
+
+	Client::Ref().WriteFile(data, filename);
+	doScreenshot = false;
+	lastScreenshotTime = screenshotTime;
+
+	return filename;
 }
 
 int GameView::Record(bool record)
@@ -912,6 +958,7 @@ int GameView::Record(bool record)
 			Platform::MakeDirectory("recordings");
 			Platform::MakeDirectory(ByteString::Build("recordings", PATH_SEP, recordingFolder).c_str());
 			recording = true;
+			recordingIndex = 0;
 		}
 	}
 	return recordingFolder;
@@ -919,49 +966,66 @@ int GameView::Record(bool record)
 
 void GameView::updateToolButtonScroll()
 {
-	if(toolButtons.size())
+	if (toolButtons.size())
 	{
-		int x = currentMouse.X, y = currentMouse.Y;
-		int newInitialX = WINDOWW-56;
-		int totalWidth = (toolButtons[0]->Size.X+1)*toolButtons.size();
-		int scrollSize = (int)(((float)(XRES-BARSIZE))/((float)totalWidth) * ((float)XRES-BARSIZE));
-		if (scrollSize>XRES-1)
-			scrollSize = XRES-1;
-		if(totalWidth > XRES-15)
-		{
+		int x = currentMouse.X;
+		int y = currentMouse.Y;
+
+		int offsetDelta = 0;
+
+		int newInitialX = WINDOWW - 56;
+		int totalWidth = (toolButtons[0]->Size.X + 1) * toolButtons.size();
+		int scrollSize = (int)(((float)(XRES - BARSIZE))/((float)totalWidth) * ((float)XRES - BARSIZE));
+
+		if (scrollSize > XRES - 1)
+			scrollSize = XRES - 1;
+		
+		if (totalWidth > XRES - 15)
+		{			
 			int mouseX = x;
-			if(mouseX > XRES)
+
+			float overflow = 0;
+			float mouseLocation = 0;
+
+			if (mouseX > XRES)
 				mouseX = XRES;
-			//if (mouseX < 15) //makes scrolling a little nicer at edges but apparently if you put hundreds of elements in a menu it makes the end not show ...
-			//	mouseX = 15;
 
-			scrollBar->Position.X = (int)(((float)mouseX/((float)XRES))*(float)(XRES-scrollSize));
+			// if (mouseX < 15) // makes scrolling a little nicer at edges but apparently if you put hundreds of elements in a menu it makes the end not show ...
+			// 	mouseX = 15;
 
-			float overflow = float(totalWidth-(XRES-BARSIZE)), mouseLocation = float(XRES-3)/float((XRES-2)-mouseX); //mouseLocation adjusted slightly in case you have 200 elements in one menu
+			scrollBar->Visible = true;
 
-			newInitialX += int(overflow/mouseLocation);
+			scrollBar->Position.X = (int)(((float)mouseX / (float)XRES) * (float)(XRES - scrollSize)) + 1;
+
+			overflow = (float)(totalWidth - (XRES - BARSIZE));
+			mouseLocation = (float)(XRES - 3)/(float)((XRES - 2) - mouseX); // mouseLocation adjusted slightly in case you have 200 elements in one menu
+
+			newInitialX += (int)(overflow/mouseLocation);
 		}
 		else
 		{
-			scrollBar->Position.X = 1;
+			scrollBar->Visible = false;
 		}
-		scrollBar->Size.X=scrollSize;
-		int offsetDelta = toolButtons[0]->Position.X - newInitialX;
-		for(auto *button : toolButtons)
+
+		scrollBar->Size.X = scrollSize - 1;
+
+		offsetDelta = toolButtons[0]->Position.X - newInitialX;
+
+		for (auto *button : toolButtons)
 		{
 			button->Position.X -= offsetDelta;
-			if (button->Position.X+button->Size.X <= 0 || (button->Position.X+button->Size.X) > XRES-2)
+			if (button->Position.X + button->Size.X <= 0 || (button->Position.X + button->Size.X) > XRES - 2)
 				button->Visible = false;
 			else
 				button->Visible = true;
 		}
 
-		//Ensure that mouseLeave events are make their way to the buttons should they move from underneath the mouse pointer
-		if(toolButtons[0]->Position.Y < y && toolButtons[0]->Position.Y+toolButtons[0]->Size.Y > y)
+		// Ensure that mouseLeave events are make their way to the buttons should they move from underneath the mouse pointer
+		if (toolButtons[0]->Position.Y < y && toolButtons[0]->Position.Y + toolButtons[0]->Size.Y > y)
 		{
-			for(auto *button : toolButtons)
+			for (auto *button : toolButtons)
 			{
-				if(button->Position.X < x && button->Position.X+button->Size.X > x)
+				if (button->Position.X < x && button->Position.X + button->Size.X > x)
 					button->OnMouseEnter(x, y);
 				else
 					button->OnMouseLeave(x, y);
@@ -1311,7 +1375,7 @@ void GameView::OnKeyPress(int key, int scan, bool repeat, bool shift, bool ctrl,
 				c->SetActiveTool(0, "DEFAULT_UI_PROPERTY");
 		}
 		else
-			screenshot();
+			doScreenshot = true;
 		break;
 	case SDL_SCANCODE_F3:
 		SetDebugHUD(!GetDebugHUD());
@@ -2071,15 +2135,9 @@ void GameView::OnDraw()
 
 		ren->RenderEnd();
 
-		if(doScreenshot)
+		if (doScreenshot)
 		{
-			VideoBuffer screenshot(ren->DumpFrame());
-			std::vector<char> data = format::VideoBufferToPNG(screenshot);
-
-			ByteString filename = ByteString::Build("screenshot_", Format::Width(screenshotIndex++, 6), ".png");
-
-			Client::Ref().WriteFile(data, filename);
-			doScreenshot = false;
+			TakeScreenshot(0, 0);
 		}
 
 		if(recording)
@@ -2087,7 +2145,7 @@ void GameView::OnDraw()
 			VideoBuffer screenshot(ren->DumpFrame());
 			std::vector<char> data = format::VideoBufferToPPM(screenshot);
 
-			ByteString filename = ByteString::Build("recordings", PATH_SEP, recordingFolder, PATH_SEP, "frame_", Format::Width(screenshotIndex++, 6), ".ppm");
+			ByteString filename = ByteString::Build("recordings", PATH_SEP, recordingFolder, PATH_SEP, "frame_", Format::Width(recordingIndex++, 6), ".ppm");
 
 			Client::Ref().WriteFile(data, filename);
 		}
@@ -2149,13 +2207,13 @@ void GameView::OnDraw()
 				}
 				else if ((type == PT_PIPE || type == PT_PPIP) && c->IsValidElement(ctype))
 				{
-					if (ctype == PT_LAVA && c->IsValidElement((int)sample.particle.pavg[1]))
+					if (ctype == PT_LAVA && c->IsValidElement(sample.particle.tmp4))
 					{
-						sampleInfo << c->ElementResolve(type, 0) << " with molten " << c->ElementResolve((int)sample.particle.pavg[1], -1);
+						sampleInfo << c->ElementResolve(type, 0) << " with molten " << c->ElementResolve(sample.particle.tmp4, -1);
 					}
 					else
 					{
-						sampleInfo << c->ElementResolve(type, 0) << " with " << c->ElementResolve(ctype, (int)sample.particle.pavg[1]);
+						sampleInfo << c->ElementResolve(type, 0) << " with " << c->ElementResolve(ctype, sample.particle.tmp4);
 					}
 				}
 				else if (type == PT_LIFE)
@@ -2242,8 +2300,8 @@ void GameView::OnDraw()
 			sampleInfo << "Empty";
 		}
 		int textWidth = Graphics::textwidth(sampleInfo.Build());
-		g->fillrect(6, 18, textWidth + 8, 15, 0, 0, 0, alpha*0.5f);
-		g->drawtext(8, 22, sampleInfo.Build(), 225, 225, 225, alpha*0.95f);
+		g->fillrect(6, 18, textWidth + 8, 15, 0, 0, 0, (int)(alpha * 0.5f));
+		g->drawtext(8, 22, sampleInfo.Build(), 225, 225, 225, (int)(alpha * 0.95f));
 
 #ifndef OGLI
 		if (wavelengthGfx)
@@ -2302,8 +2360,8 @@ void GameView::OnDraw()
 							sampleInfo << ", Dcolor: #" << Format::Uppercase() << Format::Hex() << sample.particle.dcolour;
 						}
 						sampleInfo << Format::Dec();
-						sampleInfo << ", P0: " << sample.particle.pavg[0];
-						sampleInfo << ", P1: " << sample.particle.pavg[1];
+						sampleInfo << ", t3: " << sample.particle.tmp3;
+						sampleInfo << ", t4: " << sample.particle.tmp4;
 						sampleInfo << ", #" << sample.ParticleID;
 					}
 
@@ -2314,8 +2372,8 @@ void GameView::OnDraw()
 					sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
-				g->fillrect(6, 33, textWidth + 8, 14, 0, 0, 0, alpha*0.5f);
-				g->drawtext(8, 37, sampleInfo.Build(), 32, 216, 255, alpha*0.95f);
+				g->fillrect(6, 33, textWidth + 8, 14, 0, 0, 0, (int)(alpha * 0.5f));
+				g->drawtext(8, 37, sampleInfo.Build(), 32, 216, 255, (int)(alpha * 0.95f));
 			}
 	}
 	if(showHud && introText < 51)
@@ -2354,8 +2412,8 @@ void GameView::OnDraw()
 	
 		int textWidth = Graphics::textwidth(fpsInfo.Build());
 		int alpha = 255 - introText * 5;
-		g->fillrect(6, 3, textWidth + 6, 15, 40, 40, 40, alpha*0.5f);
-		g->drawtext(8, 7, fpsInfo.Build(), 255, 255, 255, alpha*0.95);
+		g->fillrect(6, 3, textWidth + 6, 15, 40, 40, 40, (int)(alpha * 0.5f));
+		g->drawtext(8, 7, fpsInfo.Build(), 255, 255, 255, (int)(alpha * 0.95f));
 	}
 
 	//Tooltips

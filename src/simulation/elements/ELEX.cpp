@@ -74,16 +74,15 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	else 
 	{
-	float frequency = 0.1045;
-	cr = (sin(frequency* cpart->tmp + 4) * 127 + 150);
-	cg = (sin(frequency* cpart->tmp + 5) * 127 + 150);
-	cb = (sin(frequency* cpart->tmp + 8) * 127 + 150);
-	if (cpart->tmp > 70)
-	ren->draw_line(cpart->x, cpart->y, RNG::Ref().between(cpart->x - 9, cpart->x + 9), RNG::Ref().between(cpart->y - 9, cpart->y + 9), 255, 255, 255, 255);
+		float frequency = 0.1045;
+		cr = (int)(sin(frequency* cpart->tmp + 4) * 127 + 150);
+		cg = (int)(sin(frequency* cpart->tmp + 5) * 127 + 150);
+		cb = (int)(sin(frequency* cpart->tmp + 8) * 127 + 150);
+		if (cpart->tmp > 70)
+			ren->draw_line((int)(cpart->x), (int)(cpart->y), RNG::Ref().between((int)(cpart->x - 9), (int)(cpart->x + 9)), RNG::Ref().between((int)(cpart->y - 9), (int)(cpart->y + 9)), 255, 255, 255, 255);
 	}
-	ren->drawcircle(cpart->x, cpart->y,2,2,cr,cg,cb,150);
-	ren->fillcircle(cpart->x, cpart->y,1,1,cr,cg,cb,100);
-	ren->drawcircle(cpart->x, cpart->y,3,3,cr,cg,cb,150);
+	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 2, 2, cr, cg, cb, 150);
+	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 1, 1, cr, cg, cb, 100);
+	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 3, 3, cr, cg, cb, 150);
 	return 0;
 }
-

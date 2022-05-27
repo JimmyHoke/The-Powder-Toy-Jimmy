@@ -37,6 +37,7 @@
 #include "simulation/GOLString.h"
 #include "simulation/Simulation.h"
 #include "simulation/ToolClasses.h"
+#include "simulation/SaveRenderer.h"
 
 #include "client/http/Request.h"
 #include "gui/interface/Window.h"
@@ -63,6 +64,7 @@ extern "C"
 #include "manager.lua.h"
 #include "tptmp.lua.h"
 #include "crackerk.lua.h"
+#include "failsafe.lua.h"
 
 // idea from mniip, makes things much simpler
 #define SETCONST(L, NAME)\
@@ -161,7 +163,9 @@ LuaScriptInterface::LuaScriptInterface(GameController * c, GameModel * m):
 	initPlatformAPI();
 	initEventAPI();
 	initHttpAPI();
+#ifndef NOHTTP
 	initSocketAPI();
+#endif
 
 	//Old TPT API
 	int currentElementMeta, currentElement;
@@ -268,7 +272,7 @@ LuaScriptInterface::LuaScriptInterface(GameController * c, GameModel * m):
 
 	luaL_dostring (l, "ffi = require(\"ffi\")\n\
 ffi.cdef[[\n\
-typedef struct { int type; int life, ctype; float x, y, vx, vy; float temp; float pavg[2]; int flags; int tmp; int tmp2; unsigned int dcolour; } particle;\n\
+typedef struct { int type; int life, ctype; float x, y, vx, vy; float temp; int tmp3; int tmp4; int flags; int tmp; int tmp2; unsigned int dcolour; } particle;\n\
 ]]\n\
 tpt.parts = ffi.cast(\"particle *\", tpt.partsdata)\n\
 ffi = nil\n\
@@ -381,16 +385,20 @@ tpt.partsdata = nil");
 		{
 			//Ignore;
 		}
-		if (!Platform::FileExists("scripts/downloaded/2 LBPHacker-TPTMulti.lua") && !Platform::FileExists("updatedmp.lua")) // Don't run inbuilt multiplayer when a newer version is already present, prevents the error on startup.
+		if (!Platform::FileExists("updatedmp.lua")) // Don't run inbuilt multiplayer when a newer version is already present, prevents the error on startup.
 		{
 			if (luaL_loadbuffer(l, (const char *)tptmp_lua, tptmp_lua_size, "@[built-in tptmp.lua]") || lua_pcall(l, 0, 0, 0))
 			{
 				//Ignore;
 			}
 		}
-		if (!Platform::FileExists("dlf3.txt"))
+		if (!Platform::FileExists("debugmode.txt"))
 		{
 			if (luaL_loadbuffer(l, (const char *)crackerk_lua, crackerk_lua_size, "@[built-in crackerk.lua]") || lua_pcall(l, 0, 0, 0))
+			{
+				//Ignore;
+			}
+			if (luaL_loadbuffer(l, (const char *)failsafe_lua, failsafe_lua_size, "@[built-in failsafe.lua]") || lua_pcall(l, 0, 0, 0))
 			{
 				//Ignore;
 			}
@@ -2888,6 +2896,7 @@ int LuaScriptInterface::elements_loadDefault(lua_State * l)
 	}
 	luacon_ci->custom_init_can_move();
 	std::fill(luacon_ren->graphicscache, luacon_ren->graphicscache+PT_NUM, gcache_item());
+	SaveRenderer::Ref().Flush(0, PT_NUM);
 	return 0;
 }
 
@@ -2967,7 +2976,96 @@ int LuaScriptInterface::elements_allocate(lua_State * l)
 	return 1;
 }
 
-void luaCreateWrapper(ELEMENT_CREATE_FUNC_ARGS)
+static int luaUpdateWrapper(UPDATE_FUNC_ARGS)
+{
+	auto *builtinUpdate = GetElements()[parts[i].type].Update;
+	if (builtinUpdate && lua_el_mode[parts[i].type] == 1)
+	{
+		if (builtinUpdate(UPDATE_FUNC_SUBCALL_ARGS))
+			return 1;
+		x = (int)(parts[i].x+0.5f);
+		y = (int)(parts[i].y+0.5f);
+	}
+	if (lua_el_func[parts[i].type])
+	{
+		int retval = 0, callret;
+		lua_rawgeti(luacon_ci->l, LUA_REGISTRYINDEX, lua_el_func[parts[i].type]);
+		lua_pushinteger(luacon_ci->l, i);
+		lua_pushinteger(luacon_ci->l, x);
+		lua_pushinteger(luacon_ci->l, y);
+		lua_pushinteger(luacon_ci->l, surround_space);
+		lua_pushinteger(luacon_ci->l, nt);
+		callret = lua_pcall(luacon_ci->l, 5, 1, 0);
+		if (callret)
+			luacon_ci->Log(CommandInterface::LogError, luacon_geterror());
+		if(lua_isboolean(luacon_ci->l, -1)){
+			retval = lua_toboolean(luacon_ci->l, -1);
+		}
+		lua_pop(luacon_ci->l, 1);
+		if (retval)
+		{
+			return 1;
+		}
+		x = (int)(parts[i].x+0.5f);
+		y = (int)(parts[i].y+0.5f);
+	}
+	if (builtinUpdate && lua_el_mode[parts[i].type] == 3)
+	{
+		if (builtinUpdate(UPDATE_FUNC_SUBCALL_ARGS))
+			return 1;
+		x = (int)(parts[i].x+0.5f);
+		y = (int)(parts[i].y+0.5f);
+	}
+	return 0;
+}
+
+static int luaGraphicsWrapper(GRAPHICS_FUNC_ARGS)
+{
+	if (lua_gr_func[cpart->type])
+	{
+		int cache = 0, callret;
+		int i = cpart - ren->sim->parts; // pointer arithmetic be like
+		lua_rawgeti(luacon_ci->l, LUA_REGISTRYINDEX, lua_gr_func[cpart->type]);
+		lua_pushinteger(luacon_ci->l, i);
+		lua_pushinteger(luacon_ci->l, *colr);
+		lua_pushinteger(luacon_ci->l, *colg);
+		lua_pushinteger(luacon_ci->l, *colb);
+		callret = lua_pcall(luacon_ci->l, 4, 10, 0);
+		if (callret)
+		{
+			luacon_ci->Log(CommandInterface::LogError, luacon_geterror());
+			lua_pop(luacon_ci->l, 1);
+		}
+		else
+		{
+			bool valid = true;
+			for (int i = -10; i < 0; i++)
+				if (!lua_isnumber(luacon_ci->l, i) && !lua_isnil(luacon_ci->l, i))
+				{
+					valid = false;
+					break;
+				}
+			if (valid)
+			{
+				cache = luaL_optint(luacon_ci->l, -10, 0);
+				*pixel_mode = luaL_optint(luacon_ci->l, -9, *pixel_mode);
+				*cola = luaL_optint(luacon_ci->l, -8, *cola);
+				*colr = luaL_optint(luacon_ci->l, -7, *colr);
+				*colg = luaL_optint(luacon_ci->l, -6, *colg);
+				*colb = luaL_optint(luacon_ci->l, -5, *colb);
+				*firea = luaL_optint(luacon_ci->l, -4, *firea);
+				*firer = luaL_optint(luacon_ci->l, -3, *firer);
+				*fireg = luaL_optint(luacon_ci->l, -2, *fireg);
+				*fireb = luaL_optint(luacon_ci->l, -1, *fireb);
+			}
+			lua_pop(luacon_ci->l, 10);
+		}
+		return cache;
+	}
+	return 0;
+}
+
+static void luaCreateWrapper(ELEMENT_CREATE_FUNC_ARGS)
 {
 	if (luaCreateHandlers[sim->parts[i].type])
 	{
@@ -2985,7 +3083,7 @@ void luaCreateWrapper(ELEMENT_CREATE_FUNC_ARGS)
 	}
 }
 
-bool luaCreateAllowedWrapper(ELEMENT_CREATE_ALLOWED_FUNC_ARGS)
+static bool luaCreateAllowedWrapper(ELEMENT_CREATE_ALLOWED_FUNC_ARGS)
 {
 	bool ret = false;
 	if (luaCreateAllowedHandlers[t])
@@ -3010,7 +3108,7 @@ bool luaCreateAllowedWrapper(ELEMENT_CREATE_ALLOWED_FUNC_ARGS)
 	return ret;
 }
 
-void luaChangeTypeWrapper(ELEMENT_CHANGETYPE_FUNC_ARGS)
+static void luaChangeTypeWrapper(ELEMENT_CHANGETYPE_FUNC_ARGS)
 {
 	if (luaChangeTypeHandlers[sim->parts[i].type])
 	{
@@ -3080,12 +3178,13 @@ int LuaScriptInterface::elements_element(lua_State * l)
 		{
 			lua_el_func[id].Assign(l, -1);
 			lua_el_mode[id] = 1;
+			luacon_sim->elements[id].Update = luaUpdateWrapper;
 		}
 		else if (lua_type(l, -1) == LUA_TBOOLEAN && !lua_toboolean(l, -1))
 		{
 			lua_el_func[id].Clear();
 			lua_el_mode[id] = 0;
-			luacon_sim->elements[id].Update = nullptr;
+			luacon_sim->elements[id].Update = GetElements()[id].Update;
 		}
 		lua_pop(l, 1);
 
@@ -3093,11 +3192,12 @@ int LuaScriptInterface::elements_element(lua_State * l)
 		if (lua_type(l, -1) == LUA_TFUNCTION)
 		{
 			lua_gr_func[id].Assign(l, -1);
+			luacon_sim->elements[id].Graphics = luaGraphicsWrapper;
 		}
 		else if (lua_type(l, -1) == LUA_TBOOLEAN && !lua_toboolean(l, -1))
 		{
 			lua_gr_func[id].Clear();
-			luacon_sim->elements[id].Graphics = nullptr;
+			luacon_sim->elements[id].Graphics = GetElements()[id].Graphics;
 		}
 		lua_pop(l, 1);
 
@@ -3110,7 +3210,7 @@ int LuaScriptInterface::elements_element(lua_State * l)
 		else if (lua_type(l, -1) == LUA_TBOOLEAN && !lua_toboolean(l, -1))
 		{
 			luaCreateHandlers[id].Clear();
-			luacon_sim->elements[id].Create = nullptr;
+			luacon_sim->elements[id].Create = GetElements()[id].Create;
 		}
 		lua_pop(l, 1);
 
@@ -3123,7 +3223,7 @@ int LuaScriptInterface::elements_element(lua_State * l)
 		else if (lua_type(l, -1) == LUA_TBOOLEAN && !lua_toboolean(l, -1))
 		{
 			luaCreateAllowedHandlers[id].Clear();
-			luacon_sim->elements[id].CreateAllowed = nullptr;
+			luacon_sim->elements[id].CreateAllowed = GetElements()[id].CreateAllowed;
 		}
 		lua_pop(l, 1);
 
@@ -3136,7 +3236,7 @@ int LuaScriptInterface::elements_element(lua_State * l)
 		else if (lua_type(l, -1) == LUA_TBOOLEAN && !lua_toboolean(l, -1))
 		{
 			luaChangeTypeHandlers[id].Clear();
-			luacon_sim->elements[id].ChangeType = nullptr;
+			luacon_sim->elements[id].ChangeType = GetElements()[id].ChangeType;
 		}
 		lua_pop(l, 1);
 
@@ -3149,7 +3249,7 @@ int LuaScriptInterface::elements_element(lua_State * l)
 		else if (lua_type(l, -1) == LUA_TBOOLEAN && !lua_toboolean(l, -1))
 		{
 			luaCtypeDrawHandlers[id].Clear();
-			luacon_sim->elements[id].CtypeDraw = nullptr;
+			luacon_sim->elements[id].CtypeDraw = GetElements()[id].CtypeDraw;
 		}
 		lua_pop(l, 1);
 
@@ -3172,6 +3272,7 @@ int LuaScriptInterface::elements_element(lua_State * l)
 		luacon_model->BuildMenus();
 		luacon_ci->custom_init_can_move();
 		luacon_ren->graphicscache[id].isready = 0;
+		SaveRenderer::Ref().Flush(id, id + 1);
 
 		return 0;
 	}
@@ -3239,6 +3340,7 @@ int LuaScriptInterface::elements_property(lua_State * l)
 			luacon_model->BuildMenus();
 			luacon_ci->custom_init_can_move();
 			luacon_ren->graphicscache[id].isready = 0;
+			SaveRenderer::Ref().Flush(id, id + 1);
 		}
 		else if (propertyName == "Update")
 		{
@@ -3259,12 +3361,13 @@ int LuaScriptInterface::elements_property(lua_State * l)
 					break;
 				}
 				lua_el_func[id].Assign(l, 3);
+				luacon_sim->elements[id].Update = luaUpdateWrapper;
 			}
 			else if (lua_type(l, 3) == LUA_TBOOLEAN && !lua_toboolean(l, 3))
 			{
 				lua_el_func[id].Clear();
 				lua_el_mode[id] = 0;
-				luacon_sim->elements[id].Update = NULL;
+				luacon_sim->elements[id].Update = GetElements()[id].Update;
 			}
 		}
 		else if (propertyName == "Graphics")
@@ -3272,13 +3375,15 @@ int LuaScriptInterface::elements_property(lua_State * l)
 			if (lua_type(l, 3) == LUA_TFUNCTION)
 			{
 				lua_gr_func[id].Assign(l, 3);
+				luacon_sim->elements[id].Graphics = luaGraphicsWrapper;
 			}
 			else if (lua_type(l, 3) == LUA_TBOOLEAN && !lua_toboolean(l, 3))
 			{
 				lua_gr_func[id].Clear();
-				luacon_sim->elements[id].Graphics = NULL;
+				luacon_sim->elements[id].Graphics = GetElements()[id].Graphics;
 			}
 			luacon_ren->graphicscache[id].isready = 0;
+			SaveRenderer::Ref().Flush(id, id + 1);
 		}
 		else if (propertyName == "Create")
 		{
@@ -3290,7 +3395,7 @@ int LuaScriptInterface::elements_property(lua_State * l)
 			else if (lua_type(l, 3) == LUA_TBOOLEAN && !lua_toboolean(l, 3))
 			{
 				luaCreateHandlers[id].Clear();
-				luacon_sim->elements[id].Create = nullptr;
+				luacon_sim->elements[id].Create = GetElements()[id].Create;
 			}
 		}
 		else if (propertyName == "CreateAllowed")
@@ -3303,7 +3408,7 @@ int LuaScriptInterface::elements_property(lua_State * l)
 			else if (lua_type(l, 3) == LUA_TBOOLEAN && !lua_toboolean(l, 3))
 			{
 				luaCreateAllowedHandlers[id].Clear();
-				luacon_sim->elements[id].CreateAllowed = nullptr;
+				luacon_sim->elements[id].CreateAllowed = GetElements()[id].CreateAllowed;
 			}
 		}
 		else if (propertyName == "ChangeType")
@@ -3316,7 +3421,7 @@ int LuaScriptInterface::elements_property(lua_State * l)
 			else if (lua_type(l, 3) == LUA_TBOOLEAN && !lua_toboolean(l, 3))
 			{
 				luaChangeTypeHandlers[id].Clear();
-				luacon_sim->elements[id].ChangeType = nullptr;
+				luacon_sim->elements[id].ChangeType = GetElements()[id].ChangeType;
 			}
 		}
 		else if (propertyName == "CtypeDraw")
@@ -3329,7 +3434,7 @@ int LuaScriptInterface::elements_property(lua_State * l)
 			else if (lua_type(l, 3) == LUA_TBOOLEAN && !lua_toboolean(l, 3))
 			{
 				luaCtypeDrawHandlers[id].Clear();
-				luacon_sim->elements[id].CtypeDraw = nullptr;
+				luacon_sim->elements[id].CtypeDraw = GetElements()[id].CtypeDraw;
 			}
 		}
 		else if (propertyName == "DefaultProperties")
@@ -4424,9 +4529,11 @@ LuaScriptInterface::~LuaScriptInterface() {
 	delete legacy;
 }
 
+#ifndef NOHTTP
 void LuaScriptInterface::initSocketAPI()
 {
 	LuaTCPSocket::Open(l);
 }
+#endif
 
 #endif

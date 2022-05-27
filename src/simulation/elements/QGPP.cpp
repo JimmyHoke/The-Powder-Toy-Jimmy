@@ -77,10 +77,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	if (cpart->tmp <= 150 && cpart->temp >= 374.15f)
 	{
 		float frequency = 0.04045;
-		*colr = (sin(frequency* cpart->tmp + 4) * 127 + 150);
-		*colg = (sin(frequency* cpart->tmp + 8) * 127 + 150);
-		*colb = (sin(frequency* cpart->tmp + 5) * 127 + 150);
-		ren->draw_line(cpart->x, cpart->y, RNG::Ref().between(cpart->x-6,cpart->x+6), RNG::Ref().between(cpart->y-6,cpart->y+6), *colr, *colg, *colb, 255);
+		*colr = (int)(sin(frequency * cpart->tmp + 4) * 127 + 150);
+		*colg = (int)(sin(frequency * cpart->tmp + 8) * 127 + 150);
+		*colb = (int)(sin(frequency * cpart->tmp + 5) * 127 + 150);
+		ren->draw_line((int)(cpart->x), (int)(cpart->y), RNG::Ref().between((int)(cpart->x - 6.0f), (int)(cpart->x + 6.0f)), RNG::Ref().between((int)(cpart->y - 6.0f), (int)(cpart->y + 6.0f)), *colr, *colg, *colb, 255);
 	}
 	if (cpart->temp < 373.15f)
 	{

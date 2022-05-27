@@ -71,7 +71,7 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp2 == 1 && parts[i].tmp > -5)
 	{
 		parts[i].tmp --;
-		sim->pv[(y / CELL)][(x / CELL)] = parts[i].tmp/150;
+		sim->pv[(y / CELL)][(x / CELL)] = parts[i].tmp / 150.0f;
 		if (RNG::Ref().chance(1, 50))
 		{
 			if (parts[i].temp >= 273.15f)

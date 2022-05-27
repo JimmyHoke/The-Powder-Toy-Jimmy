@@ -798,9 +798,9 @@ void GameController::ResetAir()
 	sim->air->Clear();
 	for (int i = 0; i < NPART; i++)
 	{
-		if (sim->parts[i].type == PT_QRTZ || sim->parts[i].type == PT_GLAS || sim->parts[i].type == PT_TUNG)
+		if (GameSave::PressureInTmp3(sim->parts[i].type))
 		{
-			sim->parts[i].pavg[0] = sim->parts[i].pavg[1] = 0;
+			sim->parts[i].tmp3 = 0;
 		}
 	}
 }
@@ -1562,6 +1562,11 @@ String GameController::WallName(int type)
 		return gameModel->GetSimulation()->wtypes[type].name;
 	else
 		return String();
+}
+
+ByteString GameController::TakeScreenshot(int captureUI, int fileType)
+{
+	return gameView->TakeScreenshot(captureUI, fileType);
 }
 
 int GameController::Record(bool record)

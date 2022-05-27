@@ -107,24 +107,25 @@ static int update(UPDATE_FUNC_ARGS)
 			}
 	return 0;
 }
+
 static int graphics(GRAPHICS_FUNC_ARGS)
-		{
-			if (cpart->life > 0)
-			{
-				*colr = cpart->life + 50;
-				*colg = 0;
-				*colb = cpart->life + 50;
-				*pixel_mode = PMODE_FLARE;
-			}
-			else
-			{
-				*colr = 0;
-				*colb = 0;
-				*colg = 0;
-				*pixel_mode |= NO_DECO;
-			}
-		return 0;
+{
+	if (cpart->life > 0)
+	{
+		*colr = cpart->life + 50;
+		*colg = 0;
+		*colb = cpart->life + 50;
+		*pixel_mode = PMODE_FLARE;
 	}
+	else
+	{
+		*colr = 0;
+		*colb = 0;
+		*colg = 0;
+		*pixel_mode |= NO_DECO;
+	}
+	return 0;
+}
 
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {

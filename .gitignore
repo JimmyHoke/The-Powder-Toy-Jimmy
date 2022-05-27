@@ -115,3 +115,4 @@ screenshot_*
 
 CppProperties.json
 compile_commands.json
+ignore/

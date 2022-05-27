@@ -14,6 +14,7 @@
 #mesondefine DEBUG
 #mesondefine IGNORE_UPDATES
 #mesondefine LIN
+#mesondefine AND
 #mesondefine NATIVE
 #mesondefine NO_INSTALL_CHECK
 #mesondefine OGLI
@@ -47,8 +48,8 @@
 #define BUILD_NUM 350
 #mesondefine SNAPSHOT_ID
 #mesondefine MOD_ID
-#define FUTURE_SAVE_VERSION 96
-#define FUTURE_MINOR_VERSION 2
+#define FUTURE_SAVE_VERSION 97
+#define FUTURE_MINOR_VERSION 0
 
 #if !(defined(SNAPSHOT) || defined(BETA) || defined(DEBUG) || MOD_ID > 0)
 #undef FUTURE_SAVE_VERSION

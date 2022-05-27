@@ -89,7 +89,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 			*firer = (cpart->dcolour >> 16) & 0xFF;
 			*fireg = (cpart->dcolour >> 8) & 0xFF;
 			*fireb = (cpart->dcolour) & 0xFF;
-			*firea = cpart->temp - 273.15f;
+			*firea = (int)(cpart->temp - 273.15f);
 			*pixel_mode |= FIRE_ADD;
 	}
 	*pixel_mode |= NO_DECO;
@@ -99,4 +99,3 @@ static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
 	sim->parts[i].dcolour = 0xFFFFFF;
 }
-

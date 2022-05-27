@@ -149,10 +149,8 @@ static int update(UPDATE_FUNC_ARGS)
 						continue;
 					if (TYP(r) == PT_PLNT)
 				{
-				parts[i].pavg[0] = rx*3;
-				parts[i].pavg[1] = ry*3;
-				parts[i].vx = parts[i].pavg[0];
-				parts[i].vy = parts[i].pavg[1];
+				parts[i].vx = (float)(rx * 3);
+				parts[i].vy = (float)(ry * 3);
 				sim->pv[(y / CELL) + ry][(x / CELL) + rx] = -4.0f;
 				}
 				}
@@ -168,10 +166,8 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[ID(r)].temp > 373.15f)
 				{
-					parts[i].pavg[0] = -rx;
-					parts[i].pavg[1] = -ry;
-					parts[i].vx = parts[i].pavg[0];
-					parts[i].vy = parts[i].pavg[1];
+					parts[i].vx = (float)(-rx);
+					parts[i].vy = (float)(-ry);
 				}
 
 				switch (TYP(r))
@@ -180,10 +176,8 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					if (parts[i].life > 90)
 					{
-						parts[i].pavg[0] = -rx;
-						parts[i].pavg[1] = -ry;
-						parts[i].vx = parts[i].pavg[0] * 2;
-						parts[i].vy = parts[i].pavg[1] * 2;
+						parts[i].vx = (float)(-rx) * 2;
+						parts[i].vy = (float)(-ry) * 2;
 					}
 				}
 				break;
@@ -198,10 +192,8 @@ static int update(UPDATE_FUNC_ARGS)
 				case PT_LAVA:
 				case PT_CFLM:
 				{
-					parts[i].pavg[0] = -rx;
-					parts[i].pavg[1] = -ry;
-					parts[i].vx = parts[i].pavg[0]*2;
-					parts[i].vy = parts[i].pavg[1]*2;
+					parts[i].vx = (float)(-rx)*2;
+					parts[i].vy = (float)(-ry)*2;
 				}
 				break;
 				case PT_PLNT:
@@ -240,7 +232,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colb = 40;
 	}
 	//wings
-	ren->draw_line(cpart->x, cpart->y, RNG::Ref().between(cpart->x - 2, cpart->x + 2), cpart->y-1, 255, 255, 0, 245);
+	ren->draw_line((int)(cpart->x), (int)(cpart->y), RNG::Ref().between((int)(cpart->x - 2.0f), (int)(cpart->x + 2.0f)), (int)(cpart->y - 1.0f), 255, 255, 0, 245);
 	return 0;
 }
 

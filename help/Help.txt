@@ -8,6 +8,7 @@ Load order:
 Manager
 TPTMP
 Crackerk
+failsafe
 
 4) TOOLS:
 Copy RSET.cpp
@@ -69,7 +70,12 @@ src>gui>search>Searchview.cpp
 (CHLR 230);         
 (ACTY 231);    
 (ELEX 232);   
-(RADN 233);                          
+(RADN 233);          
+(GRPH 234);      
+(BASE 235);                      
+(WHEL 236); 
+(NAPM 237); 
+(GSNS 238); 
 
 Elements that use.tmp2 >> type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 
@@ -89,21 +95,4 @@ c) Done.
 a) Run new PR.bat
 b) Open gitbash> git checkout -b vanilla (in case it fails to checkout)
 c) git checkout -b <branch name here>
-d) Push commits> push to origin> Done. 
-
-Help:
-for debug, just run debug compile.bat
-
-manual:
-Note: Always name the main mod folder as "newmod" in order to make the script work.
-Debug
-cd /d C:\newmod 
-meson build-debug 
-cd build-debug 
-ninja
-
-for static
-cd /d C:\newmod 
-meson -Dbuildtype=release -Dstatic=prebuilt -Db_vscrt=static_from_buildtype build-release-static
-cd build-release-static
-ninja
+d) Push commits> push to origin> Done.

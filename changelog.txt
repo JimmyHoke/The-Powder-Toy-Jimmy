@@ -1,10 +1,25 @@
-Changelog for V36.56 (69)
+Changelog for V37.0 (71)
 
-Fix potential crash when using certain elements near edge
-Fix Whel not stopping once rotated
-Fix Texter errors when reaching max line limit
-Fix error when turning on notifications after a restart
-Update version to 36.6
+New element: GSNS (gravity sensor)
+Revamped stack tools with better controls
+Fix developer button stacking if clicked multiple times
+Updated internal notification script
+Changes to filter and brightness settings
+New fail detection that checks for script errors.
+Faster and more accurate MISL also fix MISL getting displaced by gravity.
+LITH now reflects PHOT with varying wavelengths based on its charge levels
+Make Texter follow theme colours
+Fix typos in WIKI
+Fix int to float conversion errors while compiling
+New message indicator that also acts as a button
+Changes to reset option (Always performs a full reset now)
+New Icon for mod (Thanks to xphere07)
+Remove some unnecessary checks from BEE element
+Fix potential crash when using PET around edges
+Improved update function for internal multiplayer script.
 
-
- 
+Changes from snapshot 234:
+Let NEUT pass through BGLA element
+Fix cryptic Lua error built-in elements could sometimes produce
+Added chemically strengthening GLAS (expose GLAS to molten SALT)
+Element scroll bars no longer show in menus that don't scroll

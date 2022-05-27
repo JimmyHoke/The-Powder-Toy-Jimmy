@@ -79,8 +79,8 @@ static int update(UPDATE_FUNC_ARGS)
 					int r = sim->create_part(-1, x + rx, y + ry, PT_UVRD);
 					if (r != -1)
 					{
-						parts[r].vx = rx * 3;
-						parts[r].vy = ry * 3;
+						parts[r].vx = (float)(rx * 3);
+						parts[r].vy = (float)(ry * 3);
 						if (r > i)
 						{
 							// Make sure movement doesn't happen until next frame, to avoid gaps in the beams of photons produced
@@ -97,15 +97,15 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp <= 50)
 	{
-		*firer = 190.0;
-		*fireg = 90.0;
-		*fireb = 0.0;
+		*firer = 190;
+		*fireg = 90;
+		*fireb = 0;
 	}
 	else if (cpart->tmp > 50)
 	{
-		*firer = 0.0;
-		*fireg = 0.0;
-		*fireb = 200.0;
+		*firer = 0;
+		*fireg = 0;
+		*fireb = 200;
 	}
 	*firea = 60;
 	*pixel_mode |= FIRE_ADD;

@@ -47,7 +47,7 @@ ByteString ExecutableName()
 	ByteString ret;
 #if defined(WIN)
 	using Char = wchar_t;
-#elif defined(LIN)
+#else
 	using Char = char;
 #endif
 #if defined(WIN)
@@ -115,9 +115,9 @@ void DoRestart()
 		}
 		else
 		{
-#if !defined(RENDERER) && !defined(FONTEDITOR)
+# if !defined(RENDERER) && !defined(FONTEDITOR)
 			Client::Ref().Shutdown(); // very ugly hack; will fix soon(tm)
-#endif
+# endif
 			exit(0);
 		}
 #elif defined(LIN) || defined(MACOSX)
@@ -373,7 +373,7 @@ String DoMigration(ByteString fromDir, ByteString toDir)
 	auto scripts = DirectorySearch(fromDir + "scripts", "", { ".lua", ".txt" });
 	auto downloadedScripts = DirectorySearch(fromDir + "scripts/downloaded", "", { ".lua" });
 	bool hasScriptinfo = FileExists(toDir + "scripts/downloaded/scriptinfo");
-	auto screenshots = DirectorySearch(fromDir, "powdertoy-", { ".png" });
+	auto screenshots = DirectorySearch(fromDir, "screenshot", { ".png" });
 	bool hasAutorun = FileExists(fromDir + "autorun.lua");
 	bool hasPref = FileExists(fromDir + "powder.pref");
 
@@ -532,17 +532,15 @@ int main(int argc, char *argv[]);
 int WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	int argc;
-	wchar_t **wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
 	std::vector<ByteString> argv;
+	std::vector<char *> argp;
+	wchar_t **wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
 	for (auto i = 0; i < argc; ++i)
 	{
 		argv.push_back(Platform::WinNarrow(std::wstring(wargv[i])));
+		argp.push_back(&argv.back()[0]);
 	}
-	std::vector<char *> argp;
-	for (auto &arg : argv)
-	{
-		argp.push_back(&arg[0]);
-	}
+	LocalFree(wargv);
 	return main(argc, &argp[0]);
 }
 #endif

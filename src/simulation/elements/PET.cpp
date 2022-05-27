@@ -223,67 +223,68 @@ static int update(UPDATE_FUNC_ARGS)
 
 	for (int rx = -15; rx < 15; rx++)
 		for (int ry = -10; ry < 5; ry++)
-			if (BOUNDS_CHECK && (rx || ry))
-			{
+				if (x + rx >= 0 && y + ry >= 0 && x + rx < XRES && y + ry < YRES && (rx || ry))
+				{
 				int r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
 				r = pmap[y + ry][x + rx];
 
-				if(parts)
-				switch (TYP(r))
+				if (parts)
 				{
-					// Avoid these particles.
-				case PT_FIRE:
-				case PT_PLSM:
-				case PT_SMKE:
-				case PT_ACID:
-				case PT_BOMB:
-				case PT_DEST:
-				case PT_VIRS:
-				case PT_LAVA:
-				case PT_CFLM:
-				case PT_BFLM:
-				case PT_THDR:
-				{
-				parts[i].tmp = 10;
-				parts[i].vx = -rx * 2;
-				parts[i].vy = -ry * 2;
-				}
-				break;
-				case PT_PLNT:
-				case PT_WATR:
-				{
-					if (RNG::Ref().chance(1, 200))
-				{
-					parts[i].life += 1;
-					sim->kill_part(ID(r));
-				}
-					if (parts[i].x < parts[ID(r)].x)
+					switch (TYP(r))
 					{
-						parts[i].x++;
-					}
-					else if (parts[i].x > parts[ID(r)].x)
-					{
-						parts[i].x--;
-					}
+						// Avoid these particles.
+						case PT_FIRE:
+						case PT_PLSM:
+						case PT_SMKE:
+						case PT_ACID:
+						case PT_BOMB:
+						case PT_DEST:
+						case PT_VIRS:
+						case PT_LAVA:
+						case PT_CFLM:
+						case PT_BFLM:
+						case PT_THDR:
+						{
+							parts[i].tmp = 10;
+							parts[i].vx = (float)(-rx * 2);
+							parts[i].vy = (float)(-ry * 2);						
+						}	break;
+						case PT_PLNT:
+						case PT_WATR:
+						{
+							if (RNG::Ref().chance(1, 200))
+							{
+								parts[i].life += 1;
+								sim->kill_part(ID(r));
+							}
 
-					if (parts[i].y < parts[ID(r)].y)
-					{
-						parts[i].y++;
+							if (parts[i].x < parts[ID(r)].x)
+							{
+								parts[i].x++;
+							}
+							else if (parts[i].x > parts[ID(r)].x)
+							{
+								parts[i].x--;
+							}
+
+							if (parts[i].y < parts[ID(r)].y)
+							{
+								parts[i].y++;
+							}
+							else if (parts[i].y > parts[ID(r)].y)
+							{
+								parts[i].y--;
+							}
+						}	break;
 					}
-					else if (parts[i].y > parts[ID(r)].y)
-					{
-						parts[i].y--;
-					}
-				}
-				break;
 				}
 			}
 
 	int r, rx, ry;
-	for (rx = -4; rx < 4; rx++)
-		for (ry = -6; ry < 6; ry++)
+	for (rx = -2; rx < 3; rx++)
+		for (ry = -2; ry < 3; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				r = pmap[y + ry][x + rx];
@@ -338,37 +339,37 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		mg = 150;
 		mb = 20;
 	}
-    if (cpart->tmp > 5 || cpart->life < 30)
+	if (cpart->tmp > 5 || cpart->life < 30)
 	{
-		    mr = 250;
+			mr = 250;
 			mg = 50;
 			mb = 50;
-			ren->drawtext(cpart->x+9, cpart->y - 17,"!",255, 0, 0, 255);
+			ren->drawtext((int)(cpart->x + 9.0f), (int)(cpart->y - 17.0f), "!", 255, 0, 0, 255);
 	}
-	if (cpart->tmp > 0 && cpart->tmp <5) 
+	if (cpart->tmp > 0 && cpart->tmp <5)
 	{
-		ren->drawtext(cpart->x - 10, cpart->y - 27, "Stkm", 55, 255, 55, 250);
+		ren->drawtext((int)(cpart->x - 10.0f), (int)(cpart->y - 27.0f), "Stkm", 55, 255, 55, 250);
 	}
 
 	if (cpart->vy > 0)
 	{
-		ren->drawtext(cpart->x-2, cpart->y + 3, "*", 255, 255, 0, 255); 
+		ren->drawtext((int)(cpart->x - 2.0f), (int)(cpart->y + 3.0f), "*", 255, 255, 0, 255); 
 	}
-	//draw body
-	ren->fillcircle(cpart->x, cpart->y - 10, cpart->ctype, cpart->ctype, mr, mg, mb, 255);
-	ren->fillcircle(cpart->x, cpart->y - 2, cpart->ctype +1, cpart->ctype +1, 138, 138, 255, 205);
-	ren->drawrect(cpart->x-1, cpart->y-11, 3, 1, 0, 0, 0, 255);
+	// draw body
+	ren->fillcircle((int)(cpart->x), (int)(cpart->y - 10.0f), cpart->ctype, cpart->ctype, mr, mg, mb, 255);
+	ren->fillcircle((int)(cpart->x), (int)(cpart->y - 2.0f), cpart->ctype + 1, cpart->ctype + 1, 138, 138, 255, 205);
+	ren->drawrect((int)(cpart->x - 1.0f), (int)(cpart->y - 11.0f), 3, 1, 0, 0, 0, 255);
 
-	//health bar
-	ren->fillrect(cpart->x-4, cpart->y - 17, cpart->life/10, 1, mr, mg, mb, 255);
-	ren->drawrect(cpart->x-5, cpart->y - 18, 12, 3, 138, 138, 255, 150);
+	// health bar
+	ren->fillrect((int)(cpart->x - 4.0f), (int)(cpart->y - 17.0f), cpart->life / 10, 1, mr, mg, mb, 255);
+	ren->drawrect((int)(cpart->x - 5.0f), (int)(cpart->y - 18.0f), 12, 3, 138, 138, 255, 150);
 
-	//Hand
-	ren->drawrect(cpart->x - 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
-	ren->drawrect(cpart->x + 5, cpart->y - 6, 1, 4, 255, 255, 255, 205);
+	// Hand
+	ren->drawrect((int)(cpart->x - 5.0f), (int)(cpart->y - 6.0f), 1, 4, 255, 255, 255, 205);
+	ren->drawrect((int)(cpart->x + 5.0f), (int)(cpart->y - 6.0f), 1, 4, 255, 255, 255, 205);
 
-	//anteena
-	ren->drawrect(cpart->x - 4, cpart->y - 13, 1, 3, mr, mg, mb, 255);
-	ren->drawrect(cpart->x + 4, cpart->y - 13, 1, 3, mr, mg, mb, 255);
+	// anteena
+	ren->drawrect((int)(cpart->x - 4.0f), (int)(cpart->y - 13.0f), 1, 3, mr, mg, mb, 255);
+	ren->drawrect((int)(cpart->x + 4.0f), (int)(cpart->y - 13.0f), 1, 3, mr, mg, mb, 255);
 	return 0;
 }
