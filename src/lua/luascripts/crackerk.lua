@@ -64,8 +64,6 @@ local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI relate
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 
 local reset = Button:new(10,92,80,25,"Reset", "Reset.")
-local reset1 = Button:new(100,92,45,25,"Soft", "Reset the mod settings.")
-local reset2 = Button:new(148,92,45,25,"Hard", "Reset everything.")
 
 local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
@@ -2013,6 +2011,7 @@ end)
 
 reset:action(function(sender)
 os.remove("scripts/updatedmp.lua")
+os.remove("updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
