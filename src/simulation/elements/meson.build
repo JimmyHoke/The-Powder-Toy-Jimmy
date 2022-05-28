@@ -239,7 +239,8 @@ simulation_elem_ids = [
 	[ 'BASE',   MOD_ELEMENT_OFFSET + 43 ],
 	[ 'WHEL',   MOD_ELEMENT_OFFSET + 44 ],
 	[ 'NAPM',   MOD_ELEMENT_OFFSET + 45 ],
-	[ 'GSNS',   MOD_ELEMENT_OFFSET + 46 ]
+	[ 'GSNS',   MOD_ELEMENT_OFFSET + 46 ],
+	[ 'MGNT',   MOD_ELEMENT_OFFSET + 47 ]
 ]
 
 simulation_elem_src = []

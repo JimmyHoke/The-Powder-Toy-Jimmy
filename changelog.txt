@@ -1,4 +1,9 @@
 Changelog for V37.1 (72)
 
+New element: MGNT (Electromagnet).
+Fix LED losing its default colour after saving.
+New Mod icon for linux :)
+Make cross-Hair show proper X and Y coordinates when inside zoom window.
+Stack positioning now also works when using zoom.
 Fix TPTMP not loading when updatedmp file was still present.
-Fix older lua scripts returning errors because of property changes.
+Add compatibility for running older lua scripts requiring pavg property.
