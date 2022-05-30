@@ -1,6 +1,7 @@
 Changelog for V37.1 (72)
 
 New element: MGNT (Electromagnet, will definitely attract you :P).
+Prevent ELEX from turning into WHEL.
 Fix LED losing its default colour after saving.
 Proper support to stacking particles.
 New Mod icon for linux :)
