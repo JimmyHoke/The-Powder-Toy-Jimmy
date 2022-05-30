@@ -30,7 +30,7 @@ void Element::Element_MGNT()
 	Weight = 100;
 
 	HeatConduct = 251;
-	Description = "Electro Magnet, creates electromagnetic fields when sparked. Can attract/ repel certain metal powders. Read WIKI.";
+	Description = "Strong electro magnet, creates EM fields when powered. Can attract/ repel certain metals or Energy particles. Read WIKI.";
 
 	Properties = TYPE_SOLID| PROP_LIFE_DEC | PROP_HOT_GLOW;
 
@@ -47,40 +47,29 @@ void Element::Element_MGNT()
 }
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].tmp < 0 || parts[i].tmp > 20)
-		parts[i].tmp = 20;
-
 	if (parts[i].tmp > 0)
 	{
-		if (RNG::Ref().chance(1, 3))
-		{
-			parts[i].tmp -= 1;
-		}
+		parts[i].tmp -= 1;
+		parts[i].life += 2;
 	}
-
-	if (parts[i].tmp2 < 0 || parts[i].tmp2 > 20)
-		parts[i].tmp2 = 20;
-
 	if (parts[i].tmp2 > 0)
 	{
-		if (RNG::Ref().chance(1, 3))
-		{
-			parts[i].tmp2 -= 1;
-		}
+		parts[i].tmp2 -= 1;
+		parts[i].life += 2;
 	}
-	if (parts[i].tmp3 > 0)
-		parts[i].tmp3 -= 1;
 
-	if (parts[i].life > 0 && parts[i].tmp3 > 0)
+	if (parts[i].life > 20)
 	{
-		parts[i].temp += 10.15f;
+		parts[i].life = 20;
 	}
-
+	if (parts[i].tmp > 0 && parts[i].tmp2 > 0)
+	{
+		parts[i].temp += 15.15f;
+	}
+	int checkrad = parts[i].life;
 	int r, rx, ry;
-	int ar = abs(parts[i].tmp - parts[i].tmp2);
-
-		for (rx = -2; rx <= 3; rx++)
-			for (ry = -2; ry <= 3; ry++)
+		for (rx = -1; rx <= 2; rx++)
+			for (ry = -1; ry <= 2; ry++)
 				if (BOUNDS_CHECK && (rx || ry))
 				{
 					r = pmap[y + ry][x + rx];
@@ -92,50 +81,35 @@ static int update(UPDATE_FUNC_ARGS)
 						{
 							if (parts[i].temp < 673.15f)
 							{
-								parts[i].temp += 5.0f;
+								parts[i].temp += 3.0f;
 							}
-
 							{
 								PropertyValue value;
-								value.Integer = 2;
-								sim->flood_prop(x, y, offsetof(Particle, life), value, StructProperty::Integer);
+								value.Integer = 3;
+								sim->flood_prop(x, y, offsetof(Particle, tmp), value, StructProperty::Integer);
 							}
 						}
 						if (parts[ID(r)].ctype == PT_NSCN)
 						{
 							if (parts[i].temp < 673.15f)
 							{
-								parts[i].temp += 5.0f;
+								parts[i].temp += 3.0f;
 							}
 							{
 								PropertyValue value;
-								value.Integer = 2;
-								sim->flood_prop(x, y, offsetof(Particle, tmp3), value, StructProperty::Integer);
+								value.Integer = 3;
+								sim->flood_prop(x, y, offsetof(Particle, tmp2), value, StructProperty::Integer);
 							}
 						}
 					}
-					if (parts[ID(r)].life > 0)
-					{
-						if (RNG::Ref().chance(1, 30))
-						{
-							parts[i].tmp += 1;
-						}
-					}
-				    if (parts[ID(r)].tmp3 > 0)
-					{
-						if (RNG::Ref().chance(1, 30))
-						{
-							parts[i].tmp2 += 1;
-						}
-					}
 				}
-		if (RNG::Ref().chance(1, 8))
-		{
-			for (rx = -ar; rx <= ar; rx++)
-				for (ry = -ar; ry <= ar; ry++)
+			for (rx = -checkrad; rx <= checkrad; rx++)
+				for (ry = -checkrad; ry <= checkrad; ry++)
 					if (x + rx >= 0 && y + ry >= 0 && x + rx < XRES && y + ry < YRES && (rx || ry))
 					{
 						r = pmap[y + ry][x + rx];
+						if (!r)
+							r = sim->photons[y + ry][x + rx];
 						if (!r)
 							continue;
 						switch (TYP(r))
@@ -145,6 +119,8 @@ static int update(UPDATE_FUNC_ARGS)
 						case PT_SLCN:
 						case PT_PQRT:
 						case PT_COPR:
+						case PT_ELEC:
+						case PT_PHOT:
 						{
 							if (parts[i].tmp > 0)
 							{
@@ -180,25 +156,32 @@ static int update(UPDATE_FUNC_ARGS)
 						{
 							if (parts[i].tmp> 0 and parts[i].tmp2 > 0)
 							{
-									parts[ID(r)].temp += 5.15f;
+								if (parts[ID(r)].life == 0)
+								{
+									parts[ID(r)].temp += 35.15f;
+									parts[ID(r)].life = 4;
+									parts[ID(r)].ctype = parts[ID(r)].type;
+									sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
+								}
 							}
 						}
 						break;
 						}
 					}
-		}
 	return 0;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if (cpart->tmp > 0)
-	{
-		ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->tmp, cpart->tmp, 248, 98, 98, 10);
-	}
+	if (RNG::Ref().chance(1, 3))
+	{if (cpart->tmp > 0)
+		{
+			ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, 248, 108, 108, 30);
+		}
 	if (cpart->tmp2 > 0)
 	{
-		ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->tmp2, cpart->tmp2, 98, 98, 248, 10);
+		ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, 108, 108, 248, 30);
 	}
+}
 	return 0;
 }
