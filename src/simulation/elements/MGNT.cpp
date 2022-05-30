@@ -32,7 +32,7 @@ void Element::Element_MGNT()
 	HeatConduct = 251;
 	Description = "Strong electro magnet, creates EM fields when powered. Can attract/ repel certain metals or Energy particles. Read WIKI.";
 
-	Properties = TYPE_SOLID| PROP_LIFE_DEC | PROP_HOT_GLOW;
+	Properties = TYPE_SOLID | PROP_HOT_GLOW;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
@@ -47,18 +47,24 @@ void Element::Element_MGNT()
 }
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].tmp > 0)
+	if ((RNG::Ref().chance(1, 5)))
 	{
-		parts[i].tmp -= 1;
-		parts[i].life += 2;
+		if (parts[i].tmp > 0)
+		{
+			parts[i].tmp -= 1;
+			parts[i].life += 2;
+		}
+		if (parts[i].tmp2 > 0)
+		{
+			parts[i].tmp2 -= 1;
+			parts[i].life += 2;
+		}
+		if (parts[i].life > 0)
+		{
+			parts[i].life -= 1;
+		}
 	}
-	if (parts[i].tmp2 > 0)
-	{
-		parts[i].tmp2 -= 1;
-		parts[i].life += 2;
-	}
-
-	if (parts[i].life > 20)
+	if (parts[i].life > 20||parts[i].life < 0)
 	{
 		parts[i].life = 20;
 	}
@@ -174,14 +180,10 @@ static int update(UPDATE_FUNC_ARGS)
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (RNG::Ref().chance(1, 3))
-	{if (cpart->tmp > 0)
-		{
-			ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, 248, 108, 108, 30);
-		}
-	if (cpart->tmp2 > 0)
 	{
-		ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, 108, 108, 248, 30);
+
+	ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, cpart->tmp*84, 88, cpart->tmp2 * 84, 20);
+
 	}
-}
 	return 0;
 }

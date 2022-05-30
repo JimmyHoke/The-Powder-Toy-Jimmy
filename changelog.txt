@@ -1,7 +1,8 @@
 Changelog for V37.1 (72)
 
-New element: MGNT (Electromagnet).
+New element: MGNT (Electromagnet, will definitely attract you :P).
 Fix LED losing its default colour after saving.
+Proper support to stacking particles.
 New Mod icon for linux :)
 MISL doesn't activate if there's a blocking INSL between it and PSCN anymore.
 Make cross-Hair show proper X and Y coordinates when inside zoom window.

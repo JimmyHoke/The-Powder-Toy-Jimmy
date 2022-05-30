@@ -510,7 +510,7 @@ stamplb = "0"
 clearsb()
 end)
 
-local stackposx, stackposy, stackposval, zx, zy = 99, 99, 0,0,0
+local stv, stackposx, stackposy, stackposval, zx, zy = 0, 99, 99, 0,0,0
 
 function drawstack()
 zx,zy = sim.adjustCoords(tpt.mousex,tpt.mousey)
@@ -529,6 +529,10 @@ gfx.drawText(148,370,"Stack pos.",255,255,255)
 gfx.fillRect(204,367,23,13,255,25,25,100)
 gfx.drawText(206,370,"Exit",255,255,255)
 
+if stv == 1 then
+gfx.drawText(tpt.mousex,tpt.mousey+20,"Stack mode on",98,2448,98,200)
+end
+
 if stackposval == 1 then
 if ren.zoomEnabled() then
 gfx.drawLine(zx-7, zy,zx+7,zy,0,255,0,255)
@@ -544,9 +548,18 @@ end
 
 function getclick()
 if tpt.mousex >13 and tpt.mousex < 40 and tpt.mousey > 365 and tpt.mousey < 378 then
-  tpt.set_property("x", stackposx, "NONE")
-  tpt.set_property("y", stackposy, "NONE")
-  	print("Stacked the particles")
+stv = 1
+print("Click the particles under brush you want to stack")
+return false
+end
+
+if stv == 1 then
+for i in sim.neighbors(tpt.mousex,tpt.mousey,tpt.brushx,tpt.brushy) do
+ sim.partProperty(i, sim.FIELD_X, stackposx)
+  sim.partProperty(i, sim.FIELD_Y, stackposy)
+end
+print("Stacked the selected particles.")
+stv = 0
 return false
 end
 
