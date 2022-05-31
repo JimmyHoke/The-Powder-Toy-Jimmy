@@ -1,8 +1,8 @@
-Changelog for V37.1 (72)
+Changelog for V37.1 (73)
 
 New element: MGNT (Electromagnet, will definitely attract you :P).
-Updated internal script manager to v3.12
-Prevent ELEX from turning into WHEL.
+Updated internal script manager to v3.12.0
+Prevent ELEX from turning into WHEL element.
 Fix LED losing its default colour after saving.
 Proper support to stacking particles.
 MISL doesn't activate if there's a blocking INSL between it and PSCN anymore.

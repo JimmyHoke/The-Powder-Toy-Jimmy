@@ -536,7 +536,7 @@ gfx.fillRect(204,367,23,13,255,25,25,100)
 gfx.drawText(206,370,"Exit",255,255,255)
 
 if stv == 1 then
-gfx.drawText(tpt.mousex,tpt.mousey+20,"Stack mode on",98,2448,98,200)
+gfx.drawText(tpt.mousex-30,tpt.mousey+14+tpt.brushy,"Stack mode on",98,248,98,200)
 end
 
 if stackposval == 1 then
@@ -556,7 +556,7 @@ function getclick()
 if tpt.mousex >13 and tpt.mousex < 40 and tpt.mousey > 365 and tpt.mousey < 378 then
 if stv == 1 then
 stv = 0
-print("Stack mode turned off")
+print("Stack mode deactivated")
 elseif stv == 0 then
 stv = 1
 tpt.brushID = 1
