@@ -91,7 +91,7 @@ static int update(UPDATE_FUNC_ARGS)
 							}
 							{
 								PropertyValue value;
-								value.Integer = 3;
+								value.Integer = 4;
 								sim->flood_prop(x, y, offsetof(Particle, tmp), value, StructProperty::Integer);
 							}
 						}
@@ -103,7 +103,7 @@ static int update(UPDATE_FUNC_ARGS)
 							}
 							{
 								PropertyValue value;
-								value.Integer = 3;
+								value.Integer = 4;
 								sim->flood_prop(x, y, offsetof(Particle, tmp2), value, StructProperty::Integer);
 							}
 						}
@@ -182,7 +182,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	if (RNG::Ref().chance(1, 3))
 	{
 
-	ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, cpart->tmp*84, 88, cpart->tmp2 * 84, 20);
+	ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, 80+cpart->tmp*40, 0, 80+cpart->tmp2 *40, 20);
 
 	}
 	return 0;

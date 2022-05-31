@@ -515,7 +515,13 @@ local stv, stackposx, stackposy, stackposval, zx, zy = 0, 99, 99, 0,0,0
 function drawstack()
 zx,zy = sim.adjustCoords(tpt.mousex,tpt.mousey)
 gfx.fillRect(13,367,28,13,25,255,25,100)
+if stv == 0 then
+gfx.fillRect(13,367,28,13,25,255,25,100)
 gfx.drawText(15,370,"Stack",255,255,255)
+else
+gfx.fillRect(13,367,28,13,255,0,0,170)
+gfx.drawText(14,370,"<Off>",255,255,255)
+end
 
 gfx.fillRect(47,367,45,13,25,25,255,100)
 gfx.drawText(50,370,"De-Stack",255,255,255)
@@ -548,18 +554,31 @@ end
 
 function getclick()
 if tpt.mousex >13 and tpt.mousex < 40 and tpt.mousey > 365 and tpt.mousey < 378 then
+if stv == 1 then
+stv = 0
+print("Stack mode turned off")
+elseif stv == 0 then
 stv = 1
+tpt.brushID = 1
 print("Click the particles under brush you want to stack")
+end
 return false
 end
 
 if stv == 1 then
+if ren.zoomEnabled() then
+local bx,by = sim.adjustCoords(tpt.brushx,tpt.brushy)
+for i in sim.neighbors(zx,zy,bx,by) do
+ sim.partProperty(i, sim.FIELD_X, stackposx)
+  sim.partProperty(i, sim.FIELD_Y, stackposy)
+  end
+else
 for i in sim.neighbors(tpt.mousex,tpt.mousey,tpt.brushx,tpt.brushy) do
  sim.partProperty(i, sim.FIELD_X, stackposx)
   sim.partProperty(i, sim.FIELD_Y, stackposy)
 end
+end
 print("Stacked the selected particles.")
-stv = 0
 return false
 end
 
@@ -617,6 +636,7 @@ event.unregister(event.mousedown,getclick)
 event.register(event.mousedown,getclick)
 event.unregister(event.tick,drawstack)
 event.register(event.tick,drawstack)
+stv = 0
 end)
 
 edito:action(function(sender)
@@ -1685,10 +1705,10 @@ end
 if adminval == 1 then
 graphics.fillRect(221,330,160,31,255,40,40,210)
 graphics.drawRect(220,330,160,32,255,0,0,255)
-graphics.drawText(233,315,"Warning: Proceed at your own risk!",255,5,5,255)
+graphics.drawText(222,315,"Warning: Proceed at your own risk!",255,5,5,255)
 elseif adminval == 2 then
 graphics.fillRect(220,330,160,32,40,255,40,210)
-graphics.drawText(233,315,"Select the script to disable:",40,255,40,210)
+graphics.drawText(233,315,"Select one of the options:",40,255,40,210)
 end
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barstat = "Off"
