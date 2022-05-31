@@ -565,23 +565,6 @@ end
 return false
 end
 
-if stv == 1 then
-if ren.zoomEnabled() then
-local bx,by = sim.adjustCoords(tpt.brushx,tpt.brushy)
-for i in sim.neighbors(zx,zy,bx,by) do
- sim.partProperty(i, sim.FIELD_X, stackposx)
-  sim.partProperty(i, sim.FIELD_Y, stackposy)
-  end
-else
-for i in sim.neighbors(tpt.mousex,tpt.mousey,tpt.brushx,tpt.brushy) do
- sim.partProperty(i, sim.FIELD_X, stackposx)
-  sim.partProperty(i, sim.FIELD_Y, stackposy)
-end
-end
-print("Stacked the selected particles.")
-return false
-end
-
 if tpt.mousex >204 and tpt.mousex < 226 and tpt.mousey > 365 and tpt.mousey < 378 then
 event.unregister(event.mousedown,getclick)
 event.unregister(event.tick,drawstack)
@@ -626,6 +609,23 @@ for i in sim.parts() do
 		end
 	end
 	print("Removed the outermost particle from stack")
+return false
+end
+
+if stv == 1 then
+if ren.zoomEnabled() then
+local bx,by = sim.adjustCoords(tpt.brushx,tpt.brushy)
+for i in sim.neighbors(zx,zy,bx,by) do
+ sim.partProperty(i, sim.FIELD_X, stackposx)
+  sim.partProperty(i, sim.FIELD_Y, stackposy)
+  end
+else
+for i in sim.neighbors(tpt.mousex,tpt.mousey,tpt.brushx,tpt.brushy) do
+ sim.partProperty(i, sim.FIELD_X, stackposx)
+  sim.partProperty(i, sim.FIELD_Y, stackposy)
+end
+end
+print("Stacked the selected particles.")
 return false
 end
 end
