@@ -5,7 +5,6 @@ Updated internal script manager to v3.12
 Prevent ELEX from turning into WHEL.
 Fix LED losing its default colour after saving.
 Proper support to stacking particles.
-New Mod icon for linux :)
 MISL doesn't activate if there's a blocking INSL between it and PSCN anymore.
 Make cross-Hair show proper X and Y coordinates when inside zoom window.
 Stack positioning now also works when using zoom.
