@@ -4,6 +4,7 @@ New element: MGNT (Electromagnet, will definitely attract you :P).
 Updated internal script manager to v3.12.0
 Prevent ELEX from turning into WHEL element.
 Fix LED losing its default colour after saving.
+Fix screenshots getting overwritten on Mac OS.
 Proper support to stacking particles.
 MISL doesn't activate if there's a blocking INSL between it and PSCN anymore.
 Make cross-Hair show proper X and Y coordinates when inside zoom window.
