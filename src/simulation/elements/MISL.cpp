@@ -125,7 +125,7 @@ static int update(UPDATE_FUNC_ARGS)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				int r = pmap[y + ry][x + rx];
-				if (!r)
+				if (!r || sim->parts_avg(ID(r), i, PT_INSL) == PT_INSL)
 					continue;
 				if (parts[ID(r)].type == PT_SPRK && parts[ID(r)].ctype == PT_PSCN && parts[ID(r)].life == 3) //Check for a sprk with ctype PSCN to activate and store the direction.
 				{

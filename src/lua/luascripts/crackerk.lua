@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 37.0
+local crackversion = 37.1
 local passreal2 = "DMND"
 local multiplayerversion = 26
 local motw = "."
@@ -64,6 +64,8 @@ local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI relate
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 
 local reset = Button:new(10,92,80,25,"Reset", "Reset.")
+local reset1 = Button:new(100,92,45,25,"Soft", "Reset the mod settings.")
+local reset2 = Button:new(148,92,45,25,"Hard", "Reset everything.")
 
 local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
@@ -508,27 +510,43 @@ stamplb = "0"
 clearsb()
 end)
 
-local stackposx, stackposy, stackposval = 99, 99, 0
+local stv, stackposx, stackposy, stackposval, zx, zy = 0, 99, 99, 0,0,0
 
 function drawstack()
-gfx.fillRect(13,367,28,13,25,255,25,200)
+zx,zy = sim.adjustCoords(tpt.mousex,tpt.mousey)
+gfx.fillRect(13,367,28,13,25,255,25,100)
+if stv == 0 then
+gfx.fillRect(13,367,28,13,25,255,25,100)
 gfx.drawText(15,370,"Stack",255,255,255)
+else
+gfx.fillRect(13,367,28,13,255,0,0,170)
+gfx.drawText(14,370,"<Off>",255,255,255)
+end
 
-gfx.fillRect(47,367,45,13,25,25,255,200)
+gfx.fillRect(47,367,45,13,25,25,255,100)
 gfx.drawText(50,370,"De-Stack",255,255,255)
 
-gfx.fillRect(98,367,43,13,32,200,125,200)
+gfx.fillRect(98,367,43,13,32,200,125,100)
 gfx.drawText(100,370,"Top only",255,255,255)
 
-gfx.fillRect(146,367,52,13,255,255,25,200)
+gfx.fillRect(146,367,52,13,255,255,25,100)
 gfx.drawText(148,370,"Stack pos.",255,255,255)
 
-gfx.fillRect(204,367,23,13,255,25,25,200)
+gfx.fillRect(204,367,23,13,255,25,25,100)
 gfx.drawText(206,370,"Exit",255,255,255)
 
+if stv == 1 then
+gfx.drawText(tpt.mousex-30,tpt.mousey+14+tpt.brushy,"Stack mode on",98,248,98,200)
+end
+
 if stackposval == 1 then
+if ren.zoomEnabled() then
+gfx.drawLine(zx-7, zy,zx+7,zy,0,255,0,255)
+gfx.drawLine(zx, zy-7,zx,zy+7,0,255,0,255)
+else
 gfx.drawLine(tpt.mousex-7, tpt.mousey,tpt.mousex+7,tpt.mousey,0,255,0,255)
 gfx.drawLine(tpt.mousex, tpt.mousey-7,tpt.mousex,tpt.mousey+7,0,255,0,255)
+end
 end
 gfx.drawLine(stackposx-5, stackposy,stackposx+5,stackposy,0,255,0,200)
 gfx.drawLine(stackposx, stackposy-5,stackposx,stackposy+5,0,255,0,200)
@@ -536,9 +554,14 @@ end
 
 function getclick()
 if tpt.mousex >13 and tpt.mousex < 40 and tpt.mousey > 365 and tpt.mousey < 378 then
-  tpt.set_property("x", stackposx, "NONE")
-  tpt.set_property("y", stackposy, "NONE")
-  	print("Stacked the particles")
+if stv == 1 then
+stv = 0
+print("Stack mode deactivated")
+elseif stv == 0 then
+stv = 1
+tpt.brushID = 1
+print("Click the particles under brush you want to stack")
+end
 return false
 end
 
@@ -567,8 +590,13 @@ return false
 end
 
 if stackposval == 1 then
+if ren.zoomEnabled() then
+stackposx = zx
+stackposy = zy
+else
 stackposx = tpt.mousex
 stackposy = tpt.mousey
+end
 stackposval = 0
 return false
 end
@@ -583,6 +611,23 @@ for i in sim.parts() do
 	print("Removed the outermost particle from stack")
 return false
 end
+
+if stv == 1 then
+if ren.zoomEnabled() then
+local bx,by = sim.adjustCoords(tpt.brushx,tpt.brushy)
+for i in sim.neighbors(zx,zy,bx,by) do
+ sim.partProperty(i, sim.FIELD_X, stackposx)
+  sim.partProperty(i, sim.FIELD_Y, stackposy)
+  end
+else
+for i in sim.neighbors(tpt.mousex,tpt.mousey,tpt.brushx,tpt.brushy) do
+ sim.partProperty(i, sim.FIELD_X, stackposx)
+  sim.partProperty(i, sim.FIELD_Y, stackposy)
+end
+end
+print("Stacked the selected particles.")
+return false
+end
 end
 
 info:action(function(sender)
@@ -591,6 +636,7 @@ event.unregister(event.mousedown,getclick)
 event.register(event.mousedown,getclick)
 event.unregister(event.tick,drawstack)
 event.register(event.tick,drawstack)
+stv = 0
 end)
 
 edito:action(function(sender)
@@ -898,7 +944,7 @@ local drawpos2 = 500
 local disabletype = 0
 
 function drawprev2()
-gfx.fillRect(4,344,606,42,ar,ag,ab,100)
+gfx.fillRect(4,344,606,42,ar,ag,ab,70)
 if yvalue < ylimit then
 graphics.drawText(10,yvalue+yval2,texttext..".",tr,tg,tb,255)
 if ffix == "0" then
@@ -1293,7 +1339,7 @@ local close2 = Button:new(570, 400, 50, 15, "Close")
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation)."
+local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1389,6 +1435,7 @@ tpt.el.base.menu=0
 tpt.el.whel.menu=0
 tpt.el.napm.menu=0
 tpt.el.gsns.menu=0
+tpt.el.emgt.menu=0
 end
 
 function showmodelem()
@@ -1440,6 +1487,7 @@ tpt.el.base.menu=1
 tpt.el.whel.menu=1
 tpt.el.napm.menu=1
 tpt.el.gsns.menu=1
+tpt.el.emgt.menu=1
 end
 local modelemval = "0"
 bg:action(function(sender)
@@ -1572,8 +1620,14 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
 if MANAGER.getsetting("CRK", "fancurs") == "1" then 
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..tpt.mousex,ar,ag,ab,al)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..tpt.mousey,ar,ag,ab,al)
+local crx, cry = 0,0 
+if ren.zoomEnabled() then
+crx, cry = sim.adjustCoords(tpt.mousex,tpt.mousey)
+else
+crx, cry = tpt.mousex,tpt.mousey
+end
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..crx,ar,ag,ab,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..cry,ar,ag,ab,al)
 if tpt.brushx > 0 or tpt.brushy > 0 then
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,al)
 graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,al)
@@ -1651,10 +1705,10 @@ end
 if adminval == 1 then
 graphics.fillRect(221,330,160,31,255,40,40,210)
 graphics.drawRect(220,330,160,32,255,0,0,255)
-graphics.drawText(233,315,"Warning: Proceed at your own risk!",255,5,5,255)
+graphics.drawText(222,315,"Warning: Proceed at your own risk!",255,5,5,255)
 elseif adminval == 2 then
 graphics.fillRect(220,330,160,32,40,255,40,210)
-graphics.drawText(233,315,"Select the script to disable:",40,255,40,210)
+graphics.drawText(233,315,"Select one of the options:",40,255,40,210)
 end
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barstat = "Off"
@@ -1919,7 +1973,12 @@ function startupcheck()
 fs.makeDirectory("scripts")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
+local filecheck =io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+if filecheck ~= nil then 
+io.close(filecheck)
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
+print("External TPTMP script detected and deleted, please use the UpdateMP button instead.")
+end
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 local faz =io.open("scripts/updatedmp.lua","r")
 if faz ~= nil then 
@@ -2011,7 +2070,6 @@ end)
 
 reset:action(function(sender)
 os.remove("scripts/updatedmp.lua")
-os.remove("updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")

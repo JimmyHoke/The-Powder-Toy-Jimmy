@@ -97,5 +97,5 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 }
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
-	sim->parts[i].dcolour = 0xFFFFFF;
+	sim->parts[i].dcolour = 0xFFFFFFFF;
 }

@@ -1,4 +1,12 @@
-Changelog for V37.1 (72)
+Changelog for V37.1 (73)
 
+New element: MGNT (Electromagnet, will definitely attract you :P).
+Updated internal script manager to v3.12.0
+Prevent ELEX from turning into WHEL element.
+Fix LED losing its default colour after saving.
+Proper support to stacking particles.
+MISL doesn't activate if there's a blocking INSL between it and PSCN anymore.
+Make cross-Hair show proper X and Y coordinates when inside zoom window.
+Stack positioning now also works when using zoom.
 Fix TPTMP not loading when updatedmp file was still present.
-Fix older lua scripts returning errors because of property changes.
+Add compatibility for running older lua scripts requiring pavg property.

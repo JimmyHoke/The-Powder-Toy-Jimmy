@@ -76,6 +76,7 @@ src>gui>search>Searchview.cpp
 (WHEL 236); 
 (NAPM 237); 
 (GSNS 238); 
+(MGNT 239); 
 
 Elements that use.tmp2 >> type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
 

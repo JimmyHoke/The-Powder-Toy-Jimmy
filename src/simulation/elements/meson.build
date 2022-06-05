@@ -240,6 +240,7 @@ simulation_elem_ids = [
 	[ 'WHEL',   MOD_ELEMENT_OFFSET + 44 ],
 	[ 'NAPM',   MOD_ELEMENT_OFFSET + 45 ],
 	[ 'GSNS',   MOD_ELEMENT_OFFSET + 46 ],
+	[ 'MGNT',   MOD_ELEMENT_OFFSET + 47 ],
 	['JRAY', 500],
 	['EBCL', 501],
 	['GGOO', 502],
@@ -250,6 +251,7 @@ simulation_elem_ids = [
 	['SYST', 507],
 	['JFUL', 508],
 	['HECL', 509],
+	['FRCF', 509],
 ]
 simulation_elem_src = []
 foreach elem_name_id : simulation_elem_ids
