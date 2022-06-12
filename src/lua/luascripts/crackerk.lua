@@ -227,26 +227,6 @@ if code2 == 200 then
 motw = ret2
 onlinestatus = 1 
 if motw ~= "." then
-if motw == "lock" then
-local lockmenu = Window:new(100,150, 330, 70)
-local lockclose = Button:new(311,2,15,15,"X", "Close.")
-lockmenu:addComponent(lockclose)
-local function drawlocktext()
-gfx.fillRect(1,1,610,380,255,0,0,90)
-graphics.drawText(110,155,"Level 2 Message: The Cracker1000's Mod has been locked.",255,0,0,255)
-graphics.drawText(110,172,"Please update to a newer version, if available, using forum thread.\nContact @Cracker1000 if the problem persists.\n\nClick the X button to open forum thread.",255,255,255,255)
-end
-local function lockedmod()
-ui.showWindow(lockmenu)
-lockmenu:onDraw(drawlocktext)
-end
-tpt.register_step(lockedmod)
-lockclose:action(function(sender)
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
-os.exit()
-end)
-end
-
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
