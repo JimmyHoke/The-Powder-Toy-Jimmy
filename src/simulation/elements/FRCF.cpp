@@ -118,75 +118,30 @@ static int update(UPDATE_FUNC_ARGS)
 							r = sim->photons[y + ry][x + rx];
 						if (!r)
 							continue;
-						switch (TYP(r))
-						{
-						case PT_BRMT:
-						case PT_BREC:
-						case PT_SLCN:
-						case PT_PQRT:
-						case PT_COPR:
-						case PT_ELEC:
-						case PT_PHOT:
-						case PT_FIRE:
-						case PT_NEUT:
-						case PT_LAVA:
-						case PT_ACID:
-						case PT_BOMB:
-						case PT_DEST:
-						case PT_CAUS:
-						case PT_VIRS:
-						case PT_VRSG:
-						case PT_GGOO:
-						case PT_RGOO:
-						case PT_DEUT:
-						case PT_PLSM:
-						case PT_PROT:
-						{
-							if (parts[i].tmp > 0)
+						if (parts[i].tmp > 0)
 							{
 								if (parts[ID(r)].y > parts[i].y)
-									parts[ID(r)].vy = -0.5;
+									parts[ID(r)].vy = -0.5 - parts[i].tmp4;
 								else if (parts[ID(r)].y < parts[i].y)
-									parts[ID(r)].vy = 0.5;
+									parts[ID(r)].vy = 0.5 + parts[i].tmp4;
 
 								if (parts[ID(r)].x > parts[i].x)
-									parts[ID(r)].vx = -0.5;
+									parts[ID(r)].vx = -0.5 - parts[i].tmp4;
 								else if (parts[ID(r)].x < parts[i].x)
-									parts[ID(r)].vx = 0.5;
+									parts[ID(r)].vx = 0.5 + parts[i].tmp4;
 							}
 							if (parts[i].tmp2 > 0)
 							{
 								if (parts[ID(r)].y > parts[i].y)
-									parts[ID(r)].vy = 1;
+									parts[ID(r)].vy = 1 +  parts[i].tmp4;
 								else if (parts[ID(r)].y < parts[i].y)
-									parts[ID(r)].vy = -1;
+									parts[ID(r)].vy = -1 - parts[i].tmp4;
 
 								if (parts[ID(r)].x > parts[i].x)
-									parts[ID(r)].vx = 0.5;
+									parts[ID(r)].vx = 0.5 + parts[i].tmp4;
 								else if (parts[ID(r)].x < parts[i].x)
-									parts[ID(r)].vx = -0.5;
+									parts[ID(r)].vx = -0.5 - parts[i].tmp4;
 							}
-						}
-						break;
-						case PT_METL:
-						case PT_BMTL:
-						case PT_IRON:
-						case PT_TUNG:
-						case PT_GOLD:
-						{
-							if (parts[i].tmp> 0 and parts[i].tmp2 > 0)
-							{
-								if (parts[ID(r)].life == 0)
-								{
-									parts[ID(r)].temp += 35.15f;
-									parts[ID(r)].life = 4;
-									parts[ID(r)].ctype = parts[ID(r)].type;
-									sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
-								}
-							}
-						}
-						break;
-						}
 					}
 	return 0;
 }
