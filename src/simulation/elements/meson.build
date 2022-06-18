@@ -252,6 +252,9 @@ simulation_elem_ids = [
 	['JFUL', 508],
 	['HECL', 509],
 	['FRCF', 509],
+	['CPTL', 510],
+	['CPTG', 511],
+	['CPTS', 499],
 ]
 simulation_elem_src = []
 foreach elem_name_id : simulation_elem_ids
