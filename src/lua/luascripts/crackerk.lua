@@ -3,7 +3,7 @@ failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
 local crackversion = 38
 local passreal2 = "DMND"
-local multiplayerversion = 26
+local multiplayerversion = 28
 local motw = "."
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255,"Twilight"
@@ -7082,14 +7082,14 @@ chars_light = {
         }
     }
 }
-
+local crackversionnot = 6
 function notificationscript()
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
 end
 
-if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
+if crackversionnot == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
     return
 end
 
@@ -7433,7 +7433,7 @@ function MaticzplNotifications.DrawNotifications()
         posX = 573
         posY = 435
     end
-	if tpt.version.modid == 6 then --Cracker1000's Mod
+	if crackversionnot == 6 then --Cracker1000's Mod
           getcrackertheme()
     end
     local w,h = gfx.textSize(number)
