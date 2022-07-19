@@ -1,3 +1,6 @@
-Changelog for V37.2 (75)
+Changelog for V38.0
 
-Internal changes made to support the new starcatcher terms of services.
+Uses new URS update system 1.0
+updated internal tptmp script to v2.0.24
+Fix Cross-hair interfering with decorations
+Changes from latest snapshot

@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 37.1
+local crackversion = 38
 local passreal2 = "DMND"
 local multiplayerversion = 26
 local motw = "."
@@ -175,6 +175,7 @@ end
 
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
+local req3 = http.get("https://pastebin.com/raw/TjZAwiaT")
 local updatedmpval = "0" -- used for showing mp script status in menu
 
 function writefile()
@@ -215,12 +216,47 @@ end
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
+local updatever = 1
+
+function clicktomsg2()
+if tpt.mousex >10 and tpt.mousex < 157 and tpt.mousey > 367 and tpt.mousey < 380 then
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+event.unregister(event.tick,showmotdnot2)
+event.unregister(event.mousedown,clicktomsg2)
+return false
+end
+if tpt.mousex > 162 and tpt.mousex < 175 and tpt.mousey > 367 and tpt.mousey < 380 then
+event.unregister(event.mousedown, clicktomsg2)
+event.unregister(event.tick, showmotdnot2)
+return false
+end
+end
+
+function showmotdnot2()
+if tpt.mousex >10 and tpt.mousex < 157 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(10,366,148,14,32,255,210,140)
+else
+gfx.fillRect(10,366,148,14,32,250,210,20)
+end
+
+gfx.drawRect(10,366,148,14,32,250,210,155)
+gfx.drawText(15,370,"V."..updatever.." available for download",32,250,210,255)
+
+if tpt.mousex >162 and tpt.mousex < 175 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(162,366,14,14,250,50,50,150)
+else
+gfx.fillRect(162,366,14,14,250,50,50,20)
+end
+gfx.drawRect(162,366,14,14,250,50,50,255)
+gfx.drawText(166,369,"X",250,50,50,255)
+end
 
 function writefile2()
 timermotd = timermotd + 1
-if timermotd >= 150 then
+if timermotd >= 250 then
 event.unregister(event.tick,writefile2)
 end
+
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
@@ -235,9 +271,22 @@ event.unregister(event.mousedown, clicktomsg)
 event.register(event.mousedown, clicktomsg)
 end
 end
-event.unregister(event.tick,writefile2)
 end
 end
+
+if req3:status() == "done" then
+local ret3, code3 = req3:finish()
+if code3 == 200 then
+updatever = ret3
+if tonumber(crackversion) < tonumber(updatever) then
+event.unregister(event.tick,showmotdnot2)
+event.register(event.tick,showmotdnot2)
+event.unregister(event.mousedown, clicktomsg2)
+event.register(event.mousedown, clicktomsg2)
+end
+end
+end
+
 end
 
 function clicktomsg()
@@ -2153,7 +2202,7 @@ else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
 if updatedmpval == "1" then --Multiplayer script status
-gfx.drawText(484,37,"Updated",105,255,105,255)
+gfx.drawText(484,37,"New",105,255,105,255)
 else
 gfx.drawText(484,37,"Stock",105,255,105,255)
 end
