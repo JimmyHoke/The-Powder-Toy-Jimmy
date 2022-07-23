@@ -220,17 +220,26 @@ local onlinestatus = 0
 
 local updatever, updatestatus = 1,0
 local updatertext = "Available, click here to download"
-local reqwin, updatetimer = 0
+local reqwin
+local updatetimer = 0
 local checkos = platform.platform()
 local filename = platform.exeName()
+
 function updatermod()
+if updatetimer < 1000 then
+updatetimer = updatetimer + 1
+end
+if updatetimer >= 1400 then
+print("Taking too long, try again...")
+updatetimer = 0
+end
 --Windows
 if checkos == "WIN64" then
-os.rename(filename,"older.exe")
 updatertext = "Downloading the update for Win64"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
+os.rename(filename,"older.exe")
 updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata)
@@ -239,24 +248,26 @@ updatertext = "Update done. Close the mod."
 platform.restart()
 event.unregister(event.tick,updatermod)
 else
-updatertext = "Error downloading"
+updatertext = "Error code: "..reqwincode
+event.unregister(event.tick,updatermod)
 end
 end
 end
 if checkos == "LIN64" then
-os.rename(filename,"older")
 updatertext = "Downloading the update for LIN64"
 if reqwin:status() == "done"  then
+os.rename(filename,"older")
 local reqwindata2, reqwincode2 = reqwin:finish()
 if reqwincode2 == 200  then
 updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata2)
 f:close()
-updatertext = "Please restart the mod to continue."
+updatertext = "Update done. Close the mod."
 event.unregister(event.tick,updatermod)
 else
-updatertext = "Error downloading"
+updatertext = "Error code: "..reqwincode2
+event.unregister(event.tick,updatermod)
 end
 end
 end
@@ -265,9 +276,9 @@ end
 function clicktomsg2()
 if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
 if checkos == "WIN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/V38.0/CMod-Win.exe")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
 elseif checkos == "LINN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/V38.0/CMod-Linux")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
 end
 
 event.register(event.tick,updatermod)
