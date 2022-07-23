@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 38.0
+local crackversion = 37.0
 local passreal2 = "DMND"
 local multiplayerversion = 28
 local motw = "."
@@ -250,7 +250,7 @@ if reqwin:status() == "done"  then
 local reqwindata2, reqwincode2 = reqwin:finish()
 if reqwincode2 == 200  then
 updatertext = "Done"
-f = io.open("CMod-Lin", 'wb')
+f = io.open(filename, 'wb')
 f:write(reqwindata2)
 f:close()
 updatertext = "Please restart the mod to continue."
