@@ -64,9 +64,9 @@ static int update(UPDATE_FUNC_ARGS)
 			parts[i].life -= 1;
 		}
 	}
-	if (parts[i].life > 20||parts[i].life < 0)
+	if (parts[i].life > 40||parts[i].life < 0)
 	{
-		parts[i].life = 20;
+		parts[i].life = 40;
 	}
 	if (parts[i].tmp > 0 && parts[i].tmp2 > 0)
 	{
@@ -81,6 +81,10 @@ static int update(UPDATE_FUNC_ARGS)
 					r = pmap[y + ry][x + rx];
 					if (!r)
 						continue;
+					if (nt > 0)
+					{
+						parts[i].tmp3 = 1;
+					}
 					if (parts[ID(r)].type == PT_SPRK)
 					{
 						if (parts[ID(r)].ctype == PT_PSCN)
@@ -109,6 +113,8 @@ static int update(UPDATE_FUNC_ARGS)
 						}
 					}
 				}
+		if (parts[i].tmp3 == 1)
+		{
 			for (rx = -checkrad; rx <= checkrad; rx++)
 				for (ry = -checkrad; ry <= checkrad; ry++)
 					if (x + rx >= 0 && y + ry >= 0 && x + rx < XRES && y + ry < YRES && (rx || ry))
@@ -126,6 +132,8 @@ static int update(UPDATE_FUNC_ARGS)
 						case PT_PQRT:
 						case PT_COPR:
 						case PT_ELEC:
+						case PT_NEUT:
+						case PT_GRVT:
 						case PT_PHOT:
 						{
 							if (parts[i].tmp > 0)
@@ -160,7 +168,7 @@ static int update(UPDATE_FUNC_ARGS)
 						case PT_TUNG:
 						case PT_GOLD:
 						{
-							if (parts[i].tmp> 0 and parts[i].tmp2 > 0)
+							if (parts[i].tmp > 0 and parts[i].tmp2 > 0)
 							{
 								if (parts[ID(r)].life == 0)
 								{
@@ -174,16 +182,18 @@ static int update(UPDATE_FUNC_ARGS)
 						break;
 						}
 					}
+		}
 	return 0;
 }
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if (RNG::Ref().chance(1, 3))
+	if (cpart->tmp3 > 0)
 	{
-
-	ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, 40+cpart->tmp*70, 0, 40+cpart->tmp2*70, 20);
-
+		if (RNG::Ref().chance(1, 3))
+		{
+			ren->drawcircle((int)(cpart->x), (int)(cpart->y), cpart->life, cpart->life, 40 + cpart->tmp * 70, 0, 40 + cpart->tmp2 * 70, 40);
+		}
 	}
 	return 0;
 }

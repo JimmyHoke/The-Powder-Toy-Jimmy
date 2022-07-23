@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 38.0
+local crackversion = 39.0
 local passreal2 = "DMND"
 local multiplayerversion = 28
 local motw = "."
@@ -217,21 +217,27 @@ end
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
-
+--URS
 local updatever, updatestatus = 1,0
 local updatertext = "Available, click here to download"
 local reqwin
 local updatetimer = 0
-local checkos = platform.platform()
+local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 
 function updatermod()
-if updatetimer < 1000 then
+if updatetimer < 1500 then
 updatetimer = updatetimer + 1
 end
-if updatetimer >= 1400 then
+if updatetimer >= 1000 then
 print("Taking too long, try again...")
 updatetimer = 0
+clickcheck = 0
+end
+if updatetimer < 1200 then
+gfx.fillRect(11,367,updatetimer/6,12,55,255,55,205)
+else
+gfx.fillRect(11,367,197,12,255,5,5,205)
 end
 --Windows
 if checkos == "WIN64" then
@@ -244,8 +250,8 @@ updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata)
 f:close()
-updatertext = "Update done. Close the mod."
-platform.restart()
+updatertext = "Update done, click here to restart."
+clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
 updatertext = "Error code: "..reqwincode
@@ -263,7 +269,8 @@ updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata2)
 f:close()
-updatertext = "Update done. Close the mod."
+updatertext = "Update done, click here to restart."
+clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
 updatertext = "Error code: "..reqwincode2
@@ -275,20 +282,26 @@ end
 
 function clicktomsg2()
 if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
+if clickcheck == 0 then
+clickcheck = 2
 if checkos == "WIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
 elseif checkos == "LINN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
 end
-
 event.register(event.tick,updatermod)
+elseif clickcheck == 1 then
+platform.restart()
+end
 return false
 end
+if clickcheck == 0 then
 if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
 updatestatus = 1
 event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
 return false
+end
 end
 end
 
@@ -302,7 +315,7 @@ end
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
 
-
+if clickcheck == 0 then
 if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(208,366,14,14,250,50,50,150)
 else
@@ -311,7 +324,8 @@ end
 gfx.drawRect(208,366,14,14,250,50,50,255)
 gfx.drawText(212,369,"X",250,50,50,255)
 end
-
+end
+--URS end
 function writefile2()
 timermotd = timermotd + 1
 if timermotd >= 250 then
@@ -1712,7 +1726,7 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  end
  --Cross-hair
-if MANAGER.getsetting("CRK", "fancurs") == "1" then 
+if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() ~= 65 then 
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
 local crx, cry = 0,0 
@@ -2323,23 +2337,19 @@ end
 hide:action(function(sender)
 close()
 end)
-local ttime = 0
+
 function keyclicky2(key2)
 if (key2 == 106) and shrtv == "1" then
 close()
-ttime = 2
 end
 end
 
 function keyclicky(key)
-if ttime > 0 then
-ttime = ttime - 1
-end
-if (key == "j") and TPTMP.chatHidden == true and shrtv == "1" and ttime == 0 then
+if (key == 106) and TPTMP.chatHidden == true and shrtv == "1" then
 open()
 end
 end
-tpt.register_keypress(keyclicky) 
+event.register(event.keypress,keyclicky)
 
 toggle:action(function(sender)
 open()

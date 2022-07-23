@@ -1,6 +1,9 @@
-Changelog for V38.0
+Changelog for V39.0
 
-Uses new URS update system 1.0
-updated internal tptmp script to v2.0.24
-Fix Cross-hair interfering with decorations
-Changes from latest snapshot
+Performance improvements to EMGT, range extended from 20 to 40!
+Fix trees grown using seed getting covered with vine.
+Fix Cross-hair interfering with decorations when flood filling.
+
+URS 2.0:
+Better handling for linux and more optimised.
+Fix linux version not getting restarted after successful updates.
