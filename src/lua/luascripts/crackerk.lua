@@ -1727,7 +1727,6 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  --Cross-hair
 if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() ~= 65 and event.getmodifiers() ~= 4161 then 
-gfx.drawText(10,200,event.getmodifiers(),255,0,0,255)
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
 local crx, cry = 0,0 
