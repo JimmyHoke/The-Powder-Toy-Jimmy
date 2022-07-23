@@ -1,10 +1,11 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 38
+local crackversion = 38.0
 local passreal2 = "DMND"
 local multiplayerversion = 28
 local motw = "."
+local updatestatus = 0
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255,"Twilight"
 
@@ -173,7 +174,7 @@ newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
 end
 
-local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
+local req
 local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
 local req3 = http.get("https://pastebin.com/raw/TjZAwiaT")
 local updatedmpval = "0" -- used for showing mp script status in menu
@@ -216,16 +217,64 @@ end
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
-local updatever = 1
+
+local updatever, updatestatus = 1,0
+local updatertext = "Available, click here to download"
+local reqwin, updatetimer = 0
+local checkos = platform.platform()
+local filename = platform.exeName()
+function updatermod()
+--Windows
+if checkos == "WIN64" then
+os.rename(filename,"older.exe")
+updatertext = "Downloading the update for Win64"
+if reqwin:status() == "done"  then
+local reqwindata, reqwincode = reqwin:finish()
+if reqwincode == 200  then
+updatertext = "Done"
+f = io.open(filename, 'wb')
+f:write(reqwindata)
+f:close()
+updatertext = "Update done. Close the mod."
+platform.restart()
+event.unregister(event.tick,updatermod)
+else
+updatertext = "Error downloading"
+end
+end
+end
+if checkos == "LIN64" then
+os.rename(filename,"older")
+updatertext = "Downloading the update for LIN64"
+if reqwin:status() == "done"  then
+local reqwindata2, reqwincode2 = reqwin:finish()
+if reqwincode2 == 200  then
+updatertext = "Done"
+f = io.open("CMod-Lin", 'wb')
+f:write(reqwindata2)
+f:close()
+updatertext = "Please restart the mod to continue."
+event.unregister(event.tick,updatermod)
+else
+updatertext = "Error downloading"
+end
+end
+end
+end
 
 function clicktomsg2()
-if tpt.mousex >10 and tpt.mousex < 157 and tpt.mousey > 367 and tpt.mousey < 380 then
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
-event.unregister(event.tick,showmotdnot2)
-event.unregister(event.mousedown,clicktomsg2)
+if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
+if checkos == "WIN64" then
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/V38.0/CMod-Win.exe")
+elseif checkos == "LINN64" then
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/V38.0/CMod-Linux")
+end
+
+event.register(event.tick,updatermod)
 return false
 end
-if tpt.mousex > 162 and tpt.mousex < 175 and tpt.mousey > 367 and tpt.mousey < 380 then
+if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
+updatestatus = 1
 event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
 return false
@@ -233,22 +282,23 @@ end
 end
 
 function showmotdnot2()
-if tpt.mousex >10 and tpt.mousex < 157 and tpt.mousey > 367 and tpt.mousey < 380 then
-gfx.fillRect(10,366,148,14,32,255,210,140)
+if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(10,366,197,14,32,255,210,140)
 else
-gfx.fillRect(10,366,148,14,32,250,210,20)
+gfx.fillRect(10,366,197,14,32,250,210,20)
 end
 
-gfx.drawRect(10,366,148,14,32,250,210,155)
-gfx.drawText(15,370,"V."..updatever.." available for download",32,250,210,255)
+gfx.drawRect(10,366,197,14,34,250,210,155)
+gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
 
-if tpt.mousex >162 and tpt.mousex < 175 and tpt.mousey > 367 and tpt.mousey < 380 then
-gfx.fillRect(162,366,14,14,250,50,50,150)
+
+if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(208,366,14,14,250,50,50,150)
 else
-gfx.fillRect(162,366,14,14,250,50,50,20)
+gfx.fillRect(208,366,14,14,250,50,50,20)
 end
-gfx.drawRect(162,366,14,14,250,50,50,255)
-gfx.drawText(166,369,"X",250,50,50,255)
+gfx.drawRect(208,366,14,14,250,50,50,255)
+gfx.drawText(212,369,"X",250,50,50,255)
 end
 
 function writefile2()
@@ -310,6 +360,7 @@ end
 
 upmp:action(function(sender)
 close()
+req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 timermp = 0
 print("Attempting To Update Multiplayer...")
 fs.makeDirectory("scripts/downloaded")
@@ -1549,6 +1600,10 @@ al = MANAGER.getsetting("CRK", "al")
 else
 al = brightSlider:value()
 end
+--Update text
+if updatestatus == 1 then
+gfx.drawText(10,370,"You are running an outdated version.",190,190,190,180)
+end
 --Filters
 if filterval == 1 then
 tpt.drawrect(2,2,607,379,ar,ag,ab,50)
@@ -2000,6 +2055,8 @@ end)
 
 function startupcheck()
 fs.makeDirectory("scripts")
+os.remove("older.exe")
+os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
 local filecheck =io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
