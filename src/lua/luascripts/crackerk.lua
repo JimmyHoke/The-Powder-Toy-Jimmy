@@ -229,8 +229,8 @@ function updatermod()
 if updatetimer < 1500 then
 updatetimer = updatetimer + 1
 end
-if updatetimer >= 1000 then
-print("Taking too long, try again...")
+if updatetimer >= 1200 then
+print("Taking too long, try again after restarting...")
 updatetimer = 0
 clickcheck = 0
 end
@@ -1726,7 +1726,8 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  end
  --Cross-hair
-if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() ~= 65 then 
+if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() ~= 65 and event.getmodifiers() ~= 4161 then 
+gfx.drawText(10,200,event.getmodifiers(),255,0,0,255)
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
 local crx, cry = 0,0 
