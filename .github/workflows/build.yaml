@@ -106,12 +106,10 @@ jobs:
 ############## END BLOCK FOR COPYING BELOW ##############
 #########################################################
         include:
-          - platform_short: lin
-            os: ubuntu-18.04
+            - platform_short: lin
             prefix: ''
             suffix: ''
           - platform_short: win
-            os: windows-2019
             prefix: ''
             suffix: '.exe'
     steps:
@@ -121,6 +119,12 @@ jobs:
           python-version: '3.10'
       - id: get_type
         run: python3 ./.github/get-type.py ${{ github.ref }}
+      - if: matrix.platform_short == 'lin' && matrix.toolset_short == 'mingw'
+        run: sudo apt update && sudo apt install g++-mingw-w64-x86-64
+      - if: matrix.platform_short == 'mac'
+        run: brew install pkg-config coreutils
+      - if: matrix.platform_short == 'mac' && matrix.static_dynamic != 'static'
+        run: brew install luajit curl fftw zlib sdl2
       - if: matrix.platform_short == 'lin' && matrix.static_dynamic != 'static'
         run: sudo apt update && sudo apt install libluajit-5.1-dev libcurl4-openssl-dev libfftw3-dev zlib1g-dev libsdl2-dev
       - run: python3 -m pip install meson ninja
