@@ -106,7 +106,7 @@ jobs:
 ############## END BLOCK FOR COPYING BELOW ##############
 #########################################################
         include:
-            - platform_short: lin
+          - platform_short: lin
             prefix: ''
             suffix: ''
           - platform_short: win
