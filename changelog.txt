@@ -3,7 +3,6 @@ Changelog for V39.0
 Performance improvements to EMGT, range extended from 20 to 40!
 Fix trees grown using seed getting covered with vine.
 Fix Cross-hair interfering with decorations when flood filling.
-
 URS 2.0:
 Better handling for linux and more optimised.
 Fix linux version not getting restarted after successful updates.
