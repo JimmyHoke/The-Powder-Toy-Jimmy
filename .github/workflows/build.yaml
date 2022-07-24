@@ -110,10 +110,23 @@ jobs:
             os: ubuntu-18.04
             prefix: ''
             suffix: ''
+          - platform_short: mac
+            os: macos-11.0
+            prefix: ''
+            suffix: ''
           - platform_short: win
             os: windows-2019
             prefix: ''
             suffix: '.exe'
+          - platform_short: lin
+            toolset_short: mingw
+            os: ubuntu-20.04
+            prefix: ''
+            suffix: '.exe'
+          - platform_short: and
+            os: ubuntu-18.04
+            prefix: ''
+            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -121,12 +134,6 @@ jobs:
           python-version: '3.10'
       - id: get_type
         run: python3 ./.github/get-type.py ${{ github.ref }}
-      - if: matrix.platform_short == 'lin' && matrix.toolset_short == 'mingw'
-        run: sudo apt update && sudo apt install g++-mingw-w64-x86-64
-      - if: matrix.platform_short == 'mac'
-        run: brew install pkg-config coreutils
-      - if: matrix.platform_short == 'mac' && matrix.static_dynamic != 'static'
-        run: brew install luajit curl fftw zlib sdl2
       - if: matrix.platform_short == 'lin' && matrix.static_dynamic != 'static'
         run: sudo apt update && sudo apt install libluajit-5.1-dev libcurl4-openssl-dev libfftw3-dev zlib1g-dev libsdl2-dev
       - run: python3 -m pip install meson ninja
@@ -206,9 +213,15 @@ jobs:
           - platform_short: lin
             prefix: ''
             suffix: ''
+          - platform_short: mac
+            prefix: ''
+            suffix: ''
           - platform_short: win
             prefix: ''
             suffix: '.exe'
+          - platform_short: and
+            prefix: ''
+            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
