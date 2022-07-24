@@ -110,23 +110,10 @@ jobs:
             os: ubuntu-18.04
             prefix: ''
             suffix: ''
-          - platform_short: mac
-            os: macos-11.0
-            prefix: ''
-            suffix: ''
           - platform_short: win
             os: windows-2019
             prefix: ''
             suffix: '.exe'
-          - platform_short: lin
-            toolset_short: mingw
-            os: ubuntu-20.04
-            prefix: ''
-            suffix: '.exe'
-          - platform_short: and
-            os: ubuntu-18.04
-            prefix: ''
-            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
