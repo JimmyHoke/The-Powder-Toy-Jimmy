@@ -1,17 +1,8 @@
 name: build
 
 on:
-  push:
-    branches:
-      - '*'
     tags:
       - 'v*.*'
-      - 'snapshot-*'
-      - 'tptlibsdev-*'
-  pull_request:
-    branches:
-      - '*'
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -123,6 +114,10 @@ jobs:
             os: ubuntu-20.04
             prefix: ''
             suffix: '.exe'
+          - platform_short: and
+            os: ubuntu-18.04
+            prefix: ''
+            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -221,6 +216,9 @@ jobs:
           - platform_short: win
             prefix: ''
             suffix: '.exe'
+          - platform_short: and
+            prefix: ''
+            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
