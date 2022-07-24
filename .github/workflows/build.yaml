@@ -49,12 +49,12 @@ jobs:
 #                |          x86_64           |           i686            |           arm64           |            arm                  
 #                |  lin |  mac |  win |  and |  lin |  mac |  win |  and |  lin |  mac |  win |  and |  lin |  mac |  win |  and 
 # ---------------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------
-#          gcc   |      |   NO  |  NO  |   NO   |  NO  |      |  NO  |   NO   |  NO  |  NO    |  NO  |    NO  |  NO  |  NO  |  NO  |      
-# static   msvc  |  NO  |  NO  |      |  NO  |  NO  |  NO  |  NO |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
+#          gcc   |      |   NO   |  NO  |   NO   |  NO  |  NO  |  NO  |   NO   |  NO  |   NO   |  NO  |   NO   |  NO  |  NO  |  NO  |      
+# static   msvc  |  NO  |  NO  |   NO   |  NO  |  NO  |  NO  |      |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
 #          mingw |   NO   |  NO  |   NO   |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-#          gcc   |   NO   |   NO   |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |NO [1]|  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-# dynamic  msvc  |  NO  |  NO  |   NO   |  NO  |  NO  |  NO  |  NO    |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-#          mingw |  NO    |  NO  |    NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
+#          gcc   |      |      |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |NO [1]|  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
+# dynamic  msvc  |  NO  |  NO  |   NO   |  NO  |  NO  |  NO  |   NO   |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
+#          mingw |  NO    |  NO  |   NO   |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
 #
 # [1] This is only required for development on ARM Macs. We have no access to such devices, so someone will
 #     have to help us figure out how to get dynamic libraries.
