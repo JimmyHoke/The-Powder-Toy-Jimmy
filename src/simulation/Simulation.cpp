@@ -3375,14 +3375,6 @@ void Simulation::GetGravityField(int x, int y, float particleGrav, float newtonG
 				pGravX = particleGrav * (dx / pGravD);
 				pGravY = particleGrav * (dy / pGravD);
 			}
-<<<<<<< HEAD
-		case 3: //Inverted
-			pGravY = -particleGrav;
-			break;
-		case 4: //Accelerated.
-			pGravY += particleGrav * 10.0;
-			break;
-=======
 		}
 		break;
 	case 3: //custom gravity
@@ -3394,7 +3386,6 @@ void Simulation::GetGravityField(int x, int y, float particleGrav, float newtonG
 	{
 		pGravX += newtonGrav*gravx[(y/CELL)*(XRES/CELL)+(x/CELL)];
 		pGravY += newtonGrav*gravy[(y/CELL)*(XRES/CELL)+(x/CELL)];
->>>>>>> 6aa68adb (Add custom gravity mode and replace hardcoded gravity interactions (#820))
 	}
 }
 
@@ -3593,10 +3584,9 @@ void Simulation::UpdateParticles(int start, int end)
 				}
 			}
 
-			float pGravX = 0, pGravY = 0;
+			float pGravX = 0, pGravY = 0, pGravD = 0;
 			if (!(elements[t].Properties & TYPE_SOLID) && (elements[t].Gravity || elements[t].NewtonianGravity))
 			{
-<<<<<<< HEAD
 				if (elements[t].Gravity)
 				{
 					//Gravity mode by Moach
@@ -3615,14 +3605,6 @@ void Simulation::UpdateParticles(int start, int end)
 						pGravX = elements[t].Gravity * ((float)(x - XCNTR) / pGravD);
 						pGravY = elements[t].Gravity * ((float)(y - YCNTR) / pGravD);
 						break;
-					case 3:
-						pGravX = 0.0f;
-						pGravY = -elements[t].Gravity;
-						break;
-					case 4:
-						pGravX = 0.0f;
-						pGravY = elements[t].Gravity * 10;
-						break;
 					}
 				}
 				if (elements[t].NewtonianGravity)
@@ -3631,9 +3613,7 @@ void Simulation::UpdateParticles(int start, int end)
 					pGravX += elements[t].NewtonianGravity * gravx[(y/CELL)*(XRES/CELL)+(x/CELL)];
 					pGravY += elements[t].NewtonianGravity * gravy[(y/CELL)*(XRES/CELL)+(x/CELL)];
 				}
-=======
 				GetGravityField(x, y, elements[t].Gravity, elements[t].NewtonianGravity, pGravX, pGravY);
->>>>>>> 6aa68adb (Add custom gravity mode and replace hardcoded gravity interactions (#820))
 			}
 
 			//velocity updates for the particle
@@ -4625,7 +4605,6 @@ killed:
 							for (j=0;j<rt;j++)
 							{
 								// Calculate overall gravity direction
-<<<<<<< HEAD
 								switch (gravityMode)
 								{
 									default:
@@ -4641,20 +4620,10 @@ killed:
 										pGravX = ptGrav * ((float)(nx - XCNTR) / pGravD);
 										pGravY = ptGrav * ((float)(ny - YCNTR) / pGravD);
 										break;
-									case 3:
-										pGravX = 0.0f;
-										pGravY = -ptGrav;
-										break;
-									case 4:
-										pGravX = 0.0f;
-										pGravY = ptGrav * 10;
-										break;
 								}
 								pGravX += gravx[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
 								pGravY += gravy[(ny/CELL)*(XRES/CELL)+(nx/CELL)];
-=======
 								GetGravityField(nx, ny, ptGrav, 1.0f, pGravX, pGravY);
->>>>>>> 6aa68adb (Add custom gravity mode and replace hardcoded gravity interactions (#820))
 								// Scale gravity vector so that the largest component is 1 pixel
 								if (fabsf(pGravY)>fabsf(pGravX))
 									mv = fabsf(pGravY);
@@ -4709,7 +4678,6 @@ killed:
 								for (j=0;j<rt;j++)
 								{
 									// Calculate overall gravity direction
-<<<<<<< HEAD
 									switch (gravityMode)
 									{
 										default:

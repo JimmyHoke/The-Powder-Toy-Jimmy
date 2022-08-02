@@ -222,7 +222,6 @@ OptionsView::OptionsView():
 		if (gravityMode->GetOption().second == 3)
 			new GravityWindow(ui::Point(-1, -1), 50, customGravityX, customGravityY, c);
 	} });
->>>>>>> 6aa68adb (Add custom gravity mode and replace hardcoded gravity interactions (#820))
 
 	tempLabel = new ui::Label(ui::Point(8, currentY), ui::Point(Size.X-96, 16), "Gravity Simulation Mode");
 	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;

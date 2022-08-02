@@ -1,5 +1,5 @@
 Changelog for V39.0
-
+Custom gravity modes from snapshots
 Fix Cross-Hair not hiding when using right side modifier keys
 URS now shows the status as it checks for updates
 Upated tptmp to v2.0.25
