@@ -1,9 +1,9 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 39.0
+local crackversion = 40.0
 local passreal2 = "DMND"
-local multiplayerversion = 28
+local multiplayerversion = 29
 local motw = "."
 local updatestatus = 0
 --Default theme for initial launch and resets
@@ -224,7 +224,7 @@ local reqwin
 local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
-
+local errtext = "Checking for updates.."
 function updatermod()
 if updatetimer < 1500 then
 updatetimer = updatetimer + 1
@@ -254,7 +254,7 @@ updatertext = "Update done, click here to restart."
 clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
-updatertext = "Error code: "..reqwincode
+updatertext = " Updater error code: "..reqwincode
 event.unregister(event.tick,updatermod)
 end
 end
@@ -314,7 +314,9 @@ end
 
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
-
+if updatertext == "Update done, click here to restart." then
+gfx.fillRect(10,366,197,14,0,250,0,125)
+end
 if clickcheck == 0 then
 if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(208,366,14,14,250,50,50,150)
@@ -326,6 +328,7 @@ gfx.drawText(212,369,"X",250,50,50,255)
 end
 end
 --URS end
+local errtimer = 200
 function writefile2()
 timermotd = timermotd + 1
 if timermotd >= 250 then
@@ -352,16 +355,35 @@ end
 if req3:status() == "done" then
 local ret3, code3 = req3:finish()
 if code3 == 200 then
+errtext = ""
 updatever = ret3
 if tonumber(crackversion) < tonumber(updatever) then
+event.unregister(event.tick,errormesg)
 event.unregister(event.tick,showmotdnot2)
 event.register(event.tick,showmotdnot2)
 event.unregister(event.mousedown, clicktomsg2)
 event.register(event.mousedown, clicktomsg2)
+elseif tonumber(crackversion) >= tonumber(updatever) then
+errtext = "URS: You are running the latest version :)"
+end
+else
+errtext = "URS: Update check failed with error code: "..code3
 end
 end
 end
 
+function errormesg()
+if errtimer > 0 then
+errtimer = errtimer - 1
+end
+if errtext ==  "URS: You are running the latest version :)" or errtext == "Checking for updates.." then
+gfx.drawText(10,370,errtext,0,255,0,220)
+else
+gfx.drawText(10,370,errtext,255,0,0,220)
+end
+if errtimer == 0 then
+event.unregister(event.tick,errormesg)
+end
 end
 
 function clicktomsg()
@@ -1726,7 +1748,7 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  end
  --Cross-hair
-if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() ~= 65 and event.getmodifiers() ~= 4161 then 
+if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() == 0 or event.getmodifiers() == 4096 or event.getmodifiers() == 32768 or event.getmodifiers() == 8192 or event.getmodifiers() == 45056 or event.getmodifiers() == 40960 or event.getmodifiers() == 36864 or event.getmodifiers() == 12288 then 
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
 local crx, cry = 0,0 
@@ -2079,6 +2101,7 @@ end)
 end)
 
 function startupcheck()
+event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")
 os.remove("older.exe")
 os.remove("older")
