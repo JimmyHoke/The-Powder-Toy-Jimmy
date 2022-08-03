@@ -1,0 +1,22 @@
+V40.0
+Custom gravity settings.
+This update brings a new element called SODM (sodium).
+Update tptmp to v2.0.25
+Add support for showing changelogs to the URS system.
+Now it also shows the status while performing different update checks
+Fix cross-hair not hiding properly when using different modifier keys.
+Fix colour code for EMGT.
+
+
+V39.0:
+Performance improvements to EMGT, range extended from 20 to 40!
+Fix trees grown using seed getting covered with vine.
+Fix Cross-hair interfering with decorations when flood filling.
+URS 2.0:
+Better handling for linux and more optimised.
+Fix linux version not getting restarted after successful updates.
+
+V38.0 released:
+New URS (Unified Release System). Automatically downloads and applies updates when they are released, no need to manually download them.
+Updated tptmp to v2.0.24
+Improved and more efficient startup checks.
