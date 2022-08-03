@@ -4,7 +4,7 @@ const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
 "\bw                                            Welcome To The Cracker1000's Mod \n"
 "\bo                                           |-----------------------------------|\n"
-"                                               \br<< \bwVersion: 40.0 || \bwURS 2.0 \br>>"
+"                                               \br<< \bwVersion: 40.0 || \bwURS 3.0 \br>>"
 "\n\n   \boInstructions (Do Not Skip):                        \n"
 "\bt *\bw There's a new 'Settings' button near tags, press it to open the Mod menu ('J' shortcut).\n"
 "\bg *\bw Themes, crosshair and other options can be found in Control Centre settings.\n"
