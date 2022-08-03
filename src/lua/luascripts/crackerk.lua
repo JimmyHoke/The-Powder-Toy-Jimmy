@@ -221,10 +221,12 @@ local onlinestatus = 0
 local updatever, updatestatus = 1,0
 local updatertext = "Available, click here to download"
 local reqwin
+local crdata = "Getting data please wait.."
 local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 local errtext = "Checking for updates.."
+
 function updatermod()
 if updatetimer < 1500 then
 updatetimer = updatetimer + 1
@@ -238,6 +240,13 @@ if updatetimer < 1200 then
 gfx.fillRect(11,367,updatetimer/6,12,55,255,55,205)
 else
 gfx.fillRect(11,367,197,12,255,5,5,205)
+end
+--Get changelogs
+if crlog:status() == "done"  then
+local crlogdata, crlogcode = crlog:finish()
+if crlogcode == 200  then
+crdata = crlogdata
+end
 end
 --Windows
 if checkos == "WIN64" then
@@ -284,6 +293,7 @@ function clicktomsg2()
 if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
 if clickcheck == 0 then
 clickcheck = 2
+crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/changelog.txt")
 if checkos == "WIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
 elseif checkos == "LINN64" then
@@ -306,6 +316,12 @@ end
 end
 
 function showmotdnot2()
+if clickcheck ~= 0 then
+gfx.fillRect(5,132,600,250,10,10,10,200)
+gfx.drawRect(5,132,600,250,255,255,255,255)
+gfx.drawText(140,136,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
+gfx.drawText(12,154,crdata,250,250,250,255)
+end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(10,366,197,14,32,255,210,140)
 else
@@ -326,6 +342,7 @@ end
 gfx.drawRect(208,366,14,14,250,50,50,255)
 gfx.drawText(212,369,"X",250,50,50,255)
 end
+
 end
 --URS end
 local errtimer = 200
@@ -1563,6 +1580,7 @@ tpt.el.whel.menu=0
 tpt.el.napm.menu=0
 tpt.el.gsns.menu=0
 tpt.el.emgt.menu=0
+tpt.el.sodm.menu=0
 end
 
 function showmodelem()
@@ -1615,6 +1633,7 @@ tpt.el.whel.menu=1
 tpt.el.napm.menu=1
 tpt.el.gsns.menu=1
 tpt.el.emgt.menu=1
+tpt.el.sodm.menu=1
 end
 local modelemval = "0"
 bg:action(function(sender)
