@@ -7,7 +7,7 @@ void Element::Element_MGNT()
 {
 	Identifier = "DEFAULT_PT_MGNT";
 	Name = "EMGT";
-	Colour = PIXPACK(0xA9A9A9);
+	Colour = PIXPACK(0x708090);
 	MenuVisible = 1;
 	MenuSection = SC_FORCE;
 	Enabled = 1;
