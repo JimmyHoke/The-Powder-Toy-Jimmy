@@ -59,18 +59,6 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		sim->create_part(-1, x - 2, y, PT_FIRE);
 		sim->create_part(-1, x + 2, y, PT_FIRE);
-		sim->create_part(-1, x, y + 2, PT_FIRE);
-		sim->create_part(-1, x, y - 2, PT_FIRE);
-
-		sim->create_part(-1, x - 3, y, PT_FIRE);
-		sim->create_part(-1, x + 3, y, PT_FIRE);
-		sim->create_part(-1, x, y + 3, PT_FIRE);
-		sim->create_part(-1, x, y - 3, PT_FIRE);
-
-		sim->create_part(-1, x - 3, y, PT_SMKE);
-		sim->create_part(-1, x + 3, y, PT_SMKE);
-		sim->create_part(-1, x, y + 3, PT_SMKE);
-		sim->create_part(-1, x, y - 3, PT_SMKE);
 	}
 		for (int rx = -2; rx < 3; rx++)
 			for (int ry = -2; ry < 3; ry++)
@@ -102,7 +90,7 @@ static int update(UPDATE_FUNC_ARGS)
 							}
 						}
 					}
-					if (TYP(r) == PT_CHLR && parts[i].tmp3 < 50 && RNG::Ref().chance(1, 100))
+					if (TYP(r) == PT_CHLR && parts[i].tmp3 < 50 && parts[i].temp > 50 + 273.15f && RNG::Ref().chance(1, 100))
 					{
 						if (parts[i].tmp < 190)
 						{

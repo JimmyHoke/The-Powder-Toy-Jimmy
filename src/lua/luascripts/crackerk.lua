@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 40.0
+local crackversion = 41.0
 local passreal2 = "DMND"
 local multiplayerversion = 29
 local motw = "."
@@ -232,14 +232,12 @@ if updatetimer < 1500 then
 updatetimer = updatetimer + 1
 end
 if updatetimer >= 1200 then
-print("Taking too long, try again after restarting...")
+print("URS: Taking longer than usual, try again after restarting or download it manually...")
 updatetimer = 0
 clickcheck = 0
 end
 if updatetimer < 1200 then
 gfx.fillRect(11,367,updatetimer/6,12,55,255,55,205)
-else
-gfx.fillRect(11,367,197,12,255,5,5,205)
 end
 --Get changelogs
 if crlog:status() == "done"  then
@@ -288,7 +286,7 @@ end
 end
 end
 end
-
+local chngval = 0
 function clicktomsg2()
 if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
 if clickcheck == 0 then
@@ -313,14 +311,30 @@ event.unregister(event.tick, showmotdnot2)
 return false
 end
 end
+
+if clickcheck ~= 0 then
+if tpt.mousex >570 and tpt.mousex < 601 and tpt.mousey > 135 and tpt.mousey < 153 then
+if chngval == 0 then
+chngval = 1
+end
+return false
+end
+end
 end
 
 function showmotdnot2()
-if clickcheck ~= 0 then
+if clickcheck ~= 0 and chngval == 0 then
 gfx.fillRect(5,132,600,250,10,10,10,200)
 gfx.drawRect(5,132,600,250,255,255,255,255)
 gfx.drawText(140,136,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
 gfx.drawText(12,154,crdata,250,250,250,255)
+gfx.drawRect(572,134,30,20,32,216,255,255)
+gfx.drawText(577,140,"Hide",250,250,250,255)
+if tpt.mousex >570 and tpt.mousex < 601 and tpt.mousey > 135 and tpt.mousey < 153 then
+gfx.fillRect(572,134,30,20,32,216,255,120)
+else
+gfx.fillRect(572,134,30,20,32,216,255,20)
+end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(10,366,197,14,32,255,210,140)
@@ -384,7 +398,7 @@ elseif tonumber(crackversion) >= tonumber(updatever) then
 errtext = "URS: You are running the latest version :)"
 end
 else
-errtext = "URS: Update check failed with error code: "..code3
+errtext = "URS error code: "..code3
 end
 end
 end
@@ -1770,7 +1784,7 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  end
  --Cross-hair
-if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() == 0 or event.getmodifiers() == 4096 or event.getmodifiers() == 32768 or event.getmodifiers() == 8192 or event.getmodifiers() == 45056 or event.getmodifiers() == 40960 or event.getmodifiers() == 36864 or event.getmodifiers() == 12288 then 
+if MANAGER.getsetting("CRK", "fancurs") == "1" and (event.getmodifiers() == 0 or event.getmodifiers() == 4096 or event.getmodifiers() == 32768 or event.getmodifiers() == 8192 or event.getmodifiers() == 45056 or event.getmodifiers() == 40960 or event.getmodifiers() == 36864 or event.getmodifiers() == 12288) then 
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
 local crx, cry = 0,0 
