@@ -38,62 +38,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#                |          x86_64           |           i686            |           arm64           |            arm                  
-#                |  lin |  mac |  win |  and |  lin |  mac |  win |  and |  lin |  mac |  win |  and |  lin |  mac |  win |  and 
-# ---------------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------
-#          gcc   |      |      |  NO  |      |  NO  |  NO  |  NO  |      |  NO  |      |  NO  |      |  NO  |  NO  |  NO  |      
-# static   msvc  |  NO  |  NO  |      |  NO  |  NO  |  NO  |      |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-#          mingw |      |  NO  |      |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-#          gcc   |      |      |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |NO [1]|  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-# dynamic  msvc  |  NO  |  NO  |      |  NO  |  NO  |  NO  |      |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-#          mingw |      |  NO  |      |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  |  NO  
-#
-# [1] This is only required for development on ARM Macs. We have no access to such devices, so someone will
-#     have to help us figure out how to get dynamic libraries.
+# Platform supportment for Cracker1000's mod     
+#  - Compile with static.
+#  - CPU architecture: AMD64 (x86-64)
+#  - Bits: 64-bit only
+#  - Operating System: Linux, Windows
+#  - Compiler: GCC (for Linux), MSVC (for Windows)
 #
 # Please keep this matrix in sync with the other one in this file, see the ### blocks.
-# The only difference should be that the second matrix has all mingw cells disabled; we don't publish mingw builds on starcatcher.
 #########################################################
 ############# BEGIN BLOCK FOR COPYING BELOW #############
 #########################################################
-        machine_short: [x86_64, i686, arm64, arm]
-        platform_short: [lin, mac, win, and]
-        toolset_short: [gcc, msvc, mingw]
-        static_dynamic: [static, dynamic]
+        platform_short: [lin, win]
+        toolset_short: [gcc, msvc]
         exclude:
-          - toolset_short: mingw
-            machine_short: i686  # remove this line after copying the matrix below
-          - toolset_short: mingw # remove this line after copying the matrix below
-            platform_short: mac  # remove this line after copying the matrix below
-          - machine_short: i686
-            platform_short: lin
-          - machine_short: i686
-            platform_short: mac
-          - toolset_short: msvc
-            platform_short: lin
-          - toolset_short: msvc
-            platform_short: mac
-          - toolset_short: gcc
-            platform_short: win
           - platform_short: lin
-            machine_short: arm64
-          - platform_short: win
-            machine_short: arm64
-          - platform_short: mac # see [1]
-            static_dynamic: dynamic
-            machine_short: arm64
-          - platform_short: and
-            static_dynamic: dynamic
-          - platform_short: and
             toolset_short: msvc
-          - platform_short: and
-            toolset_short: mingw
-          - platform_short: lin
-            machine_short: arm
           - platform_short: win
-            machine_short: arm
-          - platform_short: mac
-            machine_short: arm
+            toolset_short: gcc
 #########################################################
 ############## END BLOCK FOR COPYING BELOW ##############
 #########################################################
@@ -102,23 +64,10 @@ jobs:
             os: ubuntu-18.04
             prefix: ''
             suffix: ''
-          - platform_short: mac
-            os: macos-11.0
-            prefix: ''
-            suffix: ''
           - platform_short: win
             os: windows-2019
             prefix: ''
             suffix: '.exe'
-          - platform_short: lin
-            toolset_short: mingw
-            os: ubuntu-20.04
-            prefix: ''
-            suffix: '.exe'
-          - platform_short: and
-            os: ubuntu-18.04
-            prefix: ''
-            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -126,38 +75,27 @@ jobs:
           python-version: '3.10'
       - id: get_type
         run: python3 ./.github/get-type.py ${{ github.ref }}
-      - if: matrix.platform_short == 'lin' && matrix.toolset_short == 'mingw'
-        run: sudo apt update && sudo apt install g++-mingw-w64-x86-64
-      - if: matrix.platform_short == 'mac'
-        run: brew install pkg-config coreutils
-      - if: matrix.platform_short == 'mac' && matrix.static_dynamic != 'static'
-        run: brew install luajit curl fftw zlib sdl2
-      - if: matrix.platform_short == 'lin' && matrix.static_dynamic != 'static'
-        run: sudo apt update && sudo apt install libluajit-5.1-dev libcurl4-openssl-dev libfftw3-dev zlib1g-dev libsdl2-dev
       - run: python3 -m pip install meson ninja
       - run: bash -c './.github/build.sh'
         env:
           PLATFORM_SHORT: ${{ matrix.platform_short }}
-          MACHINE_SHORT: ${{ matrix.machine_short }}
           TOOLSET_SHORT: ${{ matrix.toolset_short }}
-          STATIC_DYNAMIC: ${{ matrix.static_dynamic }}
           RELNAME: ${{ steps.get_type.outputs.NAME }}
           RELTYPE: ${{ steps.get_type.outputs.TYPE }}
           MOD_ID: ${{ steps.get_type.outputs.MOD_ID }}
       - uses: actions/upload-release-asset@v1
-        if: steps.get_type.outputs.TYPE != 'dev' && matrix.static_dynamic == 'static'
+        if: steps.get_type.outputs.TYPE != 'dev'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ${{ matrix.prefix }}powder${{ matrix.suffix }}
-          asset_name: ${{ matrix.prefix }}powder-${{ steps.get_type.outputs.NAME }}-${{ matrix.machine_short }}-${{ matrix.platform_short }}-${{ matrix.toolset_short }}-${{ matrix.static_dynamic }}${{ matrix.suffix }}
+          asset_name: ${{ matrix.prefix }}powder-cracker1000-${{ steps.get_type.outputs.NAME }}-${{ matrix.platform_short }}${{ matrix.suffix }}
           asset_content_type: application/zip
       - uses: actions/upload-artifact@v2
-        if: matrix.static_dynamic == 'static'
         with:
           path: ${{ matrix.prefix }}powder${{ matrix.suffix }}
-          name: ${{ matrix.prefix }}powder-${{ steps.get_type.outputs.NAME }}-${{ matrix.machine_short }}-${{ matrix.platform_short }}-${{ matrix.toolset_short }}-${{ matrix.static_dynamic }}${{ matrix.suffix }}
+          name: ${{ matrix.prefix }}powder-cracker1000-${{ steps.get_type.outputs.NAME }}-${{ matrix.platform_short }}${{ matrix.suffix }}
   starcatcher-publish:
     runs-on: ubuntu-latest
     needs: [build, release]
@@ -168,58 +106,23 @@ jobs:
 #########################################################
 ############# BEGIN BLOCK COPIED FROM ABOVE #############
 #########################################################
-        machine_short: [x86_64, i686, arm64, arm]
-        platform_short: [lin, mac, win, and]
-        toolset_short: [gcc, msvc, mingw]
-        static_dynamic: [static, dynamic]
+        platform_short: [lin, win]
+        toolset_short: [gcc, msvc]
         exclude:
-          - toolset_short: mingw
-          - machine_short: i686
-            platform_short: lin
-          - machine_short: i686
-            platform_short: mac
-          - toolset_short: msvc
-            platform_short: lin
-          - toolset_short: msvc
-            platform_short: mac
-          - toolset_short: gcc
-            platform_short: win
           - platform_short: lin
-            machine_short: arm64
-          - platform_short: win
-            machine_short: arm64
-          - platform_short: mac # see [1]
-            static_dynamic: dynamic
-            machine_short: arm64
-          - platform_short: and
-            static_dynamic: dynamic
-          - platform_short: and
             toolset_short: msvc
-          - platform_short: and
-            toolset_short: mingw
-          - platform_short: lin
-            machine_short: arm
           - platform_short: win
-            machine_short: arm
-          - platform_short: mac
-            machine_short: arm
+            toolset_short: gcc
 #########################################################
 ############## END BLOCK COPIED FROM ABOVE ##############
 #########################################################
-          - static_dynamic: dynamic
         include:
           - platform_short: lin
-            prefix: ''
-            suffix: ''
-          - platform_short: mac
             prefix: ''
             suffix: ''
           - platform_short: win
             prefix: ''
             suffix: '.exe'
-          - platform_short: and
-            prefix: ''
-            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -229,15 +132,15 @@ jobs:
         run: python3 ./.github/get-type.py ${{ github.ref }}
       - uses: actions/download-artifact@v1
         with:
-          name: ${{ matrix.prefix }}powder-${{ steps.get_type.outputs.NAME }}-${{ matrix.machine_short }}-${{ matrix.platform_short }}-${{ matrix.toolset_short }}-${{ matrix.static_dynamic }}${{ matrix.suffix }}
+          name: ${{ matrix.prefix }}powder-cracker1000-${{ steps.get_type.outputs.NAME }}-${{ matrix.platform_short }}${{ matrix.suffix }}
       - run: sudo apt update && sudo apt install lftp
-      - if: steps.get_type.outputs.TYPE != 'dev' && matrix.static_dynamic == 'static'
+      - if: steps.get_type.outputs.TYPE != 'dev'
         run: bash -c './.github/starcatcher-publish.sh ${{ matrix.prefix }}powder${{ matrix.suffix }}'
         env:
           STARCATCHER_PUBLISH_HOSTPORT: ${{ secrets.STARCATCHER_PUBLISH_HOSTPORT }}
           STARCATCHER_PUBLISH_USERNAME: ${{ secrets.STARCATCHER_PUBLISH_USERNAME }}
           STARCATCHER_PUBLISH_PASSWORD: ${{ secrets.STARCATCHER_PUBLISH_PASSWORD }}
-          STARCATCHER_PUBLISH_FILENAME: ${{ matrix.prefix }}powder-${{ steps.get_type.outputs.NAME }}-${{ matrix.machine_short }}-${{ matrix.platform_short }}-${{ matrix.toolset_short }}-${{ matrix.static_dynamic }}${{ matrix.suffix }}
+          STARCATCHER_PUBLISH_FILENAME: ${{ matrix.prefix }}powder-cracker1000-${{ steps.get_type.outputs.NAME }}-${{ matrix.platform_short }}${{ matrix.suffix }}
   starcatcher-release:
     runs-on: ubuntu-latest
     needs: [starcatcher-publish, release]
