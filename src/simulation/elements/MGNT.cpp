@@ -135,6 +135,7 @@ static int update(UPDATE_FUNC_ARGS)
 						case PT_NEUT:
 						case PT_GRVT:
 						case PT_PHOT:
+						case PT_PLSM:
 						{
 							if (parts[i].tmp > 0)
 							{

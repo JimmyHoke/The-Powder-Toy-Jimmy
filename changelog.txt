@@ -2,5 +2,6 @@ Changelog for V41.0
 
 Fix cross-hair not hiding even when turned off
 Make sodium react with Cl2 only when above 50C and few other adjustments.
-You can now hide the changelogs while the update downloads.
+Better handling for update failures.
 Update wiki
+

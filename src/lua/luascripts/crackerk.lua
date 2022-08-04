@@ -231,8 +231,8 @@ function updatermod()
 if updatetimer < 1500 then
 updatetimer = updatetimer + 1
 end
-if updatetimer >= 1200 then
-print("URS: Taking longer than usual, try again after restarting or download it manually...")
+if updatetimer >= 1300 then
+print("URS: Taking longer than usual, process restarted. Download manually if it fails...")
 updatetimer = 0
 clickcheck = 0
 end
@@ -308,15 +308,7 @@ if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 3
 updatestatus = 1
 event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
-return false
-end
-end
-
-if clickcheck ~= 0 then
-if tpt.mousex >570 and tpt.mousex < 601 and tpt.mousey > 135 and tpt.mousey < 153 then
-if chngval == 0 then
-chngval = 1
-end
+event.unregister(event.tick,updatermod)
 return false
 end
 end
@@ -324,16 +316,14 @@ end
 
 function showmotdnot2()
 if clickcheck ~= 0 and chngval == 0 then
-gfx.fillRect(5,132,600,250,10,10,10,200)
-gfx.drawRect(5,132,600,250,255,255,255,255)
-gfx.drawText(140,136,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
-gfx.drawText(12,154,crdata,250,250,250,255)
-gfx.drawRect(572,134,30,20,32,216,255,255)
-gfx.drawText(577,140,"Hide",250,250,250,255)
-if tpt.mousex >570 and tpt.mousex < 601 and tpt.mousey > 135 and tpt.mousey < 153 then
-gfx.fillRect(572,134,30,20,32,216,255,120)
+gfx.fillRect(5,92,600,292,10,10,10,200)
+gfx.drawRect(5,92,600,292,255,255,255,255)
+gfx.drawText(140,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
+gfx.drawText(12,124,crdata,250,250,250,255)
+if updatertext == "Update done, click here to restart." then
+gfx.drawRect(10,363,590,1,10,250,10,255)
 else
-gfx.fillRect(572,134,30,20,32,216,255,20)
+gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -345,7 +335,7 @@ end
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
 if updatertext == "Update done, click here to restart." then
-gfx.fillRect(10,366,197,14,0,250,0,125)
+gfx.fillRect(10,366,197,14,0,250,0,100)
 end
 if clickcheck == 0 then
 if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -395,7 +385,7 @@ event.register(event.tick,showmotdnot2)
 event.unregister(event.mousedown, clicktomsg2)
 event.register(event.mousedown, clicktomsg2)
 elseif tonumber(crackversion) >= tonumber(updatever) then
-errtext = "URS: You are running the latest version :)"
+errtext = "URS:Latest version :)"
 end
 else
 errtext = "URS error code: "..code3
@@ -407,7 +397,7 @@ function errormesg()
 if errtimer > 0 then
 errtimer = errtimer - 1
 end
-if errtext ==  "URS: You are running the latest version :)" or errtext == "Checking for updates.." then
+if errtext ==  "URS:Latest version :)" or errtext == "Checking for updates.." then
 gfx.drawText(10,370,errtext,0,255,0,220)
 else
 gfx.drawText(10,370,errtext,255,0,0,220)
@@ -1498,7 +1488,7 @@ local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp pro
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
-local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine gas. Melts at around 97C."
+local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR, generating H2 andloosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine gas when above 50C. Melts at around 97C."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
