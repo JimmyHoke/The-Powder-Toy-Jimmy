@@ -92,16 +92,7 @@ jobs:
           asset_path: ${{ matrix.prefix }}powder${{ matrix.suffix }}
           asset_name: ${{ matrix.prefix }}powder${{ steps.get_type.outputs.NAME }}-${{ matrix.platform_short }}${{ matrix.suffix }}
           asset_content_type: application/zip
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-release-asset@v2
         with:
           path: powder
           name: powder${{ matrix.suffix }}
-
-      - uses: actions/upload-release-asset@v1
-    env:
-     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    with:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      asset_path: ${{ matrix.prefix }}powder${{ matrix.suffix }}
-      asset_name: ${{ matrix.prefix }}powder${{ steps.get_type.outputs.NAME }}-${{ matrix.platform_short }}${{ matrix.suffix }}
-      asset_content_type: application/zip
