@@ -94,5 +94,5 @@ jobs:
           asset_content_type: application/zip
       - uses: actions/upload-artifact@v2
         with:
-          path: powder
+          path: ${{ matrix.prefix }}powder${{ matrix.suffix }}
           name: powder${{ matrix.suffix }}
