@@ -384,7 +384,7 @@ tpt.partsdata = nil");
 		{
 			//Ignore;
 		}
-		if (!Platform::FileExists("scripts/updatedmp.lua")) // Don't run inbuilt multiplayer when a newer version is already present, prevents the error on startup.
+		if (!Platform::FileExists("scripts/downloaded/2 LBPHacker-TPTMulti.lua")) // Don't run inbuilt multiplayer when a newer version is already present, prevents the error on startup.
 		{
 			if (luaL_loadbuffer(l, (const char *)tptmp_lua, tptmp_lua_size, "@[built-in tptmp.lua]") || lua_pcall(l, 0, 0, 0))
 			{

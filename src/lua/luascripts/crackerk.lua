@@ -416,7 +416,7 @@ MANAGER.savesetting("CRK","secondaryele",tpt.selectedr)
 MANAGER.savesetting("CRK","loadelem","1")
 event.unregister(event.tick,strtelemgraph)
 event.unregister(event.mousedown,strtelem)
-print("Startup elements configured succesfully. Primary: "..MANAGER.getsetting("CRK","primaryele").." and Secondary: "..MANAGER.getsetting("CRK","secondaryele"))
+print("Startup elements configured succesfully. Primary: "..MANAGER.getsetting("CRK","primaryele").." and Secondary: "..MANAGER.getsetting("CRK","secondaryelele"))
 return false
 end
 
