@@ -1,9 +1,8 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 41.0
+local crackversion = 42.0
 local passreal2 = "DMND"
-local multiplayerversion = 29
 local motw = "."
 local updatestatus = 0
 --Default theme for initial launch and resets
@@ -115,7 +114,7 @@ local passbut = Button:new(396,188,80,25, "Password", "Secure password protectio
 local reminder = Button:new(396,220,80,25, "Notifications", "Maticzpl's notification stuff")
 local reminderhelp = Button:new(506,224,15,15, "?", "Help")
 
-local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
+local upmp = Button:new(396,28,80,25, "Startup Elem.", "Update multiplayer")
 
 local hide= Button:new(578,5,25,25, "X", "Hide.")
 
@@ -174,45 +173,8 @@ newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
 end
 
-local req
 local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
 local req3 = http.get("https://pastebin.com/raw/TjZAwiaT")
-local updatedmpval = "0" -- used for showing mp script status in menu
-
-function writefile()
-timermp = timermp + 1
-if timermp >= 450 then
-print("Taking too long to update, try agin after restarting..")
-tpt.unregister_step(writefile)
-end
-if req:status() == "done" then
-local ret, code = req:finish()
-if code == 200 then
-if MANAGER.getsetting("CRK","mpversion") == nil then
-MANAGER.savesetting("CRK","mpversion",multiplayerversion)--Multiplayer internal version
-end
-
-if MANAGER.scriptinfo(2).version > tonumber(MANAGER.getsetting("CRK","mpversion")) then
-f = io.open('scripts/updatedmp.lua', 'w')
-f:write(ret)
-f:close()
-dofile("scripts/updatedmp.lua")
-updatedmpval = "1"
-MANAGER.savesetting("CRK","mpversion",MANAGER.scriptinfo(2).version)
-print("Multiplayer Script has been updated to match latest version.")
-event.unregister(event.tick,theme)
-event.register(event.tick,theme)
-event.unregister(event.tick,writefile)
-else
-tpt.unregister_step(writefile)
-print("You are already running the latest version of tptmp script..")
-end
-else
-print("Error updating multiplayer, make sure you have internet access!")
-event.unregister(event.tick,writefile)
-end
-end
-end
 
 local timermotd = 0
 local posix = 0
@@ -385,10 +347,14 @@ event.register(event.tick,showmotdnot2)
 event.unregister(event.mousedown, clicktomsg2)
 event.register(event.mousedown, clicktomsg2)
 elseif tonumber(crackversion) >= tonumber(updatever) then
-errtext = "URS:Latest version :)"
+errtext = "URS: Latest"
 end
 else
+if code3 == 602 then
+errtext ="Offline"
+else
 errtext = "URS error code: "..code3
+end
 end
 end
 end
@@ -397,10 +363,10 @@ function errormesg()
 if errtimer > 0 then
 errtimer = errtimer - 1
 end
-if errtext ==  "URS:Latest version :)" or errtext == "Checking for updates.." then
-gfx.drawText(10,370,errtext,0,255,0,220)
+if errtext ==  "URS: Latest" or errtext == "Checking for updates.." then
+gfx.drawText(10,370,errtext,105,255,105,200)
 else
-gfx.drawText(10,370,errtext,255,0,0,220)
+gfx.drawText(10,370,errtext,255,105,105,200)
 end
 if errtimer == 0 then
 event.unregister(event.tick,errormesg)
@@ -426,14 +392,49 @@ tpt.drawrect(418,408,51,14,32,250,210,255)
 gfx.drawText(395,370,"You have an unread message",32,250,210,255)
 end
 
+local function strtelemgraph()
+gfx.drawText(140,350,"Please select the primary and secondary startup elements of your choice and click save.",255,255,255,255)
+gfx.drawRect(255,362,30,15,32,250,210,255)
+gfx.drawRect(305,362,64,15,255,125,125,255)
+
+if tpt.mousex >255 and tpt.mousex < 285 and tpt.mousey > 362 and tpt.mousey < 377 then
+tpt.fillrect(255,362,30,15,32,250,210,190)
+end
+
+if tpt.mousex >304 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
+tpt.fillrect(305,362,64,15,255,125,125,190)
+end
+
+gfx.drawText(260,366,"Save",32,250,210,255)
+gfx.drawText(310,366,"Cancel/ Off",255,125,125,255)
+end
+
+local function strtelem()
+if tpt.mousex >255 and tpt.mousex < 285 and tpt.mousey > 362 and tpt.mousey < 377 then
+MANAGER.savesetting("CRK","primaryele",tpt.selectedl)
+MANAGER.savesetting("CRK","secondaryele",tpt.selectedr)
+MANAGER.savesetting("CRK","loadelem","1")
+event.unregister(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+print("Startup elements configured succesfully. Primary: "..MANAGER.getsetting("CRK","primaryele").." and Secondary: "..MANAGER.getsetting("CRK","secondaryele"))
+return false
+end
+
+if tpt.mousex >304 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
+event.unregister(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+MANAGER.savesetting("CRK","loadelem","0")
+print("Startup elements configuration cancelled.")
+return false
+end
+end
+
 upmp:action(function(sender)
 close()
-req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
-timermp = 0
-print("Attempting To Update Multiplayer...")
-fs.makeDirectory("scripts/downloaded")
-event.unregister(event.tick,writefile)
-event.register(event.tick,writefile)
+event.unregister(event.tick,strtelemgraph)
+event.register(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+event.register(event.mousedown,strtelem)
 end)
 
 passbut:action(function(sender)
@@ -1488,7 +1489,7 @@ local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp pro
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
-local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR, generating H2 andloosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine gas when above 50C. Melts at around 97C."
+local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR, generating H2 and loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine gas when above 50C. Melts at around 97C."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -2133,20 +2134,14 @@ os.remove("older.exe")
 os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
-local filecheck =io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
-if filecheck ~= nil then 
-io.close(filecheck)
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
-print("External TPTMP script detected and deleted, please use the UpdateMP button instead.")
+
+if MANAGER.getsetting("CRK","loadelem") == nil then
+MANAGER.savesetting("CRK","loadelem","0")
 end
-os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
-local faz =io.open("scripts/updatedmp.lua","r")
-if faz ~= nil then 
-io.close(faz)
-updatedmpval = "1"
-dofile("scripts/updatedmp.lua")
-else
-updatedmpval = "0"
+
+if MANAGER.getsetting("CRK","loadelem") == "1" then
+tpt.selectedl = MANAGER.getsetting("CRK","primaryele")
+tpt.selectedr = MANAGER.getsetting("CRK","secondaryele")
 end
 
 if MANAGER.getsetting("CRK","al") == nil then
@@ -2229,7 +2224,6 @@ end
 end)
 
 reset:action(function(sender)
-os.remove("scripts/updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
@@ -2332,11 +2326,13 @@ gfx.drawText(484,229,"ON",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
-if updatedmpval == "1" then --Multiplayer script status
-gfx.drawText(484,37,"New",105,255,105,255)
+
+if MANAGER.getsetting("CRK","loadelem") == "1" then --Startup elements.
+gfx.drawText(484,37,"Configured",105,255,105,255)
 else
-gfx.drawText(484,37,"Stock",105,255,105,255)
+gfx.drawText(484,37,"OFF",255,105,105,255)
 end
+--Reserved
 if invtoolv == "0" then --Invert-tool
 gfx.drawText(484,101,"ON",105,255,105,255)
 else

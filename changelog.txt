@@ -1,7 +1,7 @@
-Changelog for V41.0
+Changelog for V42.0
 
-Fix cross-hair not hiding even when turned off
-Make sodium react with Cl2 only when above 50C and few other adjustments.
-Better handling for update failures.
-Update wiki
-
+Fix saves from v97.0 error when loading newer saves published using the snapshots.
+New Feature: Startup elem selecter.
+Remove Update MP option.
+Make URS statuses less distracting.
+Optimised release process.
