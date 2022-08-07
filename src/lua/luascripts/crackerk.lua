@@ -190,15 +190,15 @@ local filename = platform.exeName()
 local errtext = "Checking for updates.."
 
 function updatermod()
-if updatetimer < 1500 then
+if updatetimer < 2500 then
 updatetimer = updatetimer + 1
 end
-if updatetimer >= 1300 then
+if updatetimer >= 2000 then
 print("URS: Taking longer than usual, process restarted. Download manually if it fails...")
 updatetimer = 0
 clickcheck = 0
 end
-if updatetimer < 1200 then
+if updatetimer < 1190 then
 gfx.fillRect(11,367,updatetimer/6,12,55,255,55,205)
 end
 --Get changelogs

@@ -1,7 +1,8 @@
 Changelog for V42.0
 
-Fix saves from v97.0 error when loading newer saves published using the snapshots.
-New Feature: Startup elem selecter.
+Fix saves from v97.0 error when loading some newer saves.
+New Feature: Startup elem selector, allows you to set default elements to load on startup.
 Remove Update MP option.
-Make URS statuses less distracting.
+Fix some typos in wiki.
+Make URS statuses somewhat less distracting.
 Optimised release process.
