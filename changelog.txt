@@ -1,8 +1,6 @@
-Changelog for V42.0
+Changelog for V43.0
 
-Fix saves from v97.0 error when loading some newer saves.
-New Feature: Startup elem selector, allows you to set default elements to load on startup.
-Remove Update MP option.
-Fix some typos in wiki.
-Make URS statuses somewhat less distracting.
-Optimised release process.
+Fix URS giving timeout errors for some users.
+Optimised simulation checks giving around 8% performance increase.
+Merges from latest snapshot
+Improved interface for Startup elem selector.

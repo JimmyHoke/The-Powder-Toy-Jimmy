@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 42.0
+local crackversion = 43.0
 local passreal2 = "DMND"
 local motw = "."
 local updatestatus = 0
@@ -184,23 +184,24 @@ local updatever, updatestatus = 1,0
 local updatertext = "Available, click here to download"
 local reqwin
 local crdata = "Getting data please wait.."
-local updatetimer = 0
+local updatetimer, rungrap = 0,10
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 local errtext = "Checking for updates.."
+local timeout = 0
 
 function updatermod()
-if updatetimer < 2500 then
 updatetimer = updatetimer + 1
+if rungrap < 138 then
+rungrap = rungrap + 1
+elseif rungrap >= 138 then
+rungrap = 10
 end
-if updatetimer >= 2000 then
-print("URS: Taking longer than usual, process restarted. Download manually if it fails...")
-updatetimer = 0
-clickcheck = 0
+if updatetimer >= 4000 then
+timeout = 1
 end
-if updatetimer < 1190 then
-gfx.fillRect(11,367,updatetimer/6,12,55,255,55,205)
-end
+--Graphics while downloading updates..
+gfx.fillRect(rungrap,367,rungrap/2,12,35,255,35,195)
 --Get changelogs
 if crlog:status() == "done"  then
 local crlogdata, crlogcode = crlog:finish()
@@ -248,7 +249,7 @@ end
 end
 end
 end
-local chngval = 0
+
 function clicktomsg2()
 if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
 if clickcheck == 0 then
@@ -277,7 +278,7 @@ end
 end
 
 function showmotdnot2()
-if clickcheck ~= 0 and chngval == 0 then
+if clickcheck ~= 0 then
 gfx.fillRect(5,92,600,292,10,10,10,200)
 gfx.drawRect(5,92,600,292,255,255,255,255)
 gfx.drawText(140,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
@@ -286,6 +287,9 @@ if updatertext == "Update done, click here to restart." then
 gfx.drawRect(10,363,590,1,10,250,10,255)
 else
 gfx.drawRect(10,363,590,1,32,216,255,255)
+end
+if timeout == 1 and clickcheck ~= 1 then
+gfx.drawText(220,369,"Taking longer than usual, you may wait or download manually..",255,50,50,250)
 end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -393,20 +397,26 @@ gfx.drawText(395,370,"You have an unread message",32,250,210,255)
 end
 
 local function strtelemgraph()
+gfx.fillRect(135,347,430,35,255,255,255,35)
+gfx.drawRect(135,347,430,35,255,255,255,155)
 gfx.drawText(140,350,"Please select the primary and secondary startup elements of your choice and click save.",255,255,255,255)
-gfx.drawRect(255,362,30,15,32,250,210,255)
-gfx.drawRect(305,362,64,15,255,125,125,255)
+gfx.drawRect(255,362,30,15,225,225,225,255)
+gfx.drawRect(305,362,64,15,225,225,225,255)
 
 if tpt.mousex >255 and tpt.mousex < 285 and tpt.mousey > 362 and tpt.mousey < 377 then
-tpt.fillrect(255,362,30,15,32,250,210,190)
+tpt.fillrect(255,362,29,14,50,255,50,160)
 end
 
-if tpt.mousex >304 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
-tpt.fillrect(305,362,64,15,255,125,125,190)
+if tpt.mousex >304 and tpt.mousex < 341 and tpt.mousey > 362 and tpt.mousey < 377 then
+tpt.fillrect(305,362,37,14,250,250,250,120)
 end
 
-gfx.drawText(260,366,"Save",32,250,210,255)
-gfx.drawText(310,366,"Cancel/ Off",255,125,125,255)
+if tpt.mousex >341 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
+tpt.fillrect(340,362,28,14,250,50,50,120)
+end
+
+gfx.drawText(260,366,"Save",225,225,225,255)
+gfx.drawText(310,366,"Cancel | Off",225,225,225,255)
 end
 
 local function strtelem()
@@ -420,15 +430,21 @@ print("Startup elements configured succesfully. Primary: "..MANAGER.getsetting("
 return false
 end
 
-if tpt.mousex >304 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
+if tpt.mousex >304 and tpt.mousex < 341 and tpt.mousey > 362 and tpt.mousey < 377 then
 event.unregister(event.tick,strtelemgraph)
 event.unregister(event.mousedown,strtelem)
-MANAGER.savesetting("CRK","loadelem","0")
 print("Startup elements configuration cancelled.")
 return false
 end
-end
 
+if tpt.mousex >341 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
+event.unregister(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+MANAGER.savesetting("CRK","loadelem","0")
+print("Startup elements configuration turned off")
+return false
+end
+end
 upmp:action(function(sender)
 close()
 event.unregister(event.tick,strtelemgraph)
@@ -7205,14 +7221,14 @@ chars_light = {
         }
     }
 }
-local crackversionnot = 6
+
 function notificationscript()
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
 end
 
-if crackversionnot == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
+if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
     return
 end
 
@@ -7556,7 +7572,7 @@ function MaticzplNotifications.DrawNotifications()
         posX = 573
         posY = 435
     end
-	if crackversionnot == 6 then --Cracker1000's Mod
+	if tpt.version.modid == 6 then --Cracker1000's Mod
           getcrackertheme()
     end
     local w,h = gfx.textSize(number)
