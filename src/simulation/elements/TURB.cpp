@@ -93,9 +93,12 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[ID(r)].type == PT_PSCN && parts[i].life > 0)
 				{
-					parts[ID(r)].ctype = PT_PSCN;
-					parts[ID(r)].life = 4;
-					sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
+					if (parts[ID(r)].life == 0)
+					{
+						parts[ID(r)].life = 4;
+						parts[ID(r)].ctype = parts[ID(r)].type;
+						sim->part_change_type(ID(r), x + rx, y + ry, PT_SPRK);
+					}
 				}
 			}
 	return 0;

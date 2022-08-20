@@ -1,6 +1,8 @@
 Changelog for V43.0
-
+Sodium under Vaccum now gives off yellow light.
+Fix TURB producing sprk loops
+Around 8% performance boost.
 Fix URS giving timeout errors for some users.
-Optimised simulation checks giving around 8% performance increase.
 Merges from latest snapshot
+Switch from Maticzpl's method to official one for dealing with new property alias.
 Improved interface for Startup elem selector.

@@ -54,6 +54,10 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		parts[i].tmp2 = parts[i].tmp2 - 1;
 	}
+	if (parts[i].tmp4 > 0)
+	{
+		parts[i].tmp4 = parts[i].tmp4 - 1;
+	}
 
 		for (int rx = -2; rx < 3; rx++)
 			for (int ry = -2; ry < 3; ry++)
@@ -62,6 +66,13 @@ static int update(UPDATE_FUNC_ARGS)
 					int r = pmap[y + ry][x + rx];
 					if (!r)
 						continue;
+					if (sim->pv[y / CELL][x / CELL] < -2.0f && parts[i].tmp4 < 100)
+					{
+						if (RNG::Ref().chance(1, 10))
+						{
+							parts[i].tmp4 += 1;
+						}
+					}
 					if ((TYP(r) == PT_O2 || TYP(r) == PT_CO2) && RNG::Ref().chance(1, 10))
 					{
 						if (parts[i].tmp3 < 200)
@@ -105,19 +116,31 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	if (cpart->tmp2 > 0)
+
+	if (cpart->tmp4 > 20)
 	{
-		*pixel_mode |= PMODE_LFLARE;
+		*firer = 255;
+		*fireg = 165;
+		*fireb = 0;
+		*firea = cpart->tmp4;
+		*pixel_mode |= FIRE_ADD;
 	}
-	else if (cpart->tmp2 <= 0)
+	else
 	{
-		if (cpart->tmp == 0 && cpart->tmp3 < 10)
+		if (cpart->tmp2 > 0)
 		{
-			*pixel_mode |= PMODE_FLARE;
+			*pixel_mode |= PMODE_LFLARE;
 		}
-		*colr = 255 - cpart->tmp3 / 2;
-		*colg = 255 - cpart->tmp3 / 2;
-		*colb = 255 - cpart->tmp3 / 2;
+		else if (cpart->tmp2 <= 0)
+		{
+			if (cpart->tmp == 0 && cpart->tmp3 < 10)
+			{
+				*pixel_mode |= PMODE_FLARE;
+			}
+			*colr = 255 - cpart->tmp3 / 2;
+			*colg = 255 - cpart->tmp3 / 2;
+			*colb = 255 - cpart->tmp3 / 2;
+		}
 	}
 	return 0;
 }
