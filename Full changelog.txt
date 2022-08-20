@@ -1,5 +1,13 @@
-V42.0
+V43.0
+Sodium under Vaccum now gives off yellow light.
+Fix TURB producing sprk loops
+Around 8% performance boost.
+Fix URS giving timeout errors for some users.
+Merges from latest snapshot
+Switch from Maticzpl's method to official one for dealing with new property alias.
+Improved interface for Startup elem selector.
 
+V42.0
 Fix saves from v97.0 error when loading some newer saves.
 New Feature: Startup elem selector, allows you to set default elements to load on startup.
 Remove Update MP option.
