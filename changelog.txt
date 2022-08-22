@@ -1,4 +1,1 @@
-Changelog for V44.0
-Fix version number in startup text
-Remove some restrictions making users unable to pulish saves
-Add some missing info in wiki
+Changelog for V45.0

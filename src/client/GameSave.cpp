@@ -2298,6 +2298,7 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 				if ((tmp3 || tmp4) && (!PressureInTmp3(particles[i].type) || hasPressure))
 				{
 					fieldDesc |= 1 << 13;
+#if SAVE_VERSION >= 97
 					// The tmp3 of PressureInTmp3 elements is okay to truncate because the loading code
 					// sign extends it anyway, expecting the value to not be higher in magnitude than
 					// 256 (max pressure value) * 64 (tmp3 multiplicative bias).
@@ -2306,6 +2307,7 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 						fieldDesc |= 1 << 15;
 						fieldDesc |= 1 << 16;
 					}
+#endif
 				}
 
 				// Extra type byte if necessary

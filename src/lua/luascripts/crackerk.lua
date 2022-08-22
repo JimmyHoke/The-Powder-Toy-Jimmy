@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 44.0
+local crackversion = 45.0
 local passreal2 = "DMND"
 local motw = "."
 local updatestatus = 0
@@ -56,7 +56,7 @@ platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=2
 end)
 end
 
-local toggle = Button:new(419,408,50,15, "Settings", "Open Mod Settings.")
+local toggle = Button:new(419,408,50,15, "Cr-Menu", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 609, 255)
 
 local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI related stuff.")
@@ -397,22 +397,22 @@ gfx.drawText(395,370,"You have an unread message",32,250,210,255)
 end
 
 local function strtelemgraph()
-gfx.fillRect(135,347,430,35,255,255,255,35)
-gfx.drawRect(135,347,430,35,255,255,255,155)
+gfx.fillRect(135,347,430,35,10,10,10,255)
+gfx.drawRect(135,347,430,35,255,255,255,255)
 gfx.drawText(140,350,"Please select the primary and secondary startup elements of your choice and click save.",255,255,255,255)
 gfx.drawRect(255,362,30,15,225,225,225,255)
 gfx.drawRect(305,362,64,15,225,225,225,255)
 
 if tpt.mousex >255 and tpt.mousex < 285 and tpt.mousey > 362 and tpt.mousey < 377 then
-tpt.fillrect(255,362,29,14,50,255,50,160)
+tpt.fillrect(255,362,29,14,50,255,50,180)
 end
 
 if tpt.mousex >304 and tpt.mousex < 341 and tpt.mousey > 362 and tpt.mousey < 377 then
-tpt.fillrect(305,362,37,14,250,250,250,120)
+tpt.fillrect(305,362,37,14,200,200,200,180)
 end
 
 if tpt.mousex >341 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
-tpt.fillrect(340,362,28,14,250,50,50,120)
+tpt.fillrect(340,362,28,14,250,30,30,180)
 end
 
 gfx.drawText(260,366,"Save",225,225,225,255)
