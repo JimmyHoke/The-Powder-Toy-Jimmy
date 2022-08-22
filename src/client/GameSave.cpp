@@ -2305,7 +2305,6 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 					{
 						fieldDesc |= 1 << 15;
 						fieldDesc |= 1 << 16;
-						RESTRICTVERSION(97, 0);
 					}
 				}
 
@@ -2521,11 +2520,6 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 				{
 					RESTRICTVERSION(96, 0);
 				}
-				if (particles[i].type == PT_GLAS && particles[i].life > 0)
-				{
-					RESTRICTVERSION(97, 0);
-				}
-
 				//Get the pmap entry for the next particle in the same position
 				i = partsPosLink[i];
 			}
