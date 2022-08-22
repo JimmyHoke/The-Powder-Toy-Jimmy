@@ -257,7 +257,7 @@ clickcheck = 2
 crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/changelog.txt")
 if checkos == "WIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
-elseif checkos == "LINN64" then
+elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
 end
 event.register(event.tick,updatermod)

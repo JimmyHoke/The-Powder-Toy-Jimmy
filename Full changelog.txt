@@ -1,3 +1,8 @@
+V44.0
+Fix version number in startup text
+Remove some restrictions making users unable to pulish saves
+Add some missing info in wiki
+
 V43.0
 Sodium under Vaccum now gives off yellow light.
 Fix TURB producing sprk loops
