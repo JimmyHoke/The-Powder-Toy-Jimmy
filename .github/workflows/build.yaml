@@ -217,7 +217,7 @@ jobs:
             machine_short: arm
           - platform_short: and
             machine_short: i686
-             - platform_short: and
+          - platform_short: and
             machine_short: x86_64
     
 #########################################################
