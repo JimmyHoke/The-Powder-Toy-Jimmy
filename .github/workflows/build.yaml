@@ -154,4 +154,4 @@ jobs:
         if: matrix.static_dynamic == 'static'
         with:
           path: ${{ matrix.prefix }}powder${{ matrix.suffix }}
-          name: powder${{ matrix.machine_short }}${{ matrix.suffix }}
+          name: powder-${{ matrix.machine_short }}-${{ matrix.platform_short }}-${{ matrix.toolset_short }}${{ matrix.suffix }}
