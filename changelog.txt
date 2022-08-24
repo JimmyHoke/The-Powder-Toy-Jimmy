@@ -1,1 +1,5 @@
 Changelog for V45.0
+
+Add supoort for Win32
+Preliminary support for Mac (X86_64) versions only
+Add comment time stamps

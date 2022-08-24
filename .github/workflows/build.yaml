@@ -101,7 +101,7 @@ jobs:
             machine_short: arm64
           - platform_short: and
 #########################################################
-############## END BLOCK FOR COPYING BELOW ##############
+############# END BLOCK FOR COPYING BELOW #############
         include:
           - platform_short: lin
             os: ubuntu-18.04
