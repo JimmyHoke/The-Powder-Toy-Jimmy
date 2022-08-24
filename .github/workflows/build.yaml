@@ -114,9 +114,9 @@ jobs:
           - platform_short: win
             os: windows-2019
             prefix: ''
-            if machine_short: x86_64
+          - if machine_short: x86_64
             suffix: '.exe'
-            if machine_short: i686
+           - if machine_short: i686
             suffix: '32.exe'
     steps:
       - uses: actions/checkout@v2
