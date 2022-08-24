@@ -111,12 +111,13 @@ jobs:
             os: macos-11.0
             prefix: ''
             suffix: ''
-          - platform_short: win
+          - platform_short: win && matrix.machine_short == 'i686'
             os: windows-2019
             prefix: ''
-            if: matrix.machine_short == 'i686'
             suffix: '32.exe'
-            if: matrix.machine_short == 'x86_64'
+          - platform_short: win && matrix.machine_short == 'x86_64'
+            os: windows-2019
+            prefix: ''
             suffix: '64.exe'
     steps:
       - uses: actions/checkout@v2
