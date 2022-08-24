@@ -209,6 +209,15 @@ if crlogcode == 200  then
 crdata = crlogdata
 end
 end
+--Unsupported platforms
+if checkos ~= "WIN64" and checkos ~= "LIN64" then
+print("Your platform isn't supported by URS. Please download the update manually.")
+print("Opening Mod thread for download links...")
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+event.unregister(event.mousedown, clicktomsg2)
+event.unregister(event.tick, showmotdnot2)
+event.unregister(event.tick,updatermod)
+end
 --Windows
 if checkos == "WIN64" then
 updatertext = "Downloading the update for Win64"
@@ -229,6 +238,7 @@ event.unregister(event.tick,updatermod)
 end
 end
 end
+--Linux
 if checkos == "LIN64" then
 updatertext = "Downloading the update for LIN64"
 if reqwin:status() == "done"  then
@@ -259,6 +269,8 @@ if checkos == "WIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
 elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
+else
+reqwin = "Notsupported"
 end
 event.register(event.tick,updatermod)
 elseif clickcheck == 1 then
@@ -281,6 +293,8 @@ function showmotdnot2()
 if clickcheck ~= 0 then
 gfx.fillRect(5,92,600,292,10,10,10,200)
 gfx.drawRect(5,92,600,292,255,255,255,255)
+gfx.fillCircle(130,99,4,4,50,50,250,200)
+gfx.drawCircle(130,99,4,4,32,216,250,255)
 gfx.drawText(140,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
 gfx.drawText(12,124,crdata,250,250,250,255)
 if updatertext == "Update done, click here to restart." then
