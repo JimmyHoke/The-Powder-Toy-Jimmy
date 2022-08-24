@@ -97,6 +97,8 @@ jobs:
             machine_short: msvc
           - platform_short: lin
             machine_short: mingw
+          - platform_short: mac
+            machine_short: arm64
 #########################################################
 ############## END BLOCK FOR COPYING BELOW ##############
 #########################################################
@@ -112,7 +114,10 @@ jobs:
           - platform_short: win
             os: windows-2019
             prefix: ''
+            if machine_short: x86_64
             suffix: '.exe'
+            if machine_short: i686
+            suffix: '32.exe'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
