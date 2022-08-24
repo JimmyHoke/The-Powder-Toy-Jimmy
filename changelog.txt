@@ -1,5 +1,6 @@
 Changelog for V45.0
-
+Fix upper bits of tmp3 and tmp4 getting saved in saves, causing issues for vanilla users.
+Settings is now Cr-Menu
 Add supoort for Win32
 Preliminary support for Mac (X86_64) versions only
 Add comment time stamps
