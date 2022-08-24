@@ -1,10 +1,8 @@
 name: build
 on:
   push:
-    branches:
-      - '*'
     tags:
-      - 'r*.*'
+      - 'v*.*'
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -60,7 +58,7 @@ jobs:
         machine_short: [x86_64, i686, arm64, arm]
         platform_short: [lin, mac, win, and]
         toolset_short: [gcc, msvc, mingw]
-        static_dynamic: [static, dynamic]
+        static_dynamic: [static]
         exclude:
           - toolset_short: mingw
             machine_short: i686  # remove this line after copying the matrix below
@@ -111,11 +109,15 @@ jobs:
             os: windows-2019
             prefix: ''
             suffix: '.exe'
-          - platform_short: win
-            toolset_short: i686
-            os: windows-2019
+          - platform_short: lin
+            toolset_short: mingw
+            os: ubuntu-20.04
             prefix: ''
-            suffix: '32.exe'
+            suffix: '.exe'
+          - platform_short: and
+            os: ubuntu-18.04
+            prefix: ''
+            suffix: '.apk'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
