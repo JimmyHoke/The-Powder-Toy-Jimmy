@@ -114,10 +114,7 @@ jobs:
           - platform_short: win
             os: windows-2019
             prefix: ''
-            if: matrix.machine_short == 'i686'
-            suffix: '32.exe'
-            if: matrix.machine_short == 'x86_64'
-            suffix: '64.exe'
+            suffix: '.exe'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -156,4 +153,4 @@ jobs:
         if: matrix.static_dynamic == 'static'
         with:
           path: ${{ matrix.prefix }}powder${{ matrix.suffix }}
-          name: powder${{ matrix.suffix }}
+          name: powder ${{ matrix.suffix }}
