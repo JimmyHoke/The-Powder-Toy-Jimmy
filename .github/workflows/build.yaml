@@ -207,11 +207,18 @@ jobs:
             machine_short: arm
           - platform_short: mac
             machine_short: arm
-          - platform_short: and
           - platform_short: win
             machine_short: mingw
-            - platform_short: mac
+          - platform_short: mac
             machine_short: arm64
+          - platform_short: and
+            machine_short: arm64
+          - platform_short: and
+            machine_short: arm
+          - platform_short: and
+            machine_short: i686
+             - platform_short: and
+            machine_short: x86_64
     
 #########################################################
 ############## END BLOCK COPIED FROM ABOVE ##############
