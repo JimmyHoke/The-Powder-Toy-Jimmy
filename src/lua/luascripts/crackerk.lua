@@ -210,17 +210,16 @@ crdata = crlogdata
 end
 end
 --Unsupported platforms
-if checkos ~= "WIN64" and checkos ~= "LIN64" then
+if checkos ~= "WIN64" and checkos ~= "LIN64" and checkos ~= "WIN32" then
 print("Your platform isn't supported by URS. Please download the update manually.")
-print("Opening Mod thread for download links...")
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+print("Download the update from Mod thread")
 event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
 event.unregister(event.tick,updatermod)
 end
 --Windows
-if checkos == "WIN64" then
-updatertext = "Downloading the update for Win64"
+if checkos == "WIN64" or checkos == "WIN32" then
+updatertext = "Downloading the update for "..checkos
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
@@ -269,6 +268,8 @@ if checkos == "WIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
 elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
+elseif checkos == "WIN32" then
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 else
 reqwin = "Notsupported"
 end
