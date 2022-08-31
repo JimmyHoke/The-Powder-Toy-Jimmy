@@ -1,6 +1,13 @@
 Changelog for V46.0
 
+Fix invalid stamps names being accepted
 Adjust the vote count and comment time stamp preview in browser.
 Crop stamp thumbnails that don't fit even when resized.
 Make QRTZ slightly change color while growing.
 Drop support for mac os builds.
+Fixes from master branch
+
+todo:
+New split theme
+Put proper limit on number of characters that can be used in passwords
+Scroll bar for URS changelogs?
