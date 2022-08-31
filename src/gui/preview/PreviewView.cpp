@@ -125,7 +125,7 @@ PreviewView::PreviewView():
 	viewsLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(viewsLabel);
 
-	voteLabel = new ui::Label(ui::Point((XRES/2)-85, 10), ui::Point(80, 16), "+0 \bg/\br -0");
+	voteLabel = new ui::Label(ui::Point((XRES/2)-85, 10), ui::Point(80, 16), "Votes here.");
 	voteLabel->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
 	voteLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	voteLabel->SetTextColour(ui::Colour(0, 255, 0));
@@ -452,7 +452,7 @@ void PreviewView::NotifySaveChanged(PreviewModel * sender)
 		else
 			userIsAuthor = false;
 		viewsLabel->SetText(String::Build("\bgViews:\bw ", save->Views));
-		voteLabel->SetText(String::Build("+", votesUp, " \bg/\br -", votesDown));
+		voteLabel->SetText(String::Build(votesUp, "\bw - \br", votesDown,"\bg = \bw",votesUp-votesDown));
 
 		saveDescriptionLabel->SetText(save->Description);
 		if(save->Favourite)
@@ -636,7 +636,7 @@ void PreviewView::NotifyCommentsChanged(PreviewModel * sender)
 			tempTimestamp = new ui::Label(ui::Point(31, currentY+3), ui::Point(Size.X-((XRES/2) + 13 + 26), 16), comments->at(i)->formattedTimestamp);
 			tempTimestamp->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
 			tempTimestamp->Appearance.VerticalAlign = ui::Appearance::AlignBottom;
-			tempTimestamp->SetTextColour(ui::Colour(252, 219, 3));
+			tempTimestamp->SetTextColour(ui::Colour(32, 216, 255));
 
 			tempUsername->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 			tempUsername->Appearance.VerticalAlign = ui::Appearance::AlignBottom;

@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 45.0
+local crackversion = 46.0
 local passreal2 = "DMND"
 local motw = "."
 local updatestatus = 0

@@ -1,2 +1,6 @@
 Changelog for V46.0
 
+Adjust the vote count and comment time stamp preview in browser.
+Crop stamp thumbnails that don't fit even when resized.
+Make QRTZ slightly change color while growing.
+Drop support for mac os builds.

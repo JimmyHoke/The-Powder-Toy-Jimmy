@@ -100,6 +100,8 @@ jobs:
           - platform_short: mac
             machine_short: arm64
           - platform_short: and
+           - toolset_short: gcc
+            platform_short: mac
 #########################################################
 ############## END BLOCK FOR COPYING BELOW ##############
 #########################################################
@@ -111,7 +113,7 @@ jobs:
           - platform_short: mac
             os: macos-11.0
             prefix: ''
-            suffix: ''
+            suffix: 'mac'
           - platform_short: win
             os: windows-2019
             prefix: ''
