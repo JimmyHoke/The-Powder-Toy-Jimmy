@@ -125,7 +125,7 @@ PreviewView::PreviewView():
 	viewsLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(viewsLabel);
 
-	voteLabel = new ui::Label(ui::Point((XRES/2)-85, 10), ui::Point(80, 16), "Votes here.");
+	voteLabel = new ui::Label(ui::Point((XRES/2)-82, 223), ui::Point(80, 16),"");
 	voteLabel->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
 	voteLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	voteLabel->SetTextColour(ui::Colour(0, 255, 0));
@@ -326,10 +326,6 @@ void PreviewView::OnDraw()
 		g->fillrect(Position.X+(XRES/2)-4-nyu, Position.Y+(YRES/2)+5, nyu, 3, 57, 187, 57, 255);
 		g->fillrect(Position.X+(XRES/2)-4-nyd, Position.Y+(YRES/2)+11, nyd, 3, 187, 57, 57, 255);
 	}
-
-	// Shade background for + / -
-	g->fillrect((XRES/2)-4 - g->textwidth(voteLabel->GetText()) - 6 + Position.X, 9 + Position.Y,
-		g->textwidth(voteLabel->GetText()) + 6, 16, 0, 0, 0, 150);
 }
 
 void PreviewView::OnTick(float dt)
@@ -452,7 +448,7 @@ void PreviewView::NotifySaveChanged(PreviewModel * sender)
 		else
 			userIsAuthor = false;
 		viewsLabel->SetText(String::Build("\bgViews:\bw ", save->Views));
-		voteLabel->SetText(String::Build(votesUp, "\bw - \br", votesDown,"\bg = \bw",votesUp-votesDown));
+		voteLabel->SetText(String::Build(votesUp,"\bw-\br",votesDown,"\bg=\bw",votesUp-votesDown));
 
 		saveDescriptionLabel->SetText(save->Description);
 		if(save->Favourite)
@@ -636,7 +632,7 @@ void PreviewView::NotifyCommentsChanged(PreviewModel * sender)
 			tempTimestamp = new ui::Label(ui::Point(31, currentY+3), ui::Point(Size.X-((XRES/2) + 13 + 26), 16), comments->at(i)->formattedTimestamp);
 			tempTimestamp->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
 			tempTimestamp->Appearance.VerticalAlign = ui::Appearance::AlignBottom;
-			tempTimestamp->SetTextColour(ui::Colour(32, 216, 255));
+			tempTimestamp->SetTextColour(ui::Colour(250, 50, 50));
 
 			tempUsername->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 			tempUsername->Appearance.VerticalAlign = ui::Appearance::AlignBottom;
