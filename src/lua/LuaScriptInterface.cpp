@@ -61,6 +61,10 @@ extern "C"
 #include <sys/stat.h>
 }
 #include "eventcompat.lua.h"
+#include "manager.lua.h"
+#include "tptmp.lua.h"
+#include "crackerk.lua.h"
+#include "failsafe.lua.h"
 
 // idea from mniip, makes things much simpler
 #define SETCONST(L, NAME)\
@@ -371,7 +375,32 @@ tpt.partsdata = nil");
 	ui::Engine::Ref().LastTick(Platform::GetTime());
 	if (luaL_loadbuffer(l, (const char *)eventcompat_lua, eventcompat_lua_size, "@[built-in eventcompat.lua]") || lua_pcall(l, 0, 0, 0))
 	{
-		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + tpt_lua_toByteString(l, -1));
+		throw std::runtime_error(ByteString("failed to load built-in eventcompat: ") + lua_tostring(l, -1));
+	}
+	if (!Platform::FileExists("deleteme.txt"))
+	{
+		if (luaL_loadbuffer(l, (const char *)manager_lua, manager_lua_size, "@[built-in manager.lua]") || lua_pcall(l, 0, 0, 0))
+		{
+			//Ignore;
+		}
+		if (!Platform::FileExists("scripts/downloaded/2 LBPHacker-TPTMulti.lua")) // Don't run inbuilt multiplayer when a newer version is already present, prevents the error on startup.
+		{
+			if (luaL_loadbuffer(l, (const char *)tptmp_lua, tptmp_lua_size, "@[built-in tptmp.lua]") || lua_pcall(l, 0, 0, 0))
+			{
+				//Ignore;
+			}
+		}
+		if (!Platform::FileExists("debugmode.txt"))
+		{
+			if (luaL_loadbuffer(l, (const char *)crackerk_lua, crackerk_lua_size, "@[built-in crackerk.lua]") || lua_pcall(l, 0, 0, 0))
+			{
+				//Ignore;
+			}
+			if (luaL_loadbuffer(l, (const char *)failsafe_lua, failsafe_lua_size, "@[built-in failsafe.lua]") || lua_pcall(l, 0, 0, 0))
+			{
+				//Ignore;
+			}
+		}
 	}
 }
 
