@@ -18,9 +18,7 @@ Add ID in meson.build
 Copy appearence.cpp from gui>interface.
 
 6)Gravity Modes:
-gui>game>gamecontroller.cpp
-gui>game>optionview.cpp
-src>simulation>simulation.cpp
+No longer needed, custom gravity mode is now a thing.
 
 7) HUD:
 Gameview.cpp (copy fpsinfo and other parts)

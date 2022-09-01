@@ -824,8 +824,7 @@ void GameController::ResetSpark()
 
 void GameController::SwitchGravity()
 {
-	gameModel->GetSimulation()->gravityMode = (gameModel->GetSimulation()->gravityMode + 1) % 5; // %5 to incklude 2 new modes!
-
+	gameModel->GetSimulation()->gravityMode = (gameModel->GetSimulation()->gravityMode+1)%4;
 	switch (gameModel->GetSimulation()->gravityMode)
 	{
 	case 0:
@@ -838,10 +837,7 @@ void GameController::SwitchGravity()
 		gameModel->SetInfoTip("Gravity: Radial");
 		break;
 	case 3:
-		gameModel->SetInfoTip("Gravity: Inverted");
-		break;
-	case 4:
-		gameModel->SetInfoTip("Gravity: Accelerated");
+		gameModel->SetInfoTip("Gravity: Custom");
 		break;
 	}
 }

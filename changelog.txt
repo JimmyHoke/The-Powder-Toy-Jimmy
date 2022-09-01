@@ -1,3 +1,9 @@
-Changelog for V37.2 (75)
-
-Internal changes made to support the new starcatcher terms of services.
+Changelog for V39.0
+Custom gravity modes from snapshots
+New element: SODM (Sodium).
+Fix EMGT's Colour code.
+Fix Cross-Hair not hiding when using right side modifier keys
+URS now shows the status as it checks for updates and changelogs too.
+Upated tptmp to v2.0.25
+Changes to update mp option.
+New start with last element option in control centre.

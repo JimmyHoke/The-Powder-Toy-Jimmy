@@ -74,6 +74,8 @@ static int update(UPDATE_FUNC_ARGS)
 				break;
 				case PT_WATR: //Got the nutrients, time to drink and grow.
 				case PT_SLTW:
+				case PT_CBNW:
+				case PT_DSTW:
 				{
 					if (parts[i].tmp == 1)
 					{
@@ -87,28 +89,32 @@ static int update(UPDATE_FUNC_ARGS)
 	//Actual life begins here.
 	if (parts[i].tmp == 2 && parts[i].temp >= 275.15f)
 	{
-		parts[i].vy = -0.5;
+		parts[i].vy = -0.4;
 		parts[i].vx = 0;
 		parts[i].life--;
-		if (parts[i].life >= 160)
+		if (parts[i].life >= 200)
 		{
-			sim->create_part(-1, x, y + 1, PT_WOOD);
-			sim->create_part(-1, x + 1, y + 1, PT_WOOD);
+			sim->create_part(-1,x-1,y+1,PT_GOO);
+			sim->create_part(-1,x,y+1,PT_WOOD);
+			sim->create_part(-1,x+1,y+1,PT_GOO);
 		}
-		else if (parts[i].life < 160 && parts[i].life >= 148)
+		else if (parts[i].life < 200 && parts[i].life >= 175)
 		{
+			sim->create_part(-1, x - 1, y + 1, PT_PLNT);
 			sim->create_part(-1, x, y + 1, PT_PLNT);
-			sim->create_part(-1, x+1, y+1, PT_PLNT);
+			sim->create_part(-1, x + 1, y + 1, PT_PLNT);
 		}
-		else if (parts[i].life > 0 && parts[i].life < 148)
+		else if (parts[i].life > 0 && parts[i].life < 175)
 		{
-			sim->create_part(-1, x - 2, y + 2, PT_VINE);
-			sim->create_part(-1, x + 2, y + 2, PT_VINE);
-			sim->create_part(-1, x - 6, y + 2, PT_VINE);
-			sim->create_part(-1, x + 6, y + 2, PT_VINE);
-			sim->create_part(-1, x - 14, y + 2, PT_VINE);
-			sim->create_part(-1, x + 14, y + 2, PT_VINE);
-			sim->create_part(-1, x, y + 2, PT_VINE);
+			sim->create_part(-1, x - 3, y + 3, PT_VINE);
+			sim->create_part(-1, x + 3, y + 3, PT_VINE);
+			sim->create_part(-1, x - 9, y + 3, PT_VINE);
+			sim->create_part(-1, x + 9, y + 3, PT_VINE);
+			sim->create_part(-1, x - 18, y + 3, PT_VINE);
+			sim->create_part(-1, x + 18, y + 3, PT_VINE);
+			sim->create_part(-1, x - 27, y + 3, PT_VINE);
+			sim->create_part(-1, x + 27, y + 3, PT_VINE);
+			sim->create_part(-1, x, y + 3, PT_VINE);
 		}
 		//Played the role, time to say goodbye to simulation.
 		if (parts[i].life == 0)
@@ -122,7 +128,7 @@ static int update(UPDATE_FUNC_ARGS)
 
 static void create(ELEMENT_CREATE_FUNC_ARGS)
 {
-	sim->parts[i].life = RNG::Ref().between(190, 400);
+	sim->parts[i].life = RNG::Ref().between(190, 500);
 	sim->parts[i].tmp2 = RNG::Ref().between(0, 4);
 }
 
@@ -130,14 +136,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 {
 	if (cpart->tmp == 2 && cpart->temp >= 275.15f)// Infinity Seeds.
 	{
-		*colr = 255;
-		*colg = 255;
-		*colb = 255;
-		*firer = 250;
-		*fireg = 250;
-		*fireb = 250;
-		*firea = 100;
-		*pixel_mode |= PMODE_LFLARE;
+		ren->fillcircle((int)(cpart->x+1), (int)(cpart->y),2,2,150,75,0,240);
 	}                            
 	else if (cpart->temp < 275.15f) //Cold seeds.
 	{

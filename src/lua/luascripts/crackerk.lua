@@ -1,10 +1,11 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 37.1
+local crackversion = 40.0
 local passreal2 = "DMND"
-local multiplayerversion = 26
+local multiplayerversion = 29
 local motw = "."
+local updatestatus = 0
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255,"Twilight"
 
@@ -175,6 +176,8 @@ end
 
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 local req2 = http.get("https://jimmyhoke.net/jimmysmodmotd")
+--local req3 = http.get("https://pastebin.com/raw/TjZAwiaT")
+local req3 = http.get("https://jimmyhoke.net/jimmysmodversion")
 local updatedmpval = "0" -- used for showing mp script status in menu
 
 function writefile()
@@ -215,12 +218,141 @@ end
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
+--URS
+local updatever, updatestatus = 1,0
+local updatertext = "Available, click here to download"
+local reqwin
+local crdata = "Getting data please wait.."
+local updatetimer = 0
+local checkos, clickcheck = platform.platform(), 0
+local filename = platform.exeName()
+local errtext = "Checking for updates.."
 
+function updatermod()
+if updatetimer < 1500 then
+updatetimer = updatetimer + 1
+end
+if updatetimer >= 1200 then
+print("Taking too long, try again after restarting...")
+updatetimer = 0
+clickcheck = 0
+end
+if updatetimer < 1200 then
+gfx.fillRect(11,367,updatetimer/6,12,55,255,55,205)
+else
+gfx.fillRect(11,367,197,12,255,5,5,205)
+end
+--Get changelogs
+if crlog:status() == "done"  then
+local crlogdata, crlogcode = crlog:finish()
+if crlogcode == 200  then
+crdata = crlogdata
+end
+end
+--Windows
+if checkos == "WIN64" then
+updatertext = "Downloading the update for Win64"
+if reqwin:status() == "done"  then
+local reqwindata, reqwincode = reqwin:finish()
+if reqwincode == 200  then
+os.rename(filename,"older.exe")
+updatertext = "Done"
+f = io.open(filename, 'wb')
+f:write(reqwindata)
+f:close()
+updatertext = "Update done, click here to restart."
+clickcheck = 1
+event.unregister(event.tick,updatermod)
+else
+updatertext = " Updater error code: "..reqwincode
+event.unregister(event.tick,updatermod)
+end
+end
+end
+if checkos == "LIN64" then
+updatertext = "Downloading the update for LIN64"
+if reqwin:status() == "done"  then
+os.rename(filename,"older")
+local reqwindata2, reqwincode2 = reqwin:finish()
+if reqwincode2 == 200  then
+updatertext = "Done"
+f = io.open(filename, 'wb')
+f:write(reqwindata2)
+f:close()
+updatertext = "Update done, click here to restart."
+clickcheck = 1
+event.unregister(event.tick,updatermod)
+else
+updatertext = "Error code: "..reqwincode2
+event.unregister(event.tick,updatermod)
+end
+end
+end
+end
+
+function clicktomsg2()
+if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
+if clickcheck == 0 then
+clickcheck = 2
+crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/changelog.txt")
+if checkos == "WIN64" then
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
+elseif checkos == "LINN64" then
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
+end
+event.register(event.tick,updatermod)
+elseif clickcheck == 1 then
+platform.restart()
+end
+return false
+end
+if clickcheck == 0 then
+if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
+updatestatus = 1
+event.unregister(event.mousedown, clicktomsg2)
+event.unregister(event.tick, showmotdnot2)
+return false
+end
+end
+end
+
+function showmotdnot2()
+if clickcheck ~= 0 then
+gfx.fillRect(5,132,600,250,10,10,10,200)
+gfx.drawRect(5,132,600,250,255,255,255,255)
+gfx.drawText(140,136,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
+gfx.drawText(12,154,crdata,250,250,250,255)
+end
+if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(10,366,197,14,32,255,210,140)
+else
+gfx.fillRect(10,366,197,14,32,250,210,20)
+end
+
+gfx.drawRect(10,366,197,14,34,250,210,155)
+gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
+if updatertext == "Update done, click here to restart." then
+gfx.fillRect(10,366,197,14,0,250,0,125)
+end
+if clickcheck == 0 then
+if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(208,366,14,14,250,50,50,150)
+else
+gfx.fillRect(208,366,14,14,250,50,50,20)
+end
+gfx.drawRect(208,366,14,14,250,50,50,255)
+gfx.drawText(212,369,"X",250,50,50,255)
+end
+
+end
+--URS end
+local errtimer = 200
 function writefile2()
 timermotd = timermotd + 1
-if timermotd >= 150 then
+if timermotd >= 250 then
 event.unregister(event.tick,writefile2)
 end
+
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
@@ -235,8 +367,40 @@ event.unregister(event.mousedown, clicktomsg)
 event.register(event.mousedown, clicktomsg)
 end
 end
-event.unregister(event.tick,writefile2)
 end
+end
+
+if req3:status() == "done" then
+local ret3, code3 = req3:finish()
+if code3 == 200 then
+errtext = ""
+updatever = ret3
+if tonumber(crackversion) < tonumber(updatever) then
+event.unregister(event.tick,errormesg)
+event.unregister(event.tick,showmotdnot2)
+event.register(event.tick,showmotdnot2)
+event.unregister(event.mousedown, clicktomsg2)
+event.register(event.mousedown, clicktomsg2)
+elseif tonumber(crackversion) >= tonumber(updatever) then
+errtext = "URS: You are running the latest version :)"
+end
+else
+errtext = "URS: Update check failed with error code: "..code3
+end
+end
+end
+
+function errormesg()
+if errtimer > 0 then
+errtimer = errtimer - 1
+end
+if errtext ==  "URS: You are running the latest version :)" or errtext == "Checking for updates.." then
+errtext = ""
+else
+gfx.drawText(10,370,errtext,255,0,0,220)
+end
+if errtimer == 0 then
+event.unregister(event.tick,errormesg)
 end
 end
 
@@ -261,6 +425,7 @@ end
 
 upmp:action(function(sender)
 close()
+req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 timermp = 0
 print("Attempting To Update Multiplayer...")
 fs.makeDirectory("scripts/downloaded")
@@ -1309,7 +1474,7 @@ end)
 
 wiki:action(function(sender)
 local pgno = 1
-local maxpage = 4
+local maxpage = 5
 
 local creditw = Window:new(-15,-15, 626, 422)
 local prevpg = Button:new(238, 400, 40, 15, "Prev.")
@@ -1320,6 +1485,7 @@ local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp pro
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
+local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine gas. Melts at around 97C."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1336,6 +1502,8 @@ elseif pgno == 3 then
 wcontent = wpage3
 elseif pgno == 4 then
 wcontent = wpage4
+elseif pgno == 5 then
+wcontent = wpage5
 end
 gfx.drawRect(10,395,610,1,255,255,55,255)
 gfx.drawText(10,22,wcontent,255,255,255,255)
@@ -1416,6 +1584,7 @@ tpt.el.whel.menu=0
 tpt.el.napm.menu=0
 tpt.el.gsns.menu=0
 tpt.el.emgt.menu=0
+tpt.el.sodm.menu=0
 end
 
 function showmodelem()
@@ -1468,6 +1637,7 @@ tpt.el.whel.menu=1
 tpt.el.napm.menu=1
 tpt.el.gsns.menu=1
 tpt.el.emgt.menu=1
+tpt.el.sodm.menu=1
 end
 local modelemval = "0"
 bg:action(function(sender)
@@ -1499,6 +1669,10 @@ if MANAGER.getsetting("CRK", "brightstate") ~= "1" then
 al = MANAGER.getsetting("CRK", "al")
 else
 al = brightSlider:value()
+end
+--Update text
+if updatestatus == 1 then
+gfx.drawText(10,370,"You are running an outdated version.",190,190,190,180)
 end
 --Filters
 if filterval == 1 then
@@ -1597,7 +1771,7 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  end
  --Cross-hair
-if MANAGER.getsetting("CRK", "fancurs") == "1" then 
+if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() == 0 or event.getmodifiers() == 4096 or event.getmodifiers() == 32768 or event.getmodifiers() == 8192 or event.getmodifiers() == 45056 or event.getmodifiers() == 40960 or event.getmodifiers() == 36864 or event.getmodifiers() == 12288 then 
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
 local crx, cry = 0,0 
@@ -1950,7 +2124,10 @@ end)
 end)
 
 function startupcheck()
+event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")
+os.remove("older.exe")
+os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
 local filecheck =io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
@@ -2153,7 +2330,7 @@ else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
 if updatedmpval == "1" then --Multiplayer script status
-gfx.drawText(484,37,"Updated",105,255,105,255)
+gfx.drawText(484,37,"New",105,255,105,255)
 else
 gfx.drawText(484,37,"Stock",105,255,105,255)
 end
@@ -2206,23 +2383,19 @@ end
 hide:action(function(sender)
 close()
 end)
-local ttime = 0
+
 function keyclicky2(key2)
 if (key2 == 106) and shrtv == "1" then
 close()
-ttime = 2
 end
 end
 
 function keyclicky(key)
-if ttime > 0 then
-ttime = ttime - 1
-end
-if (key == "j") and TPTMP.chatHidden == true and shrtv == "1" and ttime == 0 then
+if (key == 106) and TPTMP.chatHidden == true and shrtv == "1" then
 open()
 end
 end
-tpt.register_keypress(keyclicky) 
+event.register(event.keypress,keyclicky)
 
 toggle:action(function(sender)
 open()
@@ -7033,14 +7206,14 @@ chars_light = {
         }
     }
 }
-
+local crackversionnot = 6
 function notificationscript()
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
 end
 
-if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
+if crackversionnot == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
     return
 end
 
@@ -7384,7 +7557,7 @@ function MaticzplNotifications.DrawNotifications()
         posX = 573
         posY = 435
     end
-	if tpt.version.modid == 6 then --Cracker1000's Mod
+	if crackversionnot == 6 then --Cracker1000's Mod
           getcrackertheme()
     end
     local w,h = gfx.textSize(number)

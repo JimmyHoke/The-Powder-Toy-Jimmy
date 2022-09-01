@@ -2,7 +2,7 @@ local env__ = setmetatable({}, { __index = function(_, key)
 	return rawget(_G, key) or error("__index on env: " .. tostring(key), 2)
 end, __newindex = function(_, key)
 	error("__newindex on env: " .. tostring(key), 2)
-end})
+end })
 local _ENV = env__
 if rawget(_G, "setfenv") then
 	setfenv(1, env__)
@@ -31,7 +31,7 @@ require_preload__["tptmp.client"] = function()
 		loadtime_error = "CELL size is not 4"
 	elseif sim.PMAPBITS >= 13 then -- * Required by how non-element tools are encoded (extended tool IDs, XIDs).
 		loadtime_error = "PMAPBITS is too large"
-	elseif not (tpt.version and tpt.version.major >= 96 and tpt.version.minor >= 1) then
+	elseif not (tpt.version and tpt.version.major >= 96 and tpt.version.minor >= 2) then
 		loadtime_error = "version not supported"
 	elseif not rawget(_G, "bit") then
 		loadtime_error = "no bit API"
@@ -71,6 +71,22 @@ require_preload__["tptmp.client"] = function()
 			return
 		end
 	
+		-- * Prevent c1k's mod from deleting us.
+		if tpt.version.modid == 6 then
+			local protect_from_malware = {
+				[ "scripts/downloaded/2 LBPHacker-TPTMulti.lua" ] = true,
+				[ "scripts/downloaded/219 Maticzpl-Notifications.lua" ] = true,
+			}
+	
+			local real_remove = os.remove
+			function os.remove(path)
+				if path and protect_from_malware[path] then
+					return nil, "malware :/"
+				end
+				return real_remove(path)
+			end
+		end
+	
 		local hooks_enabled = false
 		local window_status = "hidden"
 		local window_hide_mode = "hidden"
@@ -99,7 +115,7 @@ require_preload__["tptmp.client"] = function()
 			if key == "chatHidden" then
 				return window_status ~= "shown"
 			end
-			return rawset(tbl, key)
+			return rawget(tbl, key)
 		end })
 		rawset(_G, "TPTMP", TPTMP)
 	
@@ -1261,16 +1277,20 @@ require_preload__["tptmp.client.client"] = function()
 		local auth_err
 		if conn_status == 4 then -- * Quickauth failed.
 			self.window_:set_subtitle("status", "Authenticating")
-			local token, err, info = get_auth_token(uid, sess, self.host_ .. ":" .. self.port_)
-			if not token then
-				if err == "non200" then
-					auth_err = "authentication failed (status code " .. info .. "); try again later or try restarting TPT"
-				elseif err == "timeout" then
-					auth_err = "authentication failed (timeout: " .. info .. "); try again later or try restarting TPT"
+			local token = ""
+			if uid then
+				local fresh_token, err, info = get_auth_token(uid, sess, self.host_ .. ":" .. self.port_)
+				if fresh_token then
+					token = fresh_token
 				else
-					auth_err = "authentication failed (" .. err .. ": " .. info .. "); try logging out and back in and restarting TPT"
+					if err == "non200" then
+						auth_err = "authentication failed (status code " .. info .. "); try again later or try restarting TPT"
+					elseif err == "timeout" then
+						auth_err = "authentication failed (timeout: " .. info .. "); try again later or try restarting TPT"
+					else
+						auth_err = "authentication failed (" .. err .. ": " .. info .. "); try logging out and back in and restarting TPT"
+					end
 				end
-				token = ""
 			end
 			self:write_str8_(token)
 			self:write_flush_()
@@ -1278,6 +1298,11 @@ require_preload__["tptmp.client.client"] = function()
 			if uid then
 				self.set_qa_func_((conn_status == 1) and (self.host_ .. ":" .. self.port_ .. ":" .. uid .. ":" .. token) or "")
 			end
+		end
+		local downgrade_reason
+		if conn_status == 5 then -- * Downgraded to guest.
+			downgrade_reason = self:read_str8_()
+			conn_status = self:read_bytes_(1)
 		end
 		if conn_status == 1 then
 			self.should_reconnect_func_()
@@ -1290,6 +1315,9 @@ require_preload__["tptmp.client.client"] = function()
 			self.connecting_since_ = nil
 			if tpt.get_name() and auth_err then
 				self.window_:backlog_push_error("Warning: " .. auth_err)
+			end
+			if downgrade_reason then
+				self.window_:backlog_push_error("Warning: " .. downgrade_reason)
 			end
 			self.window_:backlog_push_registered(self.formatted_nick_)
 			self.profile_:set_client(self)
@@ -2039,12 +2067,12 @@ require_preload__["tptmp.client.colours"] = function()
 		inactive = {
 			background = {   0,   0,   0 },
 			text       = { 255, 255, 255 },
-			border     = { 90, 90, 90 },
+			border     = { 200, 200, 200 },
 		},
 		active = {
 			background = { 255, 255, 255 },
 			text       = {   0,   0,   0 },
-			border     = { 90, 90, 90 },
+			border     = { 235, 235, 235 },
 		},
 	}
 	
@@ -2062,7 +2090,7 @@ require_preload__["tptmp.client.config"] = function()
 
 	local common_config = require("tptmp.common.config")
 	
-	local versionstr = "v2.0.22"
+	local versionstr = "v2.0.25"
 	
 	local config = {
 		-- ***********************************************************************
@@ -2242,9 +2270,9 @@ require_preload__["tptmp.client.format"] = function()
 	end
 	
 	local names = {
-		[   "null" ] = "main lobby",
+		[   "null" ] = "lobby",
 		[  "guest" ] = "guest lobby",
-		[ "kicked" ] = "kicked lobby",
+		[ "kicked" ] = "a dark alley",
 	}
 	
 	local function room(unformatted)
@@ -2594,7 +2622,7 @@ require_preload__["tptmp.client.localcmd"] = function()
 			reconnect = nil
 		end
 		local fps_sync = parse_fps_sync(manager.get("fpsSync", "0"))
-		local floating = manager.get("floating", "off") == "on"
+		local floating = manager.get("floating", "on") == "on"
 		local cmd = setmetatable({
 			fps_sync_ = fps_sync,
 			floating_ = floating,
@@ -4294,6 +4322,9 @@ require_preload__["tptmp.client.side_button"] = function()
 	function side_button_i:update_notif_count_()
 		local notif_count = self.notif_count_func_()
 		local notif_important = self.notif_important_func_()
+		if self.window_status_func_() == "floating" and not notif_important then
+			notif_count = 0
+		end
 		if self.notif_count_ ~= notif_count or self.notif_important_ ~= notif_important then
 			self.notif_count_ = notif_count
 			self.notif_important_ = notif_important
@@ -5420,7 +5451,7 @@ require_preload__["tptmp.client.window"] = function()
 		local cli = self.client_func_()
 		if cli then
 			if (" " .. str .. " "):lower():find("[^a-z0-9-_]" .. cli:nick():lower() .. "[^a-z0-9-_]") then
-				return true
+				return "highlight"
 			end
 		end
 	end
@@ -5662,6 +5693,7 @@ require_preload__["tptmp.client.window"] = function()
 			table.insert(self.backlog_text_, {
 				padding = padding,
 				pushed_at = lines[i].msg.pushed_at,
+				highlight = lines[i].msg.important == "highlight",
 				text = lines[i].wrapped,
 				box_width = box_width,
 			})
@@ -5771,7 +5803,10 @@ require_preload__["tptmp.client.window"] = function()
 	end
 	
 	function window_i:handle_tick()
-		if self.backlog_auto_scroll_ then
+		local floating = self.window_status_func_() == "floating"
+		local now = socket.gettime()
+	
+		if self.backlog_auto_scroll_ and not floating then
 			self.backlog_last_seen_ = self.backlog_last_wrapped_
 		else
 			if self.backlog_last_seen_ < self.backlog_unique_ and not self.backlog_enable_marker_ then
@@ -5804,9 +5839,6 @@ require_preload__["tptmp.client.window"] = function()
 			self.dragger_last_y_ = self.dragger_last_y_ + diff_y
 			self:save_window_rect_()
 		end
-	
-		local floating = self.window_status_func_() == "floating"
-		local now = socket.gettime()
 	
 		local border_colour = colours.appearance[self.in_focus and "active" or "inactive"].border
 		local background_colour = colours.appearance.inactive.background
@@ -5846,6 +5878,9 @@ require_preload__["tptmp.client.window"] = function()
 				local alpha = 1
 				if floating then
 					alpha = math.min(1, (fades_at - now) / config.floating_fade_time)
+				end
+				if self.backlog_text_[i].highlight then
+					gfx.fillRect(self.pos_x_ + 1, self.pos_y_ + self.backlog_text_y_ + i * 12 - 14, self.width_ - 2, 12, 255, 50, 50, alpha * 64)
 				end
 				gfx.drawText(self.pos_x_ + 4 + self.backlog_text_[i].padding, self.pos_y_ + self.backlog_text_y_ + i * 12 - 12, self.backlog_text_[i].text, 255, 255, 255, alpha * 255)
 			end
@@ -6029,7 +6064,7 @@ require_preload__["tptmp.client.window"] = function()
 						table.sort(nicks)
 						local index = 1
 						for i = 1, #nicks do
-							if nicks[i] == left_word and nicks[i + 1] then
+							if nicks[i]:lower() == left_word and nicks[i + 1] then
 								index = i + 1
 							end
 						end
@@ -6255,11 +6290,16 @@ require_preload__["tptmp.client.window"] = function()
 		})
 	end
 	
+	local function set_size_clamp(new_width, new_height, new_pos_x, new_pos_y)
+		local width = math.min(math.max(new_width, config.min_width), sim.XRES - 1)
+		local height = math.min(math.max(new_height, config.min_height), sim.YRES - 1)
+		local pos_x = math.min(math.max(1, new_pos_x), sim.XRES - width)
+		local pos_y = math.min(math.max(1, new_pos_y), sim.YRES - height)
+		return width, height, pos_x, pos_y
+	end
+	
 	function window_i:set_size(new_width, new_height)
-		self.width_ = math.min(math.max(new_width, config.min_width), sim.XRES - 1)
-		self.height_ = math.min(math.max(new_height, config.min_height), sim.YRES - 1)
-		self.pos_x_ = math.min(math.max(1, self.pos_x_), sim.XRES - self.width_)
-		self.pos_y_ = math.min(math.max(1, self.pos_y_), sim.YRES - self.height_)
+		self.width_, self.height_, self.pos_x_, self.pos_y_ = set_size_clamp(new_width, new_height, self.pos_x_, self.pos_y_)
 		self:input_update_()
 		self:backlog_update_()
 		self:subtitle_update_()
@@ -6267,7 +6307,7 @@ require_preload__["tptmp.client.window"] = function()
 	end
 	
 	function window_i:subtitle_update_()
-		self.subtitle_text_ = self.subtitle_secondary_ or self.subtitle_
+		self.subtitle_text_ = self.subtitle_secondary_ or self.subtitle_ or ""
 		local max_width = self.width_ - self.title_width_ - 43
 		if gfx.textSize(self.subtitle_text_) > max_width then
 			self.subtitle_text_ = self.subtitle_text_:sub(1, util.binary_search_implicit(1, #self.subtitle_text_, function(idx)
@@ -6442,10 +6482,12 @@ require_preload__["tptmp.client.window"] = function()
 	end
 	
 	local function new(params)
-		local pos_x = tonumber(manager.get("windowLeft", "")) or config.default_x
-		local pos_y = tonumber(manager.get("windowTop", "")) or config.default_y
-		local width = tonumber(manager.get("windowWidth", "")) or config.default_width
-		local height = tonumber(manager.get("windowHeight", "")) or config.default_height
+		local width, height, pos_x, pos_y = set_size_clamp(
+			tonumber(manager.get("windowWidth", "")) or config.default_width,
+			tonumber(manager.get("windowHeight", "")) or config.default_height,
+			tonumber(manager.get("windowLeft", "")) or config.default_x,
+			tonumber(manager.get("windowTop", "")) or config.default_y
+		)
 		local alpha = tonumber(manager.get("windowAlpha", "")) or config.default_alpha
 		local title = "TPT Multiplayer " .. config.versionstr
 		local title_width = gfx.textSize(title)
@@ -6734,7 +6776,7 @@ require_preload__["tptmp.common.config"] = function()
 		-- ***********************************************************************
 	
 		-- * Protocol version, between 0 and 254. 255 is reserved for future use.
-		version = 26,
+		version = 27,
 	
 		-- * Client-to-server message size limit, between 0 and 255, the latter
 		--   limit being imposted by the protocol.
