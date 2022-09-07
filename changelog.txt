@@ -3,7 +3,8 @@ Changelog for V46.0
 *Enable By date button when viewing Favorites
 *New theme called split, inverts half of the user interface colour.
 *Fix invalid stamps names being accepted
-*Fix Focus mode not hiding topbar.
+*Cross-hair is no longer on by default
+*Fix Focus mode not hiding topbar, plus make some adjustments.
 *URS now shows manual download links when updater fails.
 *Adjust the vote count and comment time stamp preview in browser.
 *Crop stamp thumbnails that don't fit even when resized.
