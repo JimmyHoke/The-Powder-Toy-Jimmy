@@ -1,4 +1,6 @@
 V46.0
+Enable By date button when viewing Favorites
+New theme called split, inverts half of the user interface colour.
 Fix invalid stamps names being accepted
 Fix Focus mode not hiding topbar.
 URS now shows manual download links when updater fails.

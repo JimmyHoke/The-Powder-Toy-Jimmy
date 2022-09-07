@@ -1744,34 +1744,54 @@ tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 end
 --Topbarend
-
+if MANAGER.getsetting("CRK","split") == "1" then
+--top
+tpt.drawrect(613,17,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,49,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,81,14,14,255-ar,255-ag,255-ab,al)
+--right
+tpt.drawrect(613,152,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,184,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,216,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,248,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,280,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,312,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,344,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,376,14,14,255-ar,255-ag,255-ab,al)
+--Lua manager
+tpt.drawrect(613,119,14,15,255-ar,255-ag,255-ab,al)
+else
+--top
+tpt.drawrect(613,17,14,14,ar,ag,ab,al)
+tpt.drawrect(613,49,14,14,ar,ag,ab,al)
+tpt.drawrect(613,81,14,14,ar,ag,ab,al)
+--right
+tpt.drawrect(613,152,14,14,ar,ag,ab,al)
+tpt.drawrect(613,184,14,14,ar,ag,ab,al)
+tpt.drawrect(613,216,14,14,ar,ag,ab,al)
+tpt.drawrect(613,248,14,14,ar,ag,ab,al)
+tpt.drawrect(613,280,14,14,ar,ag,ab,al)
+tpt.drawrect(613,312,14,14,ar,ag,ab,al)
+tpt.drawrect(613,344,14,14,ar,ag,ab,al)
+tpt.drawrect(613,376,14,14,ar,ag,ab,al)
+--Lua manager
+tpt.drawrect(613,119,14,15,ar,ag,ab,al)
+end
 --top
 tpt.drawrect(613,1,14,14,ar,ag,ab,al)
-tpt.drawrect(613,17,14,14,ar,ag,ab,al)
 tpt.drawrect(613,33,14,14,ar,ag,ab,al)
-tpt.drawrect(613,49,14,14,ar,ag,ab,al)
 tpt.drawrect(613,65,14,14,ar,ag,ab,al)
-tpt.drawrect(613,81,14,14,ar,ag,ab,al)
 --MP and manager
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
-tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 --right
 tpt.drawrect(613,136,14,14,ar,ag,ab,al)
-tpt.drawrect(613,152,14,14,ar,ag,ab,al)
 tpt.drawrect(613,168,14,14,ar,ag,ab,al)
-tpt.drawrect(613,184,14,14,ar,ag,ab,al)
 tpt.drawrect(613,200,14,14,ar,ag,ab,al)
-tpt.drawrect(613,216,14,14,ar,ag,ab,al)
 tpt.drawrect(613,232,14,14,ar,ag,ab,al)
-tpt.drawrect(613,248,14,14,ar,ag,ab,al)
 tpt.drawrect(613,264,14,14,ar,ag,ab,al)
-tpt.drawrect(613,280,14,14,ar,ag,ab,al)
 tpt.drawrect(613,296,14,14,ar,ag,ab,al)
-tpt.drawrect(613,312,14,14,ar,ag,ab,al)
 tpt.drawrect(613,328,14,14,ar,ag,ab,al)
-tpt.drawrect(613,344,14,14,ar,ag,ab,al)
 tpt.drawrect(613,360,14,14,ar,ag,ab,al)
-tpt.drawrect(613,376,14,14,ar,ag,ab,al)
 tpt.drawrect(613,392,14,14,ar,ag,ab,al)
 --bottom
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
@@ -1842,6 +1862,7 @@ local mp4 = Button:new(170,92,45,25,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,92,45,25,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(270,92,45,25,defaulttheme, "Resets back to default")
 local mp9 = Button:new(320,92,45,25,"Pulse", "RBG makes everything better.")
+local mp10 = Button:new(370,92,45,25,"Split", "Half of the theme is inverted")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
 local bg1 = Button:new(24,300,60,25,"Filters", "Toggle filters")
@@ -1877,7 +1898,6 @@ aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
-
 rclr = rSlider:value() 
 rlb:text(rclr)
 
@@ -1915,11 +1935,19 @@ barstat = "Short"
 elseif MANAGER.getsetting("CRK", "barval") == "2" then
 barstat = "Long"
 end
+
 gfx.drawText(20,23,"Preview:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,78,"Presets:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,133,"Theme Customisation:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,235,"Topbar: "..barstat,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(25,285,"Other Options:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
+
+if MANAGER.getsetting("CRK","savergb") == "1" then
+gfx.drawRect(320,92,47,27,32,216,255,255)
+end
+if MANAGER.getsetting("CRK","split") == "1" then
+gfx.drawRect(370,92,47,27,32,216,255,255)
+end
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
 graphics.drawText(90,342, "ON",105,255,105,255)
@@ -1943,7 +1971,12 @@ gfx.drawText(190,309,"OFF",255,105,105,255)
 end
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
+if MANAGER.getsetting("CRK","split") ~= "1" then
 graphics.fillRect(22, 40,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+else
+graphics.fillRect(22, 40,284,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+graphics.fillRect(307, 40,284,22,255-tonumber(MANAGER.getsetting("CRK", "ar")),255-tonumber(MANAGER.getsetting("CRK", "ag")),255-tonumber(MANAGER.getsetting("CRK", "ab")),MANAGER.getsetting("CRK", "al"))
+end
 graphics.drawRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
 graphics.fillRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 else
@@ -1966,6 +1999,7 @@ newmenuth:addComponent(mp4)
 newmenuth:addComponent(mp7)
 newmenuth:addComponent(mp8)
 newmenuth:addComponent(mp9)
+newmenuth:addComponent(mp10)
 
 newmenuth:addComponent(bg1)
 newmenuth:addComponent(bg7)
@@ -2098,9 +2132,19 @@ MANAGER.savesetting("CRK","ag",dg)
 MANAGER.savesetting("CRK","ab",db)
 MANAGER.savesetting("CRK","al",da)
 MANAGER.savesetting("CRK","savergb",1)
+MANAGER.savesetting("CRK","split","0")
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 aclr = aSlider:value() 
 alb:text(aclr)
+end)
+
+mp10:action(function(sender)
+mpnolag()
+if MANAGER.getsetting("CRK","split") == "0" or MANAGER.getsetting("CRK","split") == nil then
+MANAGER.savesetting("CRK","split","1")
+elseif  MANAGER.getsetting("CRK","split") == "1" then
+MANAGER.savesetting("CRK","split","0")
+end
 end)
 
 bg1:action(function(sender)
@@ -2193,7 +2237,7 @@ end
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 if MANAGER.getsetting("CRK","fancurs") == nil then
-MANAGER.savesetting("CRK", "fancurs","1")
+MANAGER.savesetting("CRK", "fancurs","0")
 end
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()

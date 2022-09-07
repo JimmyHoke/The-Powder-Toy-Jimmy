@@ -99,8 +99,6 @@ jobs:
             toolset_short: mingw
           - platform_short: mac
             machine_short: arm64
-          - toolset_short: gcc
-            platform_short: mac
           - platform_short: and
 #########################################################
 ############## END BLOCK FOR COPYING BELOW ##############
@@ -110,10 +108,6 @@ jobs:
             os: ubuntu-18.04
             prefix: ''
             suffix: ''
-          - platform_short: mac
-            os: macos-11.0
-            prefix: ''
-            suffix: 'mac'
           - platform_short: win
             os: windows-2019
             prefix: ''
