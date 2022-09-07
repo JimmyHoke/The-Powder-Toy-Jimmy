@@ -97,11 +97,7 @@ jobs:
             toolset_short: mingw
           - platform_short: win
             toolset_short: mingw
-          - platform_short: mac
-            machine_short: arm64
           - platform_short: and
-           - toolset_short: gcc
-            platform_short: mac
 #########################################################
 ############## END BLOCK FOR COPYING BELOW ##############
 #########################################################
