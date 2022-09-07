@@ -64,8 +64,6 @@ local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI relate
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 
 local reset = Button:new(10,92,80,25,"Reset", "Reset.")
-local reset1 = Button:new(100,92,45,25,"Soft", "Reset the mod settings.")
-local reset2 = Button:new(148,92,45,25,"Hard", "Reset everything.")
 
 local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
@@ -201,7 +199,7 @@ if updatetimer >= 4000 then
 timeout = 1
 end
 --Graphics while downloading updates..
-gfx.fillRect(rungrap,367,rungrap/2,12,35,255,35,195)
+gfx.fillRect(rungrap,367,rungrap/2,12,34,255,35,175)
 --Get changelogs
 if crlog:status() == "done"  then
 local crlogdata, crlogcode = crlog:finish()
@@ -271,7 +269,7 @@ reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/downlo
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 else
-reqwin = "Notsupported"
+reqwin = "Not supported"
 end
 event.register(event.tick,updatermod)
 elseif clickcheck == 1 then
@@ -288,15 +286,24 @@ event.unregister(event.tick,updatermod)
 return false
 end
 end
+
+if clickcheck ~= 0 then --Manual download
+if timeout == 1 and clickcheck ~= 1 then
+if tpt.mousex > 320 and tpt.mousex < 486 and tpt.mousey > 367 and tpt.mousey < 380 then
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+end
+end
+return false
+end
 end
 
 function showmotdnot2()
 if clickcheck ~= 0 then
 gfx.fillRect(5,92,600,292,10,10,10,200)
 gfx.drawRect(5,92,600,292,255,255,255,255)
-gfx.fillCircle(130,99,4,4,50,50,250,200)
-gfx.drawCircle(130,99,4,4,32,216,250,255)
-gfx.drawText(140,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
+gfx.fillCircle(120,99,4,4,50,50,250,200)
+gfx.drawCircle(120,99,4,4,32,216,250,255)
+gfx.drawText(130,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully. (V."..crackversion.." >> V."..tonumber(updatever)..")",32,216,255,255)
 gfx.drawText(12,124,crdata,250,250,250,255)
 if updatertext == "Update done, click here to restart." then
 gfx.drawRect(10,363,590,1,10,250,10,255)
@@ -304,7 +311,10 @@ else
 gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(220,369,"Taking longer than usual, you may wait or download manually..",255,50,50,250)
+gfx.drawText(12,109,"Error: Taking longer than usual, you may wait or download manually using the button provided below..",255,30,30,255)
+gfx.drawRect(320,366,167,14,32,216,255,220)
+gfx.fillRect(320,366,167,14,32,216,255,40)
+gfx.drawText(325,370,"Click here to download manually",32,216,255,220)
 end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -312,7 +322,6 @@ gfx.fillRect(10,366,197,14,32,255,210,140)
 else
 gfx.fillRect(10,366,197,14,32,250,210,20)
 end
-
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
 if updatertext == "Update done, click here to restart." then
@@ -366,7 +375,7 @@ event.register(event.tick,showmotdnot2)
 event.unregister(event.mousedown, clicktomsg2)
 event.register(event.mousedown, clicktomsg2)
 elseif tonumber(crackversion) >= tonumber(updatever) then
-errtext = "URS: Latest"
+errtext = "URS: Latest Version"
 end
 else
 if code3 == 602 then
@@ -382,7 +391,7 @@ function errormesg()
 if errtimer > 0 then
 errtimer = errtimer - 1
 end
-if errtext ==  "URS: Latest" or errtext == "Checking for updates.." then
+if errtext ==  "URS: Latest Version" or errtext == "Checking for updates.." then
 gfx.drawText(10,370,errtext,105,255,105,200)
 else
 gfx.drawText(10,370,errtext,255,105,105,200)
@@ -1720,7 +1729,7 @@ tpt.drawrect(2,2,607,379,ar,ag,ab,al)
 tpt.drawrect(1,1,609,381,ar,ag,ab,al)
 end
 --Topbar
-if borderval ~= "1" then
+if borderval ~= "1" and uival ~= "0" then
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
@@ -2216,14 +2225,14 @@ end)
 
 function UIhide()
 if focustime < 190 then
-focustime = focustime + 2
+focustime = focustime + 3
 end
 if tpt.mousey > 380 or tpt.mousex > 610 then
 if focustime > 15 then
 focustime = focustime - 7
 end
 end
-tpt.fillrect(-1,382,616,42,0,0,0,focustime)
+tpt.fillrect(-1,382,614,42,0,0,0,focustime)
 tpt.fillrect(612,0,17,424,0,0,0,focustime)
 end
 
@@ -2239,7 +2248,6 @@ elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
 uival = "1"
-barval = "0"
 end
 end)
 

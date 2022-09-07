@@ -1,3 +1,13 @@
+V46.0
+Fix invalid stamps names being accepted
+Fix Focus mode not hiding topbar.
+URS now shows manual download links when updater fails.
+Adjust the vote count and comment time stamp preview in browser.
+Crop stamp thumbnails that don't fit even when resized.
+Make QRTZ slightly change color while growing.
+Drop support for mac os builds (for now)
+Fixes from master branch
+
 v45.0
 Fix upper bits of tmp3 and tmp4 getting saved in saves, causing issues for vanilla users.
 Settings is now Cr-Menu

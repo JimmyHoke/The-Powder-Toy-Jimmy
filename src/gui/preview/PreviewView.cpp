@@ -448,7 +448,7 @@ void PreviewView::NotifySaveChanged(PreviewModel * sender)
 		else
 			userIsAuthor = false;
 		viewsLabel->SetText(String::Build("\bgViews:\bw ", save->Views));
-		voteLabel->SetText(String::Build("\bgVotes: \bt",votesUp,"\bw || \br",votesDown));
+		voteLabel->SetText(String::Build("\bgVotes: \bh",votesUp,"\bw | \br",votesDown));
 
 		saveDescriptionLabel->SetText(save->Description);
 		if(save->Favourite)
@@ -632,7 +632,7 @@ void PreviewView::NotifyCommentsChanged(PreviewModel * sender)
 			tempTimestamp = new ui::Label(ui::Point(31, currentY+3), ui::Point(Size.X-((XRES/2) + 13 + 26), 16), comments->at(i)->formattedTimestamp);
 			tempTimestamp->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
 			tempTimestamp->Appearance.VerticalAlign = ui::Appearance::AlignBottom;
-			tempTimestamp->SetTextColour(ui::Colour(32, 215, 255));
+			tempTimestamp->SetTextColour(ui::Colour(255, 55, 55));
 
 			tempUsername->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 			tempUsername->Appearance.VerticalAlign = ui::Appearance::AlignBottom;
