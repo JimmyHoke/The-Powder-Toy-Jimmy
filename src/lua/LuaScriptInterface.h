@@ -144,6 +144,9 @@ class LuaScriptInterface: public CommandInterface
 	static int elements_free(lua_State * l);
 	static int elements_exists(lua_State * l);
 
+	static void GetDefaultProperties(lua_State * l, int id);
+	static void SetDefaultProperties(lua_State * l, int id, int stackPos);
+
 	//Interface
 	void initInterfaceAPI();
 	static int interface_showWindow(lua_State * l);
@@ -227,5 +230,31 @@ public:
 };
 
 extern LuaScriptInterface *luacon_ci;
+
+void tpt_lua_pushByteString(lua_State *L, const ByteString &str);
+void tpt_lua_pushString(lua_State *L, const String &str);
+
+// TODO: toByteStringView once we have a ByteStringView (or std::string_view, if we get rid of ByteString)
+ByteString tpt_lua_toByteString(lua_State *L, int index);
+String tpt_lua_toString(lua_State *L, int index, bool ignoreError = true);
+
+// TODO: toByteStringView once we have a ByteStringView (or std::string_view, if we get rid of ByteString)
+ByteString tpt_lua_checkByteString(lua_State *L, int index);
+String tpt_lua_checkString(lua_State *L, int index, bool ignoreError = true);
+
+// TODO: toByteStringView once we have a ByteStringView (or std::string_view, if we get rid of ByteString)
+ByteString tpt_lua_optByteString(lua_State *L, int index, ByteString defaultValue = {});
+String tpt_lua_optString(lua_State *L, int index, String defaultValue = {}, bool ignoreError = true);
+
+int tpt_lua_loadstring(lua_State *L, const ByteString &str);
+int tpt_lua_dostring(lua_State *L, const ByteString &str);
+
+bool tpt_lua_equalsString(lua_State *L, int index, const char *data, size_t size);
+template<size_t N>
+// TODO: use std::literals::string_literals::operator""s if we get rid of ByteString
+bool tpt_lua_equalsLiteral(lua_State *L, int index, const char (&lit)[N])
+{
+	return tpt_lua_equalsString(L, index, lit, N - 1U);
+}
 
 #endif /* LUASCRIPTINTERFACE_H_ */

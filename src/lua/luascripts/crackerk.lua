@@ -1,9 +1,8 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 40.0
+local crackversion = 46.0
 local passreal2 = "DMND"
-local multiplayerversion = 29
 local motw = "."
 local updatestatus = 0
 --Default theme for initial launch and resets
@@ -57,7 +56,7 @@ platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=2
 end)
 end
 
-local toggle = Button:new(419,408,50,15, "Settings", "Open Mod Settings.")
+local toggle = Button:new(419,408,50,15, "Cr-Menu", "Open Mod Settings.")
 local newmenu = Window:new(-15,-15, 609, 255)
 
 local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI related stuff.")
@@ -65,8 +64,6 @@ local deletesparkButton =  Button:new(10,28,80,25,"Focus Mode", "shows UI relate
 local FPS = Button:new(10,60,80,25, "Frame limiter", "Turns the frame limiter on/off.")
 
 local reset = Button:new(10,92,80,25,"Reset", "Reset.")
-local reset1 = Button:new(100,92,45,25,"Soft", "Reset the mod settings.")
-local reset2 = Button:new(148,92,45,25,"Hard", "Reset everything.")
 
 local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
@@ -115,7 +112,7 @@ local passbut = Button:new(396,188,80,25, "Password", "Secure password protectio
 local reminder = Button:new(396,220,80,25, "Notifications", "Maticzpl's notification stuff")
 local reminderhelp = Button:new(506,224,15,15, "?", "Help")
 
-local upmp = Button:new(396,28,80,25, "Update MP", "Update multiplayer")
+local upmp = Button:new(396,28,80,25, "Startup Elem.", "Update multiplayer")
 
 local hide= Button:new(578,5,25,25, "X", "Hide.")
 
@@ -178,42 +175,6 @@ local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
 local req2 = http.get("https://jimmyhoke.net/jimmysmodmotd")
 --local req3 = http.get("https://pastebin.com/raw/TjZAwiaT")
 local req3 = http.get("https://jimmyhoke.net/jimmysmodversion")
-local updatedmpval = "0" -- used for showing mp script status in menu
-
-function writefile()
-timermp = timermp + 1
-if timermp >= 450 then
-print("Taking too long to update, try agin after restarting..")
-tpt.unregister_step(writefile)
-end
-if req:status() == "done" then
-local ret, code = req:finish()
-if code == 200 then
-if MANAGER.getsetting("CRK","mpversion") == nil then
-MANAGER.savesetting("CRK","mpversion",multiplayerversion)--Multiplayer internal version
-end
-
-if MANAGER.scriptinfo(2).version > tonumber(MANAGER.getsetting("CRK","mpversion")) then
-f = io.open('scripts/updatedmp.lua', 'w')
-f:write(ret)
-f:close()
-dofile("scripts/updatedmp.lua")
-updatedmpval = "1"
-MANAGER.savesetting("CRK","mpversion",MANAGER.scriptinfo(2).version)
-print("Multiplayer Script has been updated to match latest version.")
-event.unregister(event.tick,theme)
-event.register(event.tick,theme)
-event.unregister(event.tick,writefile)
-else
-tpt.unregister_step(writefile)
-print("You are already running the latest version of tptmp script..")
-end
-else
-print("Error updating multiplayer, make sure you have internet access!")
-event.unregister(event.tick,writefile)
-end
-end
-end
 
 local timermotd = 0
 local posix = 0
@@ -223,25 +184,24 @@ local updatever, updatestatus = 1,0
 local updatertext = "Available, click here to download"
 local reqwin
 local crdata = "Getting data please wait.."
-local updatetimer = 0
+local updatetimer, rungrap = 0,10
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 local errtext = "Checking for updates.."
+local timeout = 0
 
 function updatermod()
-if updatetimer < 1500 then
 updatetimer = updatetimer + 1
+if rungrap < 138 then
+rungrap = rungrap + 1
+elseif rungrap >= 138 then
+rungrap = 10
 end
-if updatetimer >= 1200 then
-print("Taking too long, try again after restarting...")
-updatetimer = 0
-clickcheck = 0
+if updatetimer >= 4000 then
+timeout = 1
 end
-if updatetimer < 1200 then
-gfx.fillRect(11,367,updatetimer/6,12,55,255,55,205)
-else
-gfx.fillRect(11,367,197,12,255,5,5,205)
-end
+--Graphics while downloading updates..
+gfx.fillRect(rungrap,367,rungrap/2,12,34,255,35,175)
 --Get changelogs
 if crlog:status() == "done"  then
 local crlogdata, crlogcode = crlog:finish()
@@ -249,9 +209,17 @@ if crlogcode == 200  then
 crdata = crlogdata
 end
 end
+--Unsupported platforms
+if checkos ~= "WIN64" and checkos ~= "LIN64" and checkos ~= "WIN32" then
+print("Your platform isn't supported by URS. Please download the update manually.")
+print("Download the update from Mod thread")
+event.unregister(event.mousedown, clicktomsg2)
+event.unregister(event.tick, showmotdnot2)
+event.unregister(event.tick,updatermod)
+end
 --Windows
-if checkos == "WIN64" then
-updatertext = "Downloading the update for Win64"
+if checkos == "WIN64" or checkos == "WIN32" then
+updatertext = "Downloading the update for "..checkos
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
@@ -269,6 +237,7 @@ event.unregister(event.tick,updatermod)
 end
 end
 end
+--Linux
 if checkos == "LIN64" then
 updatertext = "Downloading the update for LIN64"
 if reqwin:status() == "done"  then
@@ -297,8 +266,12 @@ clickcheck = 2
 crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/changelog.txt")
 if checkos == "WIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
-elseif checkos == "LINN64" then
+elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
+elseif checkos == "WIN32" then
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
+else
+reqwin = "Not supported"
 end
 event.register(event.tick,updatermod)
 elseif clickcheck == 1 then
@@ -311,28 +284,50 @@ if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 3
 updatestatus = 1
 event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
+event.unregister(event.tick,updatermod)
 return false
 end
+end
+
+if clickcheck ~= 0 then --Manual download
+if timeout == 1 and clickcheck ~= 1 then
+if tpt.mousex > 320 and tpt.mousex < 486 and tpt.mousey > 367 and tpt.mousey < 380 then
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+end
+end
+return false
 end
 end
 
 function showmotdnot2()
 if clickcheck ~= 0 then
-gfx.fillRect(5,132,600,250,10,10,10,200)
-gfx.drawRect(5,132,600,250,255,255,255,255)
-gfx.drawText(140,136,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully.",32,216,250,255)
-gfx.drawText(12,154,crdata,250,250,250,255)
+gfx.fillRect(5,92,600,292,10,10,10,200)
+gfx.drawRect(5,92,600,292,255,255,255,255)
+gfx.fillCircle(120,99,4,4,50,50,250,200)
+gfx.drawCircle(120,99,4,4,32,216,250,255)
+gfx.drawText(130,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully. (V."..crackversion.." >> V."..tonumber(updatever)..")",32,216,255,255)
+gfx.drawText(12,124,crdata,250,250,250,255)
+if updatertext == "Update done, click here to restart." then
+gfx.drawRect(10,363,590,1,10,250,10,255)
+else
+gfx.drawRect(10,363,590,1,32,216,255,255)
+end
+if timeout == 1 and clickcheck ~= 1 then
+gfx.drawText(12,109,"Error: Taking longer than usual, you may wait or download manually using the button provided below..",255,30,30,255)
+gfx.drawRect(320,366,167,14,32,216,255,220)
+gfx.fillRect(320,366,167,14,32,216,255,40)
+gfx.drawText(325,370,"Click here to download manually",32,216,255,220)
+end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(10,366,197,14,32,255,210,140)
 else
 gfx.fillRect(10,366,197,14,32,250,210,20)
 end
-
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
 if updatertext == "Update done, click here to restart." then
-gfx.fillRect(10,366,197,14,0,250,0,125)
+gfx.fillRect(10,366,197,14,0,250,0,100)
 end
 if clickcheck == 0 then
 if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -382,10 +377,14 @@ event.register(event.tick,showmotdnot2)
 event.unregister(event.mousedown, clicktomsg2)
 event.register(event.mousedown, clicktomsg2)
 elseif tonumber(crackversion) >= tonumber(updatever) then
-errtext = "URS: You are running the latest version :)"
+errtext = "URS: Latest Version"
 end
 else
-errtext = "URS: Update check failed with error code: "..code3
+if code3 == 602 then
+errtext ="Offline"
+else
+errtext = "URS error code: "..code3
+end
 end
 end
 end
@@ -394,10 +393,10 @@ function errormesg()
 if errtimer > 0 then
 errtimer = errtimer - 1
 end
-if errtext ==  "URS: You are running the latest version :)" or errtext == "Checking for updates.." then
-errtext = ""
+if errtext ==  "URS: Latest Version" or errtext == "Checking for updates.." then
+errtext = errtext
 else
-gfx.drawText(10,370,errtext,255,0,0,220)
+gfx.drawText(10,370,errtext,255,105,105,200)
 end
 if errtimer == 0 then
 event.unregister(event.tick,errormesg)
@@ -423,14 +422,61 @@ tpt.drawrect(418,408,51,14,32,250,210,255)
 gfx.drawText(395,370,"You have an unread message",32,250,210,255)
 end
 
+local function strtelemgraph()
+gfx.fillRect(135,347,430,35,10,10,10,255)
+gfx.drawRect(135,347,430,35,255,255,255,255)
+gfx.drawText(140,350,"Please select the primary and secondary startup elements of your choice and click save.",255,255,255,255)
+gfx.drawRect(255,362,30,15,225,225,225,255)
+gfx.drawRect(305,362,64,15,225,225,225,255)
+
+if tpt.mousex >255 and tpt.mousex < 285 and tpt.mousey > 362 and tpt.mousey < 377 then
+tpt.fillrect(255,362,29,14,50,255,50,180)
+end
+
+if tpt.mousex >304 and tpt.mousex < 341 and tpt.mousey > 362 and tpt.mousey < 377 then
+tpt.fillrect(305,362,37,14,200,200,200,180)
+end
+
+if tpt.mousex >341 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
+tpt.fillrect(340,362,28,14,250,30,30,180)
+end
+
+gfx.drawText(260,366,"Save",225,225,225,255)
+gfx.drawText(310,366,"Cancel | Off",225,225,225,255)
+end
+
+local function strtelem()
+if tpt.mousex >255 and tpt.mousex < 285 and tpt.mousey > 362 and tpt.mousey < 377 then
+MANAGER.savesetting("CRK","primaryele",tpt.selectedl)
+MANAGER.savesetting("CRK","secondaryele",tpt.selectedr)
+MANAGER.savesetting("CRK","loadelem","1")
+event.unregister(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+print("Startup elements configured succesfully. Primary: "..MANAGER.getsetting("CRK","primaryele").." and Secondary: "..MANAGER.getsetting("CRK","secondaryele"))
+return false
+end
+
+if tpt.mousex >304 and tpt.mousex < 341 and tpt.mousey > 362 and tpt.mousey < 377 then
+event.unregister(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+print("Startup elements configuration cancelled.")
+return false
+end
+
+if tpt.mousex >341 and tpt.mousex < 368 and tpt.mousey > 362 and tpt.mousey < 377 then
+event.unregister(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+MANAGER.savesetting("CRK","loadelem","0")
+print("Startup elements configuration turned off")
+return false
+end
+end
 upmp:action(function(sender)
 close()
-req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
-timermp = 0
-print("Attempting To Update Multiplayer...")
-fs.makeDirectory("scripts/downloaded")
-event.unregister(event.tick,writefile)
-event.register(event.tick,writefile)
+event.unregister(event.tick,strtelemgraph)
+event.register(event.tick,strtelemgraph)
+event.unregister(event.mousedown,strtelem)
+event.register(event.mousedown,strtelem)
 end)
 
 passbut:action(function(sender)
@@ -1386,12 +1432,12 @@ end)
 
 bug1:action(function(sender)
 clearsb()
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=25749")
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
 end)
 
 bug2:action(function(sender)
 close()
-sim.loadSave(2829160,0) 
+sim.loadSave(2596812,0) 
 end)
 
 function hideno()
@@ -1485,7 +1531,7 @@ local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp pro
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
-local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine gas. Melts at around 97C."
+local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR, generating H2 and loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine when above 50C. Melts at 97C. Glows under vaccum."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1685,7 +1731,7 @@ tpt.drawrect(2,2,607,379,ar,ag,ab,al)
 tpt.drawrect(1,1,609,381,ar,ag,ab,al)
 end
 --Topbar
-if borderval ~= "1" then
+if borderval ~= "1" and uival ~= "0" then
 barval = MANAGER.getsetting("CRK","barval")
 if barval == nil then
 tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
@@ -1700,34 +1746,54 @@ tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 end
 --Topbarend
-
+if MANAGER.getsetting("CRK","split") == "1" then
+--top
+tpt.drawrect(613,17,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,49,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,81,14,14,255-ar,255-ag,255-ab,al)
+--right
+tpt.drawrect(613,152,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,184,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,216,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,248,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,280,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,312,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,344,14,14,255-ar,255-ag,255-ab,al)
+tpt.drawrect(613,376,14,14,255-ar,255-ag,255-ab,al)
+--Lua manager
+tpt.drawrect(613,119,14,15,255-ar,255-ag,255-ab,al)
+else
+--top
+tpt.drawrect(613,17,14,14,ar,ag,ab,al)
+tpt.drawrect(613,49,14,14,ar,ag,ab,al)
+tpt.drawrect(613,81,14,14,ar,ag,ab,al)
+--right
+tpt.drawrect(613,152,14,14,ar,ag,ab,al)
+tpt.drawrect(613,184,14,14,ar,ag,ab,al)
+tpt.drawrect(613,216,14,14,ar,ag,ab,al)
+tpt.drawrect(613,248,14,14,ar,ag,ab,al)
+tpt.drawrect(613,280,14,14,ar,ag,ab,al)
+tpt.drawrect(613,312,14,14,ar,ag,ab,al)
+tpt.drawrect(613,344,14,14,ar,ag,ab,al)
+tpt.drawrect(613,376,14,14,ar,ag,ab,al)
+--Lua manager
+tpt.drawrect(613,119,14,15,ar,ag,ab,al)
+end
 --top
 tpt.drawrect(613,1,14,14,ar,ag,ab,al)
-tpt.drawrect(613,17,14,14,ar,ag,ab,al)
 tpt.drawrect(613,33,14,14,ar,ag,ab,al)
-tpt.drawrect(613,49,14,14,ar,ag,ab,al)
 tpt.drawrect(613,65,14,14,ar,ag,ab,al)
-tpt.drawrect(613,81,14,14,ar,ag,ab,al)
 --MP and manager
 tpt.drawrect(613,103,14,14,ar,ag,ab,al)
-tpt.drawrect(613,119,14,15,ar,ag,ab,al)
 --right
 tpt.drawrect(613,136,14,14,ar,ag,ab,al)
-tpt.drawrect(613,152,14,14,ar,ag,ab,al)
 tpt.drawrect(613,168,14,14,ar,ag,ab,al)
-tpt.drawrect(613,184,14,14,ar,ag,ab,al)
 tpt.drawrect(613,200,14,14,ar,ag,ab,al)
-tpt.drawrect(613,216,14,14,ar,ag,ab,al)
 tpt.drawrect(613,232,14,14,ar,ag,ab,al)
-tpt.drawrect(613,248,14,14,ar,ag,ab,al)
 tpt.drawrect(613,264,14,14,ar,ag,ab,al)
-tpt.drawrect(613,280,14,14,ar,ag,ab,al)
 tpt.drawrect(613,296,14,14,ar,ag,ab,al)
-tpt.drawrect(613,312,14,14,ar,ag,ab,al)
 tpt.drawrect(613,328,14,14,ar,ag,ab,al)
-tpt.drawrect(613,344,14,14,ar,ag,ab,al)
 tpt.drawrect(613,360,14,14,ar,ag,ab,al)
-tpt.drawrect(613,376,14,14,ar,ag,ab,al)
 tpt.drawrect(613,392,14,14,ar,ag,ab,al)
 --bottom
 tpt.drawrect(1,408,626,14,ar,ag,ab,al)
@@ -1771,7 +1837,7 @@ if MANAGER.getsetting("CRK", "savergb") == "1" then
  end
  end
  --Cross-hair
-if MANAGER.getsetting("CRK", "fancurs") == "1" and event.getmodifiers() == 0 or event.getmodifiers() == 4096 or event.getmodifiers() == 32768 or event.getmodifiers() == 8192 or event.getmodifiers() == 45056 or event.getmodifiers() == 40960 or event.getmodifiers() == 36864 or event.getmodifiers() == 12288 then 
+if MANAGER.getsetting("CRK", "fancurs") == "1" and (event.getmodifiers() == 0 or event.getmodifiers() == 4096 or event.getmodifiers() == 32768 or event.getmodifiers() == 8192 or event.getmodifiers() == 45056 or event.getmodifiers() == 40960 or event.getmodifiers() == 36864 or event.getmodifiers() == 12288) then 
 graphics.drawLine(tpt.mousex-6,tpt.mousey,tpt.mousex+6,tpt.mousey,ar,ag,ab,al+50)
 graphics.drawLine(tpt.mousex,tpt.mousey-6,tpt.mousex,tpt.mousey+6,ar,ag,ab,al+50)
 local crx, cry = 0,0 
@@ -1798,6 +1864,7 @@ local mp4 = Button:new(170,92,45,25,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,92,45,25,"Vanilla", "Change the theme back to Plain white")
 local mp8 = Button:new(270,92,45,25,defaulttheme, "Resets back to default")
 local mp9 = Button:new(320,92,45,25,"Pulse", "RBG makes everything better.")
+local mp10 = Button:new(370,92,45,25,"Split", "Half of the theme is inverted")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
 local bg1 = Button:new(24,300,60,25,"Filters", "Toggle filters")
@@ -1833,7 +1900,6 @@ aSlider:value(MANAGER.getsetting("CRK", "al"))
 rSlider:value(MANAGER.getsetting("CRK", "ar"))
 gSlider:value(MANAGER.getsetting("CRK", "ag"))
 bSlider:value(MANAGER.getsetting("CRK", "ab"))
-
 rclr = rSlider:value() 
 rlb:text(rclr)
 
@@ -1871,11 +1937,19 @@ barstat = "Short"
 elseif MANAGER.getsetting("CRK", "barval") == "2" then
 barstat = "Long"
 end
+
 gfx.drawText(20,23,"Preview:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,78,"Presets:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,133,"Theme Customisation:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(24,235,"Topbar: "..barstat,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 gfx.drawText(25,285,"Other Options:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
+
+if MANAGER.getsetting("CRK","savergb") == "1" then
+gfx.drawRect(320,92,47,27,32,216,255,255)
+end
+if MANAGER.getsetting("CRK","split") == "1" then
+gfx.drawRect(370,92,47,27,32,216,255,255)
+end
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
 graphics.drawText(90,342, "ON",105,255,105,255)
@@ -1899,7 +1973,12 @@ gfx.drawText(190,309,"OFF",255,105,105,255)
 end
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
+if MANAGER.getsetting("CRK","split") ~= "1" then
 graphics.fillRect(22, 40,569,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+else
+graphics.fillRect(22, 40,284,22,MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),MANAGER.getsetting("CRK", "al"))
+graphics.fillRect(307, 40,284,22,255-tonumber(MANAGER.getsetting("CRK", "ar")),255-tonumber(MANAGER.getsetting("CRK", "ag")),255-tonumber(MANAGER.getsetting("CRK", "ab")),MANAGER.getsetting("CRK", "al"))
+end
 graphics.drawRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
 graphics.fillRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 else
@@ -1922,6 +2001,7 @@ newmenuth:addComponent(mp4)
 newmenuth:addComponent(mp7)
 newmenuth:addComponent(mp8)
 newmenuth:addComponent(mp9)
+newmenuth:addComponent(mp10)
 
 newmenuth:addComponent(bg1)
 newmenuth:addComponent(bg7)
@@ -2054,9 +2134,19 @@ MANAGER.savesetting("CRK","ag",dg)
 MANAGER.savesetting("CRK","ab",db)
 MANAGER.savesetting("CRK","al",da)
 MANAGER.savesetting("CRK","savergb",1)
+MANAGER.savesetting("CRK","split","0")
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 aclr = aSlider:value() 
 alb:text(aclr)
+end)
+
+mp10:action(function(sender)
+mpnolag()
+if MANAGER.getsetting("CRK","split") == "0" or MANAGER.getsetting("CRK","split") == nil then
+MANAGER.savesetting("CRK","split","1")
+elseif  MANAGER.getsetting("CRK","split") == "1" then
+MANAGER.savesetting("CRK","split","0")
+end
 end)
 
 bg1:action(function(sender)
@@ -2130,20 +2220,14 @@ os.remove("older.exe")
 os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
-local filecheck =io.open("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
-if filecheck ~= nil then 
-io.close(filecheck)
-os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
-print("External TPTMP script detected and deleted, please use the UpdateMP button instead.")
+
+if MANAGER.getsetting("CRK","loadelem") == nil then
+MANAGER.savesetting("CRK","loadelem","0")
 end
-os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
-local faz =io.open("scripts/updatedmp.lua","r")
-if faz ~= nil then 
-io.close(faz)
-updatedmpval = "1"
-dofile("scripts/updatedmp.lua")
-else
-updatedmpval = "0"
+
+if MANAGER.getsetting("CRK","loadelem") == "1" then
+tpt.selectedl = MANAGER.getsetting("CRK","primaryele")
+tpt.selectedr = MANAGER.getsetting("CRK","secondaryele")
 end
 
 if MANAGER.getsetting("CRK","al") == nil then
@@ -2155,7 +2239,7 @@ end
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
 if MANAGER.getsetting("CRK","fancurs") == nil then
-MANAGER.savesetting("CRK", "fancurs","1")
+MANAGER.savesetting("CRK", "fancurs","0")
 end
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
@@ -2187,14 +2271,14 @@ end)
 
 function UIhide()
 if focustime < 190 then
-focustime = focustime + 2
+focustime = focustime + 3
 end
 if tpt.mousey > 380 or tpt.mousex > 610 then
 if focustime > 15 then
 focustime = focustime - 7
 end
 end
-tpt.fillrect(-1,382,616,42,0,0,0,focustime)
+tpt.fillrect(-1,382,614,42,0,0,0,focustime)
 tpt.fillrect(612,0,17,424,0,0,0,focustime)
 end
 
@@ -2210,7 +2294,6 @@ elseif uival == "0" then
 tpt.hud(1)
 event.unregister(event.tick,UIhide)
 uival = "1"
-barval = "0"
 end
 end)
 
@@ -2226,7 +2309,6 @@ end
 end)
 
 reset:action(function(sender)
-os.remove("scripts/updatedmp.lua")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
@@ -2329,11 +2411,13 @@ gfx.drawText(484,229,"ON",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
-if updatedmpval == "1" then --Multiplayer script status
-gfx.drawText(484,37,"New",105,255,105,255)
+
+if MANAGER.getsetting("CRK","loadelem") == "1" then --Startup elements.
+gfx.drawText(484,37,"Configured",105,255,105,255)
 else
-gfx.drawText(484,37,"Stock",105,255,105,255)
+gfx.drawText(484,37,"OFF",255,105,105,255)
 end
+--Reserved
 if invtoolv == "0" then --Invert-tool
 gfx.drawText(484,101,"ON",105,255,105,255)
 else
@@ -7206,14 +7290,14 @@ chars_light = {
         }
     }
 }
-local crackversionnot = 6
+
 function notificationscript()
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
 end
 
-if crackversionnot == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
+if tpt.version.modid == 6 and MANAGER.getsetting("CRK","notifval") == "0" then -- Disable when notification settings turned off in Cracker1000's Mod
     return
 end
 
@@ -7557,7 +7641,7 @@ function MaticzplNotifications.DrawNotifications()
         posX = 573
         posY = 435
     end
-	if crackversionnot == 6 then --Cracker1000's Mod
+	if tpt.version.modid == 6 then --Cracker1000's Mod
           getcrackertheme()
     end
     local w,h = gfx.textSize(number)

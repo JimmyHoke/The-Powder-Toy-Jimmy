@@ -91,9 +91,9 @@ PreviewView::PreviewView():
 	AddComponent(saveNameLabel);
 
 	if(showAvatars)
-		saveDescriptionLabel = new ui::Label(ui::Point(5, (YRES/2)+4+15+21), ui::Point((XRES/2)-10, Size.Y-((YRES/2)+4+15+17)-25), "");
+		saveDescriptionLabel = new ui::Label(ui::Point(5, (YRES/2)+4+15+25), ui::Point((XRES/2)-10, Size.Y-((YRES/2)+4+15+17)-25), "");
 	else
-		saveDescriptionLabel = new ui::Label(ui::Point(5, (YRES/2)+4+15+19), ui::Point((XRES/2)-10, Size.Y-((YRES/2)+4+15+17)-23), "");
+		saveDescriptionLabel = new ui::Label(ui::Point(5, (YRES/2)+4+15+23), ui::Point((XRES/2)-10, Size.Y-((YRES/2)+4+15+17)-23), "");
 	saveDescriptionLabel->SetMultiline(true);
 	saveDescriptionLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 	saveDescriptionLabel->Appearance.VerticalAlign = ui::Appearance::AlignTop;
@@ -124,6 +124,12 @@ PreviewView::PreviewView():
 	viewsLabel->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
 	viewsLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
 	AddComponent(viewsLabel);
+
+	voteLabel = new ui::Label(ui::Point((XRES/2)-82, 223), ui::Point(80, 16),"");
+	voteLabel->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
+	voteLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
+	voteLabel->SetTextColour(ui::Colour(0, 255, 0));
+	AddComponent(voteLabel);
 
 	pageInfo = new ui::Label(ui::Point((XRES/2) + 85, Size.Y+1), ui::Point(70, 16), "Page 1 of 1");
 	pageInfo->Appearance.HorizontalAlign = ui::Appearance::AlignCentre;
@@ -441,8 +447,9 @@ void PreviewView::NotifySaveChanged(PreviewModel * sender)
 			userIsAuthor = true;
 		else
 			userIsAuthor = false;
-		
-		viewsLabel->SetText(String::Build("\bgViews:\bw ", save->Views, "\n\bgVotes:\bh ",save->votesUp,"\bw/\br",save->votesDown));
+		viewsLabel->SetText(String::Build("\bgViews:\bw ", save->Views));
+		voteLabel->SetText(String::Build("\bgVotes: \bh",votesUp,"\bw | \br",votesDown));
+
 		saveDescriptionLabel->SetText(save->Description);
 		if(save->Favourite)
 		{
@@ -597,13 +604,14 @@ void PreviewView::NotifyCommentsChanged(PreviewModel * sender)
 		int currentY = 0;//-yOffset;
 		ui::Label * tempUsername;
 		ui::Label * tempComment;
+		ui::Label * tempTimestamp;
 		ui::AvatarButton * tempAvatar;
 		for (size_t i = 0; i < comments->size(); i++)
 		{
 			if (showAvatars)
 			{
 				tempAvatar = new ui::AvatarButton(ui::Point(2, currentY+7), ui::Point(26, 26), comments->at(i)->authorName);
-				tempAvatar->SetActionCallback({ [tempAvatar] {
+				tempAvatar->SetActionCallback({ [this, tempAvatar] {
 					if (tempAvatar->GetUsername().size() > 0)
 					{
 						new ProfileActivity(tempAvatar->GetUsername());
@@ -614,9 +622,18 @@ void PreviewView::NotifyCommentsChanged(PreviewModel * sender)
 			}
 
 			if (showAvatars)
-				tempUsername = new ui::Label(ui::Point(31, currentY+3), ui::Point(Size.X-((XRES/2) + 13 + 26), 16), comments->at(i)->authorNameFormatted.FromUtf8());
+				tempUsername = new ui::Label(ui::Point(31, currentY+3), ui::Point(Size.X-((XRES/2) + 13 + 26), 16),
+					comments->at(i)->authorNameFormatted.size() > 18 ?
+						String::Build(comments->at(i)->authorNameFormatted.FromUtf8().Substr(0, 16), "..") :
+						comments->at(i)->authorNameFormatted.FromUtf8());
 			else
 				tempUsername = new ui::Label(ui::Point(5, currentY+3), ui::Point(Size.X-((XRES/2) + 13), 16), comments->at(i)->authorNameFormatted.FromUtf8());
+			
+			tempTimestamp = new ui::Label(ui::Point(31, currentY+3), ui::Point(Size.X-((XRES/2) + 13 + 26), 16), comments->at(i)->formattedTimestamp);
+			tempTimestamp->Appearance.HorizontalAlign = ui::Appearance::AlignRight;
+			tempTimestamp->Appearance.VerticalAlign = ui::Appearance::AlignBottom;
+			tempTimestamp->SetTextColour(ui::Colour(255, 55, 55));
+
 			tempUsername->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
 			tempUsername->Appearance.VerticalAlign = ui::Appearance::AlignBottom;
 			if (Client::Ref().GetAuthUser().UserID && Client::Ref().GetAuthUser().Username == comments->at(i)->authorName)
@@ -626,7 +643,9 @@ void PreviewView::NotifyCommentsChanged(PreviewModel * sender)
 			currentY += 16;
 
 			commentComponents.push_back(tempUsername);
+			commentComponents.push_back(tempTimestamp);
 			commentsPanel->AddChild(tempUsername);
+			commentsPanel->AddChild(tempTimestamp);
 
 			if (showAvatars)
 				tempComment = new ui::Label(ui::Point(31, currentY+5), ui::Point(Size.X-((XRES/2) + 13 + 26), -1), comments->at(i)->comment);

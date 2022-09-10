@@ -1,6 +1,7 @@
 #include "PreviewModel.h"
 
 #include <cmath>
+#include <ctime>
 #include <iostream>
 
 #include "Format.h"
@@ -278,7 +279,27 @@ bool PreviewModel::ParseComments(ByteString &commentsResponse)
 			if (formattedUsername == "jacobot")
 				formattedUsername = "\bt" + formattedUsername;
 			String comment = ByteString(commentsArray[j]["Text"].asString()).FromUtf8();
-			saveComments->push_back(new SaveComment(userID, username, formattedUsername, comment));
+
+			time_t unix = ByteString(commentsArray[j]["Timestamp"].asString()).ToNumber<time_t>();
+			time_t nowt = std::time(nullptr);
+			auto now 	      = *((struct tm*)std::localtime(&nowt));
+			auto comment_time = *((struct tm *)std::localtime(&unix));
+			char buffer[256];
+
+			// Same year:
+			if (comment_time.tm_year == now.tm_year) {
+				if (comment_time.tm_mon == now.tm_mon && comment_time.tm_mday == now.tm_mday)  // Same day
+					std::strftime(buffer, sizeof(buffer), "%I:%M %p", &comment_time);
+				else  // Month + date
+					std::strftime(buffer, sizeof(buffer), "%a %b %d", &comment_time);
+			}
+			// Display full date
+			else {
+				std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", &comment_time); // %b %d %Y
+			}
+
+			String formattedTimestamp = ByteString(buffer).FromUtf8();
+			saveComments->push_back(new SaveComment(userID, username, formattedUsername, comment, formattedTimestamp));
 		}
 		return true;
 	}

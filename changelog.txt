@@ -1,9 +1,13 @@
-Changelog for V39.0
-Custom gravity modes from snapshots
-New element: SODM (Sodium).
-Fix EMGT's Colour code.
-Fix Cross-Hair not hiding when using right side modifier keys
-URS now shows the status as it checks for updates and changelogs too.
-Upated tptmp to v2.0.25
-Changes to update mp option.
-New start with last element option in control centre.
+Changelog for V46.0
+
+*Enable By date button when viewing Favorites
+*New theme called split, inverts half of the user interface colour.
+*Fix invalid stamps names being accepted
+*Cross-hair is no longer on by default
+*Fix Focus mode not hiding topbar, plus make some adjustments.
+*URS now shows manual download links when updater fails.
+*Adjust the vote count and comment time stamp preview in browser.
+*Crop stamp thumbnails that don't fit even when resized.
+*Make QRTZ slightly change color while growing.
+*Drop support for mac os builds (for now)
+*Fixes from master branch
