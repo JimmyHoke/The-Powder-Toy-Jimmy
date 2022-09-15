@@ -41,24 +41,24 @@ with open('.github/mod_id.txt') as f:
 build_matrix = []
 publish_matrix = []
 for bsh_host_arch, bsh_host_platform, bsh_host_libc, bsh_static_dynamic, bsh_build_platform,        runs_on, package_suffix, publish, artifact, debug_suffix,         starcatcher_name in [
-	(    'x86_64',           'linux',         'gnu',           'static',            'linux', 'ubuntu-18.04',             '',    True,     True,       '.dbg',  'x86_64-lin-gcc-static' ),
-	(    'x86_64',           'linux',         'gnu',          'dynamic',            'linux', 'ubuntu-18.04',             '',   False,    False,         None,                       '' ),
+#	(    'x86_64',           'linux',         'gnu',           'static',            'linux', 'ubuntu-18.04',             '',    True,     True,       '.dbg',  'x86_64-lin-gcc-static' ),
+#	(    'x86_64',           'linux',         'gnu',          'dynamic',            'linux', 'ubuntu-18.04',             '',   False,    False,         None,                       '' ),
 #	(    'x86_64',         'windows',       'mingw',           'static',            'linux', 'ubuntu-20.04',             '',   False,     True,       '.dbg',                       '' ), # ubuntu-20.04 doesn't have windows TLS headers somehow and I haven't yet figured out how to get them
-	(    'x86_64',         'windows',       'mingw',          'dynamic',            'linux', 'ubuntu-20.04',             '',   False,    False,         None,                       '' ),
-	(    'x86_64',         'windows',       'mingw',           'static',          'windows', 'windows-2019',         '.exe',   False,     True,       '.dbg',                       '' ),
-	(    'x86_64',         'windows',       'mingw',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
+#	(    'x86_64',         'windows',       'mingw',          'dynamic',            'linux', 'ubuntu-20.04',             '',   False,    False,         None,                       '' ),
+#	(    'x86_64',         'windows',       'mingw',           'static',          'windows', 'windows-2019',         '.exe',   False,     True,       '.dbg',                       '' ),
+#	(    'x86_64',         'windows',       'mingw',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
 	(    'x86_64',         'windows',        'msvc',           'static',          'windows', 'windows-2019',         '.exe',    True,     True,       '.pdb', 'x86_64-win-msvc-static' ),
-	(    'x86_64',         'windows',        'msvc',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
+#	(    'x86_64',         'windows',        'msvc',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
 	(       'x86',         'windows',        'msvc',           'static',          'windows', 'windows-2019',         '.exe',    True,     True,       '.pdb',   'i686-win-msvc-static' ),
-	(       'x86',         'windows',        'msvc',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
-	(    'x86_64',          'darwin',       'macos',           'static',           'darwin',   'macos-11.0',             '',    True,     True,         None,  'x86_64-mac-gcc-static' ), # I have no idea how to separate debug info on macos
-	(    'x86_64',          'darwin',       'macos',          'dynamic',           'darwin',   'macos-11.0',             '',   False,    False,         None,                       '' ),
-	(   'aarch64',          'darwin',       'macos',           'static',           'darwin',   'macos-11.0',             '',    True,     True,         None,   'arm64-mac-gcc-static' ),
+#	(       'x86',         'windows',        'msvc',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
+#	(    'x86_64',          'darwin',       'macos',           'static',           'darwin',   'macos-11.0',             '',    True,     True,         None,  'x86_64-mac-gcc-static' ), # I have no idea how to separate debug info on macos
+#	(    'x86_64',          'darwin',       'macos',          'dynamic',           'darwin',   'macos-11.0',             '',   False,    False,         None,                       '' ),
+#	(   'aarch64',          'darwin',       'macos',           'static',           'darwin',   'macos-11.0',             '',    True,     True,         None,   'arm64-mac-gcc-static' ),
 #	(   'aarch64',          'darwin',       'macos',          'dynamic',           'darwin',   'macos-11.0',             '',   False,    False,         None,                       '' ), # macos-11.0 is x86_64 and I haven't yet figured out how to get homebrew to install aarch64 libs on x86_64
-	(       'x86',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',    'i686-and-gcc-static' ),
-	(    'x86_64',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',  'x86_64-and-gcc-static' ),
-	(       'arm',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',     'arm-and-gcc-static' ),
-	(   'aarch64',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',   'arm64-and-gcc-static' ),
+#	(       'x86',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',    'i686-and-gcc-static' ),
+#	(    'x86_64',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',  'x86_64-and-gcc-static' ),
+#	(       'arm',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',     'arm-and-gcc-static' ),
+#	(   'aarch64',         'android',      'bionic',           'static',            'linux', 'ubuntu-18.04',         '.apk',    True,     True,       '.dbg',   'arm64-and-gcc-static' ),
 ]:
 	separate_debug = True
 	if not debug_suffix:
