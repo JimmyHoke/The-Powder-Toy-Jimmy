@@ -41,15 +41,15 @@ with open('.github/mod_id.txt') as f:
 build_matrix = []
 publish_matrix = []
 for bsh_host_arch, bsh_host_platform, bsh_host_libc, bsh_static_dynamic, bsh_build_platform,        runs_on, package_suffix, publish, artifact, debug_suffix,       starcatcher_suffix in [
-	(    'x86_64',           'linux',         'gnu',           'static',            'linux', 'ubuntu-18.04',             '',    True,     True,       '.dbg',  'Linux' ),
+	(    'x86_64',           'linux',         'gnu',           'static',            'linux', 'ubuntu-18.04',             '',    True,     True,       '.dbg',  'x86_64-lin-gcc-static' ),
 #	(    'x86_64',           'linux',         'gnu',          'dynamic',            'linux', 'ubuntu-18.04',             '',   False,    False,         None,                       '' ),
 #	(    'x86_64',         'windows',       'mingw',           'static',            'linux', 'ubuntu-20.04',             '',   False,     True,       '.dbg',                       '' ), # ubuntu-20.04 doesn't have windows TLS headers somehow and I haven't yet figured out how to get them
 #	(    'x86_64',         'windows',       'mingw',          'dynamic',            'linux', 'ubuntu-20.04',             '',   False,    False,         None,                       '' ),
 #	(    'x86_64',         'windows',       'mingw',           'static',          'windows', 'windows-2019',         '.exe',   False,     True,       '.dbg',                       '' ),
 #	(    'x86_64',         'windows',       'mingw',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
-	(    'x86_64',         'windows',        'msvc',           'static',          'windows', 'windows-2019',         '.exe',    True,     True,       '.pdb', 'Win-64' ),
+	(    'x86_64',         'windows',        'msvc',           'static',          'windows', 'windows-2019',         '.exe',    True,     True,       '.pdb', 'x86_64-win-msvc-static' ),
 #	(    'x86_64',         'windows',        'msvc',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
-	(       'x86',         'windows',        'msvc',           'static',          'windows', 'windows-2019',         '.exe',    True,     True,       '.pdb',   'Win-32' ),
+	(       'x86',         'windows',        'msvc',           'static',          'windows', 'windows-2019',         '.exe',    True,     True,       '.pdb',   'i686-win-msvc-static' ),
 #	(       'x86',         'windows',        'msvc',          'dynamic',          'windows', 'windows-2019',         '.exe',   False,    False,         None,                       '' ),
 #	(    'x86_64',          'darwin',       'macos',           'static',           'darwin',   'macos-11.0',             '',    True,     True,         None,  'x86_64-mac-gcc-static' ), # I have no idea how to separate debug info on macos
 #	(    'x86_64',          'darwin',       'macos',          'dynamic',           'darwin',   'macos-11.0',             '',   False,    False,         None,                       '' ),
@@ -66,7 +66,7 @@ for bsh_host_arch, bsh_host_platform, bsh_host_libc, bsh_static_dynamic, bsh_bui
 		separate_debug = False
 	if publish:
 		assert artifact
-	for debug_release in ['release']:
+	for debug_release in ['release' ]:
 		publish_release = publish and debug_release == 'release'
 		artifact_release = artifact and debug_release == 'release'
 		asset_path = f'powder{package_suffix}'

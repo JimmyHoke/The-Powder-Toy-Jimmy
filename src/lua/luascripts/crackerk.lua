@@ -2113,6 +2113,7 @@ MANAGER.savesetting("CRK","ab",db)
 MANAGER.savesetting("CRK","al",da)
 MANAGER.savesetting("CRK","savergb",1)
 MANAGER.savesetting("CRK","split","0")
+splitval = 0
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 aclr = aSlider:value() 
 alb:text(aclr)

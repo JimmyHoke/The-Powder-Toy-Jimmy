@@ -1,3 +1,13 @@
+v47.0
+Optimised various startup checks
+More efficient checks for split theme
+Reduced the linux version file size by half
+New workflows
+Fix bug where clicks won't register while showing update notifications.
+URS updater now shows the progress of downloads
+More optimised updater.
+Split theme applies to other areas aswell
+
 V46.0
 Enable By date button when viewing Favorites
 New theme called split, inverts half of the user interface colour.
