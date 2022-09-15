@@ -1755,8 +1755,9 @@ tpt.drawrect(613,344,14,14,spr,spg,spb,al)
 tpt.drawrect(613,376,14,14,spr,spg,spb,al)
 --Lua manager
 tpt.drawrect(613,119,14,15,spr,spg,spb,al)
+--Bottom
+tpt.drawrect(1,408,626,14,spr,spg,spb,al)
 --split theme end
-
 --top
 tpt.drawrect(613,1,14,14,ar,ag,ab,al)
 tpt.drawrect(613,33,14,14,ar,ag,ab,al)
@@ -1774,16 +1775,15 @@ tpt.drawrect(613,328,14,14,ar,ag,ab,al)
 tpt.drawrect(613,360,14,14,ar,ag,ab,al)
 tpt.drawrect(613,392,14,14,ar,ag,ab,al)
 --bottom
-tpt.drawrect(1,408,626,14,ar,ag,ab,al)
-tpt.drawline(612,408,612,421,ar,ag,ab,al)
-tpt.drawline(187,409,187,422,ar,ag,ab,al)
-tpt.drawline(487,408,487,421,ar,ag,ab,al)
-tpt.drawline(241,408,241,421,ar,ag,ab,al)
-tpt.drawline(469,408,469,421,ar,ag,ab,al)
-tpt.drawline(36,408,36,421,ar,ag,ab,al)
-tpt.drawline(18,408,18,421,ar,ag,ab,al)
-tpt.drawline(580,409,580,422,ar,ag,ab,al)
-tpt.drawline(596,409,596,422,ar,ag,ab,al)
+tpt.drawline(612,409,612,421,ar,ag,ab,al)
+tpt.drawline(187,409,187,421,ar,ag,ab,al)
+tpt.drawline(487,409,487,421,ar,ag,ab,al)
+tpt.drawline(241,409,241,421,ar,ag,ab,al)
+tpt.drawline(469,409,469,421,ar,ag,ab,al)
+tpt.drawline(36,409,36,421,ar,ag,ab,al)
+tpt.drawline(18,409,18,421,ar,ag,ab,al)
+tpt.drawline(580,409,580,421,ar,ag,ab,al)
+tpt.drawline(596,409,596,421,ar,ag,ab,al)
 tpt.drawline(418,408,418,421,ar,ag,ab,al)
 
 if MANAGER.getsetting("CRK", "savergb") == "1" then
