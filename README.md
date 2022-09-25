@@ -50,6 +50,7 @@ Libraries and other assets used
 * [LuaJIT](https://luajit.org/)
 * [LuaSocket](http://w3.impa.br/~diego/software/luasocket/)
 * [Mallangche](https://github.com/JammPark/Mallangche)
+* [mbedtls](https://www.trustedfirmware.org/projects/mbed-tls/)
 * [SDL](https://libsdl.org/)
 * [zlib](https://www.zlib.net/)
 
@@ -57,7 +58,6 @@ Instructions
 ===========================================================================
 
 Click on the elements with the mouse and draw in the field, like in MS Paint. The rest of the game is learning what happens next.
-
 
 Controls
 ===========================================================================
@@ -109,8 +109,6 @@ Controls
 | Ctrl + Shift + R        | Vertical mirror for selected area when pasting stamps           |
 | R                       | Rotate selected area counterclockwise when pasting stamps       |
 
-
-
 Command Line
 ---------------------------------------------------------------------------
 
@@ -124,3 +122,5 @@ Command Line
 | `ptsave:SAVEID`       | Open online save, used by ptsave: URLs           | `ptsave:2198`                     |
 | `disable-network`     | Disables internet connections                    |                                   |
 | `redirect`            | Redirects output to stdout.txt / stderr.txt      |                                   |
+| `cafile:CAFILE`       | Set certificate bundle path                      | `cafile:/etc/ssl/certs/ca-certificates.crt` |
+| `capath:CAPATH`       | Set certificate directory path                   | `capath:/etc/ssl/certs`           |
