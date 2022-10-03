@@ -1,7 +1,7 @@
 Changelog for V48.0
 
 todo:
-Render line
+Add missing renderer option lines
 Make pulse button toggle the mode
 Use one file for all updates
 Merge with latest
