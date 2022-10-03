@@ -1,12 +1,12 @@
-Changelog for V47.0
+Changelog for V48.0
 
-Optimised various startup checks
-More efficient checks for split theme
-Reduced the linux version file size by half
-New workflows
-Fix bug where clicks won't register while showing update notifications.
-URS updater now shows the progress of downloads
-More optimised updater.
-Split theme applies to other areas aswell
+todo:
+Render line
+Make pulse button toggle the mode
+Use one file for all updates
+Merge with latest
+Better failsafe module
+New element: Laser (WIP)/ GUN
+Optimise the release upload process
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**
