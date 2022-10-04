@@ -242,7 +242,7 @@ simulation_elem_ids = [
 	[ 'GSNS',   MOD_ELEMENT_OFFSET + 46 ],
 	[ 'MGNT',   MOD_ELEMENT_OFFSET + 47 ],
 	[ 'SODM',   MOD_ELEMENT_OFFSET + 48 ],
-	[ 'LASR',   MOD_ELEMENT_OFFSET + 49 ]
+	[ 'BALL',   MOD_ELEMENT_OFFSET + 49 ]
 ]
 
 simulation_elem_src = []

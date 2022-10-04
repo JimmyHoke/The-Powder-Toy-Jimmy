@@ -1,12 +1,13 @@
 Changelog for V48.0
 
-todo:
 Add missing renderer option lines
+New element: BALL
+Merge with latest
+
+todo:
 Make pulse button toggle the mode
 Use one file for all updates
-Merge with latest
 Better failsafe module
-New element: Laser (WIP)/ GUN
 Optimise the release upload process
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**
