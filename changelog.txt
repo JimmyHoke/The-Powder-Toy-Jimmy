@@ -1,4 +1,4 @@
-Changelog for V48.0
+Changelog for V47.5
 
 Add missing renderer option lines.
 New Neon Mode in control centre, makes everything super bright.
