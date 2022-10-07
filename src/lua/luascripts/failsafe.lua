@@ -1,18 +1,28 @@
-if failsafe == nil then
+--Fail safe protection module v2.0
 function warningmsg()
-gfx.drawRect(177,367,340,14,255,0,0,255)
-gfx.fillRect(177,367,340,14,255,0,0,50)
-gfx.drawText(180,370,"Failed to perform startup checks, click the reset button to restore.",255,0,0,255)
+gfx.drawRect(177,367,330,14,255,0,0,255)
+if tpt.mousex >176 and tpt.mousex <= 505 and tpt.mousey > 367 and tpt.mousey <= 380 then
+gfx.fillRect(177,367,330,14,255,20,20,80)
+else
+gfx.fillRect(177,367,330,14,255,20,20,30)
 end
-local failtoggle = Button:new(419,408,50,15, "Reset", "Reset mod to original state")
-tpt.register_step(warningmsg)
-interface.addComponent(failtoggle)
-failtoggle:action(function(sender)
-os.remove("scripts/updatedmp.lua")
+gfx.drawText(180,370,"Fail safe: Uh oh something went wrong, click here to reset the mod!",255,0,0,255)
+end
+
+function warningmsgclick()
+gfx.drawRect(177,367,300,14,255,0,0,255)
+if tpt.mousex >176 and tpt.mousex <= 505 and tpt.mousey > 367 and tpt.mousey <= 380 then
 os.remove("dlf3.txt")
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/autorunsettings.txt")
 platform.restart()
-end)
 end
+return false
+end
+
+if failsafe == nil then
+event.register(event.tick, warningmsg)
+event.register(event.mousedown, warningmsgclick)
+end
+

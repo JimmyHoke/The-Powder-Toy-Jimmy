@@ -1,13 +1,14 @@
 Changelog for V48.0
 
-Add missing renderer option lines
-New element: BALL
-Merge with latest
-
-todo:
+Add missing renderer option lines.
+New Neon Mode in control centre, makes everything super bright.
+New element: BALL, super bouncy rubber balls.
+New default theme.
+Merge changes from latest snapshot.
+Allow pulse theme to work with split mode.
 Make pulse button toggle the mode
-Use one file for all updates
+Pulse theme no longer reverts the theme back to default when turned off.
+Split theme now applies to top bar aswell.
 Better failsafe module
-Optimise the release upload process
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

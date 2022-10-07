@@ -1,12 +1,12 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 47.0 --47
+local crackversion = 47.5 --48 Next version
 local passreal2 = "DMND"
 local motw = "."
 local updatestatus = 0
 --Default theme for initial launch and resets
-local dr, dg, db, da, defaulttheme = 131,0,255,255,"Twilight"
+local dr, dg, db, da, defaulttheme = 32,216,255,220,"Default"
 
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
@@ -129,6 +129,7 @@ local endTime = 0
 local autoval = "1"
 local hidval = "1"
 local shrtv = "1"
+local nmodv = "0"
 local invtoolv = "1"
 local focustime = 190
 
@@ -1518,7 +1519,7 @@ local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp pro
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
-local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR, generating H2 and loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine when above 50C. Melts at 97C. Glows under vaccum."
+local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR, generating H2 and loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine when above 50C. Melts at 97C. Glows under vaccum.\n\n49) Ball: Bouncy ball, can spill away liquids and powders while bouncing. Destroyed at 100C."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1618,6 +1619,7 @@ tpt.el.napm.menu=0
 tpt.el.gsns.menu=0
 tpt.el.emgt.menu=0
 tpt.el.sodm.menu=0
+tpt.el.ball.menu=0
 end
 
 function showmodelem()
@@ -1671,6 +1673,7 @@ tpt.el.napm.menu=1
 tpt.el.gsns.menu=1
 tpt.el.emgt.menu=1
 tpt.el.sodm.menu=1
+tpt.el.ball.menu=1
 end
 local modelemval = "0"
 bg:action(function(sender)
@@ -1717,28 +1720,27 @@ if borderval == "1" then
 tpt.drawrect(2,2,607,379,ar,ag,ab,al)
 tpt.drawrect(1,1,609,381,ar,ag,ab,al)
 end
+--Split theme
+local spr, spb,spg = ar,ag,ab
+if splitval == 1 then
+spr, spg, spb = 255-ar,255-ag,255-ab
+else
+spr, spg, spb = ar,ag,ab
+end
 --Topbar
 if borderval ~= "1" and uival ~= "0" then
 barval = MANAGER.getsetting("CRK","barval")
-if barval == nil then
-tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
-end
 if barval == "1" then
 if tonumber(barlength) <= 202 then
 barlength = barlength + "5"
 end
 tpt.fillrect(tonumber(barlength),-1,tonumber(barlength),3, ar,ag,ab,al)
 elseif barval == "2" then
-tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
+tpt.fillrect(2,-1,302,3, ar,ag,ab,al)
+tpt.fillrect(305,-1,305,3, spr, spg, spb, al)
 end
 end
 --Topbarend
-local spr, spb,spg = ar,ag,ab
-if splitval == 1 then
-spr, spg,spb = 255-ar,255-ag,255-ab
-else
-spr,spg,spb = ar,ag,ab
-end
 --split theme
 --top
 tpt.drawrect(613,17,14,14,spr,spg,spb,al)
@@ -1840,18 +1842,18 @@ local mp2 = Button:new(70,92,45,25,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,92,45,25,"Aqua", "Change the theme to Red")
 local mp4 = Button:new(170,92,45,25,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,92,45,25,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,92,45,25,defaulttheme, "Resets back to default")
-local mp9 = Button:new(320,92,45,25,"Pulse", "RBG makes everything better.")
-local mp10 = Button:new(370,92,45,25,"Split", "Half of the theme is inverted")
+local mp8 = Button:new(270,92,45,25,"Twilight", "Resets back to default")
+local mp11 = Button:new(320,92,45,25,defaulttheme, "The default theme")
+local mp9 = Button:new(370,92,45,25,"Pulse", "RBG makes everything better.")
+local mp10 = Button:new(420,92,45,25,"Split", "Half of the theme is inverted")
 local mpop = Button:new(530,347,75,20,"Done", "Close")
 
 local bg1 = Button:new(24,300,60,25,"Filters", "Toggle filters")
-
 local bog1 = Button:new(24,333,60,25,"Cross-Hair", "Draw Cross-hair")
-
 local bogb1 = Button:new(124,333,60,25,"Borders", "Draw Borders")
 
 local jkey = Button:new(124,300,60,25,"J-Shortcut", "Toggle Shortcut")
+local neonmode = Button:new(224,300,60,25,"Neon Mode", "Toggle fire strength")
 local bg7 = Button:new(224,333,60,25,"Developer", "Disable inbuilt scripts")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
@@ -1903,10 +1905,8 @@ end
 if adminval == 1 then
 graphics.fillRect(221,330,160,31,255,40,40,210)
 graphics.drawRect(220,330,160,32,255,0,0,255)
-graphics.drawText(222,315,"Warning: Proceed at your own risk!",255,5,5,255)
 elseif adminval == 2 then
 graphics.fillRect(220,330,160,32,40,255,40,210)
-graphics.drawText(233,315,"Select one of the options:",40,255,40,210)
 end
 if MANAGER.getsetting("CRK", "barval") == "4" then
 barstat = "Off"
@@ -1923,10 +1923,10 @@ gfx.drawText(24,235,"Topbar: "..barstat,MANAGER.getsetting("CRK", "ar"),MANAGER.
 gfx.drawText(25,285,"Other Options:",MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),255)
 
 if MANAGER.getsetting("CRK","savergb") == "1" then
-gfx.drawRect(320,92,47,27,32,216,255,255)
+gfx.drawRect(370,92,47,27,32,216,255,255)
 end
 if MANAGER.getsetting("CRK","split") == "1" then
-gfx.drawRect(370,92,47,27,32,216,255,255)
+gfx.drawRect(420,92,47,27,32,216,255,255)
 end
 
 if MANAGER.getsetting("CRK", "fancurs") == "1" then
@@ -1949,6 +1949,11 @@ gfx.drawText(190,309,"ON",105,255,105,255)
 else
 gfx.drawText(190,309,"OFF",255,105,105,255)
 end
+if nmodv == "1" then
+gfx.drawText(290,309,"ON",105,255,105,255)
+else
+gfx.drawText(290,309,"OFF",255,105,105,255)
+end
 
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 if MANAGER.getsetting("CRK","split") ~= "1" then
@@ -1960,7 +1965,7 @@ end
 graphics.drawRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),110)
 graphics.fillRect(1,1, 609, 370, MANAGER.getsetting("CRK", "ar"),MANAGER.getsetting("CRK", "ag"),MANAGER.getsetting("CRK", "ab"),10)
 else
-graphics.drawText(30,47, "Preview not available because pulse theme is on.",255,55,55,255)
+graphics.drawText(30,47, "Preview not available because pulse theme is on. Note: Alpha slider can aslo be used for pulse theme.",255,55,55,255)
 end
 end
 newmenuth:onDraw(drawprev)
@@ -1978,6 +1983,7 @@ newmenuth:addComponent(mp3)
 newmenuth:addComponent(mp4)
 newmenuth:addComponent(mp7)
 newmenuth:addComponent(mp8)
+newmenuth:addComponent(mp11)
 newmenuth:addComponent(mp9)
 newmenuth:addComponent(mp10)
 
@@ -1987,6 +1993,7 @@ newmenuth:addComponent(bg7)
 newmenuth:addComponent(bog1)
 newmenuth:addComponent(bogb1)
 newmenuth:addComponent(jkey)
+newmenuth:addComponent(neonmode)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
@@ -2045,11 +2052,20 @@ end
 end)
 
 jkey:action(function(sender)
-clearsb()
 if shrtv == "1" then
 shrtv = "0"
 else
 shrtv = "1"
+end
+end)
+
+neonmode:action(function(sender)
+if nmodv == "0" then
+nmodv = "1"
+tpt.setfire(30)
+elseif nmodv == "1" then
+nmodv = "0"
+tpt.setfire(1)
 end
 end)
 
@@ -2099,6 +2115,14 @@ mpnolag()
 end)
 
 mp8:action(function(sender)
+MANAGER.savesetting("CRK","ar",131)
+MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ab",255)
+MANAGER.savesetting("CRK","al",255)
+mpnolag()
+end)
+--Default theme
+mp11:action(function(sender)
 MANAGER.savesetting("CRK","ar",dr)
 MANAGER.savesetting("CRK","ag",dg)
 MANAGER.savesetting("CRK","ab",db)
@@ -2107,20 +2131,17 @@ mpnolag()
 end)
 
 mp9:action(function(sender)
-MANAGER.savesetting("CRK","ar",dr)
-MANAGER.savesetting("CRK","ag",dg)
-MANAGER.savesetting("CRK","ab",db)
-MANAGER.savesetting("CRK","al",da)
+if MANAGER.getsetting("CRK","savergb") == "0" then
 MANAGER.savesetting("CRK","savergb",1)
-MANAGER.savesetting("CRK","split","0")
-splitval = 0
 aSlider:value(MANAGER.getsetting("CRK", "al"))
 aclr = aSlider:value() 
 alb:text(aclr)
+elseif MANAGER.getsetting("CRK","savergb") == "1" then
+mpnolag()
+end
 end)
 
 mp10:action(function(sender)
-mpnolag()
 if MANAGER.getsetting("CRK","split") == "0" or MANAGER.getsetting("CRK","split") == nil then
 MANAGER.savesetting("CRK","split","1")
 splitval = 1
@@ -2138,7 +2159,7 @@ filterval = 0
 end
 end)
 
-local adminpass = Textbox:new(290, 336, 55, 20, '', 'Password..')
+local adminpass = Textbox:new(290, 336, 55, 20, '', ' <Code> ')
 local admincan = Button:new(350,336,20,20,"X", "cancle admin mode")
 local admincan1 = Button:new(225,336,70,20,"Debug mode", "Disables crackerk.lua and fail check")
 local admincan2 = Button:new(298,336,76,20,"Disable scripts","Disables all embedded scripts")
@@ -2211,6 +2232,8 @@ if MANAGER.getsetting("CRK","al") == nil then --Defaults to prevent errors in sc
 MANAGER.savesetting("CRK","loadelem","0")
 MANAGER.savesetting("CRK","notifval","1")
 MANAGER.savesetting("CRK", "fancurs","0")
+MANAGER.savesetting("CRK","savergb","0")
+MANAGER.savesetting("CRK","barval","2")
 MANAGER.savesetting("CRK","ar",dr)
 MANAGER.savesetting("CRK","ag",dg)
 MANAGER.savesetting("CRK","ab",db)
