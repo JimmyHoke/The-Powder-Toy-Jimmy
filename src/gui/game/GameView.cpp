@@ -2303,7 +2303,6 @@ void GameView::OnDraw()
 		g->fillrect(6, 18, textWidth + 8, 15, 0, 0, 0, (int)(alpha * 0.5f));
 		g->drawtext(8, 22, sampleInfo.Build(), 225, 225, 225, (int)(alpha * 0.95f));
 
-#ifndef OGLI
 		if (wavelengthGfx)
 		{
 			int i, cr, cg, cb, j, h = 3, x = 6, y = 35;
@@ -2342,7 +2341,7 @@ void GameView::OnDraw()
 				}
 			}
 		}
-#endif
+
 			if (showDebug)
 			{
 				StringBuilder sampleInfo;
