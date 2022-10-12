@@ -104,7 +104,7 @@ Client::Client():
 		firstRun = true;
 }
 
-void Client::Initialise(ByteString proxyString, bool disableNetwork)
+void Client::Initialise(ByteString proxy, ByteString cafile, ByteString capath, bool disableNetwork)
 {
 #if !defined(FONTEDITOR) && !defined(RENDERER)
 	if (GetPrefBool("version.update", false))
@@ -116,7 +116,7 @@ void Client::Initialise(ByteString proxyString, bool disableNetwork)
 
 #ifndef NOHTTP
 	if (!disableNetwork)
-		http::RequestManager::Ref().Initialise(proxyString);
+		http::RequestManager::Ref().Initialise(proxy, cafile, capath);
 #endif
 
 	//Read stamps library
@@ -262,6 +262,11 @@ bool Client::CheckUpdate(http::Request *updateRequest, bool checkSession)
 	{
 		int status;
 		ByteString data = updateRequest->Finish(&status);
+
+		if (checkSession && status == 618)
+		{
+			AddServerNotification({ "Failed to load SSL certificates", SCHEME "powdertoy.co.uk/FAQ.html" });
+		}
 
 		if (status != 200)
 		{
@@ -1010,7 +1015,7 @@ SaveFile * Client::LoadSaveFile(ByteString filename)
 		try
 		{
 			std::vector<char> data;
-			if (ReadFile(data, filename))
+			if (Platform::ReadFile(data, filename))
 			{
 				file->SetGameSave(new GameSave(std::move(data)));
 			}
@@ -1550,33 +1555,6 @@ void Client::SetPrefUnicode(ByteString prop, String value)
 	SetPref(prop, value.ToUtf8());
 }
 
-bool Client::ReadFile(std::vector<char> &fileData, ByteString filename)
-{
-	std::ifstream f(filename, std::ios::binary);
-	if (f) f.seekg(0, std::ios::end);
-	if (f) fileData.resize(f.tellg());
-	if (f) f.seekg(0);
-	if (f) f.read(&fileData[0], fileData.size());
-	if (!f)
-	{
-		std::cerr << "ReadFile: " << filename << ": " << strerror(errno) << std::endl;
-		return false;
-	}
-	return true;
-}
-
-bool Client::WriteFile(std::vector<char> fileData, ByteString filename)
-{
-	std::ofstream f(filename, std::ios::binary);
-	if (f) f.write(&fileData[0], fileData.size());
-	if (!f)
-	{
-		std::cerr << "WriteFile: " << filename << ": " << strerror(errno) << std::endl;
-		return false;
-	}
-	return true;
-}
-
 bool Client::DoInstallation()
 {
 	bool ok = true;
@@ -1678,7 +1656,7 @@ bool Client::DoInstallation()
 		desktopData = desktopData.Substitute("Exec=" APPEXE, "Exec=" + desktopEscapeString(desktopEscapeExec(exe)));
 		desktopData += ByteString::Build("Path=", desktopEscapeString(path), "\n");
 		ByteString file = APPVENDOR "-" APPID ".desktop";
-		ok = ok && WriteFile(std::vector<char>(desktopData.begin(), desktopData.end()), file);
+		ok = ok && Platform::WriteFile(std::vector<char>(desktopData.begin(), desktopData.end()), file);
 		ok = ok && !system(ByteString::Build("xdg-desktop-menu install ", file).c_str());
 		ok = ok && !system(ByteString::Build("xdg-mime default ", file, " application/vnd.powdertoy.save").c_str());
 		ok = ok && !system(ByteString::Build("xdg-mime default ", file, " x-scheme-handler/ptsave").c_str());
@@ -1687,28 +1665,28 @@ bool Client::DoInstallation()
 	if (ok)
 	{
 		ByteString file = APPVENDOR "-save.xml";
-		ok = ok && WriteFile(std::vector<char>(save_xml, save_xml + save_xml_size), file);
+		ok = ok && Platform::WriteFile(std::vector<char>(save_xml, save_xml + save_xml_size), file);
 		ok = ok && !system(ByteString::Build("xdg-mime install ", file).c_str());
 		Platform::RemoveFile(file);
 	}
 	if (ok)
 	{
 		ByteString file = APPVENDOR "-cps32.png";
-		ok = ok && WriteFile(std::vector<char>(cps32_png, cps32_png + cps32_png_size), file);
+		ok = ok && Platform::WriteFile(std::vector<char>(cps32_png, cps32_png + cps32_png_size), file);
 		ok = ok && !system(ByteString::Build("xdg-icon-resource install --noupdate --context mimetypes --size 32 ", file, " application-vnd.powdertoy.save").c_str());
 		Platform::RemoveFile(file);
 	}
 	if (ok)
 	{
 		ByteString file = APPVENDOR "-cps16.png";
-		ok = ok && WriteFile(std::vector<char>(cps16_png, cps16_png + cps16_png_size), file);
+		ok = ok && Platform::WriteFile(std::vector<char>(cps16_png, cps16_png + cps16_png_size), file);
 		ok = ok && !system(ByteString::Build("xdg-icon-resource install --noupdate --context mimetypes --size 16 ", file, " application-vnd.powdertoy.save").c_str());
 		Platform::RemoveFile(file);
 	}
 	if (ok)
 	{
 		ByteString file = APPVENDOR "-exe48.png";
-		ok = ok && WriteFile(std::vector<char>(exe48_png, exe48_png + exe48_png_size), file);
+		ok = ok && Platform::WriteFile(std::vector<char>(exe48_png, exe48_png + exe48_png_size), file);
 		ok = ok && !system(ByteString::Build("xdg-icon-resource install --noupdate --size 48 ", file, " " APPVENDOR "-" APPEXE).c_str());
 		Platform::RemoveFile(file);
 	}

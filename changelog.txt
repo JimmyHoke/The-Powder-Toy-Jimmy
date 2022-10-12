@@ -1,12 +1,17 @@
-Changelog for V47.0
+Changelog for V47.5
 
-Optimised various startup checks
-More efficient checks for split theme
-Reduced the linux version file size by half
-New workflows
-Fix bug where clicks won't register while showing update notifications.
-URS updater now shows the progress of downloads
-More optimised updater.
-Split theme applies to other areas aswell
+Add missing renderer option lines.
+New Neon Mode in control centre, makes everything super bright.
+New element: BALL, super bouncy rubber balls.
+New default theme.
+Allow pulse theme to work with split mode.
+Make pulse button toggle the mode
+Pulse theme no longer reverts the theme back to default when turned off.
+Split theme now applies to top bar aswell.
+Better failsafe module
+Merge changes from latest snapshot:
+Fix uninitialized stickmen
+Fix OOB read when parsing empty string as float
+Photon reflection fix (Minor)
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

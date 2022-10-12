@@ -1,0 +1,85 @@
+#include "simulation/ElementCommon.h"
+
+static int update(UPDATE_FUNC_ARGS);
+static int graphics(GRAPHICS_FUNC_ARGS);
+
+void Element::Element_BALL()
+{
+	Identifier = "DEFAULT_PT_BALL";
+	Name = "BALL";
+	Colour = PIXPACK(0xFF0000);
+	MenuVisible = 1;
+	MenuSection = SC_SPECIAL;
+	Enabled = 1;
+
+	Advection = 0.4f;
+	AirDrag = 0.01f * CFDS;
+	AirLoss = 0.00f;
+	Loss = 0.99f;
+	Collision = 0.8f;
+	Gravity = 1.0f;
+	Diffusion = 0.4f;
+	HotAir = 0.000f	* CFDS;
+	Falldown = 2;
+
+	Flammable = 0;
+	Explosive = 0;
+	Meltable = 0;
+	Hardness = 20;
+
+	Weight = 15;
+
+	HeatConduct = 251;
+	Description = "Bouncy ball.Spills away liquids and powders when bouncing on them. Use sparingly!";
+
+	Properties = TYPE_LIQUID | PROP_LIFE_DEC;
+
+	LowPressure = IPL;
+	LowPressureTransition = NT;
+	HighPressure = IPH;
+	HighPressureTransition = NT;
+	LowTemperature = ITL;
+	LowTemperatureTransition = NT;
+	HighTemperature = 393.15f;
+	HighTemperatureTransition = PT_WATR;
+
+	Update = &update;
+	Graphics = &graphics;
+}
+static int update(UPDATE_FUNC_ARGS)
+{
+	for (int rx = -3; rx <= 3; rx++)
+		for (int ry = -3; ry <= 3; ry++)
+			if (BOUNDS_CHECK && (rx || ry))
+			{
+				int r = pmap[y + ry][x + rx];
+				if (!r)
+					continue;
+				if (TYP(r) && TYP(r) != PT_BALL && parts[i].life < 2)
+				{
+					if (!(sim->elements[TYP(r)].Properties & TYPE_SOLID) && !(sim->elements[TYP(r)].Properties & TYPE_ENERGY))
+					{
+						parts[ID(r)].vx = -1*parts[i].vx;
+						parts[ID(r)].vy = -1*parts[i].vy;
+					}
+					parts[i].life = 8;
+					parts[i].vx = -0.90*(parts[i].vx);
+					parts[i].vy = -0.90*(parts[i].vy);
+				}
+			}
+	return 0;
+}
+
+static int graphics(GRAPHICS_FUNC_ARGS)
+{
+	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 3, 3, 255, 0, 0, 255);
+	if (cpart->life > 3)
+	{
+	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 2, 2, 255, 255, 255, 200);
+	}
+	else
+	{
+	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 2, 2, 255, 50, 50, 200);
+	}
+	return 0;
+}
