@@ -256,9 +256,9 @@ void GameController::PlaceSave(ui::Point position)
 void GameController::Install()
 {
 #if defined(MACOSX)
-	new InformationMessage("No installation necessary", "You don't need to install The Powder Toy on OS X", false);
+	new InformationMessage("No installation necessary", "You don't need to install " APPNAME " on OS X", false);
 #elif defined(WIN) || defined(LIN)
-	new ConfirmPrompt("Install The Powder Toy", "Do you wish to install The Powder Toy on this computer?\nThis allows you to open save files and saves directly from the website.", { [] {
+	new ConfirmPrompt("Install " APPNAME, "Do you wish to install " APPNAME " on this computer?\nThis allows you to open save files and saves directly from the website.", { [] {
 		if (Client::Ref().DoInstallation())
 		{
 			new InformationMessage("Success", "Installation completed", false);
@@ -269,7 +269,7 @@ void GameController::Install()
 		}
 	} });
 #else
-	new ErrorMessage("Cannot install", "You cannot install The Powder Toy on this platform");
+	new ErrorMessage("Cannot install", "You cannot install " APPNAME " on this platform");
 #endif
 }
 
@@ -1224,7 +1224,7 @@ void GameController::OpenLocalSaveWindow(bool asCurrent)
 			std::vector<char> saveData = gameSave->Serialise();
 			if (saveData.size() == 0)
 				new ErrorMessage("Error", "Unable to serialize game data.");
-			else if (Client::Ref().WriteFile(saveData, gameModel->GetSaveFile()->GetName()))
+			else if (!Client::Ref().WriteFile(saveData, gameModel->GetSaveFile()->GetName()))
 				new ErrorMessage("Error", "Unable to write save file.");
 			else
 				gameModel->SetInfoTip("Saved Successfully");

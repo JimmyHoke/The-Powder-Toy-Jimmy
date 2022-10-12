@@ -1,7 +1,7 @@
 --Cracker1000 mod interface script--
 failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 46.0
+local crackversion = 47.0 --47
 local passreal2 = "DMND"
 local motw = "."
 local updatestatus = 0
@@ -197,7 +197,7 @@ rungrap = rungrap + 1
 elseif rungrap >= 138 then
 rungrap = 10
 end
-if updatetimer >= 4000 then
+if updatetimer >= 3500 then
 timeout = 1
 end
 --Graphics while downloading updates..
@@ -217,17 +217,26 @@ event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
 event.unregister(event.tick,updatermod)
 end
+local filesize, filedone = reqwin:progress()
+local downprog = math.floor((filedone/filesize)*100)
 --Windows
-if checkos == "WIN64" or checkos == "WIN32" then
-updatertext = "Downloading the update for "..checkos
+if checkos == "WIN64" or checkos == "WIN32" then --Windows
+updatertext = "Downloading the update, "..downprog .."% Done"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
+if checkos == "WIN64" or checkos == "WIN32" then
 os.rename(filename,"older.exe")
 updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata)
 f:close()
+elseif checkos == "LIN64" then --Linux
+os.rename(filename,"older")
+f = io.open(filename, 'wb')
+f:write(reqwindata)
+f:close()
+end
 updatertext = "Update done, click here to restart."
 clickcheck = 1
 event.unregister(event.tick,updatermod)
@@ -237,30 +246,10 @@ event.unregister(event.tick,updatermod)
 end
 end
 end
---Linux
-if checkos == "LIN64" then
-updatertext = "Downloading the update for LIN64"
-if reqwin:status() == "done"  then
-os.rename(filename,"older")
-local reqwindata2, reqwincode2 = reqwin:finish()
-if reqwincode2 == 200  then
-updatertext = "Done"
-f = io.open(filename, 'wb')
-f:write(reqwindata2)
-f:close()
-updatertext = "Update done, click here to restart."
-clickcheck = 1
-event.unregister(event.tick,updatermod)
-else
-updatertext = "Error code: "..reqwincode2
-event.unregister(event.tick,updatermod)
-end
-end
-end
 end
 
 function clicktomsg2()
-if tpt.mousex >10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
+if tpt.mousex > 10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
 if clickcheck == 0 then
 clickcheck = 2
 crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/changelog.txt")
@@ -1405,7 +1394,7 @@ end)
 function autohidehud()
 if tpt.mousey <= 40 then 
 tpt.hud(0) 
-gfx.drawText(6,6,"Hidden",255,255,255,200)
+gfx.drawText(6,6,"Hidden",32,216,255,200)
 else tpt.hud(1)
 end
 end
@@ -1696,7 +1685,7 @@ modelemval = "0"
 end
 clearsb()
 end)
-
+local splitval = 0
 local barval = MANAGER.getsetting("CRK","barval")
 local barlength = "1"
 local uival = "1"
@@ -1746,39 +1735,31 @@ tpt.fillrect(2,-1,607,3, ar,ag,ab,al)
 end
 end
 --Topbarend
-if MANAGER.getsetting("CRK","split") == "1" then
---top
-tpt.drawrect(613,17,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,49,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,81,14,14,255-ar,255-ag,255-ab,al)
---right
-tpt.drawrect(613,152,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,184,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,216,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,248,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,280,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,312,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,344,14,14,255-ar,255-ag,255-ab,al)
-tpt.drawrect(613,376,14,14,255-ar,255-ag,255-ab,al)
---Lua manager
-tpt.drawrect(613,119,14,15,255-ar,255-ag,255-ab,al)
+local spr, spb,spg = ar,ag,ab
+if splitval == 1 then
+spr, spg,spb = 255-ar,255-ag,255-ab
 else
---top
-tpt.drawrect(613,17,14,14,ar,ag,ab,al)
-tpt.drawrect(613,49,14,14,ar,ag,ab,al)
-tpt.drawrect(613,81,14,14,ar,ag,ab,al)
---right
-tpt.drawrect(613,152,14,14,ar,ag,ab,al)
-tpt.drawrect(613,184,14,14,ar,ag,ab,al)
-tpt.drawrect(613,216,14,14,ar,ag,ab,al)
-tpt.drawrect(613,248,14,14,ar,ag,ab,al)
-tpt.drawrect(613,280,14,14,ar,ag,ab,al)
-tpt.drawrect(613,312,14,14,ar,ag,ab,al)
-tpt.drawrect(613,344,14,14,ar,ag,ab,al)
-tpt.drawrect(613,376,14,14,ar,ag,ab,al)
---Lua manager
-tpt.drawrect(613,119,14,15,ar,ag,ab,al)
+spr,spg,spb = ar,ag,ab
 end
+--split theme
+--top
+tpt.drawrect(613,17,14,14,spr,spg,spb,al)
+tpt.drawrect(613,49,14,14,spr,spg,spb,al)
+tpt.drawrect(613,81,14,14,spr,spg,spb,al)
+--right
+tpt.drawrect(613,152,14,14,spr,spg,spb,al)
+tpt.drawrect(613,184,14,14,spr,spg,spb,al)
+tpt.drawrect(613,216,14,14,spr,spg,spb,al)
+tpt.drawrect(613,248,14,14,spr,spg,spb,al)
+tpt.drawrect(613,280,14,14,spr,spg,spb,al)
+tpt.drawrect(613,312,14,14,spr,spg,spb,al)
+tpt.drawrect(613,344,14,14,spr,spg,spb,al)
+tpt.drawrect(613,376,14,14,spr,spg,spb,al)
+--Lua manager
+tpt.drawrect(613,119,14,15,spr,spg,spb,al)
+--Bottom
+tpt.drawrect(1,408,626,14,spr,spg,spb,al)
+--split theme end
 --top
 tpt.drawrect(613,1,14,14,ar,ag,ab,al)
 tpt.drawrect(613,33,14,14,ar,ag,ab,al)
@@ -1796,16 +1777,15 @@ tpt.drawrect(613,328,14,14,ar,ag,ab,al)
 tpt.drawrect(613,360,14,14,ar,ag,ab,al)
 tpt.drawrect(613,392,14,14,ar,ag,ab,al)
 --bottom
-tpt.drawrect(1,408,626,14,ar,ag,ab,al)
-tpt.drawline(612,408,612,421,ar,ag,ab,al)
-tpt.drawline(187,409,187,422,ar,ag,ab,al)
-tpt.drawline(487,408,487,421,ar,ag,ab,al)
-tpt.drawline(241,408,241,421,ar,ag,ab,al)
-tpt.drawline(469,408,469,421,ar,ag,ab,al)
-tpt.drawline(36,408,36,421,ar,ag,ab,al)
-tpt.drawline(18,408,18,421,ar,ag,ab,al)
-tpt.drawline(580,409,580,422,ar,ag,ab,al)
-tpt.drawline(596,409,596,422,ar,ag,ab,al)
+tpt.drawline(612,409,612,421,ar,ag,ab,al)
+tpt.drawline(187,409,187,421,ar,ag,ab,al)
+tpt.drawline(487,409,487,421,ar,ag,ab,al)
+tpt.drawline(241,409,241,421,ar,ag,ab,al)
+tpt.drawline(469,409,469,421,ar,ag,ab,al)
+tpt.drawline(36,409,36,421,ar,ag,ab,al)
+tpt.drawline(18,409,18,421,ar,ag,ab,al)
+tpt.drawline(580,409,580,421,ar,ag,ab,al)
+tpt.drawline(596,409,596,421,ar,ag,ab,al)
 tpt.drawline(418,408,418,421,ar,ag,ab,al)
 
 if MANAGER.getsetting("CRK", "savergb") == "1" then
@@ -2144,8 +2124,10 @@ mp10:action(function(sender)
 mpnolag()
 if MANAGER.getsetting("CRK","split") == "0" or MANAGER.getsetting("CRK","split") == nil then
 MANAGER.savesetting("CRK","split","1")
+splitval = 1
 elseif  MANAGER.getsetting("CRK","split") == "1" then
 MANAGER.savesetting("CRK","split","0")
+splitval = 0
 end
 end)
 
@@ -2221,16 +2203,15 @@ os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
 
-if MANAGER.getsetting("CRK","loadelem") == nil then
-MANAGER.savesetting("CRK","loadelem","0")
-end
-
 if MANAGER.getsetting("CRK","loadelem") == "1" then
 tpt.selectedl = MANAGER.getsetting("CRK","primaryele")
 tpt.selectedr = MANAGER.getsetting("CRK","secondaryele")
 end
 
-if MANAGER.getsetting("CRK","al") == nil then
+if MANAGER.getsetting("CRK","al") == nil then --Defaults to prevent errors in script
+MANAGER.savesetting("CRK","loadelem","0")
+MANAGER.savesetting("CRK","notifval","1")
+MANAGER.savesetting("CRK", "fancurs","0")
 MANAGER.savesetting("CRK","ar",dr)
 MANAGER.savesetting("CRK","ag",dg)
 MANAGER.savesetting("CRK","ab",db)
@@ -2238,15 +2219,14 @@ MANAGER.savesetting("CRK","al",da)
 end
 event.unregister(event.tick,theme)
 event.register(event.tick,theme)
-if MANAGER.getsetting("CRK","fancurs") == nil then
-MANAGER.savesetting("CRK", "fancurs","0")
+
+if MANAGER.getsetting("CRK", "split") == "1" then
+splitval = 1
 end
+
 if MANAGER.getsetting("CRK", "hidestate") == "1" then
 hideno()
 hidval = "0"
-end
-if MANAGER.getsetting("CRK","notifval") == nil then
-MANAGER.savesetting("CRK","notifval","1")
 end
 if MANAGER.getsetting("CRK", "brightstate") == "1" then
 brightSlider:value(MANAGER.getsetting("CRK", "brightness"))
