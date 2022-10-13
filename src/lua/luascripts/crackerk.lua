@@ -1,13 +1,11 @@
 --Cracker1000 mod interface script--
-failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 47.5 --48 Next version
+local crackversion = 48.0 --48.5 Next version
 local passreal2 = "DMND"
 local motw = "."
 local updatestatus = 0
 --Default theme for initial launch and resets
-local dr, dg, db, da, defaulttheme = 32,216,255,220,"Default"
-
+local dr, dg, db, da, defaulttheme = 32,216,255,220, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
@@ -172,15 +170,13 @@ newmenu:removeComponent(barktext)
 newmenu:removeComponent(barklab)
 end
 
-local req2 = http.get("https://pastebin.com/raw/MP8PZygr")
-local req3 = http.get("https://pastebin.com/raw/TjZAwiaT")
-
+local req2 = http.get("https://pastebin.com/raw/9yJRRimM")
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
 --URS
 local updatever, updatestatus = 1,0
-local updatertext = "Available, click here to download"
+local updatertext = "is available, click to download"
 local reqwin
 local crdata = "Getting data please wait.."
 local updatetimer, rungrap = 0,10
@@ -220,7 +216,7 @@ local filesize, filedone = reqwin:progress()
 local downprog = math.floor((filedone/filesize)*100)
 --Windows
 if checkos == "WIN64" or checkos == "WIN32" then --Windows
-updatertext = "Downloading the update, "..downprog .."% Done"
+updatertext = "Downloading update, "..downprog .."% Done"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
@@ -236,7 +232,7 @@ f = io.open(filename, 'wb')
 f:write(reqwindata)
 f:close()
 end
-updatertext = "Update done, click here to restart."
+updatertext = "Done, click here to restart."
 clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
@@ -295,7 +291,7 @@ gfx.fillCircle(120,99,4,4,50,50,250,200)
 gfx.drawCircle(120,99,4,4,32,216,250,255)
 gfx.drawText(130,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully. (V."..crackversion.." >> V."..tonumber(updatever)..")",32,216,255,255)
 gfx.drawText(12,124,crdata,250,250,250,255)
-if updatertext == "Update done, click here to restart." then
+if updatertext == "Done, click here to restart." then
 gfx.drawRect(10,363,590,1,10,250,10,255)
 else
 gfx.drawRect(10,363,590,1,32,216,255,255)
@@ -314,7 +310,7 @@ gfx.fillRect(10,366,197,14,32,250,210,20)
 end
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
-if updatertext == "Update done, click here to restart." then
+if updatertext == "Done, click here to restart." then
 gfx.fillRect(10,366,197,14,0,250,0,100)
 end
 if clickcheck == 0 then
@@ -339,25 +335,9 @@ end
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
-motw = ret2
-onlinestatus = 1 
-if motw ~= "." then
-posix = graphics.textSize(motw)
-if motw ~= MANAGER.getsetting("CRK","storedmotd") then
-event.unregister(event.tick,showmotdnot)
-event.register(event.tick,showmotdnot)
-event.unregister(event.mousedown, clicktomsg)
-event.register(event.mousedown, clicktomsg)
-end
-end
-end
-end
-
-if req3:status() == "done" then
-local ret3, code3 = req3:finish()
-if code3 == 200 then
+--Update checks
 errtext = ""
-updatever = ret3
+updatever = string.sub(ret2,9,13)
 if tonumber(crackversion) < tonumber(updatever) then
 event.unregister(event.tick,errormesg)
 event.unregister(event.tick,showmotdnot2)
@@ -368,10 +348,22 @@ elseif tonumber(crackversion) >= tonumber(updatever) then
 errtext = "URS: Latest Version"
 end
 else
-if code3 == 602 then
+if code2 == 602 then
 errtext ="Offline"
 else
-errtext = "URS error code: "..code3
+errtext = "URS error code: "..code2
+end
+end
+--Motd stuff
+motw = string.sub(ret2,21,300)
+onlinestatus = 1 
+if motw ~= "." then
+posix = graphics.textSize(motw)
+if motw ~= MANAGER.getsetting("CRK","storedmotd") then
+event.unregister(event.tick,showmotdnot)
+event.register(event.tick,showmotdnot)
+event.unregister(event.mousedown, clicktomsg)
+event.register(event.mousedown, clicktomsg)
 end
 end
 end
@@ -404,10 +396,9 @@ tpt.fillrect(390,366,138,14,32,250,210,120)
 else
 tpt.fillrect(390,366,138,14,32,250,210,20)
 end
-
 tpt.drawrect(390,366,138,14,32,250,210,255)
-tpt.drawrect(418,408,51,14,32,250,210,255)
-gfx.drawText(395,370,"You have an unread message",32,250,210,255)
+tpt.drawrect(418,408,51,14,255,25,21,255)
+gfx.drawText(395,370,"New message, click to view.",32,250,210,255)
 end
 
 local function strtelemgraph()
@@ -1708,7 +1699,7 @@ al = brightSlider:value()
 end
 --Update text
 if updatestatus == 1 then
-gfx.drawText(10,370,"You are running an outdated version.",190,190,190,180)
+gfx.drawText(10,370,"You are running an outdated version, please update when possible.",220,220,220,250)
 end
 --Filters
 if filterval == 1 then
@@ -2230,6 +2221,7 @@ end
 
 if MANAGER.getsetting("CRK","al") == nil then --Defaults to prevent errors in script
 MANAGER.savesetting("CRK","loadelem","0")
+MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK","notifval","1")
 MANAGER.savesetting("CRK", "fancurs","0")
 MANAGER.savesetting("CRK","savergb","0")
@@ -7898,3 +7890,4 @@ if name == "" then
 end
 end
 notificationscript()
+failsafe = 1 -- Meant to be a global variable, used for detecting script crash
