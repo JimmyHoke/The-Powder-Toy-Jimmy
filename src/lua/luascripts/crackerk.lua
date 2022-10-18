@@ -3,9 +3,10 @@ local passreal = "12345678"
 local crackversion = 48.0 --48.5 Next version
 local passreal2 = "DMND"
 local motw = "."
+local specialmsgval = 0
 local updatestatus = 0
 --Default theme for initial launch and resets
-local dr, dg, db, da, defaulttheme = 32,216,255,220, "Default"
+local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
@@ -255,7 +256,7 @@ reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/downlo
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 else
-reqwin = "Not supported"
+print("Platform not supported yet.")
 end
 event.register(event.tick,updatermod)
 elseif clickcheck == 1 then
@@ -316,11 +317,12 @@ end
 if clickcheck == 0 then
 if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(208,366,14,14,250,50,50,150)
+gfx.drawText(225,369,"Cancel the update",250,50,50,250)
 else
 gfx.fillRect(208,366,14,14,250,50,50,20)
 end
-gfx.drawRect(208,366,14,14,250,50,50,255)
-gfx.drawText(212,369,"X",250,50,50,255)
+gfx.drawRect(208,366,14,14,255,5,5,255)
+gfx.drawText(212,369,"X",255,5,5,255)
 end
 
 end
@@ -355,7 +357,8 @@ errtext = "URS error code: "..code2
 end
 end
 --Motd stuff
-motw = string.sub(ret2,21,300)
+motw = string.sub(ret2,40,300)
+specialmsgval = string.sub(ret2,31,32)
 onlinestatus = 1 
 if motw ~= "." then
 posix = graphics.textSize(motw)
@@ -397,7 +400,7 @@ else
 tpt.fillrect(390,366,138,14,32,250,210,20)
 end
 tpt.drawrect(390,366,138,14,32,250,210,255)
-tpt.drawrect(418,408,51,14,255,25,21,255)
+tpt.drawrect(418,408,51,14,244,244,88,255)
 gfx.drawText(395,370,"New message, click to view.",32,250,210,255)
 end
 
@@ -1683,6 +1686,9 @@ local barlength = "1"
 local uival = "1"
 local frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function theme()
+if tonumber(specialmsgval) == 1 then
+motwdisplay()
+end
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
@@ -1699,7 +1705,7 @@ al = brightSlider:value()
 end
 --Update text
 if updatestatus == 1 then
-gfx.drawText(10,370,"You are running an outdated version, please update when possible.",220,220,220,250)
+gfx.drawText(10,370,"You are running an outdated version, please update when possible.",255,20,20,250)
 end
 --Filters
 if filterval == 1 then
@@ -1833,7 +1839,7 @@ local mp2 = Button:new(70,92,45,25,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,92,45,25,"Aqua", "Change the theme to Red")
 local mp4 = Button:new(170,92,45,25,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,92,45,25,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,92,45,25,"Twilight", "Resets back to default")
+local mp8 = Button:new(270,92,45,25,"Teal", "Teal")
 local mp11 = Button:new(320,92,45,25,defaulttheme, "The default theme")
 local mp9 = Button:new(370,92,45,25,"Pulse", "RBG makes everything better.")
 local mp10 = Button:new(420,92,45,25,"Split", "Half of the theme is inverted")
@@ -2106,8 +2112,8 @@ mpnolag()
 end)
 
 mp8:action(function(sender)
-MANAGER.savesetting("CRK","ar",131)
-MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ar",87)
+MANAGER.savesetting("CRK","ag",255)
 MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
@@ -2317,8 +2323,9 @@ clearm()
 barlength = 1
 end
 local posix2 = posix + 10
-
-function showmotd()
+function motwdisplay()
+if motw ~= "." then
+if posix > 600 then
 if posix2 > -1*(posix)then
 posix2 = posix2 - 1
 end
@@ -2326,15 +2333,18 @@ if posix2 <= -1*(posix) then
 posix2 = posix + 10
 end
 end
-
-function drawglitch()
-if motw ~= "." then
-if posix > 600 then
-showmotd()
-end
+if tonumber(specialmsgval) == 1 then
+graphics.fillRect(2,358,609, 10,20,20,20,200)
+graphics.drawText(posix2,359,motw,255,0,0,255)
+else
 graphics.fillRect(2,258,609, 10,20,20,20,200)
 graphics.drawText(posix2,259,motw,32,250,210,255)
 end
+end
+end
+
+function drawglitch()
+motwdisplay()
 if perfmv == "1" then
 graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)

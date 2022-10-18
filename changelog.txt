@@ -1,6 +1,12 @@
 Changelog for V48.0
+
 Optimised checks for updates and motds, more efficient now.
 Update to 97.0
+One file for all check
 
+todo:
+Missile position selector tool
+Refactored code for ball element
+rewrite parts of URS 
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**
