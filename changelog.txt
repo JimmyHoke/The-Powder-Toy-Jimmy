@@ -4,9 +4,9 @@ Optimised checks for updates and motds, more efficient now.
 Update to 97.0
 One file for all checks
 Rewrite parts of URS 
+Minor changes to ball element
 
 todo:
 Missile position selector tool
-Refactored code for ball element
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

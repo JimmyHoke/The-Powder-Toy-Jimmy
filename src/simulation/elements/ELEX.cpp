@@ -83,6 +83,5 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 2, 2, cr, cg, cb, 150);
 	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 1, 1, cr, cg, cb, 100);
-	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 3, 3, cr, cg, cb, 150);
 	return 0;
 }
