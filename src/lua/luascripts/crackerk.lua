@@ -175,12 +175,12 @@ local req2 = http.get("https://pastebin.com/raw/9yJRRimM")
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
---URS
+--URS Updater
 local updatever, updatestatus = 1,0
 local updatertext = "is available, click to download"
 local reqwin
 local crdata = "Getting data please wait.."
-local updatetimer, rungrap = 0,10
+local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 local errtext = "Checking for updates.."
@@ -188,16 +188,9 @@ local timeout = 0
 
 function updatermod()
 updatetimer = updatetimer + 1
-if rungrap < 138 then
-rungrap = rungrap + 1
-elseif rungrap >= 138 then
-rungrap = 10
-end
 if updatetimer >= 3500 then
 timeout = 1
 end
---Graphics while downloading updates..
-gfx.fillRect(rungrap,367,rungrap/2,12,34,255,35,175)
 --Get changelogs
 if crlog:status() == "done"  then
 local crlogdata, crlogcode = crlog:finish()
@@ -205,41 +198,29 @@ if crlogcode == 200  then
 crdata = crlogdata
 end
 end
---Unsupported platforms
-if checkos ~= "WIN64" and checkos ~= "LIN64" and checkos ~= "WIN32" then
-print("Your platform isn't supported by URS. Please download the update manually.")
-print("Download the update from Mod thread")
-event.unregister(event.mousedown, clicktomsg2)
-event.unregister(event.tick, showmotdnot2)
-event.unregister(event.tick,updatermod)
-end
 local filesize, filedone = reqwin:progress()
 local downprog = math.floor((filedone/filesize)*100)
---Windows
-if checkos == "WIN64" or checkos == "WIN32" then --Windows
+--Graphics while downloading updates..
+gfx.fillRect(10,367,downprog*2,12,32,255,216,150)
 updatertext = "Downloading update, "..downprog .."% Done"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
-if reqwincode == 200  then
+if reqwincode == 200  then --Windows
 if checkos == "WIN64" or checkos == "WIN32" then
 os.rename(filename,"older.exe")
+elseif checkos == "LIN64" then --Linux
+os.rename(filename,"older")
+end
 updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata)
 f:close()
-elseif checkos == "LIN64" then --Linux
-os.rename(filename,"older")
-f = io.open(filename, 'wb')
-f:write(reqwindata)
-f:close()
-end
 updatertext = "Done, click here to restart."
 clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
 updatertext = " Updater error code: "..reqwincode
 event.unregister(event.tick,updatermod)
-end
 end
 end
 end
@@ -256,7 +237,10 @@ reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/downlo
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 else
-print("Platform not supported yet.")
+print("Your platform isn't supported by URS. Please download it manually from the mod thread.")
+event.unregister(event.mousedown, clicktomsg2)
+event.unregister(event.tick, showmotdnot2)
+event.unregister(event.tick,updatermod)
 end
 event.register(event.tick,updatermod)
 elseif clickcheck == 1 then
@@ -290,7 +274,7 @@ gfx.fillRect(5,92,600,292,10,10,10,200)
 gfx.drawRect(5,92,600,292,255,255,255,255)
 gfx.fillCircle(120,99,4,4,50,50,250,200)
 gfx.drawCircle(120,99,4,4,32,216,250,255)
-gfx.drawText(130,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully. (V."..crackversion.." >> V."..tonumber(updatever)..")",32,216,255,255)
+gfx.drawText(130,96,"Welcome to the Cracker1000's Mod URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
 gfx.drawText(12,124,crdata,250,250,250,255)
 if updatertext == "Done, click here to restart." then
 gfx.drawRect(10,363,590,1,10,250,10,255)
@@ -324,7 +308,6 @@ end
 gfx.drawRect(208,366,14,14,255,5,5,255)
 gfx.drawText(212,369,"X",255,5,5,255)
 end
-
 end
 --URS end
 local errtimer = 200
@@ -377,9 +360,9 @@ if errtimer > 0 then
 errtimer = errtimer - 1
 end
 if errtext ==  "URS: Latest Version" or errtext == "Checking for updates.." then
-gfx.drawText(10,370,errtext,105,255,105,200)
+gfx.drawText(10,370,errtext,55,255,55,255)
 else
-gfx.drawText(10,370,errtext,255,105,105,200)
+gfx.drawText(10,370,errtext,255,55,55,255)
 end
 if errtimer == 0 then
 event.unregister(event.tick,errormesg)
