@@ -5,7 +5,7 @@ local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local themevaldefault = 0 --Default code for secure theme.
+local themevaldefault = 1 --Default code for secure theme.
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
@@ -71,11 +71,6 @@ local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
 
 local bar = Button:new(10,188,80,25,"Auto Stamp", "Toggle Auto stamp.")
 local stamplb = "0"
-local barktext = Textbox:new(126, 185, 27, 15, '10')
-local barklab = Label:new(162, 185, 20, 15, "1-30")
-barktext:text("5")
-local barkon = Button:new(126,203,30,20,"Set", "Save.")
-local barkoff = Button:new(156,203,30,20,"Off", "Cancel.")
 
 local bug = Button:new(10,220,80,25,"Feedback", "Direct to Mod thread for bug report.")
 local bug1 = Button:new(100,220,45,25,"Website", "Direct to Mod thread for bug report.")
@@ -166,10 +161,6 @@ newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brightSlider)
-newmenu:removeComponent(barkon)
-newmenu:removeComponent(barkoff)
-newmenu:removeComponent(barktext)
-newmenu:removeComponent(barklab)
 end
 
 local req2 = http.get("https://pastebin.com/raw/9yJRRimM")
@@ -385,7 +376,7 @@ else
 tpt.fillrect(390,366,138,14,32,250,210,20)
 end
 tpt.drawrect(390,366,138,14,32,250,210,255)
-tpt.drawrect(418,408,51,14,244,244,88,255)
+tpt.drawrect(418,408,51,14,255-ar,255-ag,255-ab,255)
 gfx.drawText(395,370,"New message, click to view.",32,250,210,255)
 end
 
@@ -603,69 +594,42 @@ tpt.display_mode(3)
 end
 end)
 
-local savetime = 0
-local saveend = 0
-local maxpart1 = 0
-local maxpart2 = 0
-local maxpart3 = 0
-local maxpart4 = 0
-
+local savetime, maxpart1, maxpart2, maxpart3, maxpart4 = 0,0,0,0,0
 function getmax()
-maxpart1 = math.huge
-maxpart2 = math.huge
-maxpart3 = -math.huge
-maxpart4 = -math.huge
-for i in sim.parts() do maxpart1 = math.min(sim.partProperty(i,"x"),maxpart1)end
-for i in sim.parts() do maxpart2 = math.min(sim.partProperty(i,"y"),maxpart2)end
-for i in sim.parts() do maxpart3 = math.max(sim.partProperty(i,"x"),maxpart3)end
-for i in sim.parts() do maxpart4 = math.max(sim.partProperty(i,"y"),maxpart4)end
+maxpart1, maxpart2 = math.huge
+maxpart3, maxpart4  = -math.huge
+for i in sim.parts() do 
+maxpart1 = math.min(sim.partProperty(i,"x"),maxpart1)
+maxpart2 = math.min(sim.partProperty(i,"y"),maxpart2)
+maxpart3 = math.max(sim.partProperty(i,"x"),maxpart3)
+maxpart4 = math.max(sim.partProperty(i,"y"),maxpart4)
+end
 end
 
 function autosave()
-if savetime < saveend then
+if savetime < 250 then
 savetime = savetime + 1
-
-elseif savetime >= saveend then
-savetime = 0
 end
-
-if saveend - savetime < 15 then
-graphics.drawRect(4,367,33,14, 255,255,0,255)
-graphics.fillRect(4,367,33,14,15,15,15,200)
-graphics.drawText(8,370,"Stamp", 255,255,0,255)
+if savetime >= 240 then
+graphics.fillRect(67,372,5,5,255,255,0,240)
 end
-
-if saveend - savetime == 0 then
+if savetime >= 249 then
 getmax()
 sim.saveStamp(maxpart1,maxpart2,maxpart3-maxpart1,maxpart4-maxpart2)
+savetime = 0
 end
 end
 
 bar:action(function(sender)
 clearsb()
-newmenu:addComponent(barkon)
-newmenu:addComponent( barkoff)
-newmenu:addComponent( barktext)
-newmenu:addComponent(barklab)
-end)
-
-barkon:action(function(sender)
-if tonumber(barktext:text()) < 1 or tonumber(barktext:text()) > 30 then
-saveend = "5"
-barktext:text("5")
-end
-savetime = 0
-saveend = tonumber(barktext:text())*100
+if stamplb == "0" then
+stamplb = "1"
 event.unregister(event.tick,autosave)
 event.register(event.tick,autosave)
-stamplb = "1"
-clearsb()
-end)
-
-barkoff:action(function(sender)
-event.unregister(event.tick,autosave)
+elseif stamplb == "1" then
 stamplb = "0"
-clearsb()
+event.unregister(event.tick,autosave)
+end
 end)
 
 local stv, stackposx, stackposy, stackposval, zx, zy = 0, 99, 99, 0,0,0
@@ -1701,6 +1665,10 @@ end
 if borderval == "1" then
 tpt.drawrect(2,2,607,379,ar,ag,ab,al)
 tpt.drawrect(1,1,609,381,ar,ag,ab,al)
+end
+--Autostamp
+if stamplb == "1" then
+graphics.drawText(8,370,"<AutoStamp>", 32,255,32,220)
 end
 --Split theme
 local spr, spb,spg = ar,ag,ab

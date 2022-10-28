@@ -4,6 +4,7 @@ Optimised checks for updates and motds, more efficient now.
 One file for all checks
 Rewrite parts of URS 
 Minor changes to ball element
+Optimised Autostamp feature.
 
 todo
 Tool for setting MISL targets.
