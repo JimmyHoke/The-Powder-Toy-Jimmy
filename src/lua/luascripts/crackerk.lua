@@ -5,6 +5,7 @@ local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
+local themevaldefault = 0 --Default code for secure theme.
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
@@ -1767,7 +1768,7 @@ tpt.drawline(36,409,36,421,ar,ag,ab,al)
 tpt.drawline(18,409,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,421,ar,ag,ab,al)
 tpt.drawline(596,409,596,421,ar,ag,ab,al)
-tpt.drawline(418,408,418,421,ar,ag,ab,al)
+tpt.drawline(418,409,418,421,ar,ag,ab,al)
 
 if MANAGER.getsetting("CRK", "savergb") == "1" then
  colourRGB = {colourRED,colourGRN,colourBLU}
@@ -2044,6 +2045,7 @@ neonmode:action(function(sender)
 if nmodv == "0" then
 nmodv = "1"
 tpt.setfire(30)
+print("Neon Mode: Particles like FIRE, GAS and PHOT etc appear extra fancy and glowy.")
 elseif nmodv == "1" then
 nmodv = "0"
 tpt.setfire(1)
@@ -7278,7 +7280,12 @@ chars_light = {
         }
     }
 }
-
+function secure()
+if tpt.version.modid ~= 6 and themevaldefault == 1 then
+platform.restart()
+end
+end
+secure()
 function notificationscript()
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then

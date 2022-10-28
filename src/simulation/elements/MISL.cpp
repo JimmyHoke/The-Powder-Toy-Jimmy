@@ -42,7 +42,6 @@ void Element::Element_MISL()
 	LowTemperatureTransition = NT;
 	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
-	DefaultProperties.temp = R_TEMP + 30.0f;
 
 	Update = &update;
 	Graphics = &graphics;
