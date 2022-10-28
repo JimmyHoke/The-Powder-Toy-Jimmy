@@ -2,7 +2,7 @@
 
 #include "UpdateActivity.h"
 
-#include <bzlib.h>
+#include "bzip2/bzlib.h"
 
 #include "Config.h"
 #include "Update.h"

@@ -99,15 +99,11 @@ elif [[ $BSH_HOST_PLATFORM == darwin ]]; then
 	CC=clang
 	CXX=clang++
 	if [[ $BSH_HOST_ARCH == aarch64 ]]; then
-		if [[ $BSH_STATIC_DYNAMIC == static ]]; then
-			export MACOSX_DEPLOYMENT_TARGET=11.0
-		fi
+		export MACOSX_DEPLOYMENT_TARGET=11.0
 		CC+=" -arch arm64"
 		CXX+=" -arch arm64"
 	else
-		if [[ $BSH_STATIC_DYNAMIC == static ]]; then
-			export MACOSX_DEPLOYMENT_TARGET=10.9
-		fi
+		export MACOSX_DEPLOYMENT_TARGET=10.9
 		CC+=" -arch x86_64"
 		CXX+=" -arch x86_64"
 	fi
@@ -153,7 +149,7 @@ if [[ $BSH_HOST_PLATFORM-$BSH_HOST_LIBC != windows-msvc ]]; then
 		c_link_args+=\'-Wl,--gc-sections\',
 	fi
 fi
-if [[ $BSH_HOST_PLATFORM-$BSH_STATIC_DYNAMIC == darwin-static ]]; then
+if [[ $BSH_HOST_PLATFORM == darwin ]]; then
 	if [[ $BSH_HOST_ARCH == aarch64 ]]; then
 		c_args+=\'-mmacosx-version-min=11.0\',
 		c_link_args+=\'-mmacosx-version-min=11.0\',
@@ -188,16 +184,6 @@ if [[ $BSH_STATIC_DYNAMIC == static ]]; then
 	elif [[ $BSH_HOST_PLATFORM == linux ]]; then
 		c_link_args+=\'-static-libgcc\',
 		c_link_args+=\'-static-libstdc++\',
-	fi
-else
-	if [[ $BSH_BUILD_PLATFORM == linux ]]; then
-		meson_configure+=$'\t'-Dworkaround_elusive_bzip2=true
-	fi
-	if [[ $BSH_BUILD_PLATFORM == darwin ]]; then
-		meson_configure+=$'\t'-Dworkaround_elusive_bzip2=true
-		meson_configure+=$'\t'-Dworkaround_elusive_bzip2_lib_dir=/usr/local/opt/bzip2/lib
-		meson_configure+=$'\t'-Dworkaround_elusive_bzip2_include_dir=/usr/local/opt/bzip2/include
-		meson_configure+=$'\t'-Dworkaround_elusive_bzip2_static=true
 	fi
 fi
 if [[ $BSH_HOST_PLATFORM == linux ]] && [[ $BSH_HOST_ARCH != aarch64 ]]; then
@@ -241,8 +227,12 @@ if [[ $BSH_HOST_PLATFORM-$BSH_HOST_LIBC != windows-mingw ]] && [[ $BSH_STATIC_DY
 	# It also has a tendency to not play well with dynamic libraries.
 	meson_configure+=$'\t'-Db_lto=true
 fi
-if [[ $BSH_HOST_PLATFORM-$BSH_HOST_ARCH == darwin-aarch64 ]]; then
-	meson_configure+=$'\t'--cross-file=.github/macaa64-ghactions.ini
+if [[ $BSH_HOST_PLATFORM == darwin ]]; then
+	export MACOSX_DEPLOYMENT_TARGET=10.9
+	if [[ $BSH_HOST_ARCH == aarch64 ]]; then
+		export MACOSX_DEPLOYMENT_TARGET=11.0
+		meson_configure+=$'\t'--cross-file=.github/macaa64-ghactions.ini
+	fi
 fi
 if [[ $RELEASE_TYPE == tptlibsdev ]] && ([[ $BSH_HOST_PLATFORM == windows ]] || [[ $BSH_STATIC_DYNAMIC == static ]]); then
 	if [[ -z "${GITHUB_REPOSITORY_OWNER-}" ]]; then
