@@ -8,4 +8,5 @@ Optimised Autostamp feature.
 
 todo
 Tool for setting MISL targets.
+Merge vanilla master branch when it is working again.
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

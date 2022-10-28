@@ -5,7 +5,7 @@ local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local themevaldefault = 1 --Default code for secure theme.
+local themevaldefault = 0 --Default code for secure theme.
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
@@ -596,8 +596,8 @@ end)
 
 local savetime, maxpart1, maxpart2, maxpart3, maxpart4 = 0,0,0,0,0
 function getmax()
-maxpart1, maxpart2 = math.huge
-maxpart3, maxpart4  = -math.huge
+maxpart1, maxpart2 = math.huge, math.huge
+maxpart3, maxpart4  = -math.huge, -math.huge
 for i in sim.parts() do 
 maxpart1 = math.min(sim.partProperty(i,"x"),maxpart1)
 maxpart2 = math.min(sim.partProperty(i,"y"),maxpart2)
