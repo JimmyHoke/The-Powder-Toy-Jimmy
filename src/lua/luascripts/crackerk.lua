@@ -5,7 +5,7 @@ local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local themevaldefault = 1
+local securelock = 1 --Prevent accidental conversion of vanilla tpt into C1k Mod by URS updater. Set it to 0 to avoid warnings in case you know what you are doing.
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MISLT")
@@ -2207,8 +2207,21 @@ end)
 
 end)
 
+local function secure()
+local securetext = "URS security: You are running the script with an incompatible version of C1000 Mod. Please download it from mod thread."
+local securetext2 = "Bypassing the check may lead to unexpected results!"
+gfx.fillRect(10,338,gfx.textSize(securetext),12,15,15,15,255)
+gfx.drawText(10,340,securetext,255,0,0,255)
+
+gfx.fillRect(10,350,gfx.textSize(securetext2),12,15,15,15,255)
+gfx.drawText(10,352,securetext2,255,0,0,255)
+end
+
 function startupcheck()
 event.register(event.tick,errormesg)
+if tpt.version.modid ~= 6 and securelock == 1 then
+tpt.register_step(secure)
+end
 fs.makeDirectory("scripts")
 os.remove("older.exe")
 os.remove("older")
@@ -7289,12 +7302,7 @@ chars_light = {
         }
     }
 }
-function secure()
-if tpt.version.modid ~= 6 and themevaldefault == 1 then
-platform.restart()
-end
-end
-secure()
+
 function notificationscript()
 -- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
