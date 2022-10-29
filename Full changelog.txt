@@ -8,7 +8,10 @@ Fix URS not working properly on LINUX
 Optimised Autostamp feature.
 Sodium is now a solid, use pressure to powderise it.
 Rewrite sodium to be a bit more intresting.
-Merge changes from snapshots.
+Merge changes from snapshots:
+Fix rare crash upon clearing the ambient temperature input box in settings
+Add http.getAuthToken
+Add clip rect feature to Graphics and gfx.setClipRect
 
 v47.5
 Add missing renderer option lines.

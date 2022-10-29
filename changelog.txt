@@ -8,6 +8,9 @@ Fix URS not working properly on LINUX
 Optimised Autostamp feature.
 Sodium is now a solid, use pressure to powderise it.
 Rewrite sodium to be a bit more intresting.
-Merge changes from snapshots.
+Merge changes from snapshots:
+Fix rare crash upon clearing the ambient temperature input box in settings
+Add http.getAuthToken
+Add clip rect feature to Graphics and gfx.setClipRect
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**
