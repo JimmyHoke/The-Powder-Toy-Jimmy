@@ -5,8 +5,11 @@ One file for all checks
 Rewrite parts of URS 
 Minor changes to ball element
 Optimised Autostamp feature.
+Sodium is now a solid, use pressure to powderise it.
+Rewrite sodium to be a bit more intresting.
+Merge changes from snapshots.
 
 todo
+Update ingame wiki
 Tool for setting MISL targets.
-Merge vanilla master branch when it is working again.
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

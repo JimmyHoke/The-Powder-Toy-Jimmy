@@ -5,7 +5,7 @@ local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local themevaldefault = 0 --Default code for secure theme.
+local themevaldefault = 1 --Default code for secure theme.
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
@@ -69,7 +69,7 @@ local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
 local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
 
-local bar = Button:new(10,188,80,25,"Auto Stamp", "Toggle Auto stamp.")
+local bar = Button:new(10,188,80,25,"Auto Save", "Toggle Auto stamp.")
 local stamplb = "0"
 
 local bug = Button:new(10,220,80,25,"Feedback", "Direct to Mod thread for bug report.")
@@ -264,19 +264,19 @@ end
 
 function showmotdnot2()
 if clickcheck ~= 0 then
-gfx.fillRect(5,92,600,292,10,10,10,200)
-gfx.drawRect(5,92,600,292,255,255,255,255)
-gfx.fillCircle(120,99,4,4,50,50,250,200)
-gfx.drawCircle(120,99,4,4,32,216,250,255)
-gfx.drawText(130,96,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
-gfx.drawText(12,124,crdata,250,250,250,255)
+gfx.fillRect(5,72,600,312,10,10,10,200)
+gfx.drawRect(5,72,600,312,255,255,255,255)
+gfx.fillCircle(120,81,4,4,50,50,250,200)
+gfx.drawCircle(120,81,4,4,32,216,250,255)
+gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
+gfx.drawText(12,98,crdata,250,250,250,255)
 if updatertext == "Done, click here to restart." then
 gfx.drawRect(10,363,590,1,10,250,10,255)
 else
 gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(12,109,"Error: Taking longer than usual, you may wait or download manually using the button provided below..",255,30,30,255)
+gfx.drawText(12,350,"Error: Taking longer than usual, you can wait or download it manually using the button provided below..",255,10,10,245)
 gfx.drawRect(320,366,167,14,32,216,255,220)
 gfx.fillRect(320,366,167,14,32,216,255,40)
 gfx.drawText(325,370,"Click here to download manually",32,216,255,220)
@@ -607,13 +607,14 @@ end
 end
 
 function autosave()
-if savetime < 250 then
+if savetime < 350 then
 savetime = savetime + 1
 end
-if savetime >= 240 then
-graphics.fillRect(67,372,5,5,255,255,0,240)
+if savetime >= 340 then
+graphics.drawRect(6,368,44,12,255,255,0,200)
+graphics.fillRect(6,368,44,12,255,255,0,70)
 end
-if savetime >= 249 then
+if savetime >= 349 then
 getmax()
 sim.saveStamp(maxpart1,maxpart2,maxpart3-maxpart1,maxpart4-maxpart2)
 savetime = 0
@@ -1666,9 +1667,9 @@ if borderval == "1" then
 tpt.drawrect(2,2,607,379,ar,ag,ab,al)
 tpt.drawrect(1,1,609,381,ar,ag,ab,al)
 end
---Autostamp
+--Autosave
 if stamplb == "1" then
-graphics.drawText(8,370,"<AutoStamp>", 32,255,32,220)
+graphics.drawText(8,370,"AutoSave", 32,255,32,220)
 end
 --Split theme
 local spr, spb,spg = ar,ag,ab
