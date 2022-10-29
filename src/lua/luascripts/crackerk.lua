@@ -5,7 +5,7 @@ local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local themevaldefault = 0
+local themevaldefault = 1
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MISLT")

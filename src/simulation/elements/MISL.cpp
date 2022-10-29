@@ -30,7 +30,7 @@ void Element::Element_MISL()
 	Weight = 100;
 
 	HeatConduct = 0;
-	Description = "Missile, flies to target coordinates (tmp = X, tmp2 = Y) and then goes booom. Activates with PSCN.";
+	Description = "Missile, flies to target coordinates (tmp = X, tmp2 = Y) and then goes booom. Activates with PSCN. Use MIST tool for ease.";
 
 	Properties = TYPE_PART;
 
