@@ -124,7 +124,7 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colr = 255 - cpart->tmp*2;
 		*colg = 255 - cpart->tmp*2;
 		*colb = 255 - cpart->tmp*2;
-		*pixel_mode |= PMODE_FLARE;
+		*pixel_mode |= PMODE_SPARK;
 	}
 	return 0;
 }

@@ -1,3 +1,15 @@
+v48.0
+New TOOL: MIST MIssile Target, helps set the target coordinates for missile.
+Optimised checks for updates and motds, more efficient now.
+One file for all checks
+Rewrite parts of URS 
+Minor changes to ball element
+Fix URS not working properly on LINUX
+Optimised Autostamp feature.
+Sodium is now a solid, use pressure to powderise it.
+Rewrite sodium to be a bit more intresting.
+Merge changes from snapshots.
+
 v47.5
 Add missing renderer option lines.
 New Neon Mode in control centre, makes everything super bright.

@@ -1,15 +1,13 @@
 Changelog for V48.0
-
+New TOOL: MIST MIssile Target, helps set the target coordinates for missile.
 Optimised checks for updates and motds, more efficient now.
 One file for all checks
 Rewrite parts of URS 
 Minor changes to ball element
+Fix URS not working properly on LINUX
 Optimised Autostamp feature.
 Sodium is now a solid, use pressure to powderise it.
 Rewrite sodium to be a bit more intresting.
 Merge changes from snapshots.
 
-todo
-Update ingame wiki
-Tool for setting MISL targets.
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

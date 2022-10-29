@@ -63,12 +63,15 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].vy = 0;
 	}
 	//Explosion
-	if (((abs(parts[i].x - parts[i].tmp) <= 3 ) && abs(parts[i].y - parts[i].tmp2) <= 2) || parts[i].tmp4 > 300 || parts[i].temp >= 873.15f)
+	if (parts[i].life > 0)
 	{
-		sim->pv[(y / CELL)][(x / CELL)] = 270;
-		parts[i].life = 1;
-		parts[i].tmp = 400;
-		sim->part_change_type(i, x, y, PT_SING);
+		if (((abs(parts[i].x - parts[i].tmp) <= 3) && abs(parts[i].y - parts[i].tmp2) <= 2) || parts[i].tmp4 > 300 || parts[i].temp >= 873.15f)
+		{
+			sim->pv[(y / CELL)][(x / CELL)] = 270;
+			parts[i].life = 1;
+			parts[i].tmp = 400;
+			sim->part_change_type(i, x, y, PT_SING);
+		}
 	}
 	float velaccuracy = 0;
 	if (parts[i].life == 20)
