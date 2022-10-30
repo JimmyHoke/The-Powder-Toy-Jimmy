@@ -251,6 +251,7 @@ updatertext = "Done, click here to restart."
 clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
+timeout = 1
 updatertext = " Updater error code: "..reqwincode
 event.unregister(event.tick,updatermod)
 end
@@ -316,10 +317,10 @@ else
 gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(12,350,"Error: Taking longer than usual, you can wait or download it manually using the button provided below..",255,10,10,245)
+gfx.drawText(12,350,"Error: Something went wrong. Report the error in the mod thread and use the manual download option provided below instead.",255,10,10,245)
 gfx.drawRect(320,366,167,14,32,216,255,220)
 gfx.fillRect(320,366,167,14,32,216,255,40)
-gfx.drawText(325,370,"Click here to download manually",32,216,255,220)
+gfx.drawText(325,370,"Click here to download manually.",32,216,255,220)
 end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
