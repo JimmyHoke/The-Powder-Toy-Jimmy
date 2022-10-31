@@ -5,7 +5,7 @@ local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local securelock = 1 --Prevent accidental conversion of vanilla tpt into C1k Mod by URS updater. Set it to 0 to avoid warnings in case you know what you are doing.
+local securelock = 0 --Prevent accidental conversion of vanilla tpt into C1k Mod by URS updater. Set it to 0 to avoid warnings in case you know what you are doing.
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MISLT")
