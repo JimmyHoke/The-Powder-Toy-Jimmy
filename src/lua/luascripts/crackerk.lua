@@ -1,11 +1,11 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 48.0 --48.5 Next version
+local crackversion = 47.0 --48.5 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local securelock = 1 --Prevent accidental conversion of vanilla tpt into C1k Mod by URS updater. Set it to 0 to avoid warnings in case you know what you are doing.
+local securelock = 0 --Prevent accidental conversion of vanilla tpt into C1k Mod by URS updater. Set it to 0 to avoid warnings in case you know what you are doing.
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MISLT")
@@ -233,7 +233,7 @@ end
 local filesize, filedone = reqwin:progress()
 local downprog = math.floor((filedone/filesize)*100)
 --Graphics while downloading updates..
-gfx.fillRect(10,367,downprog*2,12,32,255,216,150)
+gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
 updatertext = "Downloading update, "..downprog .."% Done"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
@@ -241,6 +241,8 @@ if reqwincode == 200  then
 if checkos == "WIN64" or checkos == "WIN32" then --Windows
 os.rename(filename,"older.exe")
 elseif checkos == "LIN64" then --Linux
+os.rename(filename,"older")
+elseif checkos == "MACOSARM" then --MACOSARM, M1
 os.rename(filename,"older")
 end
 updatertext = "Done"
@@ -269,11 +271,9 @@ elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
-else
-print("Your platform isn't supported by URS. Please download it manually from the mod thread.")
-event.unregister(event.mousedown, clicktomsg2)
+elseif checkos == "MACOSARM" then
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/CMod-Mac.dmg")
 event.unregister(event.tick, showmotdnot2)--Prevent conflicts between motw and updater notifications
-event.unregister(event.tick,updatermod)
 end
 event.register(event.tick,updatermod)
 event.unregister(event.mousedown, clicktomsg)
@@ -309,6 +309,8 @@ gfx.fillRect(5,72,600,312,10,10,10,200)
 gfx.drawRect(5,72,600,312,255,255,255,255)
 gfx.fillCircle(120,81,4,4,50,50,250,200)
 gfx.drawCircle(120,81,4,4,32,216,250,255)
+
+gfx.drawText(12,79,"OS:"..platform.platform(),255,255,0,200)
 gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
 gfx.drawText(12,98,crdata,250,250,250,255)
 if updatertext == "Done, click here to restart." then
