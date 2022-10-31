@@ -280,7 +280,6 @@ event.unregister(event.tick,showmotdnot)
 elseif clickcheck == 1 then
 platform.restart()
 end
-return false
 end
 if clickcheck == 0 then
 if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -288,7 +287,6 @@ updatestatus = 1
 event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
 event.unregister(event.tick,updatermod)
-return false
 end
 end
 
@@ -298,8 +296,8 @@ if tpt.mousex > 320 and tpt.mousex < 486 and tpt.mousey > 367 and tpt.mousey < 3
 platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
 end
 end
-return false
 end
+return false
 end
 
 function showmotdnot2()
@@ -318,7 +316,7 @@ else
 gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(12,350,"Error: Something went wrong. Report the error in the mod thread and use the manual download option provided below instead.",255,10,10,245)
+gfx.drawText(12,350,"Uh oh something went wrong. You can wait or use the manual download option provided below. Report the error in mod thread.",255,10,10,245)
 gfx.drawRect(320,366,167,14,32,216,255,220)
 gfx.fillRect(320,366,167,14,32,216,255,40)
 gfx.drawText(325,370,"Click here to download manually.",32,216,255,220)
