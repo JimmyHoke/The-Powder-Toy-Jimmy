@@ -242,7 +242,7 @@ if checkos == "WIN64" or checkos == "WIN32" then --Windows
 os.rename(filename,"older.exe")
 elseif checkos == "LIN64" then --Linux
 os.rename(filename,"older")
-elseif checkos == "MACOSARM" or checkos == "MACOSX" then --MACOSARM, M1
+elseif checkos == "MACOSARM" then --MACOSARM, M1
 os.rename(filename,"older")
 end
 updatertext = "Done"
@@ -271,9 +271,8 @@ elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
-elseif checkos == "MACOSARM" or checkos == "MACOSX" then
+elseif checkos == "MACOSARM" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/CMod-Mac.dmg")
-event.unregister(event.tick, showmotdnot2)--Prevent conflicts between motw and updater notifications
 end
 event.register(event.tick,updatermod)
 event.unregister(event.mousedown, clicktomsg)
