@@ -8,17 +8,20 @@ local updatestatus = 0
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MIST")
-local tcount = 0
+local tcount, posxt, posyt = 150,0,0
 elem.element(MISLT, elem.element(elem.DEFAULT_PT_DMND))
 elem.property(MISLT, "Name", "MIST")
-elem.property(MISLT, "Description", "Help: Missile Target Tool, click and then quicly move cursor to set the target before counter reaches 100.")
+elem.property(MISLT, "Description", "Help: Missile Target Tool, click and then quicly move cursor to set the target before counter reaches 0. Set one at a time.")
 elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
+posxt = tpt.get_property("x",i)
+posyt = tpt.get_property("y",i)
 function setcoord()
 pcall(tpt.set_property, "tmp", tpt.mousex, i)
 pcall(tpt.set_property, "tmp2", tpt.mousey, i)
 pcall(tpt.set_property, "type", 228,i)
+return false
 end
 drawgraph()
 end)
@@ -26,21 +29,23 @@ end)
 function drawgraph()
 tpt.unregister_step(drawgraph2)
 tpt.register_step(drawgraph2)
-tcount = tcount + 1
-if tcount == 100 then
+tcount = tcount - 1
+if tcount == 0 then
 setcoord()
-tcount = 0
+tcount = 150
 tpt.unregister_step(drawgraph2)
 end
 end
 
 function drawgraph2()
-if tcount > 0 then
-gfx.fillCircle(tpt.mousex,tpt.mousey,30-tcount/3,30-tcount/3,0,190,0,200)
-gfx.drawCircle(tpt.mousex,tpt.mousey,30-tcount/3,30-tcount/3,0,190,0,255)
+if tcount < 150 then
+gfx.drawLine(posxt,posyt,tpt.mousex,tpt.mousey,255,9,9,200)
+gfx.fillCircle(tpt.mousex,tpt.mousey,tcount/5,tcount/5,0,190,0,200)
+gfx.drawCircle(tpt.mousex,tpt.mousey,tcount/5,tcount/5,0,190,0,255)
+gfx.fillCircle(posxt,posyt,2,2,255,9,9,100)
 gfx.drawText(tpt.mousex - 30,tpt.mousey + 20," MISL Target Mode")
 end 
-if tcount >= 99 then
+if tcount <= 1 then
 print("Missile Target Set")
 else
 gfx.drawText(10,370,"MISL Tool Counter: ("..tcount..")",32,216,255,255)
@@ -244,8 +249,6 @@ if checkos == "WIN64" or checkos == "WIN32" then --Windows
 os.rename(filename,"older.exe")
 elseif checkos == "LIN64" then --Linux
 os.rename(filename,"older")
-elseif checkos == "MACOSARM" or checkos == "MACOSX" then -- Both M1 and x86 versions should support this.
-os.rename(filename,"older")
 end
 updatertext = "Done"
 f = io.open(filename, 'wb')
@@ -274,7 +277,11 @@ reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/downlo
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/CMod-Mac.dmg")
+print("URS doesn't support MAC OS, please download the update manually from here...")
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+event.unregister(event.tick,updatermod)
+event.unregister(event.tick,clicktomsg2)
+event.unregister(event.tick,showmotdnot2)
 end
 event.register(event.tick,updatermod)
 event.unregister(event.mousedown, clicktomsg)
@@ -348,7 +355,7 @@ gfx.drawText(212,369,"X",255,5,5,255)
 end
 end
 --URS end
-local errtimer = 200
+local errtimer = 0
 function runupdater()
 event.unregister(event.tick,errormesg)
 event.unregister(event.tick,showmotdnot2)
@@ -396,15 +403,13 @@ end
 end
 
 function errormesg()
-if errtimer > 0 then
-errtimer = errtimer - 1
-end
+errtimer = errtimer + 1
 if errtext ==  "URS: Latest Version" or errtext == "Checking for updates.." then
 gfx.drawText(10,370,errtext,55,255,55,255)
 else
 gfx.drawText(10,370,errtext,255,55,55,255)
 end
-if errtimer == 0 then
+if errtimer >= 250 then
 event.unregister(event.tick,errormesg)
 end
 end
