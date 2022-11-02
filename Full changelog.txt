@@ -1,5 +1,4 @@
 v49.0
-
 Fix ELEX turning into MIST Tool.
 Fix save titles and tags getting cut.
 Fix and Enable URS for MacOS ARM and x86 versions.
