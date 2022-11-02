@@ -1,19 +1,18 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 48.0 --48.5 Next version
+local crackversion = 48.1 --48.5 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
 local updatestatus = 0
-local securelock = 0 --Prevent accidental conversion of vanilla tpt into C1k Mod by URS updater. Set it to 0 to avoid warnings in case you know what you are doing.
 
 --TOOL for MISL
-local MISLT = elem.allocate("CR1K", "MISLT")
-local count = 0
+local MISLT = elem.allocate("CR1K", "MIST")
+local tcount = 0
 elem.element(MISLT, elem.element(elem.DEFAULT_PT_DMND))
 elem.property(MISLT, "Name", "MIST")
-elem.property(MISLT, "Description", "HELP: Missile Tool for placing MISL targets, click and then quicly move cursor to set the target before counter reaches 100.")
-elem.property(MISLT, "Color", 0xFFFE8915)
+elem.property(MISLT, "Description", "Help: Missile Target Tool, click and then quicly move cursor to set the target before counter reaches 100.")
+elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
 function setcoord()
@@ -27,22 +26,25 @@ end)
 function drawgraph()
 tpt.unregister_step(drawgraph2)
 tpt.register_step(drawgraph2)
-count = count + 1
-if count == 100 then
+tcount = tcount + 1
+if tcount == 100 then
 setcoord()
-count = 0
-print("Target Set.")
+tcount = 0
 tpt.unregister_step(drawgraph2)
 end
 end
 
 function drawgraph2()
-if count > 0 then
-gfx.fillCircle(tpt.mousex,tpt.mousey,5,5,0,190,0,200)
-gfx.drawCircle(tpt.mousex,tpt.mousey,5,5,0,190,0,255)
+if tcount > 0 then
+gfx.fillCircle(tpt.mousex,tpt.mousey,30-tcount/3,30-tcount/3,0,190,0,200)
+gfx.drawCircle(tpt.mousex,tpt.mousey,30-tcount/3,30-tcount/3,0,190,0,255)
 gfx.drawText(tpt.mousex - 30,tpt.mousey + 20," MISL Target Mode")
 end 
-gfx.drawText(10,370,"MISL Tool Counter: ("..count..")",32,216,255,255)
+if tcount >= 99 then
+print("Missile Target Set")
+else
+gfx.drawText(10,370,"MISL Tool Counter: ("..tcount..")",32,216,255,255)
+end
 end
 --TOOL end
 
@@ -242,7 +244,7 @@ if checkos == "WIN64" or checkos == "WIN32" then --Windows
 os.rename(filename,"older.exe")
 elseif checkos == "LIN64" then --Linux
 os.rename(filename,"older")
-elseif checkos == "MACOSARM" then --MACOSARM, M1
+elseif checkos == "MACOSARM" or checkos == "MACOSX" then -- Both M1 and x86 versions should support this.
 os.rename(filename,"older")
 end
 updatertext = "Done"
@@ -271,7 +273,7 @@ elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
-elseif checkos == "MACOSARM" then
+elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/CMod-Mac.dmg")
 end
 event.register(event.tick,updatermod)
@@ -347,6 +349,13 @@ end
 end
 --URS end
 local errtimer = 200
+function runupdater()
+event.unregister(event.tick,errormesg)
+event.unregister(event.tick,showmotdnot2)
+event.register(event.tick,showmotdnot2)
+event.unregister(event.mousedown, clicktomsg2)
+event.register(event.mousedown, clicktomsg2)
+end
 function writefile2()
 timermotd = timermotd + 1
 if timermotd >= 250 then
@@ -359,11 +368,7 @@ if code2 == 200 then
 errtext = ""
 updatever = string.sub(ret2,9,13)
 if tonumber(crackversion) < tonumber(updatever) then
-event.unregister(event.tick,errormesg)
-event.unregister(event.tick,showmotdnot2)
-event.register(event.tick,showmotdnot2)
-event.unregister(event.mousedown, clicktomsg2)
-event.register(event.mousedown, clicktomsg2)
+runupdater()
 elseif tonumber(crackversion) >= tonumber(updatever) then
 errtext = "URS: Latest Version"
 end
@@ -1847,6 +1852,7 @@ local bogb1 = Button:new(124,333,60,25,"Borders", "Draw Borders")
 
 local jkey = Button:new(124,300,60,25,"J-Shortcut", "Toggle Shortcut")
 local neonmode = Button:new(224,300,60,25,"Neon Mode", "Toggle fire strength")
+local Forceup = Button:new(324,300,70,25,"Force Update", "Triggers the forced update mechanism.")
 local bg7 = Button:new(224,333,60,25,"Developer", "Disable inbuilt scripts")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
@@ -1987,6 +1993,7 @@ newmenuth:addComponent(bog1)
 newmenuth:addComponent(bogb1)
 newmenuth:addComponent(jkey)
 newmenuth:addComponent(neonmode)
+newmenuth:addComponent(Forceup)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
@@ -2061,6 +2068,12 @@ elseif nmodv == "1" then
 nmodv = "0"
 tpt.setfire(1)
 end
+end)
+
+Forceup:action(function(sender)
+ui.closeWindow(newmenuth)
+ui.closeWindow(newmenu)
+runupdater()
 end)
 
 mpop:action(function(sender)
@@ -2156,7 +2169,7 @@ end)
 local adminpass = Textbox:new(290, 336, 55, 20, '', ' <Code> ')
 local admincan = Button:new(350,336,20,20,"X", "cancle admin mode")
 local admincan1 = Button:new(225,336,70,20,"Debug mode", "Disables crackerk.lua and fail check")
-local admincan2 = Button:new(298,336,76,20,"Disable scripts","Disables all embedded scripts")
+local admincan2 = Button:new(298,336,76,20,"Disable scripts", "Disables all embedded scripts")
 
 bg7:action(function(sender)
 adminval = 1
@@ -2177,6 +2190,7 @@ newmenuth:removeComponent(adminpass)
 newmenuth:removeComponent(admincan)
 newmenuth:addComponent(admincan1)
 newmenuth:addComponent(admincan2)
+
 admincan1:action(function(sender)
 local fdlf3 = io.open('debugmode.txt', 'w')
 fdlf3:write("Message from Cracker1000: This file disables the embedded scripts in Cracker1000's Mod for debugging purposes, delete this to restore the mod to original state.")
@@ -2209,20 +2223,10 @@ end)
 
 end)
 
-local function secure()
-local securetext = "URS security: You are running the script with an incompatible version of C1000 Mod. Please download it from mod thread."
-local securetext2 = "Bypassing the check may lead to unexpected results!"
-gfx.fillRect(10,338,gfx.textSize(securetext),12,15,15,15,255)
-gfx.drawText(10,340,securetext,255,0,0,255)
-
-gfx.fillRect(10,350,gfx.textSize(securetext2),12,15,15,15,255)
-gfx.drawText(10,352,securetext2,255,0,0,255)
-end
-
 function startupcheck()
 event.register(event.tick,errormesg)
-if tpt.version.modid ~= 6 and securelock == 1 then
-tpt.register_step(secure)
+if tpt.version.modid ~= 6 then
+tpt.message_box("URS Safety Warning!", "You are using a non supported version of TPT with crackerk.lua script. Please download the original mod from mod thread. \nI will not be held responsible for any data loss or damage if you use this script with this version. Click Dismiss to continue.")
 end
 fs.makeDirectory("scripts")
 os.remove("older.exe")
