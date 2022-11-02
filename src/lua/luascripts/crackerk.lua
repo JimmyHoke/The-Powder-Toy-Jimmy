@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 48.1 --48.5 Next version
+local crackversion = 49.0 --50.0 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0

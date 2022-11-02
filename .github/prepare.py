@@ -71,7 +71,7 @@ for bsh_host_arch, bsh_host_platform, bsh_host_libc, bsh_static_dynamic, bsh_bui
 		separate_debug = False
 	if publish:
 		assert artifact
-	for debug_release in [ 'debug', 'release' ]:
+	for debug_release in ['release']:
 		publish_release = publish and debug_release == 'release'
 		artifact_release = artifact and debug_release == 'release'
 		asset_path = f'powder{package_suffix}'
