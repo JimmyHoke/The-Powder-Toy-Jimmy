@@ -1,5 +1,5 @@
-Changelog for V49.0
-
+Changelog for V50.0
+Revert changes that broke snapshots and URS updater.
 Fix ELEX turning into MIST Tool.
 Prevent CLNE and other elements from accepting MIST tool as a ctype.
 MIST tool uses sim.adjustcoords to support working with zoom window.
@@ -9,9 +9,5 @@ Update the intro text.
 Enable Macos builds (Work In Progress)
 New Force Update option in control centre.
 Fixes for the URS and make it show the platform while updating.
-*Other changes from master branch:
-Explicitly specify appimage destination 
-Add verb parameter to http.get/post
-Fix text in some buttons being cut off prematurely
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**
