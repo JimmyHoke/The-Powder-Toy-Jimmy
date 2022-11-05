@@ -1,10 +1,9 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 49.0 --50.0 Next version
+local crackversion = 50.0 --51.0 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
-local updatestatus = 0
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MIST")
@@ -334,8 +333,10 @@ gfx.drawText(325,370,"Click here to download manually.",32,216,255,220)
 end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(10,366,197,14,10,10,10,255)
 gfx.fillRect(10,366,197,14,32,255,210,140)
 else
+gfx.fillRect(10,366,197,14,10,10,10,255)
 gfx.fillRect(10,366,197,14,32,250,210,20)
 end
 gfx.drawRect(10,366,197,14,34,250,210,155)
@@ -348,6 +349,7 @@ if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 38
 gfx.fillRect(208,366,14,14,250,50,50,150)
 gfx.drawText(225,369,"Cancel the update",250,50,50,250)
 else
+gfx.fillRect(208,366,14,14,50,5,5,255)
 gfx.fillRect(208,366,14,14,250,50,50,20)
 end
 gfx.drawRect(208,366,14,14,255,5,5,255)
@@ -374,9 +376,9 @@ if code2 == 200 then
 --Update checks
 errtext = ""
 updatever = string.sub(ret2,9,13)
-if tonumber(crackversion) < tonumber(updatever) then
+if tonumber(crackversion) ~= tonumber(updatever)  then
 runupdater()
-elseif tonumber(crackversion) >= tonumber(updatever) then
+elseif tonumber(crackversion) == tonumber(updatever) then
 errtext = "URS: Latest Version"
 end
 else
@@ -2078,6 +2080,8 @@ end)
 Forceup:action(function(sender)
 ui.closeWindow(newmenuth)
 ui.closeWindow(newmenu)
+updatestatus = 0
+print("Force updating the mod, click the update notification below.")
 runupdater()
 end)
 
@@ -2231,7 +2235,7 @@ end)
 function startupcheck()
 event.register(event.tick,errormesg)
 if tpt.version.modid ~= 6 then
-tpt.message_box("URS Safety Warning!", "You are using a non supported version of TPT with crackerk.lua script. Please download the original mod from mod thread. \nI will not be held responsible for any data loss or damage if you use this script with this version. Click Dismiss to continue.")
+tpt.message_box("URS User Safety Warning!", "You are using  the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
 end
 fs.makeDirectory("scripts")
 os.remove("older.exe")
