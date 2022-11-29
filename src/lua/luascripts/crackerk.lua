@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 50.0 --51.0 Next version
+local crackversion = 51.0 --51.5 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -10,7 +10,7 @@ local MISLT = elem.allocate("CR1K", "MIST")
 local tcount, posxt, posyt = 150,0,0
 elem.element(MISLT, elem.element(elem.DEFAULT_PT_DMND))
 elem.property(MISLT, "Name", "MIST")
-elem.property(MISLT, "Description", "Help: Missile Target Tool, click and then quicly move cursor to set the target before counter reaches 0. Set one at a time.")
+elem.property(MISLT, "Description", "Help: Missile Target Tool, click and then quicly move cursor to set the target before counter reaches 0. Sets one at a time.")
 elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
@@ -26,13 +26,13 @@ drawgraph()
 end)
 
 function drawgraph()
-tpt.unregister_step(drawgraph2)
-tpt.register_step(drawgraph2)
+event.unregister(event.tick,drawgraph2)
+event.register(event.tick,drawgraph2)
 tcount = tcount - 1
 if tcount == 0 then
 setcoord()
 tcount = 150
-tpt.unregister_step(drawgraph2)
+event.unregister(event.tick,drawgraph2)
 end
 end
 
@@ -283,6 +283,7 @@ event.unregister(event.tick,clicktomsg2)
 event.unregister(event.tick,showmotdnot2)
 end
 event.register(event.tick,updatermod)
+event.unregister(event.keypress,keyclicky)
 event.unregister(event.mousedown, clicktomsg)
 event.unregister(event.tick,showmotdnot)
 elseif clickcheck == 1 then
@@ -317,8 +318,13 @@ gfx.drawRect(5,72,600,312,255,255,255,255)
 gfx.fillCircle(120,81,4,4,50,50,250,200)
 gfx.drawCircle(120,81,4,4,32,216,250,255)
 
-gfx.drawText(12,79,"OS:"..platform.platform(),255,255,0,200)
+gfx.drawText(12,79,"OS:"..platform.platform(),255,255,0,255)
+if crackversion < tonumber(updatever) then
 gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
+elseif crackversion > tonumber(updatever) then
+gfx.fillRect(127,75,395,13,255,5,5,120)
+gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Downgrading from v."..crackversion.." to v."..tonumber(updatever)..")",255,5,5,255)
+end
 gfx.drawText(12,98,crdata,250,250,250,255)
 if updatertext == "Done, click here to restart." then
 gfx.drawRect(10,363,590,1,10,250,10,255)
@@ -385,6 +391,7 @@ else
 if code2 == 602 then
 errtext ="Offline"
 else
+onlinestatus = 3 --Something went wrong
 errtext = "URS error code: "..code2
 end
 end
@@ -2380,6 +2387,8 @@ end
 gfx.drawText(12,7,"Welcome to Mod Settings. Tip: 'J' Key can be used as a shortcut to open and close the menu. Status:",255,255,255,255) --Intro message
 if onlinestatus == 1 then --Online status
 gfx.drawText(498,7,"Online",95,255,95,255)
+elseif onlinestatus == 3 then
+gfx.drawText(498,7,"Report the error!",255,0,0,255)
 else
 gfx.drawText(498,7,"Offline",255,95,95,255)
 end
