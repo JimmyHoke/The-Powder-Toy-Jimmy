@@ -7,10 +7,10 @@ local specialmsgval = 0
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MIST")
-local tcount, posxt, posyt = 150,0,0
+local tcount, posxt, posyt = 0,0,0
 elem.element(MISLT, elem.element(elem.DEFAULT_PT_DMND))
 elem.property(MISLT, "Name", "MIST")
-elem.property(MISLT, "Description", "Help: Missile Target Tool, click and then quicly move cursor to set the target before counter reaches 0. Sets one at a time.")
+elem.property(MISLT, "Description", "Help: Missile Target Tool. Click once to place the holder and then click again to set the target. Place one at a time.")
 elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
@@ -19,37 +19,45 @@ posyt = tpt.get_property("y",i)
 function setcoord()
 pcall(tpt.set_property, "tmp", tpt.mousex, i)
 pcall(tpt.set_property, "tmp2", tpt.mousey, i)
-pcall(tpt.set_property, "type", 228,i)
-return false
+pcall(tpt.set_property, "type",228,i)
+print("Target set!")
 end
-drawgraph()
+function setcoord2()
+pcall(tpt.set_property, "type",0,i)
+print("Cancelled!")
+end
+if tcount == 0 then
+event.unregister(event.tick,setmistgraph)
+event.unregister(event.mousedown,setmist)
+event.register(event.tick,setmistgraph)
+event.register(event.mousedown,setmist)
+end
 end)
 
-function drawgraph()
-event.unregister(event.tick,drawgraph2)
-event.register(event.tick,drawgraph2)
-tcount = tcount - 1
-if tcount == 0 then
-setcoord()
-tcount = 150
-event.unregister(event.tick,drawgraph2)
-end
+function setmistgraph()
+gfx.drawLine(posxt,posyt,tpt.mousex,tpt.mousey,255,9,9,200)
+gfx.drawText(tpt.mousex - 30,tpt.mousey + 20,"MISL Target Mode")
+gfx.drawText(10,370,"Click where you want to place the MISL target. Right click to cancel.",32,216,255,255)
 end
 
-function drawgraph2()
-if tcount < 150 then
-gfx.drawLine(posxt,posyt,tpt.mousex,tpt.mousey,255,9,9,200)
-gfx.fillCircle(tpt.mousex,tpt.mousey,tcount/5,tcount/5,0,190,0,200)
-gfx.drawCircle(tpt.mousex,tpt.mousey,tcount/5,tcount/5,0,190,0,255)
-gfx.fillCircle(posxt,posyt,2,2,255,9,9,100)
-gfx.drawText(tpt.mousex - 30,tpt.mousey + 20," MISL Target Mode")
-end 
-if tcount <= 1 then
-print("Missile Target Set")
+function setmist(x,y,button)
+tcount = tcount + 1
+if button == 3 then
+setcoord2()
+event.unregister(event.tick,setmistgraph)
+event.unregister(event.mousedown,setmist)
+tcount = 0
 else
-gfx.drawText(10,370,"MISL Tool Counter: ("..tcount..")",32,216,255,255)
+if tcount == 1 then
+setcoord()
+event.unregister(event.tick,setmistgraph)
+event.unregister(event.mousedown,setmist)
+tcount = 0
 end
 end
+return false
+end
+
 --TOOL end
 
 --Default theme for initial launch and resets
@@ -313,7 +321,15 @@ end
 
 function showmotdnot2()
 if clickcheck ~= 0 then
+if updatertext == "Done, click here to restart." then
+gfx.fillRect(5,72,600,312,10,200,10,30)
+else
+if timeout == 1 and clickcheck ~= 1 then
+gfx.fillRect(5,72,600,312,200,10,10,50)
+else
 gfx.fillRect(5,72,600,312,10,10,10,200)
+end
+end
 gfx.drawRect(5,72,600,312,255,255,255,255)
 gfx.fillCircle(120,81,4,4,50,50,250,200)
 gfx.drawCircle(120,81,4,4,32,216,250,255)
@@ -332,7 +348,7 @@ else
 gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(12,350,"Uh oh something went wrong. You can wait or use the manual download option provided below. Report the error in mod thread.",255,10,10,245)
+gfx.drawText(12,350,"Uh oh something went wrong. You can wait/ use the manual download option provided below. Report the error in mod thread.",255,10,10,245)
 gfx.drawRect(320,366,167,14,32,216,255,220)
 gfx.fillRect(320,366,167,14,32,216,255,40)
 gfx.drawText(325,370,"Click here to download manually.",32,216,255,220)
@@ -1716,6 +1732,7 @@ al = brightSlider:value()
 end
 --Update text
 if updatestatus == 1 then
+gfx.fillRect(8,367,315,15,20,20,20,200)
 gfx.drawText(10,370,"You are running an outdated version, please update when possible.",255,20,20,250)
 end
 --Filters
