@@ -121,6 +121,11 @@ static int update(UPDATE_FUNC_ARGS)
 						parts[i].tmp3 = 255;
 				}
 				break;
+				case PT_PHOT:
+				{
+					sim->part_change_type(ID(r), x, y, PT_UVRD);
+				}
+				break;
 				case PT_O2:
 				{
 					if (RNG::Ref().chance(1, 40))

@@ -1,10 +1,11 @@
 Changelog for V51.0
+FIx mist tool allowing users to place multiple MISL at once.
+Fix force update option if there's no connection.
+New Reaction: PHOT + GRPH = UV
+Cross-hair now shows particle counts for left and right selected elements.
 
 todo:
-FIx mist tool allowing users to place multiple MISL at once.
-Support for scrolling changelogs (URS)
 Rewrite ball element
-Fix force update option if there's no connection.
 Rewrite texter and remove all the ugly hacks that make it work
 release when v97.0 is out.
 
