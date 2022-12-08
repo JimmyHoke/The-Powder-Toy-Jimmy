@@ -1,10 +1,15 @@
 Changelog for V51.0
 Improvements to URS updater
 URS now supports downgrading builds to previous versions too.
-FIx mist tool allowing users to place multiple MISL at once.
+Fix mist tool allowing users to place multiple MISL at once.
 Fix force update option if there's no connection.
 New Reaction: PHOT + GRPH = UV
 Cross-hair now shows particle counts for left and right selected elements.
 Split theme now applies to Cross-hair too.
+Other changes from master branch:
+Expose BZ2 to Lua
+Add inverted element filtering to CONV with tmp2 set to 1
+Make file browser respond to search query changes while loading files 
+Replace max/min pressure with constants
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

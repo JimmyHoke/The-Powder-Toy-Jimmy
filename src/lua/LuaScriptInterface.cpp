@@ -472,7 +472,6 @@ tpt.partsdata = nil");
 		}
 	}
 }
-
 void LuaScriptInterface::custom_init_can_move()
 {
 	luacon_sim->init_can_move();
