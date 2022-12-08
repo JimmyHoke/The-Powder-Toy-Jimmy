@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 50.0 --51.5 Next version
+local crackversion = 51.0 --51.5 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -1859,13 +1859,13 @@ crx, cry = sim.adjustCoords(tpt.mousex,tpt.mousey)
 else
 crx, cry = tpt.mousex,tpt.mousey
 end
-graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-12,"PL:"..sim.elementCount(elem[tpt.selectedl]),ar,ag,ab,al)
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-12,"Lp:"..sim.elementCount(elem[tpt.selectedl]),ar,ag,ab,al)
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..crx,ar,ag,ab,al)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..cry,ar,ag,ab,al)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-12,"PR:"..sim.elementCount(elem[tpt.selectedr]),ar,ag,ab,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..cry,spr,spg,spb,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-12,"Rp:"..sim.elementCount(elem[tpt.selectedr]),spr,spg,spb,al)
 if tpt.brushx > 0 or tpt.brushy > 0 then
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,al)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,spr,spg,spb,al)
 end
 end
 end
@@ -1894,7 +1894,7 @@ local bg7 = Button:new(224,333,60,25,"Developer", "Disable inbuilt scripts")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
-local baropd =  Button:new(104,250,35,20,"OFF", "Turn off")
+local baropd =  Button:new(104,250,35,20,"Off", "Turn off")
 
 local als = Label:new(317,147, 30, 15, "Alpha")
 
@@ -2265,7 +2265,7 @@ end)
 function startupcheck()
 event.register(event.tick,errormesg)
 if tpt.version.modid ~= 6 then
-tpt.message_box("URS User - Warning!", "You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
+tpt.message_box("URS User Safety Warning!", "You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
 end
 fs.makeDirectory("scripts")
 os.remove("older.exe")

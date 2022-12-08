@@ -1,3 +1,12 @@
+v51.0
+Improvements to URS updater
+URS now supports downgrading builds to previous versions too.
+FIx mist tool allowing users to place multiple MISL at once.
+Fix force update option if there's no connection.
+New Reaction: PHOT + GRPH = UV
+Cross-hair now shows particle counts for left and right selected elements.
+Split theme now applies to Cross-hair too.
+
 v50.0
 Changelog for V50.0
 Revert changes that broke snapshots and URS updater.
