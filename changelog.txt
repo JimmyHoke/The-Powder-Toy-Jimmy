@@ -1,4 +1,5 @@
 Changelog for V51.0
+New element: MOVS (Moving solid). Controlled via dedicated controller.
 Improvements to URS updater
 URS now supports downgrading builds to previous versions too.
 Fix mist tool allowing users to place multiple MISL at once.
@@ -11,5 +12,7 @@ Expose BZ2 to Lua
 Add inverted element filtering to CONV with tmp2 set to 1
 Make file browser respond to search query changes while loading files 
 Replace max/min pressure with constants
+Fix text in some buttons being cut off prematurely
+Add verb parameter to http.get/post
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

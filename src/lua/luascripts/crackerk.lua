@@ -14,9 +14,9 @@ elem.property(MISLT, "Description", "Help: Missile Target Tool. Click once to pl
 elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
-if tonumber(sim.elementCount(255)) > 1 then
+if tonumber(sim.elementCount(elem[PT_MIST])) > 1 then
 pcall(tpt.set_property, "type",0,i)
-elseif tonumber(sim.elementCount(255)) < 2 then
+elseif tonumber(sim.elementCount(elem[PT_MIST])) < 2 then
 posxt = tpt.get_property("x",i)
 posyt = tpt.get_property("y",i)
 end
@@ -61,8 +61,78 @@ end
 end
 return false
 end
-
 --TOOL end
+local Exitplne = Button:new(3,332,20,15, "Exit", "Disable MOSV")
+local planebw = Button:new(33,332,20,15, "^", "Move Up")
+local planebd = Button:new(60,350,15,15, ">", "Move Right")
+local planeba = Button:new(10,350,15,15, "<", "Move Left")
+local planebs = Button:new(33,370,20,15, "V", "Move Down")
+local planebst = Button:new(30,351,25,15, "Stop", "Stop")
+local planemoveval = 0
+planebd:action(function(sender)
+planemoveval = 5
+end)
+planeba:action(function(sender)
+planemoveval = 4
+end)
+planebw:action(function(sender)
+planemoveval = 3
+end)
+planebs:action(function(sender)
+planemoveval = 2
+end)
+planebst:action(function(sender)
+planemoveval = 0
+end)
+Exitplne:action(function(sender)
+sim.clearSim()
+interface.removeComponent(planebd)
+interface.removeComponent(planeba)
+interface.removeComponent(planebw)
+interface.removeComponent(planebs)
+interface.removeComponent(planebst)
+interface.removeComponent(Exitplne)
+end)
+
+--Plane element
+local PLNE = elem.allocate("CR1K", "PLNE")
+local Plx, Ply = 0,0
+elem.element(PLNE, elem.element(elem.DEFAULT_PT_DMND))
+elem.property(PLNE, "Name", "MOVS")
+elem.property(PLNE, "Description", "Experimental moving solid, controlled via on-screen buttons. Pause & draw a shape and then use the buttons to control it.")
+elem.property(PLNE, "Color", 0xAAAAA0)
+elem.property(PLNE, "MenuSection", elem.SC_TOOL)
+elem.property(PLNE, "Update", function (i)
+Plx = tpt.get_property("x",i)
+Ply = tpt.get_property("y",i)
+if tonumber(sim.elementCount(elem[PT_PLNE])) < 1 then
+addbuttons()
+end
+
+function moveplne()
+if tpt.get_property("x",i) < 600 and tpt.get_property("x",i) > 0 and tpt.get_property("y",i) > 10 and tpt.get_property("y",i) < 380 then
+if planemoveval == 5 then
+pcall(tpt.set_property, "x", Plx  + 1, i)
+elseif planemoveval == 4 then
+pcall(tpt.set_property, "x", Plx  - 1, i)
+elseif planemoveval == 3 then
+pcall(tpt.set_property, "y", Ply  - 1, i)
+elseif planemoveval == 2 then
+pcall(tpt.set_property, "y", Ply  + 1, i)
+end
+end
+end
+moveplne()
+end)
+function addbuttons()
+tpt.selectedl = "DEFAULT_PT_SPRK"
+interface.addComponent(planebd)
+interface.addComponent(planeba)
+interface.addComponent(planebw)
+interface.addComponent(planebs)
+interface.addComponent(planebst)
+interface.addComponent(Exitplne)
+end
 
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"

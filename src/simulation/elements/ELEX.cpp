@@ -55,7 +55,7 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp >= 115 && parts[i].temp >= 274.15f)
 	{
 		int elemid = (RNG::Ref().between(1, (1 << PMAPBITS) - 1)); //max element id.
-		if (elemid != 78 && elemid != 226 && elemid != 232 && elemid != 236 && elemid != 255) // prevent from turning into BFLM, GoL, WHEL, MIST and itself.
+		if (elemid != 78 && elemid != 226 && elemid != 232 && elemid != 236 && elemid < 253) // prevent from turning into BFLM, GoL, WHEL, MIST and itself.
 		{
 			sim->create_part(i, x, y, elemid);
 		}
