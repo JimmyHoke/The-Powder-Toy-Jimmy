@@ -1,5 +1,6 @@
 Changelog for V51.1
 
+Fix potential crash when opening some online saves.
 Fix multiple MIST bugs
 MOVS in now fully functional space ship element. Found under special menu.
 

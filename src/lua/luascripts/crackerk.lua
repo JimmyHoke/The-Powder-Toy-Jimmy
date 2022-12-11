@@ -1809,6 +1809,7 @@ tpt.el.gsns.menu=0
 tpt.el.emgt.menu=0
 tpt.el.sodm.menu=0
 tpt.el.ball.menu=0
+elem.property(PLNE, "MenuVisible", 0)
 end
 
 function showmodelem()
@@ -1863,6 +1864,7 @@ tpt.el.gsns.menu=1
 tpt.el.emgt.menu=1
 tpt.el.sodm.menu=1
 tpt.el.ball.menu=1
+elem.property(PLNE, "MenuVisible", 1)
 end
 local modelemval = "0"
 bg:action(function(sender)
