@@ -55,7 +55,7 @@ static int update(UPDATE_FUNC_ARGS)
 	if (parts[i].tmp >= 115 && parts[i].temp >= 274.15f)
 	{
 		int elemid = (RNG::Ref().between(1, (1 << PMAPBITS) - 1)); //max element id.
-		if (elemid != 78 && elemid != 226 && elemid != 232 && elemid != 236) // prevent from turning into BFLM, GoL, WHEL and itself.
+		if (elemid != 78 && elemid != 226 && elemid != 232 && elemid != 236 && elemid < 253) // prevent from turning into BFLM, GoL, WHEL, MIST and itself.
 		{
 			sim->create_part(i, x, y, elemid);
 		}
@@ -83,6 +83,5 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 2, 2, cr, cg, cb, 150);
 	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 1, 1, cr, cg, cb, 100);
-	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 3, 3, cr, cg, cb, 150);
 	return 0;
 }

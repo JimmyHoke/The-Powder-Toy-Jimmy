@@ -1,7 +1,7 @@
 #include <cmath>
 #include "FontReader.h"
 
-int PIXELMETHODS_CLASS::drawtext_outline(int x, int y, String s, int r, int g, int b, int a)
+int PIXELMETHODS_CLASS::drawtext_outline(int x, int y, const String &s, int r, int g, int b, int a)
 {
 	drawtext(x-1, y-1, s, 0, 0, 0, 120);
 	drawtext(x+1, y+1, s, 0, 0, 0, 120);
@@ -12,7 +12,7 @@ int PIXELMETHODS_CLASS::drawtext_outline(int x, int y, String s, int r, int g, i
 	return drawtext(x, y, s, r, g, b, a);
 }
 
-int PIXELMETHODS_CLASS::drawtext(int x, int y, String str, int r, int g, int b, int a)
+int PIXELMETHODS_CLASS::drawtext(int x, int y, const String &str, int r, int g, int b, int a)
 {
 	if(!str.size())
 		return 0;
@@ -21,42 +21,43 @@ int PIXELMETHODS_CLASS::drawtext(int x, int y, String str, int r, int g, int b, 
 	int oR = r, oG = g, oB = b;
 	int characterX = x, characterY = y;
 	int startX = characterX;
-	String::value_type const *s = str.c_str();
-	for (; *s; s++)
+	for (size_t i = 0; i < str.length(); i++)
 	{
-		if (*s == '\n')
+		if (str[i] == '\n')
 		{
 			characterX = startX;
 			characterY += FONT_H;
 		}
-		else if (*s == '\x0F')
+		else if (str[i] == '\x0F')
 		{
-			if(!s[1] || !s[2] || !s[3]) break;
+			if (str.length() <= i+3)
+				break;
 			oR = r;
 			oG = g;
 			oB = b;
-			r = (unsigned char)s[1];
-			g = (unsigned char)s[2];
-			b = (unsigned char)s[3];
-			s += 3;
+			r = (unsigned char)str[i + 1];
+			g = (unsigned char)str[i + 2];
+			b = (unsigned char)str[i + 3];
+			i += 3;
 		}
-		else if (*s == '\x0E')
+		else if (str[i] == '\x0E')
 		{
 			r = oR;
 			g = oG;
 			b = oB;
 		}
-		else if (*s == '\x01')
+		else if (str[i] == '\x01')
 		{
 			invert = !invert;
 			r = 255-r;
 			g = 255-g;
 			b = 255-b;
 		}
-		else if (*s == '\b')
+		else if (str[i] == '\b')
 		{
-			if(!s[1]) break;
-			switch (s[1])
+			if (str.length() <= i + 1)
+				break;
+			switch (str[i + 1])
 			{
 			case 'w': r = 255; g = 255; b = 255; break;
 			case 'g': r = 192; g = 192; b = 192; break;
@@ -74,11 +75,11 @@ int PIXELMETHODS_CLASS::drawtext(int x, int y, String str, int r, int g, int b, 
 				g = 255-g;
 				b = 255-b;
 			}
-			s++;
+			i++;
 		}
 		else
 		{
-			characterX = drawchar(characterX, characterY, *s, r, g, b, a);
+			characterX = drawchar(characterX, characterY, str[i], r, g, b, a);
 		}
 	}
 	return x;
@@ -105,7 +106,11 @@ int PIXELMETHODS_CLASS::addchar(int x, int y, String::value_type c, int r, int g
 TPT_INLINE void PIXELMETHODS_CLASS::xor_pixel(int x, int y)
 {
 	int c;
-	if (x<0 || y<0 || x>=XRES || y>=YRES)
+#ifdef DO_CLIPCHECK
+	if (x<clipx1 || y<clipy1 || x>=clipx2 || y>=clipy2)
+#else
+	if (x<0 || y<0 || x>=VIDXRES || y>=VIDYRES)
+#endif
 		return;
 	c = vid[y*(VIDXRES)+x];
 	c = PIXB(c) + 3*PIXG(c) + 2*PIXR(c);
@@ -118,7 +123,11 @@ TPT_INLINE void PIXELMETHODS_CLASS::xor_pixel(int x, int y)
 void PIXELMETHODS_CLASS::blendpixel(int x, int y, int r, int g, int b, int a)
 {
 	pixel t;
+#ifdef DO_CLIPCHECK
+	if (x<clipx1 || y<clipy1 || x>=clipx2 || y>=clipy2)
+#else
 	if (x<0 || y<0 || x>=VIDXRES || y>=VIDYRES)
+#endif
 		return;
 	if (a!=255)
 	{
@@ -133,7 +142,11 @@ void PIXELMETHODS_CLASS::blendpixel(int x, int y, int r, int g, int b, int a)
 void PIXELMETHODS_CLASS::addpixel(int x, int y, int r, int g, int b, int a)
 {
 	pixel t;
+#ifdef DO_CLIPCHECK
+	if (x<clipx1 || y<clipy1 || x>=clipx2 || y>=clipy2)
+#else
 	if (x<0 || y<0 || x>=VIDXRES || y>=VIDYRES)
+#endif
 		return;
 	t = vid[y*(VIDXRES)+x];
 	r = (a*r + 255*PIXR(t)) >> 8;
@@ -377,6 +390,20 @@ void PIXELMETHODS_CLASS::clearrect(int x, int y, int w, int h)
 	w -= 1;
 	h -= 1;
 
+#ifdef DO_CLIPCHECK
+	if (x+w > clipx2) w = clipx2-x;
+	if (y+h > clipy2) h = clipy2-y;
+	if (x<clipx1)
+	{
+		w += x - clipx1;
+		x = clipx1;
+	}
+	if (y<clipy1)
+	{
+		h += y - clipy1;
+		y = clipy1;
+	}
+#else
 	if (x+w > VIDXRES) w = VIDXRES-x;
 	if (y+h > VIDYRES) h = VIDYRES-y;
 	if (x<0)
@@ -389,6 +416,7 @@ void PIXELMETHODS_CLASS::clearrect(int x, int y, int w, int h)
 		h += y;
 		y = 0;
 	}
+#endif
 	if (w<0 || h<0)
 		return;
 
@@ -396,7 +424,7 @@ void PIXELMETHODS_CLASS::clearrect(int x, int y, int w, int h)
 		memset(vid+(x+(VIDXRES)*(y+i)), 0, PIXELSIZE*w);
 }
 
-void PIXELMETHODS_CLASS::draw_image(pixel *img, int x, int y, int w, int h, int a)
+void PIXELMETHODS_CLASS::draw_image(const pixel *img, int x, int y, int w, int h, int a)
 {
 	int startX = 0;
 	if (!img)
@@ -429,6 +457,9 @@ void PIXELMETHODS_CLASS::draw_image(pixel *img, int x, int y, int w, int h, int 
 			img += startX;
 			for (int i = startX; i < w; i++)
 			{
+#ifdef DO_CLIPCHECK
+				if (!(x+i<clipx1 || y+j<clipy1 || x+i>=clipx2 || y+j>=clipy2))
+#endif
 				vid[(y+j)*(VIDXRES)+(x+i)] = *img;
 				img++;
 			}
@@ -451,12 +482,7 @@ void PIXELMETHODS_CLASS::draw_image(pixel *img, int x, int y, int w, int h, int 
 	}
 }
 
-void PIXELMETHODS_CLASS::draw_image(const VideoBuffer & vidBuf, int x, int y, int a)
-{
-	draw_image(vidBuf.Buffer, x, y, vidBuf.Width, vidBuf.Height, a);
-}
-
-void PIXELMETHODS_CLASS::draw_image(VideoBuffer * vidBuf, int x, int y, int a)
+void PIXELMETHODS_CLASS::draw_image(const VideoBuffer * vidBuf, int x, int y, int a)
 {
 	draw_image(vidBuf->Buffer, x, y, vidBuf->Width, vidBuf->Height, a);
 }

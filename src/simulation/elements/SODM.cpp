@@ -9,7 +9,7 @@ void Element::Element_SODM()
 	Name = "SODM";
 	Colour = PIXPACK(0xcaccce);
 	MenuVisible = 1;
-	MenuSection = SC_POWDERS;
+	MenuSection = SC_SOLIDS;
 	Enabled = 1;
 
 
@@ -31,7 +31,7 @@ void Element::Element_SODM()
 
 	Weight = 28;
 	HeatConduct = 100;
-	Description = "Sodium, highly reactive metal.";
+	Description = "Sodium, highly reactive metal. Read WIKI for all reactions.";
 
 	Properties = TYPE_PART | PROP_LIFE_DEC |PROP_CONDUCTS;
 
@@ -50,13 +50,15 @@ void Element::Element_SODM()
 
 static int update(UPDATE_FUNC_ARGS)
 {
-	if (parts[i].tmp2 > 0)
-	{
-		parts[i].tmp2 = parts[i].tmp2 - 1;
-	}
 	if (parts[i].tmp4 > 0)
 	{
 		parts[i].tmp4 = parts[i].tmp4 - 1;
+	}
+
+	if (parts[i].tmp3 == 0)
+	{
+		parts[i].vx = 0;
+		parts[i].vy = 0;
 	}
 
 		for (int rx = -2; rx < 3; rx++)
@@ -66,6 +68,10 @@ static int update(UPDATE_FUNC_ARGS)
 					int r = pmap[y + ry][x + rx];
 					if (!r)
 						continue;
+					if (sim->pv[y / CELL][x / CELL] > 5.0f)
+					{
+						parts[i].tmp3 = 1;
+					}
 					if (sim->pv[y / CELL][x / CELL] < -2.0f && parts[i].tmp4 < 100)
 					{
 						if (RNG::Ref().chance(1, 10))
@@ -73,36 +79,24 @@ static int update(UPDATE_FUNC_ARGS)
 							parts[i].tmp4 += 1;
 						}
 					}
-					if ((TYP(r) == PT_O2 || TYP(r) == PT_CO2) && RNG::Ref().chance(1, 10))
+					if ((TYP(r) == PT_O2 || TYP(r) == PT_CO2) && RNG::Ref().chance(1, 10) && parts[i].tmp < 100)
 					{
-						if (parts[i].tmp3 < 200)
-						{
-							sim->kill_part(ID(r));
-							parts[i].tmp3 = parts[i].tmp3 + 2;
-							parts[i].temp = +10.0f;
-						}
+						parts[i].tmp += 1;
+						if (parts[i].temp < 364.15f)
+						parts[i].temp += 1.0f;
 					}
-					if (parts[i].tmp3 < 50 && parts[i].tmp < 180)
-					{
-						if ((TYP(r) == PT_WATR || TYP(r) == PT_DSTW || TYP(r) == PT_SLTW || TYP(r) == PT_CBNW || TYP(r) == PT_WTRV))
+					if ((TYP(r) == PT_WATR || TYP(r) == PT_DSTW || TYP(r) == PT_SLTW || TYP(r) == PT_CBNW || TYP(r) == PT_WTRV))
 						{
-								parts[i].tmp = parts[i].tmp + 1;
 								if (RNG::Ref().chance(1, 100))
 								{
 									sim->part_change_type(ID(r), x, y, PT_H2);
 									sim->kill_part(i);
 								}
-								if (parts[i].tmp > 70)
-								{
-									parts[i].tmp2 = 85;
 									parts[ID(r)].temp += 30.0f;
 									sim->pv[(y / CELL) + ry][(x / CELL) + rx] += 0.07f ;
-								}
-							}
 						}
-						if (TYP(r) == PT_CHLR && parts[i].temp > 50 + 273.15f && RNG::Ref().chance(1, 100))
+						if (TYP(r) == PT_CHLR && parts[i].temp > 50 + 273.15f)
 						{
-							parts[i].tmp2 = 45;
 							if (RNG::Ref().chance(1, 100))
 							{
 								sim->part_change_type(i, x, y, PT_SALT);
@@ -127,20 +121,10 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 	}
 	else
 	{
-		if (cpart->tmp2 > 0)
-		{
-			*pixel_mode |= PMODE_LFLARE;
-		}
-		else if (cpart->tmp2 <= 0)
-		{
-			if (cpart->tmp == 0 && cpart->tmp3 < 10)
-			{
-				*pixel_mode |= PMODE_FLARE;
-			}
-			*colr = 255 - cpart->tmp3 / 2;
-			*colg = 255 - cpart->tmp3 / 2;
-			*colb = 255 - cpart->tmp3 / 2;
-		}
+		*colr = 255 - cpart->tmp*2;
+		*colg = 255 - cpart->tmp*2;
+		*colb = 255 - cpart->tmp*2;
+		*pixel_mode |= PMODE_SPARK;
 	}
 	return 0;
 }

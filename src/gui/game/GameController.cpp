@@ -432,16 +432,12 @@ bool GameController::LoadClipboard()
 	if (!clip)
 		return false;
 	gameModel->SetPlaceSave(clip);
-	if (gameModel->GetPlaceSave() && gameModel->GetPlaceSave()->Collapsed())
-		gameModel->GetPlaceSave()->Expand();
 	return true;
 }
 
 void GameController::LoadStamp(GameSave *stamp)
 {
 	gameModel->SetPlaceSave(stamp);
-	if(gameModel->GetPlaceSave() && gameModel->GetPlaceSave()->Collapsed())
-		gameModel->GetPlaceSave()->Expand();
 }
 
 void GameController::TranslateSave(ui::Point point)
@@ -1221,7 +1217,8 @@ void GameController::OpenLocalSaveWindow(bool asCurrent)
 
 			gameModel->SetSaveFile(&tempSave, gameView->ShiftBehaviour());
 			Platform::MakeDirectory(LOCAL_SAVE_DIR);
-			std::vector<char> saveData = gameSave->Serialise();
+			auto [ fromNewerVersion, saveData ] = gameSave->Serialise();
+			(void)fromNewerVersion;
 			if (saveData.size() == 0)
 				new ErrorMessage("Error", "Unable to serialize game data.");
 			else if (!Platform::WriteFile(saveData, gameModel->GetSaveFile()->GetName()))

@@ -17,9 +17,8 @@
 #endif
 
 #include <iostream>
-#include "Config.h"
 #if defined(LIN)
-#include "icon.h"
+# include "powder-128.png.h"
 #endif
 #include <csignal>
 #include <stdexcept>
@@ -160,12 +159,6 @@ void CalculateMousePosition(int *x, int *y)
 		*y = (globalMy - windowY) / scale;
 }
 
-#ifdef OGLI
-void blit()
-{
-	SDL_GL_SwapWindow(sdl_window);
-}
-#else
 void blit(pixel * vid)
 {
 	SDL_UpdateTexture(sdl_texture, NULL, vid, WINDOWW * sizeof (Uint32));
@@ -175,7 +168,6 @@ void blit(pixel * vid)
 	SDL_RenderCopy(sdl_renderer, sdl_texture, NULL, NULL);
 	SDL_RenderPresent(sdl_renderer);
 }
-#endif
 
 bool RecreateWindow();
 void SDLOpen()
@@ -221,9 +213,14 @@ void SDLOpen()
 	SendMessage(WindowHandle, WM_SETICON, ICON_BIG, (LPARAM)hIconBig);
 #endif
 #ifdef LIN
-	SDL_Surface *icon = SDL_CreateRGBSurfaceFrom((void*)app_icon, 128, 128, 32, 512, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-	SDL_SetWindowIcon(sdl_window, icon);
-	SDL_FreeSurface(icon);
+	std::vector<pixel> imageData;
+	int imgw, imgh;
+	if (PngDataToPixels(imageData, imgw, imgh, reinterpret_cast<const char *>(icon_png), icon_png_size, false))
+	{
+		SDL_Surface *icon = SDL_CreateRGBSurfaceFrom(&imageData[0], imgw, imgh, 32, imgw * sizeof(pixel), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+		SDL_SetWindowIcon(sdl_window, icon);
+		SDL_FreeSurface(icon);
+	}
 #endif
 }
 
@@ -621,11 +618,7 @@ void EngineProcess()
 							 engine->GetForceIntegerScaling());
 			}
 
-#ifdef OGLI
-			blit();
-#else
 			blit(engine->g->vid);
-#endif
 		}
 
 		int frameTime = SDL_GetTicks() - frameStart;
@@ -692,11 +685,7 @@ void BlueScreen(String detailMessage)
 		while (SDL_PollEvent(&event))
 			if(event.type == SDL_QUIT)
 				exit(-1);
-#ifdef OGLI
-		blit();
-#else
 		blit(engine->g->vid);
-#endif
 	}
 }
 
@@ -881,19 +870,6 @@ int main(int argc, char * argv[])
 		}
 	}
 
-#ifdef OGLI
-	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
-	//glScaled(2.0f, 2.0f, 1.0f);
-#endif
-#if defined(OGLI) && !defined(MACOSX)
-	int status = glewInit();
-	if(status != GLEW_OK)
-	{
-		fprintf(stderr, "Initializing Glew: %d\n", status);
-		exit(-1);
-	}
-#endif
-
 	StopTextInput();
 
 	ui::Engine::Ref().g = new Graphics();
@@ -974,11 +950,7 @@ int main(int argc, char * argv[])
 			engine->g->drawrect((engine->GetWidth()/2)-100, (engine->GetHeight()/2)-25, 200, 50, 255, 255, 255, 180);
 			engine->g->drawtext((engine->GetWidth()/2)-(Graphics::textwidth("Loading save...")/2), (engine->GetHeight()/2)-5, "Loading save...", style::Colour::InformationTitle.Red, style::Colour::InformationTitle.Green, style::Colour::InformationTitle.Blue, 255);
 
-#ifdef OGLI
-			blit();
-#else
 			blit(engine->g->vid);
-#endif
 			ByteString ptsaveArg = arguments["ptsave"];
 			try
 			{

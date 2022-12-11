@@ -1,3 +1,0 @@
-Version: 47.5
-Motd:"."
-Specialmsg: "0"

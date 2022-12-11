@@ -1,3 +1,54 @@
+v51.1
+Fix multiple MIST bugs
+MOVS in now fully functional space ship element. Found under special menu.
+
+v51.0
+New element: MOVS (Moving solid). Controlled via dedicated controller.
+Improvements to URS updater
+URS now supports downgrading builds to previous versions too.
+Fix mist tool allowing users to place multiple MISL at once.
+Fix force update option if there's no connection.
+New Reaction: PHOT + GRPH = UV
+Cross-hair now shows particle counts for left and right selected elements.
+Split theme now applies to Cross-hair too.
+Other changes from master branch:
+Expose BZ2 to Lua
+Add inverted element filtering to CONV with tmp2 set to 1
+Make file browser respond to search query changes while loading files 
+Replace max/min pressure with constants
+Fix text in some buttons being cut off prematurely
+Add verb parameter to http.get/post
+
+v50.0
+Changelog for V50.0
+Revert changes that broke snapshots and URS updater.
+Fix ELEX turning into MIST Tool.
+Prevent CLNE and other elements from accepting MIST tool as a ctype.
+MIST tool uses sim.adjustcoords to support working with zoom window.
+Fix save titles and tags getting cut.
+Fix and Enable URS for MacOS ARM and x86 versions.
+Update the intro text.
+Enable Macos builds (Work In Progress)
+New Force Update option in control centre.
+Fixes for the URS and make it show the platform while updating./**
+
+v49.0: Broken update
+
+v48.0
+New TOOL: MIST MIssile Target, helps set the target coordinates for missile.
+Optimised checks for updates and motds, more efficient now.
+One file for all checks
+Rewrite parts of URS 
+Minor changes to ball element
+Fix URS not working properly on LINUX
+Optimised Autostamp feature.
+Sodium is now a solid, use pressure to powderise it.
+Rewrite sodium to be a bit more intresting.
+Merge changes from snapshots:
+Fix rare crash upon clearing the ambient temperature input box in settings
+Add http.getAuthToken
+Add clip rect feature to Graphics and gfx.setClipRect
+
 v47.5
 Add missing renderer option lines.
 New Neon Mode in control centre, makes everything super bright.

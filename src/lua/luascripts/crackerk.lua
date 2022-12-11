@@ -1,13 +1,266 @@
 --Cracker1000 mod interface script--
-failsafe = 1 -- Meant to be a global variable, used for detecting script crash
 local passreal = "12345678"
-local crackversion = 47.5 --48 Next version
+local crackversion = 51.1 --51.5 Next version
 local passreal2 = "DMND"
 local motw = "."
-local updatestatus = 0
---Default theme for initial launch and resets
-local dr, dg, db, da, defaulttheme = 32,216,255,220,"Default"
+local specialmsgval = 0
 
+--TOOL for MISL
+local MISLT = elem.allocate("CR1K", "MIST")
+local tcount, posxt, posyt = 0,0,0
+elem.element(MISLT, elem.element(elem.DEFAULT_PT_DMND))
+elem.property(MISLT, "Name", "MIST")
+elem.property(MISLT, "Description", "Help: Missile Target Tool. Click once to place the holder and then click again to set the target. Places one at a time.")
+elem.property(MISLT, "Color", 0xFFA500)
+elem.property(MISLT, "MenuSection", elem.SC_TOOL)
+elem.property(MISLT, "Update", function (i)
+if tonumber(sim.elementCount(elem.CR1K_PT_MIST)) > 1 then
+pcall(tpt.set_property, "type",0,i)
+elseif tonumber(sim.elementCount(elem.CR1K_PT_MIST)) < 2 then
+posxt = tpt.get_property("x",i)
+posyt = tpt.get_property("y",i)
+end
+function setcoord()
+pcall(tpt.set_property, "tmp", tpt.mousex, i)
+pcall(tpt.set_property, "tmp2", tpt.mousey, i)
+pcall(tpt.set_property, "type",228,i)
+print("Target set ("..tpt.mousex..", "..tpt.mousey..")")
+end
+function setcoord2()
+pcall(tpt.set_property, "type",0,i)
+print("Cancelled!")
+end
+if tcount == 0 then
+event.unregister(event.tick,setmistgraph)
+event.unregister(event.mousedown,setmist)
+event.register(event.tick,setmistgraph)
+event.register(event.mousedown,setmist)
+end
+end)
+
+function setmistgraph()
+gfx.drawLine(posxt,posyt,tpt.mousex,tpt.mousey,255,9,9,200)
+gfx.drawText(tpt.mousex - 30,tpt.mousey + 20,"MISL Target Mode")
+gfx.drawText(10,370,"Click where you want to place the MISL target. Right click to cancel.",32,216,255,255)
+end
+
+function setmist(x,y,button)
+tcount = tcount + 1
+if button == 3 then
+setcoord2()
+event.unregister(event.tick,setmistgraph)
+event.unregister(event.mousedown,setmist)
+tcount = 0
+else
+if tcount == 1 then
+setcoord()
+event.unregister(event.tick,setmistgraph)
+event.unregister(event.mousedown,setmist)
+tcount = 0
+end
+end
+return false
+end
+--TOOL end
+local Exitplne = Button:new(03,290,20,15, "X", "Disable Plane")
+local PLNEBST = Button:new(60,290,20,15, "BST", "Toggle Booster.")
+local planebwd = Button:new(10,322,20,15, "Ul", "Move Up + Left")
+local planebwa = Button:new(56,322,20,15, "Ur", "Move Up + Right")
+local planebcharge = Button:new(10,360,20,15, "Chrg", "Recharge.")
+local planebExpl = Button:new(56,360,20,15, "Exp", "Explode")
+
+local planebw = Button:new(33,322,20,15, "^", "Move Up")
+local planebd = Button:new(60,340,15,15, ">", "Move Right")
+local planeba = Button:new(10,340,15,15, "<", "Move Left")
+local planebs = Button:new(33,360,20,15, "V", "Move Down")
+local planebst = Button:new(30,341,25,15, "Stop", "Stop")
+local planemoveval, Plx, Ply, PLNEFUEL, PLNEBOOST = 0,0,0,2000,0
+
+planebcharge:action(function(sender)
+if PLNEFUEL < 2000 then
+PLNEFUEL = PLNEFUEL + 20
+end
+end)
+
+PLNEBST:action(function(sender)
+if PLNEBOOST == 0 then
+PLNEBOOST = 1
+elseif PLNEBOOST == 1 then
+PLNEBOOST = 0
+end
+end)
+
+planebExpl:action(function(sender)
+Explode()
+event.unregister(event.tick,plnegraphics)
+interface.removeComponent(PLNEBST )
+interface.removeComponent(planebcharge)
+interface.removeComponent(planebExpl)
+interface.removeComponent(planebwd)
+interface.removeComponent(planebwa)
+interface.removeComponent(planebd)
+interface.removeComponent(planeba)
+interface.removeComponent(planebw)
+interface.removeComponent(planebs)
+interface.removeComponent(planebst)
+interface.removeComponent(Exitplne)
+end)
+
+planebwd:action(function(sender)
+planemoveval = 7
+end)
+planebwa:action(function(sender)
+planemoveval = 6
+end)
+planebd:action(function(sender)
+planemoveval = 5
+end)
+planeba:action(function(sender)
+planemoveval = 4
+end)
+planebw:action(function(sender)
+planemoveval = 3
+end)
+planebs:action(function(sender)
+planemoveval = 2
+end)
+planebst:action(function(sender)
+planemoveval = 0
+end)
+
+Exitplne:action(function(sender)
+sim.clearSim()
+event.unregister(event.tick,plnegraphics)
+interface.removeComponent(PLNEBST)
+interface.removeComponent(planebcharge)
+interface.removeComponent(planebExpl)
+interface.removeComponent(planebwd)
+interface.removeComponent(planebwa)
+interface.removeComponent(planebd)
+interface.removeComponent(planeba)
+interface.removeComponent(planebw)
+interface.removeComponent(planebs)
+interface.removeComponent(planebst)
+interface.removeComponent(Exitplne)
+end)
+
+--Plane element
+local PLNE = elem.allocate("CR1K", "PLNE")
+elem.element(PLNE, elem.element(elem.DEFAULT_PT_EQVE))
+elem.property(PLNE, "Name", "SPSH")
+elem.property(PLNE, "Description", "Space ship. Flies with the on screen controller.")
+elem.property(PLNE, "Color", 0xAAAAA0)
+elem.property(PLNE, "MenuSection", elem.SC_SPECIAL)
+elem.property(PLNE, "MenuVisible", 1)
+elem.property(PLNE, "Update", function (i)
+Plx = tpt.get_property("vx",i)
+Ply = tpt.get_property("vy",i)
+Plosx = tpt.get_property("x",i)
+Plosy = tpt.get_property("y",i)
+if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 1 then
+pcall(tpt.set_property, "type", 0, i)
+end
+addbuttons()
+function Explode()
+pcall(tpt.set_property, "temp", 1131, i)
+pcall(tpt.set_property, "tmp", 999, i)
+pcall(tpt.set_property, "type", 131, i)
+end
+
+function moveplne()
+if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) < 2 then
+if PLNEFUEL > 100 and planemoveval ~= 0 then
+if PLNEBOOST == 0 then
+PLNEFUEL = PLNEFUEL - 1
+elseif PLNEBOOST == 1 then
+PLNEFUEL = PLNEFUEL - 4
+end
+end
+if PLNEFUEL > 2000 then
+PLNEFUEL = 2000
+end
+if tpt.get_property("x",i) > 605 then
+pcall(tpt.set_property, "x", 600, i)
+elseif tpt.get_property("x",i) < 15 then
+pcall(tpt.set_property, "x", 16, i)
+end
+if tpt.get_property("y",i) > 368 then
+pcall(tpt.set_property, "y", 367, i)
+elseif tpt.get_property("y",i) < 15 then
+pcall(tpt.set_property, "y", 16, i)
+end
+if PLNEFUEL/10 > 10 then
+local Movespeed = 0.2
+if PLNEBOOST == 1 then
+Movespeed = 0.6
+elseif  PLNEBOOST == 0 then
+Movespeed = 0.2
+end
+if planemoveval == 5 then
+pcall(tpt.set_property, "vx", Plx  + Movespeed, i) --Right
+elseif planemoveval == 4 then
+pcall(tpt.set_property, "vx", Plx  - Movespeed, i) --Left
+elseif planemoveval == 3 then
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) --Up
+elseif planemoveval == 2 then
+pcall(tpt.set_property, "vy", Ply  + Movespeed, i) --Down
+elseif planemoveval == 6 then
+pcall(tpt.set_property, "vx", Plx  + Movespeed, i)
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + RIGHT
+elseif planemoveval == 7 then
+pcall(tpt.set_property, "vx", Plx  - Movespeed, i)
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + LEFT
+end
+end
+end
+end
+moveplne()
+event.unregister(event.tick,plnegraphics)
+event.register(event.tick,plnegraphics)
+end)
+function addbuttons()
+tpt.selectedl = "DEFAULT_PT_SPRK"
+interface.addComponent(planebcharge)
+interface.addComponent(PLNEBST)
+interface.addComponent(planebExpl)
+interface.addComponent(planebwd)
+interface.addComponent(planebwa)
+interface.addComponent(planebd)
+interface.addComponent(planeba)
+interface.addComponent(planebw)
+interface.addComponent(planebs)
+interface.addComponent(planebst)
+interface.addComponent(Exitplne)
+end
+
+function plnegraphics()
+if PLNEBOOST == 1 then
+gfx.fillRect(50,293,6,6,0,255,0,255)
+else
+gfx.fillRect(50,293,6,6,255,0,0,255)
+end
+gfx.drawRect(1,286,82,93,32,216,255,255)
+gfx.fillRect(1,286,82,93,32,216,255,15)
+if PLNEFUEL/10 >= 150 then
+gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
+elseif PLNEFUEL/10 < 150 and PLNEFUEL/10 >= 100 then
+gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,255,255,255)
+elseif PLNEFUEL/10 < 100 and PLNEFUEL/10 > 10 then
+gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
+elseif PLNEFUEL/10 <= 10 then
+gfx.drawText(17,310,"Fuel: Empty",255,55,55,255)
+end
+if planemoveval ~= 0 then 
+gfx.drawRect(Plosx+1,Plosy+3,1,2,255,255,55,255)
+gfx.drawRect(Plosx+7,Plosy+3,1,2,255,255,55,255)
+gfx.drawCircle(Plosx+1,Plosy+4,2,2,55,55,255,255)
+gfx.drawCircle(Plosx+7,Plosy+4,2,2,55,55,255,255)
+end
+gfx.fillRect(Plosx,Plosy,10,2,255,55,55,255)
+gfx.drawCircle(Plosx+4,Plosy-3,3,2,55,55,255,255)
+end 
+--Default theme for initial launch and resets
+local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
@@ -69,13 +322,8 @@ local info = Button:new(10,124,80,25,"Stack tools", "Usefull for subframe.")
 
 local Ruler = Button:new(10,156,80,25, "Ruler", "Toggles in game ruler.")
 
-local bar = Button:new(10,188,80,25,"Auto Stamp", "Toggle Auto stamp.")
+local bar = Button:new(10,188,80,25,"Auto Save", "Toggle Auto stamp.")
 local stamplb = "0"
-local barktext = Textbox:new(126, 185, 27, 15, '10')
-local barklab = Label:new(162, 185, 20, 15, "1-30")
-barktext:text("5")
-local barkon = Button:new(126,203,30,20,"Set", "Save.")
-local barkoff = Button:new(156,203,30,20,"Off", "Cancel.")
 
 local bug = Button:new(10,220,80,25,"Feedback", "Direct to Mod thread for bug report.")
 local bug1 = Button:new(100,220,45,25,"Website", "Direct to Mod thread for bug report.")
@@ -166,10 +414,6 @@ newmenu:removeComponent(brop)
 newmenu:removeComponent(bropc)
 newmenu:removeComponent(brlabel2)
 newmenu:removeComponent(brightSlider)
-newmenu:removeComponent(barkon)
-newmenu:removeComponent(barkoff)
-newmenu:removeComponent(barktext)
-newmenu:removeComponent(barklab)
 end
 
 local req = http.get("https://starcatcher.us/scripts/main.lua?get=2")
@@ -180,12 +424,12 @@ local req3 = http.get("https://jimmyhoke.net/jimmysmodversion")
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
---URS
+--URS Updater
 local updatever, updatestatus = 1,0
-local updatertext = "Available, click here to download"
+local updatertext = "is available, click to download"
 local reqwin
 local crdata = "Getting data please wait.."
-local updatetimer, rungrap = 0,10
+local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 local errtext = "Checking for updates.."
@@ -193,16 +437,9 @@ local timeout = 0
 
 function updatermod()
 updatetimer = updatetimer + 1
-if rungrap < 138 then
-rungrap = rungrap + 1
-elseif rungrap >= 138 then
-rungrap = 10
-end
 if updatetimer >= 3500 then
 timeout = 1
 end
---Graphics while downloading updates..
-gfx.fillRect(rungrap,367,rungrap/2,12,34,255,35,175)
 --Get changelogs
 if crlog:status() == "done"  then
 local crlogdata, crlogcode = crlog:finish()
@@ -210,41 +447,30 @@ if crlogcode == 200  then
 crdata = crlogdata
 end
 end
---Unsupported platforms
-if checkos ~= "WIN64" and checkos ~= "LIN64" and checkos ~= "WIN32" then
-print("Your platform isn't supported by URS. Please download the update manually.")
-print("Download the update from Mod thread")
-event.unregister(event.mousedown, clicktomsg2)
-event.unregister(event.tick, showmotdnot2)
-event.unregister(event.tick,updatermod)
-end
 local filesize, filedone = reqwin:progress()
 local downprog = math.floor((filedone/filesize)*100)
---Windows
-if checkos == "WIN64" or checkos == "WIN32" then --Windows
-updatertext = "Downloading the update, "..downprog .."% Done"
+--Graphics while downloading updates..
+gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
+updatertext = "Downloading update, "..downprog .."% Done"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
-if checkos == "WIN64" or checkos == "WIN32" then
+if checkos == "WIN64" or checkos == "WIN32" then --Windows
 os.rename(filename,"older.exe")
+elseif checkos == "LIN64" then --Linux
+os.rename(filename,"older")
+end
 updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata)
 f:close()
-elseif checkos == "LIN64" then --Linux
-os.rename(filename,"older")
-f = io.open(filename, 'wb')
-f:write(reqwindata)
-f:close()
-end
-updatertext = "Update done, click here to restart."
+updatertext = "Done, click here to restart."
 clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
+timeout = 1
 updatertext = " Updater error code: "..reqwincode
 event.unregister(event.tick,updatermod)
-end
 end
 end
 end
@@ -260,10 +486,17 @@ elseif checkos == "LIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
-else
-reqwin = "Not supported"
+elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
+print("URS doesn't support MAC OS, please download the update manually from here...")
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+event.unregister(event.tick,updatermod)
+event.unregister(event.tick,clicktomsg2)
+event.unregister(event.tick,showmotdnot2)
 end
 event.register(event.tick,updatermod)
+event.unregister(event.keypress,keyclicky)
+event.unregister(event.mousedown, clicktomsg)
+event.unregister(event.tick,showmotdnot)
 elseif clickcheck == 1 then
 platform.restart()
 end
@@ -291,57 +524,99 @@ end
 
 function showmotdnot2()
 if clickcheck ~= 0 then
-gfx.fillRect(5,92,600,292,10,10,10,200)
-gfx.drawRect(5,92,600,292,255,255,255,255)
-gfx.fillCircle(120,99,4,4,50,50,250,200)
-gfx.drawCircle(120,99,4,4,32,216,250,255)
-gfx.drawText(130,96,"Welcome to the Cracker1000's URS Updater. Read the changelogs carefully. (V."..crackversion.." >> V."..tonumber(updatever)..")",32,216,255,255)
-gfx.drawText(12,124,crdata,250,250,250,255)
-if updatertext == "Update done, click here to restart." then
+if updatertext == "Done, click here to restart." then
+gfx.fillRect(5,72,600,312,10,200,10,30)
+else
+if timeout == 1 and clickcheck ~= 1 then
+gfx.fillRect(5,72,600,312,200,10,10,50)
+else
+gfx.fillRect(5,72,600,312,10,10,10,200)
+end
+end
+gfx.drawRect(5,72,600,312,255,255,255,255)
+gfx.fillCircle(120,81,4,4,50,50,250,200)
+gfx.drawCircle(120,81,4,4,32,216,250,255)
+
+gfx.drawText(12,79,"OS:"..platform.platform(),255,255,0,255)
+if crackversion <= tonumber(updatever) then
+gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
+else
+gfx.fillRect(127,75,395,13,255,5,5,120)
+gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Downgrading from v."..crackversion.." to v."..tonumber(updatever)..")",255,5,5,255)
+end
+gfx.drawText(12,98,crdata,250,250,250,255)
+if updatertext == "Done, click here to restart." then
 gfx.drawRect(10,363,590,1,10,250,10,255)
 else
 gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(12,109,"Error: Taking longer than usual, you may wait or download manually using the button provided below..",255,30,30,255)
+gfx.drawText(12,350,"Uh oh something went wrong. You can wait/ use the manual download option provided below. Report the error in mod thread.",255,10,10,245)
 gfx.drawRect(320,366,167,14,32,216,255,220)
 gfx.fillRect(320,366,167,14,32,216,255,40)
-gfx.drawText(325,370,"Click here to download manually",32,216,255,220)
+gfx.drawText(325,370,"Click here to download manually.",32,216,255,220)
 end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(10,366,197,14,10,10,10,255)
 gfx.fillRect(10,366,197,14,32,255,210,140)
 else
+gfx.fillRect(10,366,197,14,10,10,10,255)
 gfx.fillRect(10,366,197,14,32,250,210,20)
 end
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
-if updatertext == "Update done, click here to restart." then
+if updatertext == "Done, click here to restart." then
 gfx.fillRect(10,366,197,14,0,250,0,100)
 end
 if clickcheck == 0 then
 if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(208,366,14,14,250,50,50,150)
+gfx.drawText(225,369,"Cancel the update",250,50,50,250)
 else
+gfx.fillRect(208,366,14,14,50,5,5,255)
 gfx.fillRect(208,366,14,14,250,50,50,20)
 end
-gfx.drawRect(208,366,14,14,250,50,50,255)
-gfx.drawText(212,369,"X",250,50,50,255)
+gfx.drawRect(208,366,14,14,255,5,5,255)
+gfx.drawText(212,369,"X",255,5,5,255)
 end
-
 end
 --URS end
-local errtimer = 200
+local errtimer = 0
+function runupdater()
+event.unregister(event.tick,errormesg)
+event.unregister(event.tick,showmotdnot2)
+event.register(event.tick,showmotdnot2)
+event.unregister(event.mousedown, clicktomsg2)
+event.register(event.mousedown, clicktomsg2)
+end
 function writefile2()
 timermotd = timermotd + 1
 if timermotd >= 250 then
 event.unregister(event.tick,writefile2)
 end
-
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
-motw = ret2
+--Update checks
+errtext = ""
+updatever = string.sub(ret2,9,13)
+if tonumber(crackversion) ~= tonumber(updatever)  then
+runupdater()
+elseif tonumber(crackversion) == tonumber(updatever) then
+errtext = "URS: Latest Version"
+end
+else
+if code2 == 602 then
+errtext ="Offline"
+else
+onlinestatus = 3 --Something went wrong
+errtext = "URS error code: "..code2
+end
+end
+--Motd stuff
+motw = string.sub(ret2,40,300)
+specialmsgval = string.sub(ret2,31,32)
 onlinestatus = 1 
 if motw ~= "." then
 posix = graphics.textSize(motw)
@@ -355,40 +630,14 @@ end
 end
 end
 
-if req3:status() == "done" then
-local ret3, code3 = req3:finish()
-if code3 == 200 then
-errtext = ""
-updatever = ret3
-if tonumber(crackversion) < tonumber(updatever) then
-event.unregister(event.tick,errormesg)
-event.unregister(event.tick,showmotdnot2)
-event.register(event.tick,showmotdnot2)
-event.unregister(event.mousedown, clicktomsg2)
-event.register(event.mousedown, clicktomsg2)
-elseif tonumber(crackversion) >= tonumber(updatever) then
-errtext = "URS: Latest Version"
-end
-else
-if code3 == 602 then
-errtext ="Offline"
-else
-errtext = "URS error code: "..code3
-end
-end
-end
-end
-
 function errormesg()
-if errtimer > 0 then
-errtimer = errtimer - 1
-end
+errtimer = errtimer + 1
 if errtext ==  "URS: Latest Version" or errtext == "Checking for updates.." then
 errtext = errtext
 else
-gfx.drawText(10,370,errtext,255,105,105,200)
+gfx.drawText(10,370,errtext,255,55,55,255)
 end
-if errtimer == 0 then
+if errtimer >= 250 then
 event.unregister(event.tick,errormesg)
 end
 end
@@ -406,10 +655,9 @@ tpt.fillrect(390,366,138,14,32,250,210,120)
 else
 tpt.fillrect(390,366,138,14,32,250,210,20)
 end
-
 tpt.drawrect(390,366,138,14,32,250,210,255)
-tpt.drawrect(418,408,51,14,32,250,210,255)
-gfx.drawText(395,370,"You have an unread message",32,250,210,255)
+tpt.drawrect(418,408,51,14,255-ar,255-ag,255-ab,255)
+gfx.drawText(395,370,"New message, click to view.",32,250,210,255)
 end
 
 local function strtelemgraph()
@@ -626,69 +874,43 @@ tpt.display_mode(3)
 end
 end)
 
-local savetime = 0
-local saveend = 0
-local maxpart1 = 0
-local maxpart2 = 0
-local maxpart3 = 0
-local maxpart4 = 0
-
+local savetime, maxpart1, maxpart2, maxpart3, maxpart4 = 0,0,0,0,0
 function getmax()
-maxpart1 = math.huge
-maxpart2 = math.huge
-maxpart3 = -math.huge
-maxpart4 = -math.huge
-for i in sim.parts() do maxpart1 = math.min(sim.partProperty(i,"x"),maxpart1)end
-for i in sim.parts() do maxpart2 = math.min(sim.partProperty(i,"y"),maxpart2)end
-for i in sim.parts() do maxpart3 = math.max(sim.partProperty(i,"x"),maxpart3)end
-for i in sim.parts() do maxpart4 = math.max(sim.partProperty(i,"y"),maxpart4)end
+maxpart1, maxpart2 = math.huge, math.huge
+maxpart3, maxpart4  = -math.huge, -math.huge
+for i in sim.parts() do 
+maxpart1 = math.min(sim.partProperty(i,"x"),maxpart1)
+maxpart2 = math.min(sim.partProperty(i,"y"),maxpart2)
+maxpart3 = math.max(sim.partProperty(i,"x"),maxpart3)
+maxpart4 = math.max(sim.partProperty(i,"y"),maxpart4)
+end
 end
 
 function autosave()
-if savetime < saveend then
+if savetime < 350 then
 savetime = savetime + 1
-
-elseif savetime >= saveend then
-savetime = 0
 end
-
-if saveend - savetime < 15 then
-graphics.drawRect(4,367,33,14, 255,255,0,255)
-graphics.fillRect(4,367,33,14,15,15,15,200)
-graphics.drawText(8,370,"Stamp", 255,255,0,255)
+if savetime >= 340 then
+graphics.drawRect(6,368,44,12,255,255,0,200)
+graphics.fillRect(6,368,44,12,255,255,0,70)
 end
-
-if saveend - savetime == 0 then
+if savetime >= 349 then
 getmax()
 sim.saveStamp(maxpart1,maxpart2,maxpart3-maxpart1,maxpart4-maxpart2)
+savetime = 0
 end
 end
 
 bar:action(function(sender)
 clearsb()
-newmenu:addComponent(barkon)
-newmenu:addComponent( barkoff)
-newmenu:addComponent( barktext)
-newmenu:addComponent(barklab)
-end)
-
-barkon:action(function(sender)
-if tonumber(barktext:text()) < 1 or tonumber(barktext:text()) > 30 then
-saveend = "5"
-barktext:text("5")
-end
-savetime = 0
-saveend = tonumber(barktext:text())*100
+if stamplb == "0" then
+stamplb = "1"
 event.unregister(event.tick,autosave)
 event.register(event.tick,autosave)
-stamplb = "1"
-clearsb()
-end)
-
-barkoff:action(function(sender)
-event.unregister(event.tick,autosave)
+elseif stamplb == "1" then
 stamplb = "0"
-clearsb()
+event.unregister(event.tick,autosave)
+end
 end)
 
 local stv, stackposx, stackposy, stackposval, zx, zy = 0, 99, 99, 0,0,0
@@ -1517,11 +1739,11 @@ local prevpg = Button:new(238, 400, 40, 15, "Prev.")
 local nextpg = Button:new(342, 400, 40, 15, "Next")
 local close2 = Button:new(570, 400, 50, 15, "Close")
 
-local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
+local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. PHOT + GRPH -> UV. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
-local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2.\n    Once ignited (when above 450C) the flames are very difficult to stop. Absorbs NEUT and thus can act as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
-local wpage5 = "48) SODM: Sodium metal. Shiny powder that conducts. Reacts violently with WATR, generating H2 and loosing the reactivity.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with Chlorine when above 50C. Melts at 97C. Glows under vaccum.\n\n49) Ball: Bouncy ball, can spill away liquids and powders while bouncing. Destroyed at 100C."
+local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2 and PHOT + GRPH -> UV.\n    Once ignited (when > 450C) the flames are very difficult to stop. Absorbs NEUT and thus acting as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
+local wpage5 = "48) SODM: Sodium shiny conductive metal. Reacts violently with WATR generating hydrogen. Turns powder when under pressure.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with chlorine when above 50C. Melts at 97C. Glows under vaccum.\n\n49) BALL: Bouncy glas balls, can spill away liquids and powders while bouncing. Breaks at 20 pressure and melts around 1900C\n\n50) SPSH: Space ship. Controlled via on screen buttons. Needs to be charged to move. Can explode!"
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1622,6 +1844,8 @@ tpt.el.gsns.menu=0
 tpt.el.emgt.menu=0
 tpt.el.sodm.menu=0
 tpt.el.ball.menu=0
+elem.property(PLNE, "MenuVisible", 0)
+elem.property(MISLT, "MenuVisible", 0)
 end
 
 function showmodelem()
@@ -1676,6 +1900,8 @@ tpt.el.gsns.menu=1
 tpt.el.emgt.menu=1
 tpt.el.sodm.menu=1
 tpt.el.ball.menu=1
+elem.property(PLNE, "MenuVisible", 1)
+elem.property(MISLT, "MenuVisible", 1)
 end
 local modelemval = "0"
 bg:action(function(sender)
@@ -1694,6 +1920,9 @@ local barlength = "1"
 local uival = "1"
 local frameCount,colourRED,colourGRN,colourBLU = 0,0,0,0
 function theme()
+if tonumber(specialmsgval) == 1 then
+motwdisplay()
+end
 if MANAGER.getsetting("CRK", "savergb") ~= "1" then
 ar = MANAGER.getsetting("CRK", "ar")
 ag = MANAGER.getsetting("CRK", "ag")
@@ -1710,7 +1939,8 @@ al = brightSlider:value()
 end
 --Update text
 if updatestatus == 1 then
-gfx.drawText(10,370,"You are running an outdated version.",190,190,190,180)
+gfx.fillRect(8,367,315,15,20,20,20,200)
+gfx.drawText(10,370,"You are running an outdated version, please update when possible.",255,20,20,250)
 end
 --Filters
 if filterval == 1 then
@@ -1721,6 +1951,10 @@ end
 if borderval == "1" then
 tpt.drawrect(2,2,607,379,ar,ag,ab,al)
 tpt.drawrect(1,1,609,381,ar,ag,ab,al)
+end
+--Autosave
+if stamplb == "1" then
+graphics.drawText(8,370,"AutoSave", 32,255,32,220)
 end
 --Split theme
 local spr, spb,spg = ar,ag,ab
@@ -1788,7 +2022,7 @@ tpt.drawline(36,409,36,421,ar,ag,ab,al)
 tpt.drawline(18,409,18,421,ar,ag,ab,al)
 tpt.drawline(580,409,580,421,ar,ag,ab,al)
 tpt.drawline(596,409,596,421,ar,ag,ab,al)
-tpt.drawline(418,408,418,421,ar,ag,ab,al)
+tpt.drawline(418,409,418,421,ar,ag,ab,al)
 
 if MANAGER.getsetting("CRK", "savergb") == "1" then
  colourRGB = {colourRED,colourGRN,colourBLU}
@@ -1828,11 +2062,13 @@ crx, cry = sim.adjustCoords(tpt.mousex,tpt.mousey)
 else
 crx, cry = tpt.mousex,tpt.mousey
 end
+graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-12,"Lp:"..sim.elementCount(elem[tpt.selectedl]),ar,ag,ab,al)
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey-2,"X:"..crx,ar,ag,ab,al)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..cry,ar,ag,ab,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-2,"Y:"..cry,spr,spg,spb,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey-12,"Rp:"..sim.elementCount(elem[tpt.selectedr]),spr,spg,spb,al)
 if tpt.brushx > 0 or tpt.brushy > 0 then
 graphics.drawText(tpt.mousex-40-tpt.brushx, tpt.mousey+8,"L:"..tpt.brushx,ar,ag,ab,al)
-graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,ar,ag,ab,al)
+graphics.drawText(tpt.mousex+15+tpt.brushx, tpt.mousey+8,"H:"..tpt.brushy,spr,spg,spb,al)
 end
 end
 end
@@ -1844,7 +2080,7 @@ local mp2 = Button:new(70,92,45,25,"Fire", "Change the theme to Blue")
 local mp3 = Button:new(120,92,45,25,"Aqua", "Change the theme to Red")
 local mp4 = Button:new(170,92,45,25,"Forest", "Change the theme to Green")
 local mp7 = Button:new(220,92,45,25,"Vanilla", "Change the theme back to Plain white")
-local mp8 = Button:new(270,92,45,25,"Twilight", "Resets back to default")
+local mp8 = Button:new(270,92,45,25,"Teal", "Teal")
 local mp11 = Button:new(320,92,45,25,defaulttheme, "The default theme")
 local mp9 = Button:new(370,92,45,25,"Pulse", "RBG makes everything better.")
 local mp10 = Button:new(420,92,45,25,"Split", "Half of the theme is inverted")
@@ -1856,11 +2092,12 @@ local bogb1 = Button:new(124,333,60,25,"Borders", "Draw Borders")
 
 local jkey = Button:new(124,300,60,25,"J-Shortcut", "Toggle Shortcut")
 local neonmode = Button:new(224,300,60,25,"Neon Mode", "Toggle fire strength")
+local Forceup = Button:new(324,300,70,25,"Force Update", "Triggers the forced update mechanism.")
 local bg7 = Button:new(224,333,60,25,"Developer", "Disable inbuilt scripts")
 
 local baropa =  Button:new(24,250,35,20,"Short", "Short and moving")
 local baropb =  Button:new(64,250,35,20,"Long", "Long")
-local baropd =  Button:new(104,250,35,20,"OFF", "Turn off")
+local baropd =  Button:new(104,250,35,20,"Off", "Turn off")
 
 local als = Label:new(317,147, 30, 15, "Alpha")
 
@@ -1996,6 +2233,7 @@ newmenuth:addComponent(bog1)
 newmenuth:addComponent(bogb1)
 newmenuth:addComponent(jkey)
 newmenuth:addComponent(neonmode)
+newmenuth:addComponent(Forceup)
 
 newmenuth:addComponent(rSlider)
 newmenuth:addComponent(gSlider)
@@ -2065,10 +2303,19 @@ neonmode:action(function(sender)
 if nmodv == "0" then
 nmodv = "1"
 tpt.setfire(30)
+print("Neon Mode: Particles like FIRE, GAS and PHOT etc appear extra fancy and glowy.")
 elseif nmodv == "1" then
 nmodv = "0"
 tpt.setfire(1)
 end
+end)
+
+Forceup:action(function(sender)
+ui.closeWindow(newmenuth)
+ui.closeWindow(newmenu)
+updatestatus = 0
+print("Force updating the mod, click the update notification below.")
+runupdater()
 end)
 
 mpop:action(function(sender)
@@ -2117,8 +2364,8 @@ mpnolag()
 end)
 
 mp8:action(function(sender)
-MANAGER.savesetting("CRK","ar",131)
-MANAGER.savesetting("CRK","ag",0)
+MANAGER.savesetting("CRK","ar",87)
+MANAGER.savesetting("CRK","ag",255)
 MANAGER.savesetting("CRK","ab",255)
 MANAGER.savesetting("CRK","al",255)
 mpnolag()
@@ -2164,7 +2411,7 @@ end)
 local adminpass = Textbox:new(290, 336, 55, 20, '', ' <Code> ')
 local admincan = Button:new(350,336,20,20,"X", "cancle admin mode")
 local admincan1 = Button:new(225,336,70,20,"Debug mode", "Disables crackerk.lua and fail check")
-local admincan2 = Button:new(298,336,76,20,"Disable scripts","Disables all embedded scripts")
+local admincan2 = Button:new(298,336,76,20,"Disable scripts", "Disables all embedded scripts")
 
 bg7:action(function(sender)
 adminval = 1
@@ -2185,6 +2432,7 @@ newmenuth:removeComponent(adminpass)
 newmenuth:removeComponent(admincan)
 newmenuth:addComponent(admincan1)
 newmenuth:addComponent(admincan2)
+
 admincan1:action(function(sender)
 local fdlf3 = io.open('debugmode.txt', 'w')
 fdlf3:write("Message from Cracker1000: This file disables the embedded scripts in Cracker1000's Mod for debugging purposes, delete this to restore the mod to original state.")
@@ -2219,6 +2467,9 @@ end)
 
 function startupcheck()
 event.register(event.tick,errormesg)
+if tpt.version.modid ~= 6 then
+tpt.message_box("URS User Safety Warning!", "You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
+end
 fs.makeDirectory("scripts")
 os.remove("older.exe")
 os.remove("older")
@@ -2232,6 +2483,7 @@ end
 
 if MANAGER.getsetting("CRK","al") == nil then --Defaults to prevent errors in script
 MANAGER.savesetting("CRK","loadelem","0")
+MANAGER.savesetting("CRK", "pass","0")
 MANAGER.savesetting("CRK","notifval","1")
 MANAGER.savesetting("CRK", "fancurs","0")
 MANAGER.savesetting("CRK","savergb","0")
@@ -2327,8 +2579,9 @@ clearm()
 barlength = 1
 end
 local posix2 = posix + 10
-
-function showmotd()
+function motwdisplay()
+if motw ~= "." then
+if posix > 600 then
 if posix2 > -1*(posix)then
 posix2 = posix2 - 1
 end
@@ -2336,15 +2589,18 @@ if posix2 <= -1*(posix) then
 posix2 = posix + 10
 end
 end
-
-function drawglitch()
-if motw ~= "." then
-if posix > 600 then
-showmotd()
-end
+if tonumber(specialmsgval) == 1 then
+graphics.fillRect(2,348,609, 10,20,20,20,200)
+graphics.drawText(posix2,349,motw,255,0,0,255)
+else
 graphics.fillRect(2,258,609, 10,20,20,20,200)
 graphics.drawText(posix2,259,motw,32,250,210,255)
 end
+end
+end
+
+function drawglitch()
+motwdisplay()
 if perfmv == "1" then
 graphics.drawLine(12, 18,574,18,ar,ag,ab,al)
 graphics.drawRect(1,1, 609, 255,ar,ag,ab,110)
@@ -2357,6 +2613,8 @@ end
 gfx.drawText(12,7,"Welcome to Mod Settings. Tip: 'J' Key can be used as a shortcut to open and close the menu. Status:",255,255,255,255) --Intro message
 if onlinestatus == 1 then --Online status
 gfx.drawText(498,7,"Online",95,255,95,255)
+elseif onlinestatus == 3 then
+gfx.drawText(498,7,"Report the error!",255,0,0,255)
 else
 gfx.drawText(498,7,"Offline",255,95,95,255)
 end
@@ -7900,3 +8158,4 @@ if name == "" then
 end
 end
 notificationscript()
+failsafe = 1 -- Meant to be a global variable, used for detecting script crash

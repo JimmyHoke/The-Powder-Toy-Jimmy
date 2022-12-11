@@ -56,6 +56,11 @@ endif
 
 is_static = static_variant != 'none'
 is_debug = get_option('optimization') in [ '0', 'g' ]
+enforce_https = get_option('enforce_https')
+
+if not is_debug and not enforce_https
+	error('refusing to build a release binary with enforce_https=false')
+endif
 
 tpt_libs_static = 'none'
 if static_variant == 'prebuilt'
@@ -68,7 +73,7 @@ tpt_libs_debug = is_debug ? 'debug' : 'release'
 tpt_libs_variant = '@0@-@1@-@2@-@3@'.format(host_arch, host_platform, host_libc, tpt_libs_static)
 tpt_libs_vtag = get_option('tpt_libs_vtag')
 if tpt_libs_vtag == ''
-	tpt_libs_vtag = 'v20220922162009'
+	tpt_libs_vtag = 'v20221108204019'
 endif
 if tpt_libs_static != 'none'
 	if tpt_libs_variant not in [
@@ -89,6 +94,24 @@ if tpt_libs_static != 'none'
 		error('no prebuilt @0@ libraries are currently provided'.format(tpt_libs_variant))
 	endif
 	tpt_libs = subproject('tpt-libs-prebuilt-@0@-@1@-@2@'.format(tpt_libs_variant, tpt_libs_debug, tpt_libs_vtag))
+else
+	if get_option('workaround_elusive_bzip2')
+		bzip2_lib_name = get_option('workaround_elusive_bzip2_lib_name')
+		bzip2_include_name = get_option('workaround_elusive_bzip2_include_name')
+		bzip2_lib_dir = get_option('workaround_elusive_bzip2_lib_dir')
+		bzip2_include_dir = include_directories(get_option('workaround_elusive_bzip2_include_dir'))
+		bzip2_static = get_option('workaround_elusive_bzip2_static')
+		meson.override_dependency('bzip2', declare_dependency(
+			dependencies: c_compiler.find_library(
+				bzip2_lib_name,
+				has_headers: bzip2_include_name,
+				dirs: bzip2_lib_dir,
+				header_include_directories: bzip2_include_dir,
+				static: bzip2_static,
+			),
+			include_directories: bzip2_include_dir,
+		))
+	endif
 endif
 
 conf_data = configuration_data()
@@ -120,8 +143,10 @@ if lua_variant == 'none'
 elif lua_variant == 'lua5.1' or lua_variant == 'lua5.2'
 	lua_dep = dependency(lua_variant + '-c++', static: is_static, required: false)
 	if not lua_dep.found()
+		if not get_option('workaround_noncpp_lua')
+			error('your system @0@ is not compatible with C++, configure with -Dworkaround_noncpp_lua=true to disable this error'.format(lua_variant))
+		endif
 		lua_dep = dependency(lua_variant, static: is_static)
-		warning('your system @0@ might not be compatible with C++'.format(lua_variant))
 	endif
 elif lua_variant == 'luajit'
 	lua_dep = dependency('luajit', static: is_static)
@@ -151,7 +176,10 @@ fftw_dep = enable_gravfft ? dependency('fftw3f', static: is_static) : []
 
 threads_dep = dependency('threads')
 zlib_dep = dependency('zlib', static: is_static)
+png_dep = dependency('libpng16', static: is_static)
 sdl2_dep = dependency('sdl2', static: is_static)
+bzip2_dep = dependency('bzip2', static: is_static)
+json_dep = dependency('jsoncpp', static: is_static)
 
 project_link_args = []
 project_c_args = []
@@ -268,13 +296,6 @@ if host_platform == 'windows'
 	endif
 endif
 
-if host_platform == 'darwin' and lua_variant == 'luajit' and host_arch != 'aarch64'
-	project_link_args += [
-		'-pagezero_size', '10000',
-		'-image_base', '100000000',
-	]
-endif
-
 project_inc = include_directories([ 'src', 'data', 'resources' ])
 
 if host_platform == 'windows'
@@ -296,9 +317,6 @@ conf_data.set('X86_SSE3', x86_sse_level >= 30)
 conf_data.set('X86_SSE2', x86_sse_level >= 20)
 conf_data.set('X86_SSE', x86_sse_level >= 10)
 conf_data.set('_64BIT', is_64bit)
-conf_data.set('OGLI', false)
-conf_data.set('OGLR', false)
-conf_data.set('PIX32OGL', false)
 conf_data.set('BETA', get_option('beta'))
 conf_data.set('NO_INSTALL_CHECK', not get_option('install_check'))
 conf_data.set('IGNORE_UPDATES', get_option('ignore_updates'))
@@ -310,6 +328,7 @@ conf_data.set('SERVER', '"@0@"'.format(get_option('server')))
 conf_data.set('STATICSERVER', '"@0@"'.format(get_option('static_server')))
 conf_data.set('IDENT_PLATFORM', '"@0@"'.format(ident_platform))
 conf_data.set('IDENT', '"@0@-@1@-@2@"'.format(host_arch, host_platform, host_libc).to_upper())
+conf_data.set('ENFORCE_HTTPS', enforce_https)
 conf_data.set('APPNAME', get_option('app_name'))
 conf_data.set('APPCOMMENT', get_option('app_comment'))
 conf_data.set('APPEXE', get_option('app_exe'))
@@ -337,10 +356,13 @@ if get_option('build_powder')
 	powder_deps = [
 		threads_dep,
 		zlib_dep,
+		png_dep,
 		sdl2_dep,
 		lua_dep,
 		curl_dep,
 		fftw_dep,
+		bzip2_dep,
+		json_dep,
 	]
 	if host_platform == 'android'
 		powder_sha = shared_library(
@@ -371,14 +393,21 @@ if get_option('build_render')
 	render_deps = [
 		threads_dep,
 		zlib_dep,
+		bzip2_dep,
+		json_dep,
+		png_dep,
 	]
+	render_link_args = project_link_args
+	if host_platform == 'linux' and is_static
+		render_link_args += [ '-static' ]
+	endif
 	executable(
 		'render',
 		sources: render_files,
 		include_directories: [ project_inc, render_inc ],
 		c_args: project_c_args,
 		cpp_args: project_cpp_args,
-		link_args: project_link_args,
+		link_args: render_link_args,
 		dependencies: render_deps,
 	)
 endif
@@ -387,7 +416,10 @@ if get_option('build_font')
 	font_deps = [
 		threads_dep,
 		zlib_dep,
+		png_dep,
 		sdl2_dep,
+		bzip2_dep,
+		json_dep,
 	]
 	executable(
 		'font',

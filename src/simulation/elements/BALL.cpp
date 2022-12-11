@@ -1,5 +1,4 @@
 #include "simulation/ElementCommon.h"
-
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
 
@@ -7,7 +6,7 @@ void Element::Element_BALL()
 {
 	Identifier = "DEFAULT_PT_BALL";
 	Name = "BALL";
-	Colour = PIXPACK(0xFF0000);
+	Colour = PIXPACK(0xD2042D);
 	MenuVisible = 1;
 	MenuSection = SC_SPECIAL;
 	Enabled = 1;
@@ -30,18 +29,18 @@ void Element::Element_BALL()
 	Weight = 15;
 
 	HeatConduct = 251;
-	Description = "Bouncy ball.Spills away liquids and powders when bouncing on them. Use sparingly!";
+	Description = "Bouncy glass balls. Spills away liquids and powders when bouncing on them. Use sparingly!";
 
 	Properties = TYPE_LIQUID | PROP_LIFE_DEC;
 
 	LowPressure = IPL;
 	LowPressureTransition = NT;
-	HighPressure = IPH;
-	HighPressureTransition = NT;
+	HighPressure = 20.0f;
+	HighPressureTransition = PT_GLAS;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 393.15f;
-	HighTemperatureTransition = PT_WATR;
+	HighTemperature = 1973.0f;
+	HighTemperatureTransition = PT_LAVA;
 
 	Update = &update;
 	Graphics = &graphics;
@@ -72,14 +71,7 @@ static int update(UPDATE_FUNC_ARGS)
 
 static int graphics(GRAPHICS_FUNC_ARGS)
 {
-	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 3, 3, 255, 0, 0, 255);
-	if (cpart->life > 3)
-	{
-	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 2, 2, 255, 255, 255, 200);
-	}
-	else
-	{
-	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 2, 2, 255, 50, 50, 200);
-	}
+	ren->drawcircle((int)(cpart->x), (int)(cpart->y), 3, 3, 210, 4, 45, 255);
+	ren->fillcircle((int)(cpart->x), (int)(cpart->y), 2, 2, 210, 4, 45, 200);
 	return 0;
 }

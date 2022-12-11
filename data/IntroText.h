@@ -4,7 +4,7 @@ const char *const introTextData =
 "\bo                                           |-----------------------------------|\n"
 "\bw                                                 Welcome To Jimmy's Mod \n"
 "\bo                                           |-----------------------------------|\n"
-"                                                \br<< \bwVer 2.7.1 \bo||\bw TPT 96.2 \br>>"
+"                                                \br<< \bwVer 2.8.0 \bo||\bw TPT 96.2 \br>>"
 "\bl\n\n   Instructions:                        \n"
 "\bt *\bw There's a new 'Settings' button near tags, press it to open the Mod menu ('J' shortcut).\n"
 "\bg *\bw Themes, crosshair and other options can be found in Control Centre settings.\n"
@@ -14,4 +14,5 @@ const char *const introTextData =
 "\bg *\bw You can unhide all the hidden elements using 'Hidden elements' option.\n"
 "\bt *\bw New gravity modes can be switched using W key aswell.\n"
 "\bg *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same.\n\n"
-"\br   Press Any Key (except power) To Continue...\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+"\bt *\bg Contributors: \bu@Cracker1000, @Jacob1, @Xphere07, @Maticzpl, @NF and @Grenadier.\n\n"
+"\br   Press Any Key (except power) To Continue...";

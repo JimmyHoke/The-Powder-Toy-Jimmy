@@ -1,17 +1,8 @@
-Changelog for V47.5
+Changelog for V51.1
 
-Add missing renderer option lines.
-New Neon Mode in control centre, makes everything super bright.
-New element: BALL, super bouncy rubber balls.
-New default theme.
-Allow pulse theme to work with split mode.
-Make pulse button toggle the mode
-Pulse theme no longer reverts the theme back to default when turned off.
-Split theme now applies to top bar aswell.
-Better failsafe module
-Merge changes from latest snapshot:
-Fix uninitialized stickmen
-Fix OOB read when parsing empty string as float
-Photon reflection fix (Minor)
+Fix potential crash when opening some saves.
+Turning off Mod elements now hides MIST and SPSH too.
+Fix multiple MIST bugs
+MOVS in now fully functional space ship element. Found under special menu.
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**
