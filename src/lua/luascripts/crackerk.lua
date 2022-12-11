@@ -63,7 +63,7 @@ return false
 end
 --TOOL end
 local Exitplne = Button:new(03,290,20,15, "X", "Disable Plane")
-
+local PLNEBST = Button:new(60,290,20,15, "BST", "Toggle Booster.")
 local planebwd = Button:new(10,322,20,15, "Ul", "Move Up + Left")
 local planebwa = Button:new(56,322,20,15, "Ur", "Move Up + Right")
 local planebcharge = Button:new(10,360,20,15, "Chrg", "Recharge.")
@@ -74,7 +74,7 @@ local planebd = Button:new(60,340,15,15, ">", "Move Right")
 local planeba = Button:new(10,340,15,15, "<", "Move Left")
 local planebs = Button:new(33,360,20,15, "V", "Move Down")
 local planebst = Button:new(30,341,25,15, "Stop", "Stop")
-local planemoveval, Plx, Ply, PLNEFUEL = 0,0,0,2000
+local planemoveval, Plx, Ply, PLNEFUEL, PLNEBOOST = 0,0,0,2000,0
 
 planebcharge:action(function(sender)
 if PLNEFUEL < 2000 then
@@ -82,9 +82,18 @@ PLNEFUEL = PLNEFUEL + 20
 end
 end)
 
+PLNEBST:action(function(sender)
+if PLNEBOOST == 0 then
+PLNEBOOST = 1
+elseif PLNEBOOST == 1 then
+PLNEBOOST = 0
+end
+end)
+
 planebExpl:action(function(sender)
 Explode()
 event.unregister(event.tick,plnegraphics)
+interface.removeComponent(PLNEBST )
 interface.removeComponent(planebcharge)
 interface.removeComponent(planebExpl)
 interface.removeComponent(planebwd)
@@ -122,6 +131,7 @@ end)
 Exitplne:action(function(sender)
 sim.clearSim()
 event.unregister(event.tick,plnegraphics)
+interface.removeComponent(PLNEBST)
 interface.removeComponent(planebcharge)
 interface.removeComponent(planebExpl)
 interface.removeComponent(planebwd)
@@ -160,12 +170,19 @@ end
 function moveplne()
 if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) < 2 then
 if PLNEFUEL > 100 and planemoveval ~= 0 then
+if PLNEBOOST == 0 then
 PLNEFUEL = PLNEFUEL - 1
+elseif PLNEBOOST == 1 then
+PLNEFUEL = PLNEFUEL - 4
+end
+end
+if PLNEFUEL > 2000 then
+PLNEFUEL = 2000
 end
 if tpt.get_property("x",i) > 605 then
 pcall(tpt.set_property, "x", 600, i)
-elseif tpt.get_property("x",i) < 3 then
-pcall(tpt.set_property, "x", 5, i)
+elseif tpt.get_property("x",i) < 15 then
+pcall(tpt.set_property, "x", 16, i)
 end
 if tpt.get_property("y",i) > 368 then
 pcall(tpt.set_property, "y", 367, i)
@@ -173,20 +190,26 @@ elseif tpt.get_property("y",i) < 15 then
 pcall(tpt.set_property, "y", 16, i)
 end
 if PLNEFUEL/10 > 10 then
+local Movespeed = 0.2
+if PLNEBOOST == 1 then
+Movespeed = 0.6
+elseif  PLNEBOOST == 0 then
+Movespeed = 0.2
+end
 if planemoveval == 5 then
-pcall(tpt.set_property, "vx", Plx  + 0.3, i) --Right
+pcall(tpt.set_property, "vx", Plx  + Movespeed, i) --Right
 elseif planemoveval == 4 then
-pcall(tpt.set_property, "vx", Plx  - 0.3, i) --Left
+pcall(tpt.set_property, "vx", Plx  - Movespeed, i) --Left
 elseif planemoveval == 3 then
-pcall(tpt.set_property, "vy", Ply  - 0.3, i) --Up
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) --Up
 elseif planemoveval == 2 then
-pcall(tpt.set_property, "vy", Ply  + 0.3, i) --Down
+pcall(tpt.set_property, "vy", Ply  + Movespeed, i) --Down
 elseif planemoveval == 6 then
-pcall(tpt.set_property, "vx", Plx  + 0.3, i)
-pcall(tpt.set_property, "vy", Ply  - 0.3, i) -- UP + RIGHT
+pcall(tpt.set_property, "vx", Plx  + Movespeed, i)
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + RIGHT
 elseif planemoveval == 7 then
-pcall(tpt.set_property, "vx", Plx  - 0.3, i)
-pcall(tpt.set_property, "vy", Ply  - 0.3, i) -- UP + LEFT
+pcall(tpt.set_property, "vx", Plx  - Movespeed, i)
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + LEFT
 end
 end
 end
@@ -198,6 +221,7 @@ end)
 function addbuttons()
 tpt.selectedl = "DEFAULT_PT_SPRK"
 interface.addComponent(planebcharge)
+interface.addComponent(PLNEBST)
 interface.addComponent(planebExpl)
 interface.addComponent(planebwd)
 interface.addComponent(planebwa)
@@ -210,8 +234,13 @@ interface.addComponent(Exitplne)
 end
 
 function plnegraphics()
-gfx.drawRect(1,306,82,73,32,216,255,255)
-gfx.fillRect(1,306,82,73,32,216,255,15)
+if PLNEBOOST == 1 then
+gfx.fillRect(50,293,6,6,0,255,0,255)
+else
+gfx.fillRect(50,293,6,6,255,0,0,255)
+end
+gfx.drawRect(1,286,82,93,32,216,255,255)
+gfx.fillRect(1,286,82,93,32,216,255,15)
 if PLNEFUEL/10 >= 150 then
 gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
 elseif PLNEFUEL/10 < 150 and PLNEFUEL/10 >= 100 then
@@ -221,10 +250,12 @@ gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
 elseif PLNEFUEL/10 <= 10 then
 gfx.drawText(17,310,"Fuel: Empty",255,55,55,255)
 end
+if planemoveval ~= 0 then 
 gfx.drawRect(Plosx+1,Plosy+3,1,2,255,255,55,255)
 gfx.drawRect(Plosx+7,Plosy+3,1,2,255,255,55,255)
 gfx.drawCircle(Plosx+1,Plosy+4,2,2,55,55,255,255)
 gfx.drawCircle(Plosx+7,Plosy+4,2,2,55,55,255,255)
+end
 gfx.fillRect(Plosx,Plosy,10,2,255,55,55,255)
 gfx.drawCircle(Plosx+4,Plosy-3,3,2,55,55,255,255)
 end 
@@ -1810,6 +1841,7 @@ tpt.el.emgt.menu=0
 tpt.el.sodm.menu=0
 tpt.el.ball.menu=0
 elem.property(PLNE, "MenuVisible", 0)
+elem.property(MISLT, "MenuVisible", 0)
 end
 
 function showmodelem()
@@ -1865,6 +1897,7 @@ tpt.el.emgt.menu=1
 tpt.el.sodm.menu=1
 tpt.el.ball.menu=1
 elem.property(PLNE, "MenuVisible", 1)
+elem.property(MISLT, "MenuVisible", 1)
 end
 local modelemval = "0"
 bg:action(function(sender)
