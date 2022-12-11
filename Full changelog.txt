@@ -1,3 +1,7 @@
+v51.1
+Fix multiple MIST bugs
+MOVS in now fully functional space ship element. Found under special menu.
+
 v51.0
 New element: MOVS (Moving solid). Controlled via dedicated controller.
 Improvements to URS updater

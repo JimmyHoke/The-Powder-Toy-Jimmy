@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 51.0 --51.5 Next version
+local crackversion = 51.1 --51.5 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -14,9 +14,9 @@ elem.property(MISLT, "Description", "Help: Missile Target Tool. Click once to pl
 elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
-if tonumber(sim.elementCount(elem[PT_MIST])) > 1 then
+if tonumber(sim.elementCount(elem.CR1K_PT_MIST)) > 1 then
 pcall(tpt.set_property, "type",0,i)
-elseif tonumber(sim.elementCount(elem[PT_MIST])) < 2 then
+elseif tonumber(sim.elementCount(elem.CR1K_PT_MIST)) < 2 then
 posxt = tpt.get_property("x",i)
 posyt = tpt.get_property("y",i)
 end
@@ -24,7 +24,7 @@ function setcoord()
 pcall(tpt.set_property, "tmp", tpt.mousex, i)
 pcall(tpt.set_property, "tmp2", tpt.mousey, i)
 pcall(tpt.set_property, "type",228,i)
-print("Target set!")
+print("Target set ("..tpt.mousex..", "..tpt.mousey..")")
 end
 function setcoord2()
 pcall(tpt.set_property, "type",0,i)
@@ -62,13 +62,47 @@ end
 return false
 end
 --TOOL end
-local Exitplne = Button:new(3,332,20,15, "Exit", "Disable MOSV")
-local planebw = Button:new(33,332,20,15, "^", "Move Up")
-local planebd = Button:new(60,350,15,15, ">", "Move Right")
-local planeba = Button:new(10,350,15,15, "<", "Move Left")
-local planebs = Button:new(33,370,20,15, "V", "Move Down")
-local planebst = Button:new(30,351,25,15, "Stop", "Stop")
-local planemoveval = 0
+local Exitplne = Button:new(03,290,20,15, "X", "Disable Plane")
+
+local planebwd = Button:new(10,322,20,15, "Ul", "Move Up + Left")
+local planebwa = Button:new(56,322,20,15, "Ur", "Move Up + Right")
+local planebcharge = Button:new(10,360,20,15, "Chrg", "Recharge.")
+local planebExpl = Button:new(56,360,20,15, "Exp", "Explode")
+
+local planebw = Button:new(33,322,20,15, "^", "Move Up")
+local planebd = Button:new(60,340,15,15, ">", "Move Right")
+local planeba = Button:new(10,340,15,15, "<", "Move Left")
+local planebs = Button:new(33,360,20,15, "V", "Move Down")
+local planebst = Button:new(30,341,25,15, "Stop", "Stop")
+local planemoveval, Plx, Ply, PLNEFUEL = 0,0,0,2000
+
+planebcharge:action(function(sender)
+if PLNEFUEL < 2000 then
+PLNEFUEL = PLNEFUEL + 20
+end
+end)
+
+planebExpl:action(function(sender)
+Explode()
+event.unregister(event.tick,plnegraphics)
+interface.removeComponent(planebcharge)
+interface.removeComponent(planebExpl)
+interface.removeComponent(planebwd)
+interface.removeComponent(planebwa)
+interface.removeComponent(planebd)
+interface.removeComponent(planeba)
+interface.removeComponent(planebw)
+interface.removeComponent(planebs)
+interface.removeComponent(planebst)
+interface.removeComponent(Exitplne)
+end)
+
+planebwd:action(function(sender)
+planemoveval = 7
+end)
+planebwa:action(function(sender)
+planemoveval = 6
+end)
 planebd:action(function(sender)
 planemoveval = 5
 end)
@@ -84,8 +118,14 @@ end)
 planebst:action(function(sender)
 planemoveval = 0
 end)
+
 Exitplne:action(function(sender)
 sim.clearSim()
+event.unregister(event.tick,plnegraphics)
+interface.removeComponent(planebcharge)
+interface.removeComponent(planebExpl)
+interface.removeComponent(planebwd)
+interface.removeComponent(planebwa)
 interface.removeComponent(planebd)
 interface.removeComponent(planeba)
 interface.removeComponent(planebw)
@@ -96,36 +136,71 @@ end)
 
 --Plane element
 local PLNE = elem.allocate("CR1K", "PLNE")
-local Plx, Ply = 0,0
-elem.element(PLNE, elem.element(elem.DEFAULT_PT_DMND))
-elem.property(PLNE, "Name", "MOVS")
-elem.property(PLNE, "Description", "Experimental moving solid, controlled via on-screen buttons. Pause & draw a shape and then use the buttons to control it.")
+elem.element(PLNE, elem.element(elem.DEFAULT_PT_EQVE))
+elem.property(PLNE, "Name", "SPSH")
+elem.property(PLNE, "Description", "Space ship. Flies with the on screen controller.")
 elem.property(PLNE, "Color", 0xAAAAA0)
-elem.property(PLNE, "MenuSection", elem.SC_TOOL)
+elem.property(PLNE, "MenuSection", elem.SC_SPECIAL)
+elem.property(PLNE, "MenuVisible", 1)
 elem.property(PLNE, "Update", function (i)
-Plx = tpt.get_property("x",i)
-Ply = tpt.get_property("y",i)
-if tonumber(sim.elementCount(elem[PT_PLNE])) < 1 then
+Plx = tpt.get_property("vx",i)
+Ply = tpt.get_property("vy",i)
+Plosx = tpt.get_property("x",i)
+Plosy = tpt.get_property("y",i)
+if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 1 then
+pcall(tpt.set_property, "type", 0, i)
+end
 addbuttons()
+function Explode()
+pcall(tpt.set_property, "temp", 1131, i)
+pcall(tpt.set_property, "tmp", 999, i)
+pcall(tpt.set_property, "type", 131, i)
 end
 
 function moveplne()
-if tpt.get_property("x",i) < 600 and tpt.get_property("x",i) > 0 and tpt.get_property("y",i) > 10 and tpt.get_property("y",i) < 380 then
+if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) < 2 then
+if PLNEFUEL > 100 and planemoveval ~= 0 then
+PLNEFUEL = PLNEFUEL - 1
+end
+if tpt.get_property("x",i) > 605 then
+pcall(tpt.set_property, "x", 600, i)
+elseif tpt.get_property("x",i) < 3 then
+pcall(tpt.set_property, "x", 5, i)
+end
+if tpt.get_property("y",i) > 368 then
+pcall(tpt.set_property, "y", 367, i)
+elseif tpt.get_property("y",i) < 15 then
+pcall(tpt.set_property, "y", 16, i)
+end
+if PLNEFUEL/10 > 10 then
 if planemoveval == 5 then
-pcall(tpt.set_property, "x", Plx  + 1, i)
+pcall(tpt.set_property, "vx", Plx  + 0.3, i) --Right
 elseif planemoveval == 4 then
-pcall(tpt.set_property, "x", Plx  - 1, i)
+pcall(tpt.set_property, "vx", Plx  - 0.3, i) --Left
 elseif planemoveval == 3 then
-pcall(tpt.set_property, "y", Ply  - 1, i)
+pcall(tpt.set_property, "vy", Ply  - 0.3, i) --Up
 elseif planemoveval == 2 then
-pcall(tpt.set_property, "y", Ply  + 1, i)
+pcall(tpt.set_property, "vy", Ply  + 0.3, i) --Down
+elseif planemoveval == 6 then
+pcall(tpt.set_property, "vx", Plx  + 0.3, i)
+pcall(tpt.set_property, "vy", Ply  - 0.3, i) -- UP + RIGHT
+elseif planemoveval == 7 then
+pcall(tpt.set_property, "vx", Plx  - 0.3, i)
+pcall(tpt.set_property, "vy", Ply  - 0.3, i) -- UP + LEFT
+end
 end
 end
 end
 moveplne()
+event.unregister(event.tick,plnegraphics)
+event.register(event.tick,plnegraphics)
 end)
 function addbuttons()
 tpt.selectedl = "DEFAULT_PT_SPRK"
+interface.addComponent(planebcharge)
+interface.addComponent(planebExpl)
+interface.addComponent(planebwd)
+interface.addComponent(planebwa)
 interface.addComponent(planebd)
 interface.addComponent(planeba)
 interface.addComponent(planebw)
@@ -134,6 +209,25 @@ interface.addComponent(planebst)
 interface.addComponent(Exitplne)
 end
 
+function plnegraphics()
+gfx.drawRect(1,306,82,73,32,216,255,255)
+gfx.fillRect(1,306,82,73,32,216,255,15)
+if PLNEFUEL/10 >= 150 then
+gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
+elseif PLNEFUEL/10 < 150 and PLNEFUEL/10 >= 100 then
+gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,255,255,255)
+elseif PLNEFUEL/10 < 100 and PLNEFUEL/10 > 10 then
+gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
+elseif PLNEFUEL/10 <= 10 then
+gfx.drawText(17,310,"Fuel: Empty",255,55,55,255)
+end
+gfx.drawRect(Plosx+1,Plosy+3,1,2,255,255,55,255)
+gfx.drawRect(Plosx+7,Plosy+3,1,2,255,255,55,255)
+gfx.drawCircle(Plosx+1,Plosy+4,2,2,55,55,255,255)
+gfx.drawCircle(Plosx+7,Plosy+4,2,2,55,55,255,255)
+gfx.fillRect(Plosx,Plosy,10,2,255,55,55,255)
+gfx.drawCircle(Plosx+4,Plosy-3,3,2,55,55,255,255)
+end 
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
@@ -1614,7 +1708,7 @@ local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp pro
 local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
 local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2 and PHOT + GRPH -> UV.\n    Once ignited (when > 450C) the flames are very difficult to stop. Absorbs NEUT and thus acting as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
-local wpage5 = "48) SODM: Sodium shiny conductive metal. Reacts violently with WATR generating hydrogen. Turns powder when under pressure.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with chlorine when above 50C. Melts at 97C. Glows under vaccum.\n\n49) Ball: Bouncy glas balls, can spill away liquids and powders while bouncing. Breaks at 20 pressure and melts around 1900C"
+local wpage5 = "48) SODM: Sodium shiny conductive metal. Reacts violently with WATR generating hydrogen. Turns powder when under pressure.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with chlorine when above 50C. Melts at 97C. Glows under vaccum.\n\n49) BALL: Bouncy glas balls, can spill away liquids and powders while bouncing. Breaks at 20 pressure and melts around 1900C\n\n50) SPSH: Space ship. Controlled via on screen buttons. Needs to be charged to move. Can explode!"
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
