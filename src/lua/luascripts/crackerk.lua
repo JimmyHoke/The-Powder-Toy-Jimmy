@@ -424,171 +424,14 @@ local req3 = http.get("https://jimmyhoke.net/jimmysmodversion")
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
---URS Updater
-local updatever, updatestatus = 1,0
-local updatertext = "is available, click to download"
-local reqwin
-local crdata = "Getting data please wait.."
-local updatetimer = 0
-local checkos, clickcheck = platform.platform(), 0
-local filename = platform.exeName()
-local errtext = "Checking for updates.."
-local timeout = 0
 
-function updatermod()
-updatetimer = updatetimer + 1
-if updatetimer >= 3500 then
-timeout = 1
-end
---Get changelogs
-if crlog:status() == "done"  then
-local crlogdata, crlogcode = crlog:finish()
-if crlogcode == 200  then
-crdata = crlogdata
-end
-end
-local filesize, filedone = reqwin:progress()
-local downprog = math.floor((filedone/filesize)*100)
---Graphics while downloading updates..
-gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
-updatertext = "Downloading update, "..downprog .."% Done"
-if reqwin:status() == "done"  then
-local reqwindata, reqwincode = reqwin:finish()
-if reqwincode == 200  then
-if checkos == "WIN64" or checkos == "WIN32" then --Windows
-os.rename(filename,"older.exe")
-elseif checkos == "LIN64" then --Linux
-os.rename(filename,"older")
-end
-updatertext = "Done"
-f = io.open(filename, 'wb')
-f:write(reqwindata)
-f:close()
-updatertext = "Done, click here to restart."
-clickcheck = 1
-event.unregister(event.tick,updatermod)
-else
-timeout = 1
-updatertext = " Updater error code: "..reqwincode
-event.unregister(event.tick,updatermod)
-end
-end
-end
-
-function clicktomsg2()
-if tpt.mousex > 10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
-if clickcheck == 0 then
-clickcheck = 2
-crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/changelog.txt")
-if checkos == "WIN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
-elseif checkos == "LIN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
-elseif checkos == "WIN32" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
-elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
-print("URS doesn't support MAC OS, please download the update manually from here...")
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
-event.unregister(event.tick,updatermod)
-event.unregister(event.tick,clicktomsg2)
-event.unregister(event.tick,showmotdnot2)
-end
-event.register(event.tick,updatermod)
-event.unregister(event.keypress,keyclicky)
-event.unregister(event.mousedown, clicktomsg)
-event.unregister(event.tick,showmotdnot)
-elseif clickcheck == 1 then
-platform.restart()
-end
-return false
-end
-if clickcheck == 0 then
-if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
-updatestatus = 1
-event.unregister(event.mousedown, clicktomsg2)
-event.unregister(event.tick, showmotdnot2)
-event.unregister(event.tick,updatermod)
-return false
-end
-end
-
-if clickcheck ~= 0 then --Manual download
-if timeout == 1 and clickcheck ~= 1 then
-if tpt.mousex > 320 and tpt.mousex < 486 and tpt.mousey > 367 and tpt.mousey < 380 then
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
-end
-end
-return false
-end
-end
-
-function showmotdnot2()
-if clickcheck ~= 0 then
-if updatertext == "Done, click here to restart." then
-gfx.fillRect(5,72,600,312,10,200,10,30)
-else
-if timeout == 1 and clickcheck ~= 1 then
-gfx.fillRect(5,72,600,312,200,10,10,50)
-else
-gfx.fillRect(5,72,600,312,10,10,10,200)
-end
-end
-gfx.drawRect(5,72,600,312,255,255,255,255)
-gfx.fillCircle(120,81,4,4,50,50,250,200)
-gfx.drawCircle(120,81,4,4,32,216,250,255)
-
-gfx.drawText(12,79,"OS:"..platform.platform(),255,255,0,255)
-if crackversion <= tonumber(updatever) then
-gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
-else
-gfx.fillRect(127,75,395,13,255,5,5,120)
-gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Downgrading from v."..crackversion.." to v."..tonumber(updatever)..")",255,5,5,255)
-end
-gfx.drawText(12,98,crdata,250,250,250,255)
-if updatertext == "Done, click here to restart." then
-gfx.drawRect(10,363,590,1,10,250,10,255)
-else
-gfx.drawRect(10,363,590,1,32,216,255,255)
-end
-if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(12,350,"Uh oh something went wrong. You can wait/ use the manual download option provided below. Report the error in mod thread.",255,10,10,245)
-gfx.drawRect(320,366,167,14,32,216,255,220)
-gfx.fillRect(320,366,167,14,32,216,255,40)
-gfx.drawText(325,370,"Click here to download manually.",32,216,255,220)
-end
-end
-if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
-gfx.fillRect(10,366,197,14,10,10,10,255)
-gfx.fillRect(10,366,197,14,32,255,210,140)
-else
-gfx.fillRect(10,366,197,14,10,10,10,255)
-gfx.fillRect(10,366,197,14,32,250,210,20)
-end
-gfx.drawRect(10,366,197,14,34,250,210,155)
-gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
-if updatertext == "Done, click here to restart." then
-gfx.fillRect(10,366,197,14,0,250,0,100)
-end
-if clickcheck == 0 then
-if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
-gfx.fillRect(208,366,14,14,250,50,50,150)
-gfx.drawText(225,369,"Cancel the update",250,50,50,250)
-else
-gfx.fillRect(208,366,14,14,50,5,5,255)
-gfx.fillRect(208,366,14,14,250,50,50,20)
-end
-gfx.drawRect(208,366,14,14,255,5,5,255)
-gfx.drawText(212,369,"X",255,5,5,255)
-end
-end
---URS end
 local errtimer = 0
 function runupdater()
 event.unregister(event.tick,errormesg)
-event.unregister(event.tick,showmotdnot2)
-event.register(event.tick,showmotdnot2)
-event.unregister(event.mousedown, clicktomsg2)
-event.register(event.mousedown, clicktomsg2)
+--event.unregister(event.tick,showmotdnot2)
+--event.register(event.tick,showmotdnot2)
+--event.unregister(event.mousedown, clicktomsg2)
+--event.register(event.mousedown, clicktomsg2)
 end
 function writefile2()
 timermotd = timermotd + 1
@@ -598,21 +441,7 @@ end
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
---Update checks
-errtext = ""
-updatever = string.sub(ret2,9,13)
-if tonumber(crackversion) ~= tonumber(updatever)  then
-runupdater()
-elseif tonumber(crackversion) == tonumber(updatever) then
-errtext = "URS: Latest Version"
-end
-else
-if code2 == 602 then
-errtext ="Offline"
-else
-onlinestatus = 3 --Something went wrong
-errtext = "URS error code: "..code2
-end
+
 end
 --Motd stuff
 motw = string.sub(ret2,40,300)
@@ -621,10 +450,7 @@ onlinestatus = 1
 if motw ~= "." then
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
-event.unregister(event.tick,showmotdnot)
-event.register(event.tick,showmotdnot)
-event.unregister(event.mousedown, clicktomsg)
-event.register(event.mousedown, clicktomsg)
+
 end
 end
 end
@@ -2467,7 +2293,7 @@ end)
 
 function startupcheck()
 event.register(event.tick,errormesg)
-if tpt.version.modid ~= 6 then
+if false then
 tpt.message_box("URS User Safety Warning!", "You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
 end
 fs.makeDirectory("scripts")
