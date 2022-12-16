@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 51.1 --51.5 Next version
+local crackversion = 51.2 --51.3 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -537,7 +537,6 @@ gfx.drawText(12,79,"OS:"..platform.platform(),255,255,0,255)
 if crackversion <= tonumber(updatever) then
 gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
 else
-gfx.fillRect(127,75,395,13,255,5,5,120)
 gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Downgrading from v."..crackversion.." to v."..tonumber(updatever)..")",255,5,5,255)
 end
 gfx.drawText(12,98,crdata,250,250,250,255)
@@ -2561,11 +2560,13 @@ end
 end)
 
 reset:action(function(sender)
+if tpt.confirm(" Mod resetter","Resetting the mod changes the mod settings back to their default values and disables all the lua scripts. Saves and other important data will remain intact. Click Full Reset to perform a hard mod reset.", "Full Reset") == true then
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
 os.remove("scripts/autorunsettings.txt")
 platform.restart()
+end
 end)
 
 function close()
