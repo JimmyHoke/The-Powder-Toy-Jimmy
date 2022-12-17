@@ -10,6 +10,7 @@ local MISLT = elem.allocate("CR1K", "MIST")
 local tcount, posxt, posyt = 0,0,0
 elem.element(MISLT, elem.element(elem.DEFAULT_PT_DMND))
 elem.property(MISLT, "Name", "MIST")
+elem.property(MISLT, "Properties", elem.PROP_NOCTYPEDRAW)
 elem.property(MISLT, "Description", "Help: Missile Target Tool. Click once to place the holder and then click again to set the target. Places one at a time.")
 elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
@@ -74,11 +75,11 @@ local planebd = Button:new(60,340,15,15, ">", "Move Right")
 local planeba = Button:new(10,340,15,15, "<", "Move Left")
 local planebs = Button:new(33,360,20,15, "V", "Move Down")
 local planebst = Button:new(30,341,25,15, "Stop", "Stop")
-local planemoveval, Plx, Ply, PLNEFUEL, PLNEBOOST = 0,0,0,2000,0
+local planemoveval, Plx, Ply, PLNEFUEL, PLNEBOOST = 0,0,0,4000,0
 
 planebcharge:action(function(sender)
-if PLNEFUEL < 2000 then
-PLNEFUEL = PLNEFUEL + 20
+if PLNEFUEL < 4000 then
+PLNEFUEL = PLNEFUEL + 50
 end
 end)
 
@@ -129,7 +130,7 @@ planemoveval = 0
 end)
 
 Exitplne:action(function(sender)
-sim.clearSim()
+deletespsh()
 event.unregister(event.tick,plnegraphics)
 interface.removeComponent(PLNEBST)
 interface.removeComponent(planebcharge)
@@ -148,6 +149,7 @@ end)
 local PLNE = elem.allocate("CR1K", "PLNE")
 elem.element(PLNE, elem.element(elem.DEFAULT_PT_EQVE))
 elem.property(PLNE, "Name", "SPSH")
+elem.property(PLNE, "Properties", elem.PROP_NOCTYPEDRAW)
 elem.property(PLNE, "Description", "Space ship. Flies with the on screen controller.")
 elem.property(PLNE, "Color", 0xAAAAA0)
 elem.property(PLNE, "MenuSection", elem.SC_SPECIAL)
@@ -157,6 +159,9 @@ Plx = tpt.get_property("vx",i)
 Ply = tpt.get_property("vy",i)
 Plosx = tpt.get_property("x",i)
 Plosy = tpt.get_property("y",i)
+function deletespsh()
+pcall(tpt.set_property, "type",0,i)
+end
 if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 1 then
 pcall(tpt.set_property, "type", 0, i)
 end
@@ -176,8 +181,8 @@ elseif PLNEBOOST == 1 then
 PLNEFUEL = PLNEFUEL - 4
 end
 end
-if PLNEFUEL > 2000 then
-PLNEFUEL = 2000
+if PLNEFUEL > 4000 then
+PLNEFUEL = 4000
 end
 if tpt.get_property("x",i) > 605 then
 pcall(tpt.set_property, "x", 600, i)
@@ -250,13 +255,18 @@ gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
 elseif PLNEFUEL/10 <= 10 then
 gfx.drawText(17,310,"Fuel: Empty",255,55,55,255)
 end
-if planemoveval ~= 0 then 
+if planemoveval ~= 0 then
 gfx.drawRect(Plosx+1,Plosy+3,1,2,255,255,55,255)
 gfx.drawRect(Plosx+7,Plosy+3,1,2,255,255,55,255)
+if PLNEBOOST == 1 then
+gfx.drawCircle(Plosx+1,Plosy+6,2,2,255,255,55,255)
+gfx.drawCircle(Plosx+7,Plosy+6,2,2,255,255,55,255)
+elseif  PLNEBOOST == 0 then
 gfx.drawCircle(Plosx+1,Plosy+4,2,2,55,55,255,255)
 gfx.drawCircle(Plosx+7,Plosy+4,2,2,55,55,255,255)
 end
-gfx.fillRect(Plosx,Plosy,10,2,255,55,55,255)
+end
+gfx.fillRect(Plosx+1,Plosy,8,2,255,55,55,255)
 gfx.drawCircle(Plosx+4,Plosy-3,3,2,55,55,255,255)
 end 
 --Default theme for initial launch and resets

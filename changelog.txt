@@ -1,5 +1,7 @@
 Changelog for V51.2
 
+Increase fuel limit for SPSH, improve graphics.
+Fix MIST and SPSH getting accepted as a valid ctype for CLNE and other elements.
 Add warning while performing mod resets.
 Fix local save browser crashing the game when there a lot of saves.
 Other changes from master branch.
