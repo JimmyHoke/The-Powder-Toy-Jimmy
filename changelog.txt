@@ -1,5 +1,7 @@
 Changelog for V51.2
 
+Render options now match vanilla one again, will be fixed properly in future.
+Disabling SPSH doesn't clear entire simulation now.
 Increase fuel limit for SPSH, improved graphics.
 Fix MIST and SPSH getting accepted as a valid ctype for CLNE and other elements.
 Add warning while performing mod resets.

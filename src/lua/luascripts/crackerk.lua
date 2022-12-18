@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 51.2 --51.3 Next version
+local crackversion = 51.1 --51.3 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -16,7 +16,7 @@ elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
 if tonumber(sim.elementCount(elem.CR1K_PT_MIST)) > 1 then
-pcall(tpt.set_property, "type",0,i)
+sim.partKill(i)
 elseif tonumber(sim.elementCount(elem.CR1K_PT_MIST)) < 2 then
 posxt = tpt.get_property("x",i)
 posyt = tpt.get_property("y",i)
@@ -28,7 +28,7 @@ pcall(tpt.set_property, "type",228,i)
 print("Target set ("..tpt.mousex..", "..tpt.mousey..")")
 end
 function setcoord2()
-pcall(tpt.set_property, "type",0,i)
+sim.partKill(i)
 print("Cancelled!")
 end
 if tcount == 0 then
@@ -160,10 +160,10 @@ Ply = tpt.get_property("vy",i)
 Plosx = tpt.get_property("x",i)
 Plosy = tpt.get_property("y",i)
 function deletespsh()
-pcall(tpt.set_property, "type",0,i)
+sim.partKill(i)
 end
 if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 1 then
-pcall(tpt.set_property, "type", 0, i)
+sim.partKill(i)
 end
 addbuttons()
 function Explode()
@@ -245,8 +245,9 @@ else
 gfx.fillRect(45,298,6,6,255,0,0,255)
 end
 gfx.drawRect(7,292,72,85,32,216,255,255)
-gfx.fillRect(7,292,72,85,32,216,255,15)
+gfx.fillRect(7,292,72,85,10,10,10,50)
 if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 0 then
+gfx.fillRect(14,308,60,12,10,10,10,100)
 if PLNEFUEL/10 >= 200 then
 gfx.drawText(19,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
 elseif PLNEFUEL/10 < 200 and PLNEFUEL/10 >= 100 then
@@ -270,6 +271,7 @@ else
 gfx.drawText(16,310,"Signal lost",255,55,55,255)
 end
 end 
+--PLNE END
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
@@ -435,7 +437,7 @@ local onlinestatus = 0
 local updatever, updatestatus = 1,0
 local updatertext = "is available, click to download"
 local reqwin
-local crdata = "Getting data please wait.."
+local crdata = "Hang tight, fetching data from repository.."
 local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
@@ -2472,10 +2474,10 @@ end)
 end)
 
 function startupcheck()
-event.register(event.tick,errormesg)
 if tpt.version.modid ~= 6 then
 tpt.message_box("URS User Safety Warning!", "You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
 end
+event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")
 os.remove("older.exe")
 os.remove("older")
