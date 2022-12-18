@@ -63,18 +63,18 @@ end
 return false
 end
 --TOOL end
-local Exitplne = Button:new(03,290,20,15, "X", "Disable Plane")
-local PLNEBST = Button:new(60,290,20,15, "BST", "Toggle Booster.")
+local Exitplne = Button:new(10,295,20,12, "X", "Disable Space ship")
+local PLNEBST = Button:new(55,295,20,12, "BST", "Toggle Booster.")
 local planebwd = Button:new(10,322,20,15, "Ul", "Move Up + Left")
 local planebwa = Button:new(56,322,20,15, "Ur", "Move Up + Right")
-local planebcharge = Button:new(10,360,20,15, "Chrg", "Recharge.")
-local planebExpl = Button:new(56,360,20,15, "Exp", "Explode")
+local planebcharge = Button:new(10,358,20,15, "Chrg", "Recharge.")
+local planebExpl = Button:new(56,358,20,15, "Exp", "Explode")
 
 local planebw = Button:new(33,322,20,15, "^", "Move Up")
-local planebd = Button:new(60,340,15,15, ">", "Move Right")
-local planeba = Button:new(10,340,15,15, "<", "Move Left")
-local planebs = Button:new(33,360,20,15, "V", "Move Down")
-local planebst = Button:new(30,341,25,15, "Stop", "Stop")
+local planebd = Button:new(57,340,15,15, ">", "Move Right")
+local planeba = Button:new(13,340,15,15, "<", "Move Left")
+local planebs = Button:new(33,358,20,15, "V", "Move Down")
+local planebst = Button:new(30,340,25,15, "Stop", "Stop")
 local planemoveval, Plx, Ply, PLNEFUEL, PLNEBOOST = 0,0,0,4000,0
 
 planebcharge:action(function(sender)
@@ -210,11 +210,11 @@ pcall(tpt.set_property, "vy", Ply  - Movespeed, i) --Up
 elseif planemoveval == 2 then
 pcall(tpt.set_property, "vy", Ply  + Movespeed, i) --Down
 elseif planemoveval == 6 then
-pcall(tpt.set_property, "vx", Plx  + Movespeed, i)
-pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + RIGHT
+pcall(tpt.set_property, "vx", Plx  + Movespeed, i) -- UP + RIGHT
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) 
 elseif planemoveval == 7 then
-pcall(tpt.set_property, "vx", Plx  - Movespeed, i)
-pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + LEFT
+pcall(tpt.set_property, "vx", Plx  - Movespeed, i) -- UP + LEFT
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) 
 end
 end
 end
@@ -240,34 +240,35 @@ end
 
 function plnegraphics()
 if PLNEBOOST == 1 then
-gfx.fillRect(50,293,6,6,0,255,0,255)
+gfx.fillRect(45,298,6,6,0,255,0,255)
 else
-gfx.fillRect(50,293,6,6,255,0,0,255)
+gfx.fillRect(45,298,6,6,255,0,0,255)
 end
-gfx.drawRect(1,286,82,93,32,216,255,255)
-gfx.fillRect(1,286,82,93,32,216,255,15)
-if PLNEFUEL/10 >= 150 then
-gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
-elseif PLNEFUEL/10 < 150 and PLNEFUEL/10 >= 100 then
-gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,255,255,255)
+gfx.drawRect(7,292,72,85,32,216,255,255)
+gfx.fillRect(7,292,72,85,32,216,255,15)
+if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 0 then
+if PLNEFUEL/10 >= 200 then
+gfx.drawText(19,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
+elseif PLNEFUEL/10 < 200 and PLNEFUEL/10 >= 100 then
+gfx.drawText(19,310,"Fuel: "..PLNEFUEL/10,255,255,255,255)
 elseif PLNEFUEL/10 < 100 and PLNEFUEL/10 > 10 then
-gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
+gfx.drawText(19,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
 elseif PLNEFUEL/10 <= 10 then
 gfx.drawText(17,310,"Fuel: Empty",255,55,55,255)
 end
-if planemoveval ~= 0 then
-gfx.drawRect(Plosx+1,Plosy+3,1,2,255,255,55,255)
-gfx.drawRect(Plosx+7,Plosy+3,1,2,255,255,55,255)
+if planemoveval ~= 0 and PLNEFUEL/10 > 10 then
 if PLNEBOOST == 1 then
-gfx.drawCircle(Plosx+1,Plosy+6,2,2,255,255,55,255)
-gfx.drawCircle(Plosx+7,Plosy+6,2,2,255,255,55,255)
+gfx.fillCircle(Plosx,Plosy+6,2,3,255,255,0,255)
 elseif  PLNEBOOST == 0 then
-gfx.drawCircle(Plosx+1,Plosy+4,2,2,55,55,255,255)
-gfx.drawCircle(Plosx+7,Plosy+4,2,2,55,55,255,255)
+gfx.fillCircle(Plosx,Plosy+6,2,3,131,0,255,255)
 end
 end
-gfx.fillRect(Plosx+1,Plosy,8,2,255,55,55,255)
-gfx.drawCircle(Plosx+4,Plosy-3,3,2,55,55,255,255)
+gfx.fillRect(Plosx-3,Plosy,8,2,255,55,55,255)
+gfx.fillCircle(Plosx,Plosy-3,3,3,55,55,255,255)
+gfx.drawCircle(Plosx,Plosy-3,3,3,255,255,255,255)
+else
+gfx.drawText(16,310,"Signal lost",255,55,55,255)
+end
 end 
 --Default theme for initial launch and resets
 local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
