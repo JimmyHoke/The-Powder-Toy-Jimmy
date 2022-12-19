@@ -1,4 +1,5 @@
 Changelog for V52.0
+
 Update wiki with new information (read wiki for new .tmp sensor changes!).
 Update to .tmp sensor (can now detect all sorts of .tmp properties by changing .tmp3 values)
 .tmp2 is now shown for all the elements

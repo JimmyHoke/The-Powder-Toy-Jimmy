@@ -612,7 +612,7 @@ updatever = string.sub(ret2,9,13)
 if tonumber(crackversion) ~= tonumber(updatever)  then
 runupdater()
 elseif tonumber(crackversion) == tonumber(updatever) then
-errtext = "URS: Latest Version"
+errtext = "URS Updater: Your mod is up to date."
 end
 else
 if code2 == 602 then
@@ -640,12 +640,13 @@ end
 
 function errormesg()
 errtimer = errtimer + 1
-if errtext ==  "URS: Latest Version" or errtext == "Checking for updates.." then
+gfx.fillRect(7,367,graphics.textSize(errtext)+3,12,30,30,30,150)
+if errtext ==  "URS Updater: Your mod is up to date." or errtext == "Checking for updates.." then
 gfx.drawText(10,370,errtext,55,255,55,255)
 else
 gfx.drawText(10,370,errtext,255,55,55,255)
 end
-if errtimer >= 250 then
+if errtimer >= 230 then
 event.unregister(event.tick,errormesg)
 end
 end
@@ -1215,7 +1216,7 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2880229)
+randsav = math.random(1,2963348)
 sim.loadSave(randsav, 0) 
 end)
 
@@ -2683,7 +2684,6 @@ gfx.drawText(484,229,"ON",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
-
 if MANAGER.getsetting("CRK","loadelem") == "1" then --Startup elements.
 gfx.drawText(484,37,"Configured",105,255,105,255)
 else
