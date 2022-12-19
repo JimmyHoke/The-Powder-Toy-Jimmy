@@ -441,7 +441,7 @@ local crdata = "Hang tight, fetching data from repository.."
 local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
-local errtext = "Checking for updates.."
+local errtext = "URS updater: checking for updates.."
 local timeout = 0
 
 function updatermod()
@@ -612,11 +612,12 @@ updatever = string.sub(ret2,9,13)
 if tonumber(crackversion) ~= tonumber(updatever)  then
 runupdater()
 elseif tonumber(crackversion) == tonumber(updatever) then
+onlinestatus = 1 
 errtext = "URS Updater: Your mod is up to date."
 end
 else
 if code2 == 602 then
-errtext ="Offline"
+errtext ="URS updater: offline"
 else
 onlinestatus = 3 --Something went wrong
 errtext = "URS error code: "..code2
@@ -625,7 +626,6 @@ end
 --Motd stuff
 motw = string.sub(ret2,40,300)
 specialmsgval = string.sub(ret2,31,32)
-onlinestatus = 1 
 if motw ~= "." then
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
@@ -641,7 +641,7 @@ end
 function errormesg()
 errtimer = errtimer + 1
 gfx.fillRect(7,367,graphics.textSize(errtext)+3,12,30,30,30,150)
-if errtext ==  "URS Updater: Your mod is up to date." or errtext == "Checking for updates.." then
+if errtext ==  "URS Updater: Your mod is up to date." or errtext == "URS updater: checking for updates.." then
 gfx.drawText(10,370,errtext,55,255,55,255)
 else
 gfx.drawText(10,370,errtext,255,55,55,255)
@@ -2684,6 +2684,7 @@ gfx.drawText(484,229,"ON",105,255,105,255)
 else
 gfx.drawText(484,229,"OFF",255,105,105,255)
 end
+
 if MANAGER.getsetting("CRK","loadelem") == "1" then --Startup elements.
 gfx.drawText(484,37,"Configured",105,255,105,255)
 else

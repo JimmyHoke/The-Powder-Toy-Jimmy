@@ -1,6 +1,7 @@
 Changelog for V52.0
 
 Update wiki with new information (read wiki for new .tmp sensor changes!).
+Fix Status being accidentaly set to online when it's not.
 Update to .tmp sensor (can now detect all sorts of .tmp properties by changing .tmp3 values)
 .tmp2 is now shown for all the elements
 Render options now match vanilla one again, will be fixed properly in future.
