@@ -5068,6 +5068,8 @@ void Simulation::BeforeSim()
 {
 	if (!sys_pause||framerender)
 	{
+		luacon_ci->HandleEvent(LuaEvents::beforesim, new BeforeSimEvent());
+
 		air->update_air();
 
 		if(aheat_enable)
@@ -5267,6 +5269,8 @@ void Simulation::AfterSim()
 		Element_EMP_Trigger(this, emp_trigger_count);
 		emp_trigger_count = 0;
 	}
+
+	luacon_ci->HandleEvent(LuaEvents::aftersim, new AfterSimEvent());
 }
 
 Simulation::~Simulation()
