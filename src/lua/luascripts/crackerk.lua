@@ -606,13 +606,13 @@ end
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
 if code2 == 200 then
+onlinestatus = 1 
 --Update checks
 errtext = ""
 updatever = string.sub(ret2,9,13)
 if tonumber(crackversion) ~= tonumber(updatever)  then
 runupdater()
 elseif tonumber(crackversion) == tonumber(updatever) then
-onlinestatus = 1 
 errtext = "URS Updater: Your mod is up to date."
 end
 else
