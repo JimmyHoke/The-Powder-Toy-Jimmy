@@ -459,6 +459,7 @@ end
 local filesize, filedone = reqwin:progress()
 local downprog = math.floor((filedone/filesize)*100)
 --Graphics while downloading updates..
+if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
 updatertext = "Downloading update, "..downprog .."% Done"
 if reqwin:status() == "done"  then
@@ -482,6 +483,9 @@ updatertext = " Updater error code: "..reqwincode
 event.unregister(event.tick,updatermod)
 end
 end
+else
+updatertext = "Please download update manually!"
+end
 end
 
 function clicktomsg2()
@@ -496,11 +500,14 @@ reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/downlo
 elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
-print("URS doesn't support MAC OS, please download the update manually from here...")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.dmg")
+if tpt.confirm("URS: System message", "Dear user, URS updater doesn't support fully automatic updates yet. You will be directed to the mod thread for manual download. Click the download button to continue..","Download") == true then
 platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+else
+updatestatus = 1
+end
 event.unregister(event.tick,updatermod)
-event.unregister(event.tick,clicktomsg2)
-event.unregister(event.tick,showmotdnot2)
+event.unregister(event.mousedown,clicktomsg2)
 end
 event.register(event.tick,updatermod)
 event.unregister(event.keypress,keyclicky)
@@ -520,7 +527,6 @@ event.unregister(event.tick,updatermod)
 return false
 end
 end
-
 if clickcheck ~= 0 then --Manual download
 if timeout == 1 and clickcheck ~= 1 then
 if tpt.mousex > 320 and tpt.mousex < 486 and tpt.mousey > 367 and tpt.mousey < 380 then
