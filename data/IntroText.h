@@ -1,7 +1,6 @@
 #pragma once
 #include "Config.h"
 const char *const introTextData =
-<<<<<<< HEAD
 "\bo                                           |-----------------------------------|\n"
 "\bw                                            Welcome To The Cracker1000's Mod \n"
 "\bo                                           |-----------------------------------|\n"
@@ -12,6 +11,6 @@ const char *const introTextData =
 "\bt *\bw Other important customisation options such as themes can be found under Cr-Menu > Control centre settings.\n"
 "\bg *\bw There's a dedicated offline WIKI for the mod elements, make sure to check it out.\n"
 "\bt *\bw You can unhide all the hidden elements using 'Hidden elements' option.\n"
-"\bg *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same. Link:\n\n" https://powdertoy.co.uk
+"\bg *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same. Link:\n\n" https://tpt.io/:23279
 "\bt *\bg Contributors: \bu@Cracker1000, @Jacob1, @Xphere07, @Maticzpl, @NF and @Grenadier.\n\n"
 "\br   Press Any Key (except power) To Continue...";
