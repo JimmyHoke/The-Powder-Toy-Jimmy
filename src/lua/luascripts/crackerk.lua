@@ -447,7 +447,9 @@ local timeout = 0
 function updatermod()
 updatetimer = updatetimer + 1
 if updatetimer >= 3500 then
+if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 timeout = 1
+end
 end
 --Get changelogs
 if crlog:status() == "done"  then
@@ -461,7 +463,7 @@ local downprog = math.floor((filedone/filesize)*100)
 --Graphics while downloading updates..
 if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
-updatertext = "Downloading update, "..downprog .."% Done"
+updatertext = "Updating the mod, "..downprog .."% Done"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
@@ -501,7 +503,7 @@ elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.dmg")
-if tpt.confirm("URS: System message", "Dear user, URS updater doesn't support fully automatic updates yet. You will be directed to the mod thread for manual download. Click the download button to continue..","Download") == true then
+if tpt.confirm("URS: System message", "Dear user, URS updater doesn't support fully automatic updates for macos yet. You will be directed to the mod thread for manual download. Click the download button to continue..","Download") == true then
 platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
 else
 updatestatus = 1
@@ -2482,7 +2484,7 @@ end)
 
 function startupcheck()
 if tpt.version.modid ~= 6 then
-tpt.message_box("URS User Safety Warning!", "You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
+tpt.throw_error("You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread.")
 end
 event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")

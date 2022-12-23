@@ -1,18 +1,28 @@
 Changelog for V52.0
+#Elements:
+New element: (To be added soon)
+Make GLAS strengthening reaction more controllable and not so arbitrary
+.tmp2 is now shown for all the elements
+Big update to .tmp sensor (can now detect all sorts of .tmp properties, modes changed with .tmp3 values)
+Disabling SPSH doesn't clear entire simulation now.
+Fix MIST and SPSH getting accepted as a valid ctype for CLNE and other elements.
+Increase fuel limit for SPSH, improved graphics.
+
+#Updater:
+New links for updating mod, should save ton of time while releasing updates.
+Fix URS timeout errors for mac os.
 Bring back the support for mac os.
 Customise URS to properly support mac os updates
+Fix Status being accidentaly set to online when it's not.
+Fix the updater text  when downgrading from a higher version.
+
+#Misc:
 Use new svg icons for mod. Thanks to @Xphere.
 Update wiki with new information (read wiki for new .tmp sensor changes!).
-Fix Status being accidentaly set to online when it's not.
-Update to .tmp sensor (can now detect all sorts of .tmp properties by changing .tmp3 values)
-.tmp2 is now shown for all the elements
 Render options now match vanilla one again, will be fixed properly in future.
-Disabling SPSH doesn't clear entire simulation now.
-Increase fuel limit for SPSH, improved graphics.
-Fix MIST and SPSH getting accepted as a valid ctype for CLNE and other elements.
+Add Lua support for partial sim updates
+UpdateParticles takes a range that is inclusive on both ends
 Add warning while performing mod resets.
 Fix local save browser crashing the game when there a lot of saves.
-Other changes from master branch.
-Fix the updater text  when downgrading from a higher version.
 
 **Windows likes to flag tpt updates a virus, please ignore the warnings.**

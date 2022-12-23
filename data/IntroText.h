@@ -11,6 +11,6 @@ const char *const introTextData =
 "\bt *\bw Other important customisation options such as themes can be found under Cr-Menu > Control centre settings.\n"
 "\bg *\bw There's a dedicated offline WIKI for the mod elements, make sure to check it out.\n"
 "\bt *\bw You can unhide all the hidden elements using 'Hidden elements' option.\n"
-"\bg *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same. Link:\n\n" https://tpt.io/:23279
-"\bt *\bg Contributors: \bu@Cracker1000, @Jacob1, @Xphere07, @Maticzpl, @NF and @Grenadier.\n\n"
+"\bg *\bw There's a feedback option in the mod menu, report any bug or suggest changes using the same. Link:\n\n"
+"\bt *\bg Contributors: \bx@Cracker1000, @Jacob1, @Xphere07, @Maticzpl, @NF and @Grenadier.\n\n"
 "\br   Press Any Key (except power) To Continue...";

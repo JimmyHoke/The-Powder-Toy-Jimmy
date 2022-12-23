@@ -2,7 +2,7 @@ name: build
 on:
   push:
     tags:
-      - 'r*.*'
+      - 'v*.*'
 jobs:
   prepare:
     runs-on: ubuntu-latest
