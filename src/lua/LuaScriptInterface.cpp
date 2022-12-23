@@ -963,6 +963,8 @@ void LuaScriptInterface::initSimulationAPI()
 		{"framerender", simulation_framerender},
 		{"gspeed", simulation_gspeed},
 		{"takeSnapshot", simulation_takeSnapshot},
+		{"historyRestore", simulation_historyRestore},
+		{"historyForward", simulation_historyForward},
 		{"replaceModeFlags", simulation_replaceModeFlags},
 		{"listCustomGol", simulation_listCustomGol},
 		{"addCustomGol", simulation_addCustomGol},
@@ -2425,6 +2427,21 @@ int LuaScriptInterface::simulation_takeSnapshot(lua_State * l)
 {
 	luacon_controller->HistorySnapshot();
 	return 0;
+}
+
+
+int LuaScriptInterface::simulation_historyRestore(lua_State *l)
+{
+	bool successful = luacon_controller->HistoryRestore();
+	lua_pushboolean(l, successful);
+	return 1;
+}
+
+int LuaScriptInterface::simulation_historyForward(lua_State *l)
+{
+	bool successful = luacon_controller->HistoryForward();
+	lua_pushboolean(l, successful);
+	return 1;
 }
 
 int LuaScriptInterface::simulation_replaceModeFlags(lua_State *l)
