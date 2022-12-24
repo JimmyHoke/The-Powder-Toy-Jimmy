@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 52.0 --52.1 Next version
+local crackversion = 51.1 --52.1 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -546,12 +546,12 @@ function showmotdnot2()
 if clickcheck ~= 0 then
 gfx.drawRect(5,262,600,123,190,190,190,255) -- Window border
 if updatertext == "Done, click to restart." then
-gfx.fillRect(5,262,600,123,10,200,10,30)
+gfx.fillRect(5,262,600,123,10,200,10,120)
 else
 if timeout == 1 and clickcheck ~= 1 then
-gfx.fillRect(5,262,600,123,200,10,10,50)
+gfx.fillRect(5,262,600,123,200,10,10,120)
 else
-gfx.fillRect(5,262,600,123,40,40,40,200)
+gfx.fillRect(5,262,600,123,40,40,40,120)
 end
 end
 
@@ -659,9 +659,6 @@ end
 
 function errormesg()
 errtimer = errtimer + 1
-if errtimer > 200 then
-errtext = "URS Updater: Taking longer than expected."
-end
 gfx.fillRect(7,367,graphics.textSize(errtext)+3,12,30,30,30,150)
 if errtext ==  "URS Updater: Your mod is up to date." or errtext == "URS updater: checking for updates.." then
 gfx.drawText(10,370,errtext,55,255,55,255)
