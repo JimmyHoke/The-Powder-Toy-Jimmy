@@ -546,15 +546,20 @@ function showmotdnot2()
 if clickcheck ~= 0 then
 gfx.drawRect(5,262,600,123,190,190,190,255) -- Window border
 if updatertext == "Done, click to restart." then
-gfx.fillRect(5,262,600,123,10,200,10,120)
+gfx.fillRect(5,262,600,123,10,200,10,90)
+gfx.drawText(100,344,"Completed",55,255,55,255) -- When Completed
+gfx.fillRect(10,366,197,14,255,255,255,255)
+gfx.drawRect(10,363,590,1,10,250,10,255)
 else
-if timeout == 1 and clickcheck ~= 1 then
-gfx.fillRect(5,262,600,123,200,10,10,120)
+if timeout == 1 and clickcheck ~= 1 then -- When Error
+gfx.drawText(380,284," report this error in mod thread!",255,10,10,245)
+gfx.drawRect(10,363,590,1,255,55,55,255)
+gfx.fillRect(5,262,600,123,200,10,10,90)
 else
-gfx.fillRect(5,262,600,123,40,40,40,120)
+gfx.drawRect(10,363,590,1,32,216,255,255) -- Normal
+gfx.fillRect(5,262,600,123,40,40,40,100)
 end
 end
-
 --System and URS info:
 gfx.drawText(190,270,"Welcome to the Cracker1000 Mod's URS Updater",32,216,255,255)
 gfx.drawText(10,284,"Platform detected: "..platform.platform(),255,255,255,255)
@@ -562,18 +567,8 @@ gfx.drawText(300,284,"Error code: "..errorcode,255,255,255,255)
 gfx.drawText(10,304,"Updating/ downgrading from v."..crackversion.." to v."..updatever,255,255,255,255)
 gfx.drawText(10,324,"Current Status: "..updatertext,255,255,255,255)
 gfx.drawText(10,344,"Download progress:",255,255,255,255)
-
-if updatertext == "Done, click to restart." then
-gfx.drawText(100,344,"Completed",55,255,55,255)
-gfx.fillRect(10,366,197,14,0,250,0,100)
-gfx.drawRect(10,363,590,1,10,250,10,255)
-else
-gfx.drawRect(10,363,590,1,32,216,255,255)
 end
-if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(380,284," report this error in mod thread!",255,10,10,245)
-end
-end
+-- Hover effects for URS buttons
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(10,366,197,14,10,10,10,255)
 gfx.fillRect(10,366,197,14,32,255,210,140)
@@ -591,7 +586,7 @@ gfx.fillRect(402,366,197,14,10,10,10,255)
 gfx.fillRect(402,366,197,14,32,250,210,20)
 end
 gfx.drawRect(402,366,197,14,34,250,210,155)
-gfx.drawText(428,370,"<<<< Show the changelog >>>>",255,255,255,255)
+gfx.drawText(424,370,"<<<<< Show the changelog >>>>>",240,240,35,255)
 end
 --end
 gfx.drawRect(10,366,197,14,34,250,210,155)
@@ -645,7 +640,7 @@ end
 --Motd stuff
 motw = string.sub(ret2,40,300)
 specialmsgval = string.sub(ret2,31,32)
-if motw ~= "." then
+if motw ~= "." and onlinestatus == 1 then
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
 event.unregister(event.tick,showmotdnot)
