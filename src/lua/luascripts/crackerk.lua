@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 51.1 --52.1 Next version
+local crackversion = 52.1 --52.1 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -463,7 +463,7 @@ local downprog = math.floor((filedone/filesize)*100)
 --Graphics while downloading updates..
 if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
-gfx.drawText(100,344,downprog.."% done",32,216,255,255)
+gfx.drawText(100,344,downprog.."%",32,216,255,255)
 updatertext = "Updating the mod"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
@@ -482,7 +482,7 @@ clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
 timeout = 1
-updatertext = "Click here for manual download."
+updatertext = "Click for manual download."
 event.unregister(event.tick,updatermod)
 errorcode = reqwincode
 end
@@ -536,34 +536,31 @@ return false
 end
 end
 if clickcheck ~= 0 then
-if tpt.mousex > 402 and tpt.mousex < 597 and tpt.mousey > 367 and tpt.mousey < 380 then
-tpt.confirm("URS updater complete changelog",crdata, "Done")
+if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 305 and tpt.mousey < 317 then
+tpt.confirm("URS updater changelog. Your version: v."..crackversion,crdata, "Done reading")
 end
 return false
 end
 end
 function showmotdnot2()
 if clickcheck ~= 0 then
+gfx.fillRect(5,262,600,123,10,10,10,200) -- Window space fill
 gfx.drawRect(5,262,600,123,190,190,190,255) -- Window border
 if updatertext == "Done, click to restart." then
-gfx.fillRect(5,262,600,123,10,200,10,90)
-gfx.drawText(100,344,"Completed",55,255,55,255) -- When Completed
-gfx.fillRect(10,366,197,14,255,255,255,255)
-gfx.drawRect(10,363,590,1,10,250,10,255)
+gfx.drawText(100,344,"Completed Successfully.",55,255,55,255) -- When Completed
+gfx.drawRect(10,360,590,2,10,250,10,255)
 else
 if timeout == 1 and clickcheck ~= 1 then -- When Error
-gfx.drawText(380,284," report this error in mod thread!",255,10,10,245)
-gfx.drawRect(10,363,590,1,255,55,55,255)
-gfx.fillRect(5,262,600,123,200,10,10,90)
+gfx.drawText(380,284," Report this error in mod thread!",255,10,10,245)
+gfx.drawRect(10,360,590,2,255,55,55,255)
 else
-gfx.drawRect(10,363,590,1,32,216,255,255) -- Normal
-gfx.fillRect(5,262,600,123,40,40,40,100)
+gfx.drawRect(10,360,590,2,32,216,255,255) -- Normal
 end
 end
 --System and URS info:
 gfx.drawText(190,270,"Welcome to the Cracker1000 Mod's URS Updater",32,216,255,255)
 gfx.drawText(10,284,"Platform detected: "..platform.platform(),255,255,255,255)
-gfx.drawText(300,284,"Error code: "..errorcode,255,255,255,255)
+gfx.drawText(300,284,"Error code: "..errorcode,255,35,35,255)
 gfx.drawText(10,304,"Updating/ downgrading from v."..crackversion.." to v."..updatever,255,255,255,255)
 gfx.drawText(10,324,"Current Status: "..updatertext,255,255,255,255)
 gfx.drawText(10,344,"Download progress:",255,255,255,255)
@@ -578,15 +575,15 @@ gfx.fillRect(10,366,197,14,32,250,210,20)
 end
 if clickcheck ~= 0 then
 --Changelog stuff
-if tpt.mousex > 402 and tpt.mousex < 597 and tpt.mousey > 367 and tpt.mousey < 380 then
-gfx.fillRect(402,366,197,14,10,10,10,255)
-gfx.fillRect(402,366,197,14,32,255,210,140)
+if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 305 and tpt.mousey < 317 then
+gfx.fillRect(300,304,107,14,10,10,10,255)
+gfx.fillRect(300,304,107,14,240,240,35,140)
 else
-gfx.fillRect(402,366,197,14,10,10,10,255)
-gfx.fillRect(402,366,197,14,32,250,210,20)
+gfx.fillRect(300,304,107,14,10,10,10,255)
+gfx.fillRect(300,304,107,14,240,240,35,30)
 end
-gfx.drawRect(402,366,197,14,34,250,210,155)
-gfx.drawText(424,370,"<<<<< Show the changelog >>>>>",240,240,35,255)
+gfx.drawRect(300,304,107,14,240,240,35,100)
+gfx.drawText(310,307,"Show the changelog",240,240,35,255)
 end
 --end
 gfx.drawRect(10,366,197,14,34,250,210,155)
