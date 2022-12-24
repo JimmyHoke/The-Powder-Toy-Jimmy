@@ -437,13 +437,13 @@ local onlinestatus = 0
 local updatever, updatestatus = crackversion,0
 local updatertext = "is available, click to download"
 local reqwin
-local crdata = "Hang tight, fetching data from repository.."
+local crdata = "Something went wrong. Can't show the changelogs."
 local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 local errtext = "URS updater: checking for updates.."
 local timeout = 0
-
+local errorcode = "Nil"
 function updatermod()
 updatetimer = updatetimer + 1
 if updatetimer >= 3500 then
@@ -454,7 +454,7 @@ end
 --Get changelogs
 if crlog:status() == "done"  then
 local crlogdata, crlogcode = crlog:finish()
-if crlogcode == 200  then
+if crlogcode == 200 then
 crdata = crlogdata
 end
 end
@@ -463,7 +463,8 @@ local downprog = math.floor((filedone/filesize)*100)
 --Graphics while downloading updates..
 if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
-updatertext = "Updating the mod, "..downprog .."% Done"
+gfx.drawText(100,344,downprog.."% done",32,216,255,255)
+updatertext = "Updating the mod"
 if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
@@ -476,13 +477,14 @@ updatertext = "Done"
 f = io.open(filename, 'wb')
 f:write(reqwindata)
 f:close()
-updatertext = "Done, click here to restart."
+updatertext = "Done, click to restart."
 clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
 timeout = 1
-updatertext = " Updater error code: "..reqwincode
+updatertext = "Click here for manual download."
 event.unregister(event.tick,updatermod)
+errorcode = reqwincode
 end
 end
 else
@@ -492,9 +494,13 @@ end
 
 function clicktomsg2()
 if tpt.mousex > 10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
+if timeout == 1 and clickcheck ~= 1 then -- Manual download
+platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
+return false
+end
 if clickcheck == 0 then
 clickcheck = 2
-crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/changelog.txt")
+crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/Full%20changelog.txt")
 if checkos == "WIN64" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
 elseif checkos == "LIN64" then
@@ -521,7 +527,7 @@ end
 return false
 end
 if clickcheck == 0 then
-if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
+if tpt.mousex > 209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then -- Cancel the update
 updatestatus = 1
 event.unregister(event.mousedown, clicktomsg2)
 event.unregister(event.tick, showmotdnot2)
@@ -529,48 +535,43 @@ event.unregister(event.tick,updatermod)
 return false
 end
 end
-if clickcheck ~= 0 then --Manual download
-if timeout == 1 and clickcheck ~= 1 then
-if tpt.mousex > 320 and tpt.mousex < 486 and tpt.mousey > 367 and tpt.mousey < 380 then
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
-end
+if clickcheck ~= 0 then
+if tpt.mousex > 402 and tpt.mousex < 597 and tpt.mousey > 367 and tpt.mousey < 380 then
+tpt.confirm("URS updater complete changelog",crdata, "Done")
 end
 return false
 end
 end
-
 function showmotdnot2()
 if clickcheck ~= 0 then
-if updatertext == "Done, click here to restart." then
-gfx.fillRect(5,72,600,312,10,200,10,30)
+gfx.drawRect(5,262,600,123,190,190,190,255) -- Window border
+if updatertext == "Done, click to restart." then
+gfx.fillRect(5,262,600,123,10,200,10,30)
 else
 if timeout == 1 and clickcheck ~= 1 then
-gfx.fillRect(5,72,600,312,200,10,10,50)
+gfx.fillRect(5,262,600,123,200,10,10,50)
 else
-gfx.fillRect(5,72,600,312,10,10,10,200)
+gfx.fillRect(5,262,600,123,40,40,40,200)
 end
 end
-gfx.drawRect(5,72,600,312,255,255,255,255)
-gfx.fillCircle(120,81,4,4,50,50,250,200)
-gfx.drawCircle(120,81,4,4,32,216,250,255)
 
-gfx.drawText(12,79,"OS:"..platform.platform(),255,255,0,255)
-if crackversion <= tonumber(updatever) then
-gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Updating from v."..crackversion.." to v."..tonumber(updatever)..")",32,216,255,255)
-else
-gfx.drawText(130,78,"Welcome to the Cracker1000 Mod's URS Updater. (Downgrading from v."..crackversion.." to v."..tonumber(updatever)..")",255,5,5,255)
-end
-gfx.drawText(12,98,crdata,250,250,250,255)
-if updatertext == "Done, click here to restart." then
+--System and URS info:
+gfx.drawText(190,270,"Welcome to the Cracker1000 Mod's URS Updater",32,216,255,255)
+gfx.drawText(10,284,"Platform detected: "..platform.platform(),255,255,255,255)
+gfx.drawText(300,284,"Error code: "..errorcode,255,255,255,255)
+gfx.drawText(10,304,"Updating/ downgrading from v."..crackversion.." to v."..updatever,255,255,255,255)
+gfx.drawText(10,324,"Current Status: "..updatertext,255,255,255,255)
+gfx.drawText(10,344,"Download progress:",255,255,255,255)
+
+if updatertext == "Done, click to restart." then
+gfx.drawText(100,344,"Completed",55,255,55,255)
+gfx.fillRect(10,366,197,14,0,250,0,100)
 gfx.drawRect(10,363,590,1,10,250,10,255)
 else
 gfx.drawRect(10,363,590,1,32,216,255,255)
 end
 if timeout == 1 and clickcheck ~= 1 then
-gfx.drawText(12,350,"Uh oh something went wrong. You can wait/ use the manual download option provided below. Report the error in mod thread.",255,10,10,245)
-gfx.drawRect(320,366,167,14,32,216,255,220)
-gfx.fillRect(320,366,167,14,32,216,255,40)
-gfx.drawText(325,370,"Click here to download manually.",32,216,255,220)
+gfx.drawText(380,284," report this error in mod thread!",255,10,10,245)
 end
 end
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -580,11 +581,21 @@ else
 gfx.fillRect(10,366,197,14,10,10,10,255)
 gfx.fillRect(10,366,197,14,32,250,210,20)
 end
+if clickcheck ~= 0 then
+--Changelog stuff
+if tpt.mousex > 402 and tpt.mousex < 597 and tpt.mousey > 367 and tpt.mousey < 380 then
+gfx.fillRect(402,366,197,14,10,10,10,255)
+gfx.fillRect(402,366,197,14,32,255,210,140)
+else
+gfx.fillRect(402,366,197,14,10,10,10,255)
+gfx.fillRect(402,366,197,14,32,250,210,20)
+end
+gfx.drawRect(402,366,197,14,34,250,210,155)
+gfx.drawText(428,370,"<<<< Show the changelog >>>>",255,255,255,255)
+end
+--end
 gfx.drawRect(10,366,197,14,34,250,210,155)
 gfx.drawText(13,370,"V."..tonumber(updatever).." "..updatertext,32,250,210,255)
-if updatertext == "Done, click here to restart." then
-gfx.fillRect(10,366,197,14,0,250,0,100)
-end
 if clickcheck == 0 then
 if tpt.mousex >209 and tpt.mousex < 221 and tpt.mousey > 367 and tpt.mousey < 380 then
 gfx.fillRect(208,366,14,14,250,50,50,150)
@@ -617,7 +628,7 @@ if code2 == 200 then
 onlinestatus = 1 
 --Update checks
 errtext = ""
-updatever = string.sub(ret2,9,13)
+updatever = string.sub(ret2,10,13)
 if tonumber(crackversion) ~= tonumber(updatever)  then
 runupdater()
 elseif tonumber(crackversion) == tonumber(updatever) then
@@ -648,13 +659,16 @@ end
 
 function errormesg()
 errtimer = errtimer + 1
+if errtimer > 200 then
+errtext = "URS Updater: Taking longer than expected."
+end
 gfx.fillRect(7,367,graphics.textSize(errtext)+3,12,30,30,30,150)
 if errtext ==  "URS Updater: Your mod is up to date." or errtext == "URS updater: checking for updates.." then
 gfx.drawText(10,370,errtext,55,255,55,255)
 else
 gfx.drawText(10,370,errtext,255,55,55,255)
 end
-if errtimer >= 230 then
+if errtimer >= 250 then
 event.unregister(event.tick,errormesg)
 end
 end
