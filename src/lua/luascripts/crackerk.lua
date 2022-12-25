@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 52.1 --52.1 Next version
+local crackversion = 52.0 --52.1 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -443,12 +443,14 @@ local checkos, clickcheck = platform.platform(), 0
 local filename = platform.exeName()
 local errtext = "URS updater: checking for updates.."
 local timeout = 0
-local errorcode = "Nil"
+local errorcode = "No error to report"
+
 function updatermod()
 updatetimer = updatetimer + 1
 if updatetimer >= 3500 then
 if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 timeout = 1
+errorcode = "Taking longer than expected"
 end
 end
 --Get changelogs
@@ -460,9 +462,8 @@ end
 end
 local filesize, filedone = reqwin:progress()
 local downprog = math.floor((filedone/filesize)*100)
---Graphics while downloading updates..
 if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
-gfx.fillRect(10,367,downprog*2,12,32,255,216,120)
+gfx.fillRect(10,367,downprog*2,12,32,216,255,120)
 gfx.drawText(100,344,downprog.."%",32,216,255,255)
 updatertext = "Updating the mod"
 if reqwin:status() == "done"  then
@@ -478,6 +479,7 @@ f = io.open(filename, 'wb')
 f:write(reqwindata)
 f:close()
 updatertext = "Done, click to restart."
+errorcode = "No error to report"
 clickcheck = 1
 event.unregister(event.tick,updatermod)
 else
@@ -488,13 +490,13 @@ errorcode = reqwincode
 end
 end
 else
-updatertext = "Please download update manually!"
+updatertext = "Click for manual download."
 end
 end
 
-function clicktomsg2()
+function clicktomsg2() --Respond to or block clicks when updater is running. 
 if tpt.mousex > 10 and tpt.mousex < 204 and tpt.mousey > 367 and tpt.mousey < 380 then
-if timeout == 1 and clickcheck ~= 1 then -- Manual download
+if updatertext == "Click for manual download." then -- Manual download
 platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
 return false
 end
@@ -509,14 +511,9 @@ elseif checkos == "WIN32" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
 elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
 reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.dmg")
-if tpt.confirm("URS: System message", "Dear user, URS updater doesn't support fully automatic updates for macos yet. You will be directed to the mod thread for manual download. Click the download button to continue..","Download") == true then
-platform.openLink("https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279")
-else
-updatestatus = 1
+errorcode = "MAC OS does't support fully automatic updates."
 end
 event.unregister(event.tick,updatermod)
-event.unregister(event.mousedown,clicktomsg2)
-end
 event.register(event.tick,updatermod)
 event.unregister(event.keypress,keyclicky)
 event.unregister(event.mousedown, clicktomsg)
@@ -535,14 +532,15 @@ event.unregister(event.tick,updatermod)
 return false
 end
 end
-if clickcheck ~= 0 then
-if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 305 and tpt.mousey < 317 then
+if clickcheck ~= 0 then --Changelogs
+if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 300 and tpt.mousey < 314 then
 tpt.confirm("URS updater changelog. Your version: v."..crackversion,crdata, "Done reading")
 end
 return false
 end
 end
-function showmotdnot2()
+
+function showmotdnot2() --Draw graphics when updater is running. 
 if clickcheck ~= 0 then
 gfx.fillRect(5,262,600,123,10,10,10,200) -- Window space fill
 gfx.drawRect(5,262,600,123,190,190,190,255) -- Window border
@@ -551,7 +549,7 @@ gfx.drawText(100,344,"Completed Successfully.",55,255,55,255) -- When Completed
 gfx.drawRect(10,360,590,2,10,250,10,255)
 else
 if timeout == 1 and clickcheck ~= 1 then -- When Error
-gfx.drawText(380,284," Report this error in mod thread!",255,10,10,245)
+gfx.drawText(300,369,"Report the above error code in mod thread.",255,10,10,255)
 gfx.drawRect(10,360,590,2,255,55,55,255)
 else
 gfx.drawRect(10,360,590,2,32,216,255,255) -- Normal
@@ -561,7 +559,8 @@ end
 gfx.drawText(190,270,"Welcome to the Cracker1000 Mod's URS Updater",32,216,255,255)
 gfx.drawText(10,284,"Platform detected: "..platform.platform(),255,255,255,255)
 gfx.drawText(300,284,"Error code: "..errorcode,255,35,35,255)
-gfx.drawText(10,304,"Updating/ downgrading from v."..crackversion.." to v."..updatever,255,255,255,255)
+gfx.drawText(10,304,"Updating/ downgrading from",255,255,255,255)
+gfx.drawText(142,304,"v."..crackversion.." to v."..updatever,32,216,255,255)
 gfx.drawText(10,324,"Current Status: "..updatertext,255,255,255,255)
 gfx.drawText(10,344,"Download progress:",255,255,255,255)
 end
@@ -575,15 +574,15 @@ gfx.fillRect(10,366,197,14,32,250,210,20)
 end
 if clickcheck ~= 0 then
 --Changelog stuff
-if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 305 and tpt.mousey < 317 then
-gfx.fillRect(300,304,107,14,10,10,10,255)
-gfx.fillRect(300,304,107,14,240,240,35,140)
+if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 300 and tpt.mousey < 314 then
+gfx.fillRect(300,300,107,14,10,10,10,255)
+gfx.fillRect(300,300,107,14,240,240,35,140)
 else
-gfx.fillRect(300,304,107,14,10,10,10,255)
-gfx.fillRect(300,304,107,14,240,240,35,30)
+gfx.fillRect(300,300,107,14,10,10,10,255)
+gfx.fillRect(300,300,107,14,240,240,35,30)
 end
-gfx.drawRect(300,304,107,14,240,240,35,100)
-gfx.drawText(310,307,"Show the changelog",240,240,35,255)
+gfx.drawRect(300,300,107,14,240,240,35,100)
+gfx.drawText(310,303,"Show the changelog",240,240,35,255)
 end
 --end
 gfx.drawRect(10,366,197,14,34,250,210,155)
@@ -663,21 +662,22 @@ end
 end
 
 function clicktomsg()
-if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 367 and tpt.mousey < 380 then
+if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 365 and tpt.mousey < 379 then
 open()
 return false
 end
 end
 
 function showmotdnot()
-if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 367 and tpt.mousey < 380 then
-tpt.fillrect(390,366,138,14,32,250,210,120)
+tpt.fillrect(390,365,138,14,10,10,10,250)
+if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 365 and tpt.mousey < 379 then
+tpt.fillrect(390,365,138,14,255,255,0,120)
 else
-tpt.fillrect(390,366,138,14,32,250,210,20)
+tpt.fillrect(390,365,138,14,255,255,0,20)
 end
-tpt.drawrect(390,366,138,14,32,250,210,255)
+tpt.drawrect(390,365,138,14,255,255,0,255)
 tpt.drawrect(418,408,51,14,255-ar,255-ag,255-ab,255)
-gfx.drawText(395,370,"New message, click to view.",32,250,210,255)
+gfx.drawText(395,369,"New message, click to view.",245,245,0,255)
 end
 
 local function strtelemgraph()
@@ -2616,7 +2616,7 @@ graphics.fillRect(2,348,609, 10,20,20,20,200)
 graphics.drawText(posix2,349,motw,255,0,0,255)
 else
 graphics.fillRect(2,258,609, 10,20,20,20,200)
-graphics.drawText(posix2,259,motw,32,250,210,255)
+graphics.drawText(posix2,259,motw,32,216,255,255)
 end
 end
 end
