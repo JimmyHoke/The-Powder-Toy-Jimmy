@@ -2419,8 +2419,8 @@ void GameView::OnDraw()
 
 			if (c->GetAHeatEnable())
 			{
-					sampleInfo << ", AHeat: ";
-					format::RenderTemperature(sampleInfo, sample.AirTemperature, c->GetTemperatureScale());
+				sampleInfo << ", AHeat: ";
+				format::RenderTemperature(sampleInfo, sample.AirTemperature, c->GetTemperatureScale());
 			}
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
