@@ -1,7 +1,6 @@
-Cracker1000's Mod - Nov 2021
-==========================
+Cracker1000's Mod - December 2022
 
-Get the latest version [from the Powder Toy website](https://powdertoy.co.uk/Download.html).
+Get the latest version [from the Powder Toy website](https://powdertoy.co.uk/Discussions/Thread/View.html?Thread=23279).
 
 To use online features such as saving, you need to [register an account](https://powdertoy.co.uk/Register.html).
 You can also visit [the official TPT forum](https://powdertoy.co.uk/Discussions/Categories/Index.html).
