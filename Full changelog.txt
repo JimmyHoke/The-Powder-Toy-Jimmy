@@ -1,20 +1,31 @@
 Changelog for V52.0
 New element: (To be added soon)
+Major update to URS, much more simple and now supports scrolling changelogs.
 Make GLAS strengthening reaction more controllable and not so arbitrary
 .tmp2 is now shown for all the elements
 Big update to .tmp sensor (can now detect all sorts of .tmp properties, modes changed with .tmp3 values)
 Update wiki with new information (read wiki for new .tmp sensor changes!).
-Major update to URS, much more simple and now supports scrolling changelogs.
 Customise URS to properly support mac os updates
-Increase fuel limit for SPSH, improved graphics.
-Fix local save browser crashing the game when there a lot of saves.
+Increase fuel limit for SPSH, improve graphics.
 Fix MIST and SPSH getting accepted as a valid ctype for CLNE and other elements.
-Fix Status being accidentaly set to online when it's not.
-Use new svg icons for mod. Thanks to @Xphere.
+Fix status being accidentaly set to online when it's not.
+Fix introtext not hiding hud completely.
+
+Unify icons - the new icon looks similar to the old, but is now the same across Windows/Mac/Linux
 Render options now match vanilla one again, will be fixed properly in future.
 Add Lua support for partial sim updates
-UpdateParticles takes a range that is inclusive on both ends
 Add warning while performing mod resets.
+
+Fix the zoom window producing out of bounds coordinates
+Fix lag when scrolling local save browser (it now caches thumbnails again)
+Fix local browser offering to open broken saves
+
+Fix possible crash when flood filling with particle limit filled
+Fix glitchy behavior when flood filling solid particles around detect wall
+Add evt.beforesim and evt.aftersim for running code only when simulation advances
+Add sim.updateUpTo and sim.lastUpdatedID, for handling partial sim updates in Lua
+Add sim.historyRestore and sim.historyForward
+Add underline escape sequence to text renderer (\bU)
 
 v51.1
 Fix potential crash when opening some saves.
