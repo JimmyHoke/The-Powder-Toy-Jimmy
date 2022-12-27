@@ -2305,16 +2305,8 @@ void GameView::OnDraw()
 					else if (ctype)
 						sampleInfo << " (" << ctype << ")";
 				}
-				if (showDebug)
-				{
-					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << "C/ ";
-					sampleInfo << sample.particle.temp << "K" << "/ ";
-					sampleInfo << "" << (sample.particle.temp - 273.15f)*1.8 + 32 << "F";
-				}
-				else
-				{
-					sampleInfo << ", Temp: " << (sample.particle.temp - 273.15f) << "C";
-				}
+				sampleInfo << ", Temp: ";
+				format::RenderTemperature(sampleInfo, sample.particle.temp, c->GetTemperatureScale());
 				sampleInfo << ", Life: " << sample.particle.life;
 				if (sample.particle.type != PT_RFRG && sample.particle.type != PT_RFGL && sample.particle.type != PT_LIFE)
 				{
@@ -2339,7 +2331,8 @@ void GameView::OnDraw()
 			else
 			{
 				sampleInfo << c->BasicParticleInfo(sample.particle);
-				sampleInfo << ", Temp: " << sample.particle.temp - 273.15f << "C";
+				sampleInfo << ", Temp: ";
+				format::RenderTemperature(sampleInfo, sample.particle.temp, c->GetTemperatureScale());
 				sampleInfo << ", Pressure: " << sample.AirPressure;
 			}
 		}
@@ -2424,8 +2417,11 @@ void GameView::OnDraw()
 				if (sample.Gravity)
 					sampleInfo << ", GX: " << sample.GravityVelocityX << " GY: " << sample.GravityVelocityY;
 
-				if (c->GetAHeatEnable())
-					sampleInfo << ", AHeat: " << sample.AirTemperature - 273.15f << " C";
+			if (c->GetAHeatEnable())
+			{
+					sampleInfo << ", AHeat: ";
+					format::RenderTemperature(sampleInfo, sample.AirTemperature, c->GetTemperatureScale());
+			}
 
 				textWidth = Graphics::textwidth(sampleInfo.Build());
 				g->fillrect(6, 33, textWidth + 8, 14, 0, 0, 0, (int)(alpha * 0.5f));
