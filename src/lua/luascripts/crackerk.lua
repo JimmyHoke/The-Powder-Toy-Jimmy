@@ -4,6 +4,7 @@ local crackversion = 52.0 --52.1 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
+local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MIST")
@@ -273,7 +274,6 @@ end
 end 
 --PLNE END
 --Default theme for initial launch and resets
-local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
@@ -2487,7 +2487,7 @@ end)
 
 function startupcheck()
 if tpt.version.modid ~= 6 then
-tpt.throw_error("You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread.")
+tpt.message_box(" URS updater security warning","You are running the crackerk lua script with an unsupported version of tpt. Please download the mod from original mod thread.")
 end
 event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")
