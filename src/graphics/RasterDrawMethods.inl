@@ -70,6 +70,7 @@ int PIXELMETHODS_CLASS::drawtext(int x, int y, const String &str, int r, int g, 
 			case 'b': r = 0; g = 0; b = 255; colorCode = true; break;
 			case 't': b = 255; g = 170; r = 32; colorCode = true; break;
 			case 'u': r = 147; g = 83; b = 211; colorCode = true; break;
+			case 'h': r = 8;   g = 255; b = 8; colorCode = true; break; //green, for maticzpl's vote counter modifications.
 			}
 			if (colorCode && invert)
 			{
