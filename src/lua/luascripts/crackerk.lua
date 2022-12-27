@@ -2486,9 +2486,6 @@ end)
 end)
 
 function startupcheck()
-if tpt.version.modid ~= 6 then
-tpt.message_box(" URS updater security warning","You are running the crackerk lua script with an unsupported version of tpt. Please download the mod from original mod thread.")
-end
 event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")
 os.remove("older.exe")
