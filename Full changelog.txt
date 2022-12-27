@@ -1,4 +1,9 @@
-Changelog for V52.0
+v52.1:
+Properly configure the app constants
+Fix colours for http links being shown wrong
+Other changes which I can't just mention yet.
+
+v52.0 <<<<<
 New element: (To be added soon)
 Major update to URS, much more simple and now supports scrolling changelogs.
 Make GLAS strengthening reaction more controllable and not so arbitrary

@@ -52,7 +52,7 @@ option(
 	'mod_id',
 	type: 'integer',
 	min: 0,
-	value: 0,
+	value: 6,
 	description: 'Mod ID, used on the https://starcatcher.us/TPT build server, the build server will compile for all platforms for you and send updates in-game, see jacob1 to get a mod ID'
 )
 option(
@@ -168,7 +168,7 @@ option(
 option(
 	'app_name',
 	type: 'string',
-	value: 'The Powder Toy',
+	value: 'Cracker1000 Mod',
 	description: 'App name, used for desktop integration and the window title, change if you work on a mod'
 )
 option(
@@ -186,7 +186,7 @@ option(
 option(
 	'app_id',
 	type: 'string',
-	value: 'uk.co.powdertoy.tpt',
+	value: 'io.github.cracker1000.mod',
 	description: 'App ID, a D-Bus well-known name, used for desktop integration, change if you work on a mod'
 )
 option(
