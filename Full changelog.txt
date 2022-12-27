@@ -10,16 +10,13 @@ Increase fuel limit for SPSH, improve graphics.
 Fix MIST and SPSH getting accepted as a valid ctype for CLNE and other elements.
 Fix status being accidentaly set to online when it's not.
 Fix introtext not hiding hud completely.
-
 Unify icons - the new icon looks similar to the old, but is now the same across Windows/Mac/Linux
 Render options now match vanilla one again, will be fixed properly in future.
 Add Lua support for partial sim updates
 Add warning while performing mod resets.
-
 Fix the zoom window producing out of bounds coordinates
 Fix lag when scrolling local save browser (it now caches thumbnails again)
 Fix local browser offering to open broken saves
-
 Fix possible crash when flood filling with particle limit filled
 Fix glitchy behavior when flood filling solid particles around detect wall
 Add evt.beforesim and evt.aftersim for running code only when simulation advances
