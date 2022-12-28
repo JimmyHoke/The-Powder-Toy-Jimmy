@@ -62,7 +62,7 @@ static int update(UPDATE_FUNC_ARGS)
 		parts[i].tmp = 1;
 
 	for (int rx = -2; rx <= 2; rx++)
-		for ( int ry = -2; ry <= 2; ry++)
+		for (int ry = -2; ry <= 2; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
 				int r = pmap[y + ry][x + rx];
@@ -70,8 +70,8 @@ static int update(UPDATE_FUNC_ARGS)
 					continue;
 				if (parts[ID(r)].type != PT_RUBR && !(sim->elements[TYP(r)].Properties&TYPE_SOLID) && !(sim->elements[TYP(r)].Properties&TYPE_ENERGY) && parts[i].tmp == 1)//Bouncy behaviour.
 				{
-					parts[ID(r)].vx = (float)(-3*rx);
-					parts[ID(r)].vy = (float)(-3*ry);
+					parts[ID(r)].vx = -2*(parts[ID(r)].vx);
+					parts[ID(r)].vy = -2*(parts[ID(r)].vy);
 				}
 			}
 	return 0;
