@@ -180,7 +180,7 @@ option(
 option(
 	'app_exe',
 	type: 'string',
-	value: 'Cracker1000mod',
+	value: 'Cmod',
 	description: 'App executable name, used for desktop integration, change if you work on a mod'
 )
 option(

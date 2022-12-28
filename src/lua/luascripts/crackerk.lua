@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 52.1 --52.1 Next version
+local crackversion = 52.5 --52.1 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -440,7 +440,6 @@ local reqwin
 local crdata = "Something went wrong. Can't show the changelogs."
 local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
-local filename = platform.exeName()
 local errtext = "URS updater: checking for updates.."
 local timeout = 0
 local errorcode = "No error to report"
@@ -470,12 +469,12 @@ if reqwin:status() == "done"  then
 local reqwindata, reqwincode = reqwin:finish()
 if reqwincode == 200  then
 if checkos == "WIN64" or checkos == "WIN32" then --Windows
-os.rename(filename,"older.exe")
+os.rename(platform.exeName(),"older.exe")
 elseif checkos == "LIN64" then --Linux
-os.rename(filename,"older")
+os.rename(platform.exeName(),"older")
 end
 updatertext = "Done"
-f = io.open(filename, 'wb')
+f = io.open(platform.exeName(), 'wb')
 f:write(reqwindata)
 f:close()
 updatertext = "Done, click to restart."
@@ -504,13 +503,13 @@ if clickcheck == 0 then
 clickcheck = 2
 crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/Full%20changelog.txt")
 if checkos == "WIN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/Cmod.exe")
 elseif checkos == "LIN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/Cmod")
 elseif checkos == "WIN32" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/Cmod32.exe")
 elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.dmg")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/Cmod.dmg")
 errorcode = "MAC OS does't support fully automatic updates."
 end
 event.unregister(event.tick,updatermod)
@@ -533,7 +532,7 @@ return false
 end
 end
 if clickcheck ~= 0 then --Changelogs
-if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 300 and tpt.mousey < 314 then
+if tpt.mousex > 299 and tpt.mousex < 386 and tpt.mousey > 284 and tpt.mousey < 296 then
 tpt.confirm("URS updater changelog. Your version: v."..crackversion,crdata, "Done reading")
 end
 return false
@@ -558,10 +557,12 @@ end
 --System and URS info:
 gfx.drawText(190,270,"Welcome to the Cracker1000 Mod's URS Updater",32,216,255,255)
 gfx.drawText(10,284,"Platform detected: "..platform.platform(),255,255,255,255)
-gfx.drawText(300,284,"Error code: "..errorcode,255,35,35,255)
+gfx.drawText(300,304,"Internal status code: "..onlinestatus,255,255,255,255)
+gfx.drawText(300,344,"Error code: "..errorcode,255,35,35,255)
 gfx.drawText(10,304,"Updating/ downgrading from",255,255,255,255)
 gfx.drawText(142,304,"v."..crackversion.." to v."..updatever,32,216,255,255)
 gfx.drawText(10,324,"Current Status: "..updatertext,255,255,255,255)
+gfx.drawText(300,324,"File path: "..platform.exeName(),255,255,255,255)
 gfx.drawText(10,344,"Download progress:",255,255,255,255)
 end
 -- Hover effects for URS buttons
@@ -574,15 +575,15 @@ gfx.fillRect(10,366,197,14,32,250,210,20)
 end
 if clickcheck ~= 0 then
 --Changelog stuff
-if tpt.mousex > 299 and tpt.mousex < 406 and tpt.mousey > 300 and tpt.mousey < 314 then
-gfx.fillRect(300,300,107,14,10,10,10,255)
-gfx.fillRect(300,300,107,14,240,240,35,140)
+if tpt.mousex > 299 and tpt.mousex < 386 and tpt.mousey > 284 and tpt.mousey < 296 then
+gfx.fillRect(300,284,87,14,10,10,10,255)
+gfx.fillRect(300,284,87,14,255,216,32,140)
 else
-gfx.fillRect(300,300,107,14,10,10,10,255)
-gfx.fillRect(300,300,107,14,240,240,35,30)
+gfx.fillRect(300,284,87,14,10,10,10,255)
+gfx.fillRect(300,284,87,14,255,216,32,30)
 end
-gfx.drawRect(300,300,107,14,240,240,35,100)
-gfx.drawText(310,303,"Show the changelog",240,240,35,255)
+gfx.drawRect(300,284,87,14,255,216,32,100)
+gfx.drawText(305,287,"Show Changelog*",255,216,32,255)
 end
 --end
 gfx.drawRect(10,366,197,14,34,250,210,155)
