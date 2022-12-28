@@ -1,4 +1,5 @@
 #include "simulation/ElementCommon.h"
+#include "simulation/Air.h"
 
 static int update(UPDATE_FUNC_ARGS);
 static int graphics(GRAPHICS_FUNC_ARGS);
@@ -23,15 +24,15 @@ void Element::Element_RUBR()
 	HotAir = 0.000f	* CFDS;
 	Falldown = 2;
 
-	Flammable = 0;
+	Flammable = 35;
 	Explosive = 0;
 	Meltable = 0;
 	Hardness = 2;
 
 	Weight = 100;
 
-	HeatConduct = 05;
-	Description = "Rubber (latex form). Bounces off non solid particles, can be molded & solidified into any shape when above 230C. Read wiki.";
+	HeatConduct = 10;
+	Description = "Rubber (latex form). Bounces off particles, can be set into shape when above 230C. Blocks heat and pressure. Read wiki.";
 
 	Properties = TYPE_LIQUID;
 
@@ -41,8 +42,8 @@ void Element::Element_RUBR()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = ITH;
-	HighTemperatureTransition = NT;
+	HighTemperature = 803.0f;
+	HighTemperatureTransition = PT_FIRE;
 
 	Update = &update;
 	Graphics = &graphics;
@@ -54,25 +55,11 @@ static int update(UPDATE_FUNC_ARGS)
 	{
 		parts[i].vx = 0;
 	    parts[i].vy = 0;
+		sim->air->bmap_blockair[y / CELL][x / CELL] = 1; //Block pressure.
+		sim->air->bmap_blockairh[y / CELL][x / CELL] = 0x8;
 	}
 	if (parts[i].temp > 230 + 273.15f && RNG::Ref().chance(1, 100))
 		parts[i].tmp = 1;
-
-	if (parts[i].temp > 430 + 273.15f) //Burning code, around 430C
-	{
-		if (RNG::Ref().chance(1, 80))
-		{
-			sim->create_part(-1, x, y - 1, PT_FIRE);
-		}
-		if (RNG::Ref().chance(1, 200))
-		{
-			sim->create_part(-1, x, y - 1, PT_CO2);
-		}
-		if (RNG::Ref().chance(1, 500))
-		{
-			sim->part_change_type(i, x, y, PT_FIRE);
-		}
-	}
 
 	for (int rx = -2; rx <= 2; rx++)
 		for ( int ry = -2; ry <= 2; ry++)
