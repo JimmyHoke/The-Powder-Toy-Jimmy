@@ -1,7 +1,7 @@
 v52.5 (Beta):
-New element: Heat shrink, expands or constricts based on temp.
+New element: RUBR (rubber). Read wiki for more information.
 Match v97.0 beta.
-Add ability to switch or remove accidentally placed votes
+Add ability to change votes.
 Add temperature scales option, controls whether Celsuis, Kelvin, or Fahrenheit is default in the HUD, PROP tool, and console
 Configure the mod name, window title and app id.
 Fix colours for http links being shown wrong
