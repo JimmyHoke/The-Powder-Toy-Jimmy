@@ -1,3 +1,9 @@
+v53.0:
+Fix prop tool not setting x and y coordinates properly.
+Fix RUBR catching fire while bouncing off particles.
+Improve the pressure blocking code for wall element.
+URS now handles file renaming globally.
+
 v52.5 (Beta):
 New element: RUBR (rubber). Read wiki for more information.
 Match v97.0 beta.
@@ -6,7 +12,7 @@ Add temperature scales option, controls whether Celsuis, Kelvin, or Fahrenheit i
 Configure the mod name, window title and app id.
 Fix colours for http links being shown wrong
 
-v52.0 <<<<<
+v52.0
 New element: (To be added soon)
 Major update to URS, much more simple and now supports scrolling changelogs.
 Make GLAS strengthening reaction more controllable and not so arbitrary

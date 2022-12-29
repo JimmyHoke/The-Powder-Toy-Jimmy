@@ -465,14 +465,10 @@ if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 gfx.fillRect(10,367,downprog*2,12,32,216,255,120)
 gfx.drawText(100,344,downprog.."%",32,216,255,255)
 updatertext = "Updating the mod"
-if reqwin:status() == "done"  then
+if reqwin:status() == "done" then
 local reqwindata, reqwincode = reqwin:finish()
-if reqwincode == 200  then
-if checkos == "WIN64" or checkos == "WIN32" then --Windows
-os.rename(platform.exeName(),"older.exe")
-elseif checkos == "LIN64" then --Linux
+if reqwincode == 200 then
 os.rename(platform.exeName(),"older")
-end
 updatertext = "Done"
 f = io.open(platform.exeName(), 'wb')
 f:write(reqwindata)
@@ -2491,7 +2487,6 @@ end)
 function startupcheck()
 event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")
-os.remove("older.exe")
 os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)

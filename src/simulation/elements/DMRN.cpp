@@ -26,7 +26,7 @@ void Element::Element_DMRN()
 
 	Weight = 100;
 	HeatConduct = 0;
-	Description = "Demron, radiation-shielding fabric and insulator.";
+	Description = "Demron, radiation-shielding fabric and indestructible insulator.";
 
 	Properties = TYPE_SOLID;
 

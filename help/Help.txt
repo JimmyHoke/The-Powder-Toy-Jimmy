@@ -17,10 +17,7 @@ Add ID in meson.build
 5) Dark theme:
 Copy appearence.cpp from gui>interface.
 
-6)Gravity Modes:
-No longer needed, custom gravity mode is now a thing.
-
-7) HUD:
+6) HUD:
 Gameview.cpp (copy fpsinfo and other parts)
 
 8) Votes:
@@ -77,8 +74,9 @@ src>gui>search>Searchview.cpp
 (MGNT 239); 
 (SODM, 240); 
 (BALL, 241); 
-
-Elements that use.tmp2 >> type == PT_CWIR || type == PT_LED || type == PT_VSNS || type == PT_CSNS || type == PT_TMPS || type == PT_MISL
+(MIST, 242); Lua element 
+(SPSH, 243); Lua element 
+(RUBR, 244);
 
 For BTRY, replace this
  "if ((sim->elements[rt].Properties&PROP_CONDUCTS) && !(rt==PT_WATR||rt==PT_SLTW||rt==PT_NTCT||rt==PT_PTCT||rt==PT_INWR||rt == PT_FNTC||rt == PT_FPTC) && parts[ID(r)].life==0)"
@@ -92,8 +90,8 @@ b) FIlter branch to upstream> cherrypick and commit.
 c) Done. 
 
 12) To make a new Pull Request:
-0)Copy New pr.bat to newmod main folder (or else it will fail to delete the help folder).
-a) Run new PR.bat
-b) Open gitbash> git checkout -b vanilla (in case it fails to checkout)
-c) git checkout -b <branch name here>
-d) Push commits> push to origin> Done.
+1) Copy New pr.bat to newmod main folder (or else it will fail to delete the help folder).
+2) Run new PR.bat
+3) Open gitbash> git checkout -b vanilla (in case it fails to checkout)
+4) git checkout -b <branch name here>
+5) Push commits> push to origin> Done.

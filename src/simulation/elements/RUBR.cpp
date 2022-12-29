@@ -24,7 +24,7 @@ void Element::Element_RUBR()
 	HotAir = 0.000f	* CFDS;
 	Falldown = 2;
 
-	Flammable = 35;
+	Flammable = 0;
 	Explosive = 0;
 	Meltable = 0;
 	Hardness = 2;
@@ -42,8 +42,8 @@ void Element::Element_RUBR()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = 803.0f;
-	HighTemperatureTransition = PT_FIRE;
+	HighTemperature = ITH;
+	HighTemperatureTransition = NT;
 
 	Update = &update;
 	Graphics = &graphics;
@@ -51,6 +51,23 @@ void Element::Element_RUBR()
 
 static int update(UPDATE_FUNC_ARGS)
 {
+	if (parts[i].tmp2 == 1)
+	{
+		if (RNG::Ref().chance(1, 80))
+		{
+			sim->create_part(-1, x, y - 1, PT_FIRE);
+		}
+		if (RNG::Ref().chance(1, 200))
+		{
+			sim->create_part(-1, x, y - 1, PT_CO2);
+		}
+		if (RNG::Ref().chance(1, 700))
+		{
+			parts[i].life = 70;
+			sim->part_change_type(i, x, y, PT_FIRE);
+		}
+	}
+
 	if (parts[i].tmp != 0)
 	{
 		parts[i].vx = 0;
@@ -59,19 +76,33 @@ static int update(UPDATE_FUNC_ARGS)
 		sim->air->bmap_blockairh[y / CELL][x / CELL] = 0x8;
 	}
 	if (parts[i].temp > 230 + 273.15f && RNG::Ref().chance(1, 100))
+	{
 		parts[i].tmp = 1;
+	}
 
-	for (int rx = -2; rx <= 2; rx++)
-		for (int ry = -2; ry <= 2; ry++)
+	int r, rx, ry;
+	for (rx = -1; rx < 2; rx++)
+		for (ry = -1; ry < 2; ry++)
 			if (BOUNDS_CHECK && (rx || ry))
 			{
-				int r = pmap[y + ry][x + rx];
+				r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (parts[ID(r)].type != PT_RUBR && !(sim->elements[TYP(r)].Properties&TYPE_SOLID) && !(sim->elements[TYP(r)].Properties&TYPE_ENERGY) && parts[i].tmp == 1)//Bouncy behaviour.
 				{
-					parts[ID(r)].vx = -2*(parts[ID(r)].vx);
-					parts[ID(r)].vy = -2*(parts[ID(r)].vy);
+					if (parts[ID(r)].type != PT_RUBR && parts[i].tmp == 1 && !(sim->elements[TYP(r)].Properties&TYPE_SOLID) && !(sim->elements[TYP(r)].Properties&TYPE_ENERGY))//Bouncy behaviour.
+					{
+						parts[ID(r)].vx = -1.5*(parts[ID(r)].vx);
+						parts[ID(r)].vy = -1.5*(parts[ID(r)].vy);
+					}
+					if (parts[i].temp >= 800.15f || parts[ID(r)].type == PT_FIRE || parts[ID(r)].type == PT_PLSM || parts[ID(r)].type == PT_SMKE)//Burning code
+					{
+						parts[i].tmp2 = 1;
+					}
+
+					if (parts[ID(r)].type == PT_RUBR && parts[ID(r)].tmp2 == 1)
+					{
+						parts[i].tmp2 = 1;
+					}
 				}
 			}
 	return 0;
