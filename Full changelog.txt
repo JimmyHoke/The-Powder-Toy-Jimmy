@@ -1,8 +1,10 @@
 v53.0:
+Update tptmp to v2.0.27
+Fix maticzpl's embedded notification script not working because of a malformed URL
 Fix CLRC not sticking to COPR.
 Fix prop tool not setting x and y coordinates properly.
 Fix RUBR catching fire while bouncing off particles, better burn code.
-Add reaction: OIL and GAS now dissolves RUBR. 
+New reaction: OIL and GAS now dissolves RUBR. 
 Improve the pressure blocking code for wall element.
 URS now handles file renaming globally.
 

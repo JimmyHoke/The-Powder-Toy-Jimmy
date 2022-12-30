@@ -1093,7 +1093,7 @@ local ed7 = Label:new(151,183,120, 10,"Heat conductivity. 0 = No, 255 = Max.")
 local ed8 = Label:new(137,203,120, 10,"Flamability, 0 to a few thousand.")
 local ed9 = Label:new(169,223,120, 10,"Weight , Eg. 1 = Gas, 2 = Light, 98 = Heavy.")
 local ed10 = Label:new(173,243,120, 10,"Acid resistance , Eg. 0 = No effect, 50 = Max.")
-local ed11 = Label:new(137,263,120, 10,"Temp. at which element is spawn.")
+local ed11 = Label:new(137,263,120, 10,"Temp. of element when it is spawned.")
 local ed12 = Label:new(211,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10.")
 local ed13 = Label:new(156,303,120, 10,"How fast the particle falls. -0.1 to 0.4.")
 local ed14 = Label:new(205,323,120, 10,"How much the particle is accelerated by moving air. -1 to 01")
@@ -7571,7 +7571,7 @@ chars_light = {
 }
 
 function notificationscript()
--- Prevent multiple instances of the script running
+--- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
 end
@@ -7779,8 +7779,8 @@ function MaticzplNotifications.CheckForChanges()
         -- FP
         notif.fpCompare = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=16");
         -- By date
-        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate user%3A"..name))
-        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=sort%3Adate user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate%20user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=sort%3Adate%20user%3A"..name))
         -- By votes
         table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=user%3A"..name))
         table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=user%3A"..name))
