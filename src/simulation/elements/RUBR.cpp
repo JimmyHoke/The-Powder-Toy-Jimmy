@@ -53,15 +53,15 @@ static int update(UPDATE_FUNC_ARGS)
 {
 	if (parts[i].tmp2 == 1)
 	{
-		if (RNG::Ref().chance(1, 80))
+		if (RNG::Ref().chance(1, 50))
 		{
 			sim->create_part(-1, x, y - 1, PT_FIRE);
 		}
-		if (RNG::Ref().chance(1, 200))
+		if (RNG::Ref().chance(1, 300))
 		{
 			sim->create_part(-1, x, y - 1, PT_CO2);
 		}
-		if (RNG::Ref().chance(1, 700))
+		if (RNG::Ref().chance(1, 500))
 		{
 			parts[i].life = 70;
 			sim->part_change_type(i, x, y, PT_FIRE);
@@ -91,17 +91,23 @@ static int update(UPDATE_FUNC_ARGS)
 				{
 					if (parts[ID(r)].type != PT_RUBR && parts[i].tmp == 1 && !(sim->elements[TYP(r)].Properties&TYPE_SOLID) && !(sim->elements[TYP(r)].Properties&TYPE_ENERGY))//Bouncy behaviour.
 					{
-						parts[ID(r)].vx = -1.5*(parts[ID(r)].vx);
-						parts[ID(r)].vy = -1.5*(parts[ID(r)].vy);
+						parts[ID(r)].vx = -1.3*(parts[ID(r)].vx);
+						parts[ID(r)].vy = -1.3*(parts[ID(r)].vy);
 					}
 					if (parts[i].temp >= 800.15f || parts[ID(r)].type == PT_FIRE || parts[ID(r)].type == PT_PLSM || parts[ID(r)].type == PT_SMKE)//Burning code
 					{
 						parts[i].tmp2 = 1;
 					}
-
 					if (parts[ID(r)].type == PT_RUBR && parts[ID(r)].tmp2 == 1)
 					{
 						parts[i].tmp2 = 1;
+					}
+					if (parts[ID(r)].type == PT_GAS || parts[ID(r)].type == PT_OIL) //GAS and OIL dissolves RUBR.
+					{
+						if (RNG::Ref().chance(1, 150))
+						{
+							sim->kill_part(i);
+						}
 					}
 				}
 			}

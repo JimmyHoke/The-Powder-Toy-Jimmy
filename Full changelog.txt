@@ -1,6 +1,8 @@
 v53.0:
+Fix CLRC not sticking to COPR.
 Fix prop tool not setting x and y coordinates properly.
-Fix RUBR catching fire while bouncing off particles.
+Fix RUBR catching fire while bouncing off particles, better burn code.
+Add reaction: OIL and GAS now dissolves RUBR. 
 Improve the pressure blocking code for wall element.
 URS now handles file renaming globally.
 
