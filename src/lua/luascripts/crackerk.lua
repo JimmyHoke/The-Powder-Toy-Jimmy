@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 53.0 --53.1 Next version
+local crackversion = 53.1 --53.2 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -467,20 +467,24 @@ gfx.drawText(100,344,downprog.."%",32,216,255,255)
 updatertext = "Updating the mod"
 if reqwin:status() == "done" then
 local reqwindata, reqwincode = reqwin:finish()
+event.unregister(event.tick,updatermod)
 if reqwincode == 200 then
-os.rename(platform.exeName(),"older")
+os.remove("oldmod")--Delete the oldmod file
+updatertext = "Renaming the files.."
+if fs.exists("oldmod") == true then -- if deletion somehow failed, report it as an error.
+os.remove("oldmod")
+errorcode = "Failed to delete oldmod data, report if updater fails!"
+end
+os.rename(platform.exeName(),"oldmod")
 updatertext = "Done"
 f = io.open(platform.exeName(), 'wb')
 f:write(reqwindata)
 f:close()
 updatertext = "Done, click to restart."
-errorcode = "No error to report"
 clickcheck = 1
-event.unregister(event.tick,updatermod)
 else
 timeout = 1
 updatertext = "Click for manual download."
-event.unregister(event.tick,updatermod)
 errorcode = reqwincode
 end
 end
@@ -551,15 +555,15 @@ gfx.drawRect(10,360,590,2,32,216,255,255) -- Normal
 end
 end
 --System and URS info:
-gfx.drawText(190,270,"Welcome to the Cracker1000 Mod's URS Updater",32,216,255,255)
-gfx.drawText(10,284,"Platform detected: "..platform.platform(),255,255,255,255)
-gfx.drawText(300,304,"Internal status code: "..onlinestatus,255,255,255,255)
-gfx.drawText(300,344,"Error code: "..errorcode,255,35,35,255)
-gfx.drawText(10,304,"Updating/ downgrading from",255,255,255,255)
-gfx.drawText(142,304,"v."..crackversion.." to v."..updatever,32,216,255,255)
-gfx.drawText(10,324,"Current Status: "..updatertext,255,255,255,255)
-gfx.drawText(300,324,"File path: "..platform.exeName(),255,255,255,255)
-gfx.drawText(10,344,"Download progress:",255,255,255,255)
+gfx.drawText(190,270,"Welcome to the Cracker1000 Mod's URS Updater",32,216,255)
+gfx.drawText(10,284,"Platform detected: "..platform.platform())
+gfx.drawText(300,344,"Error code: "..errorcode,255,35,35)
+gfx.drawText(10,304,"Updating/ downgrading from")
+gfx.drawText(142,304,"v."..crackversion.." to v."..updatever,32,216,255)
+gfx.drawText(300,304,"Current Status: ")
+gfx.drawText(374,304,updatertext.." ("..onlinestatus..")",32,216,255)
+gfx.drawText(10,324,"Path to the mod: "..platform.exeName())
+gfx.drawText(10,344,"Download progress:")
 end
 -- Hover effects for URS buttons
 if tpt.mousex >10 and tpt.mousex < 205 and tpt.mousey > 367 and tpt.mousey < 380 then
@@ -612,6 +616,7 @@ event.unregister(event.tick,writefile2)
 end
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
+event.unregister(event.tick,writefile2)
 if code2 == 200 then
 onlinestatus = 1 
 --Update checks
@@ -2487,7 +2492,6 @@ end)
 function startupcheck()
 event.register(event.tick,errormesg)
 fs.makeDirectory("scripts")
-os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
 
@@ -2585,6 +2589,7 @@ os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
 os.remove("scripts/autorunsettings.txt")
+os.remove("oldmod")
 platform.restart()
 end
 end)
