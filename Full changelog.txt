@@ -1,5 +1,10 @@
-v53.2:
-Attempt to fix URS filedone errors, again.
+v54.0:
+>>>> Important: You will have to download the v54.0 update manually <<<<
+Fix URS not handling updates properly on linux
+Add various checks to prevent renaming issues when updating
+Other fixes from vanilla after v97.0 beta
+Change appname to Cmod from powder.
+
 
 v53.1:
 Attempt to fix URS filedone errors.

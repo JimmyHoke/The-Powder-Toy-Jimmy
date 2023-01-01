@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 53.2 --53.3 Next version
+local crackversion = 54.0 --Next version: 54.5 
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -436,13 +436,14 @@ local onlinestatus = 0
 --URS Updater
 local updatever, updatestatus = crackversion,0
 local updatertext = "is available, click to download"
-local reqwin
+local reqwin --Defined later on when updater runs.
 local crdata = "Something went wrong. Can't show the changelogs."
 local updatetimer = 0
 local checkos, clickcheck = platform.platform(), 0
 local errtext = "URS updater: checking for updates.."
 local timeout = 0
 local errorcode = "No error to report"
+local appname = "powder"
 
 function updatermod()
 updatetimer = updatetimer + 1
@@ -501,13 +502,13 @@ if clickcheck == 0 then
 clickcheck = 2
 crlog = http.get("https://raw.githubusercontent.com/cracker1000/The-Powder-Toy/master/Full%20changelog.txt")
 if checkos == "WIN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.exe")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/"..appname..".exe")
 elseif checkos == "LIN64" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/"..appname)
 elseif checkos == "WIN32" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder32.exe")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/"..appname.."32.exe")
 elseif checkos == "MACOSARM"  or checkos == "MACOSX" then
-reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/powder.dmg")
+reqwin = http.get("https://github.com/cracker1000/The-Powder-Toy/releases/download/Latest/"..appname..".dmg")
 errorcode = "MAC OS does't support fully automatic updates."
 end
 event.unregister(event.tick,updatermod)
@@ -539,17 +540,17 @@ end
 
 function showmotdnot2() --Draw graphics when updater is running. 
 if clickcheck ~= 0 then
-gfx.fillRect(5,262,600,123,10,10,10,200) -- Window space fill
-gfx.drawRect(5,262,600,123,190,190,190,255) -- Window border
+gfx.fillRect(5,262,600,123,10,10,10,200) --Window space fill
+gfx.drawRect(5,262,600,123,190,190,190,255) --Window border
 if updatertext == "Done, click to restart." then
 gfx.drawText(100,344,"Completed Successfully.",55,255,55,255) -- When Completed
 gfx.drawRect(10,360,590,2,10,250,10,255)
 else
-if timeout == 1 and clickcheck ~= 1 then -- When Error
+if timeout == 1 and clickcheck ~= 1 then --When Error
 gfx.drawText(300,369,"Report the above error code in mod thread.",255,10,10,255)
 gfx.drawRect(10,360,590,2,255,55,55,255)
 else
-gfx.drawRect(10,360,590,2,32,216,255,255) -- Normal
+gfx.drawRect(10,360,590,2,32,216,255,255) --Normal
 end
 end
 --System and URS info:
@@ -633,9 +634,10 @@ onlinestatus = 3 --Something went wrong
 errtext = "URS error code: "..code2
 end
 end
+--specialmsg
+specialmsgval = string.sub(ret2,31,32)
 --Motd stuff
 motw = string.sub(ret2,40,300)
-specialmsgval = string.sub(ret2,31,32)
 if motw ~= "." and onlinestatus == 1 then
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
@@ -677,7 +679,7 @@ tpt.fillrect(390,365,138,14,255,255,0,20)
 end
 tpt.drawrect(390,365,138,14,255,255,0,255)
 tpt.drawrect(418,408,51,14,255-ar,255-ag,255-ab,255)
-gfx.drawText(395,369,"New message, click to view.",245,245,0,255)
+gfx.drawText(395,369,"New message, click to view.",245,225,0,255)
 end
 
 local function strtelemgraph()
@@ -2614,7 +2616,7 @@ graphics.fillRect(2,348,609, 10,20,20,20,200)
 graphics.drawText(posix2,349,motw,255,0,0,255)
 else
 graphics.fillRect(2,258,609, 10,20,20,20,200)
-graphics.drawText(posix2,259,motw,32,216,255,255)
+graphics.drawText(posix2,259,motw,245,225,0,255)
 end
 end
 end
