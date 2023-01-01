@@ -471,9 +471,9 @@ event.unregister(event.tick,updatermod)
 if reqwincode == 200 then
 os.remove("oldmod")--Delete the oldmod file
 local oldName = platform.exeName()
-os.rename(platform.exeName(),platform.exeName():gsub("(.*[/\\])(.*)","%oldmod"))
+os.rename(oldName,"oldmod")
 updatertext = "Renaming files.."
-errorcode = "Issue while renaming files.."
+errorcode = "Error while renaming files.."
 local fupdate = io.open(oldName, 'wb')
 fupdate:write(reqwindata)
 fupdate:close()

@@ -1,6 +1,5 @@
 v53.2:
-Attempt to fix URS filedone errors x2
-Add a global path for renaming files.
+Attempt to fix URS filedone errors, again.
 
 v53.1:
 Attempt to fix URS filedone errors.
