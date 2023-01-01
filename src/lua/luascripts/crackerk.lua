@@ -1,6 +1,6 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 53.1 --53.2 Next version
+local crackversion = 53.2 --53.3 Next version
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
@@ -449,7 +449,7 @@ updatetimer = updatetimer + 1
 if updatetimer >= 3500 then
 if checkos ~= "MACOSARM" and checkos ~= "MACOSX" then
 timeout = 1
-errorcode = "Taking longer than expected"
+errorcode = "Network connection is too slow."
 end
 end
 --Get changelogs
@@ -470,17 +470,14 @@ local reqwindata, reqwincode = reqwin:finish()
 event.unregister(event.tick,updatermod)
 if reqwincode == 200 then
 os.remove("oldmod")--Delete the oldmod file
-updatertext = "Renaming the files.."
-if fs.exists("oldmod") == true then -- if deletion somehow failed, report it as an error.
-os.remove("oldmod")
-errorcode = "Failed to delete oldmod data, report if updater fails!"
-end
-os.rename(platform.exeName(),"oldmod")
-updatertext = "Done"
-f = io.open(platform.exeName(), 'wb')
-f:write(reqwindata)
-f:close()
+os.rename(platform.exeName(),platform.exeName():gsub("(.*[/\\])(.*)","%oldmod"))
+updatertext = "Renaming files.."
+errorcode = "Issue while renaming files.."
+local fupdate = io.open(platform.exeName(), 'wb')
+fupdate:write(reqwindata)
+fupdate:close()
 updatertext = "Done, click to restart."
+errorcode = "No error to report"
 clickcheck = 1
 else
 timeout = 1
