@@ -775,6 +775,7 @@ int main(int argc, char * argv[])
 		ByteString value;
 		if (arg.has_value())
 		{
+			value = arg.value();
 			if (value == "")
 			{
 				value = defaultValue;
