@@ -2097,7 +2097,6 @@ std::pair<bool, std::vector<char>> GameSave::serialiseOPS() const
 				if ((tmp3 || tmp4) && (!PressureInTmp3(particles[i].type) || hasPressure))
 				{
 					fieldDesc |= 1 << 13;
-#if SAVE_VERSION >= 97
 					// The tmp3 of PressureInTmp3 elements is okay to truncate because the loading code
 					// sign extends it anyway, expecting the value to not be higher in magnitude than
 					// 256 (max pressure value) * 64 (tmp3 multiplicative bias).
@@ -2107,7 +2106,6 @@ std::pair<bool, std::vector<char>> GameSave::serialiseOPS() const
 						fieldDesc |= 1 << 16;
 						RESTRICTVERSION(97, 0);
 					}
-#endif
 				}
 
 				// Extra type byte if necessary
@@ -2322,18 +2320,18 @@ std::pair<bool, std::vector<char>> GameSave::serialiseOPS() const
 				{
 					RESTRICTVERSION(96, 0);
 				}
-				//if (particles[i].type == PT_GLAS && particles[i].life > 0)
-				//{
-				//	RESTRICTVERSION(97, 0);
-				//}
-				//if (PressureInTmp3(particles[i].type))
-				//{
-				//	RESTRICTVERSION(97, 0);
-				//}
-				//if (particles[i].type == PT_CONV && particles[i].tmp2 != 0)
-				//{
-					//RESTRICTVERSION(97, 0);
-				//}
+				if (particles[i].type == PT_GLAS && particles[i].life > 0)
+				{
+					RESTRICTVERSION(97, 0);
+				}
+				if (PressureInTmp3(particles[i].type))
+				{
+					RESTRICTVERSION(97, 0);
+				}
+				if (particles[i].type == PT_CONV && particles[i].tmp2 != 0)
+				{
+					RESTRICTVERSION(97, 0);
+				}
 
 				//Get the pmap entry for the next particle in the same position
 				i = partsPosLink[i];
@@ -2426,7 +2424,7 @@ std::pair<bool, std::vector<char>> GameSave::serialiseOPS() const
 	{
 		bson_append_double(&b, "customGravityX", double(customGravityX));
 		bson_append_double(&b, "customGravityY", double(customGravityY));
-		//RESTRICTVERSION(97, 0);
+		RESTRICTVERSION(97, 0);
 	}
 	bson_append_start_object(&b, "minimumVersion");
 	bson_append_int(&b, "major", minimumMajorVersion);
