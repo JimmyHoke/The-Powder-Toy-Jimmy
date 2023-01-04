@@ -46,9 +46,15 @@
 #endif
 
 //VersionInfoStart
+<<<<<<< HEAD
 #define SAVE_VERSION 96
 #define MINOR_VERSION 2
 #define BUILD_NUM 350
+=======
+#define SAVE_VERSION 97
+#define MINOR_VERSION 0
+#define BUILD_NUM 352
+>>>>>>> 225293cc (Update build number and readme date)
 #mesondefine SNAPSHOT_ID
 #mesondefine MOD_ID
 #define FUTURE_SAVE_VERSION 97
