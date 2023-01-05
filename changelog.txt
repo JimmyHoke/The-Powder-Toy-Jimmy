@@ -1,8 +1,0 @@
-Changelog for V51.1
-
-Fix potential crash when opening some saves.
-Turning off Mod elements now hides MIST and SPSH too.
-Fix multiple MIST bugs
-MOVS in now fully functional space ship element. Found under special menu.
-
-**Windows likes to flag tpt updates a virus, please ignore the warnings.**

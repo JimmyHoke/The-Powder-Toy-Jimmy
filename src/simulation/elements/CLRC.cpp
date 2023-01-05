@@ -64,7 +64,7 @@ static int update(UPDATE_FUNC_ARGS)
 				r = pmap[y + ry][x + rx];
 				if (!r)
 					continue;
-				if (sim->elements[TYP(r)].Properties&TYPE_SOLID)
+				if (sim->elements[TYP(r)].Properties&TYPE_SOLID||(parts[ID(r)].type == PT_COPR && parts[ID(r)].tmp2 == 0))
 				{
 					parts[i].life = 5;
 				}

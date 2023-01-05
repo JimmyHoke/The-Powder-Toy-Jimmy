@@ -41,7 +41,7 @@ void Element::Element_CHLR()
 	HighPressureTransition = NT;
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
-	HighTemperature = NT;
+	HighTemperature = ITH;
 	HighTemperatureTransition = NT;
 
 	Update = &update;

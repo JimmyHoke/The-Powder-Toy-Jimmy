@@ -154,6 +154,7 @@ GameModel::GameModel():
 
 	mouseClickRequired = Client::Ref().GetPrefBool("MouseClickRequired", false);
 	includePressure = Client::Ref().GetPrefBool("Simulation.IncludePressure", true);
+	temperatureScale = Client::Ref().GetPrefInteger("Renderer.TemperatureScale", 1);
 
 	ClearSimulation();
 }
@@ -532,6 +533,11 @@ void GameModel::SetEdgeMode(int edgeMode)
 int GameModel::GetEdgeMode()
 {
 	return this->edgeMode;
+}
+
+void GameModel::SetTemperatureScale(int temperatureScale)
+{
+	this->temperatureScale = temperatureScale;
 }
 
 void GameModel::SetAmbientAirTemperature(float ambientAirTemp)
@@ -1106,7 +1112,7 @@ bool GameModel::MouseInZoom(ui::Point position)
 	ui::Point zoomWindowPosition = GetZoomWindowPosition();
 	ui::Point zoomWindowSize = ui::Point(GetZoomSize()*zoomFactor, GetZoomSize()*zoomFactor);
 
-	if (position.X >= zoomWindowPosition.X && position.Y >= zoomWindowPosition.Y && position.X <= zoomWindowPosition.X+zoomWindowSize.X && position.Y <= zoomWindowPosition.Y+zoomWindowSize.Y)
+	if (position.X >= zoomWindowPosition.X && position.Y >= zoomWindowPosition.Y && position.X < zoomWindowPosition.X+zoomWindowSize.X && position.Y < zoomWindowPosition.Y+zoomWindowSize.Y)
 		return true;
 	return false;
 }
@@ -1120,7 +1126,7 @@ ui::Point GameModel::AdjustZoomCoords(ui::Point position)
 	ui::Point zoomWindowPosition = GetZoomWindowPosition();
 	ui::Point zoomWindowSize = ui::Point(GetZoomSize()*zoomFactor, GetZoomSize()*zoomFactor);
 
-	if (position.X >= zoomWindowPosition.X && position.Y >= zoomWindowPosition.Y && position.X <= zoomWindowPosition.X+zoomWindowSize.X && position.Y <= zoomWindowPosition.Y+zoomWindowSize.Y)
+	if (position.X >= zoomWindowPosition.X && position.Y >= zoomWindowPosition.Y && position.X < zoomWindowPosition.X+zoomWindowSize.X && position.Y < zoomWindowPosition.Y+zoomWindowSize.Y)
 		return ((position-zoomWindowPosition)/GetZoomFactor())+GetZoomPosition();
 	return position;
 }
@@ -1236,7 +1242,7 @@ void GameModel::SetPaused(bool pauseState)
 	if (!pauseState && sim->debug_currentParticle > 0)
 	{
 		String logmessage = String::Build("Updated particles from #", sim->debug_currentParticle, " to end due to unpause");
-		sim->UpdateParticles(sim->debug_currentParticle, NPART);
+		sim->UpdateParticles(sim->debug_currentParticle, NPART - 1);
 		sim->AfterSim();
 		sim->debug_currentParticle = 0;
 		Log(logmessage, false);

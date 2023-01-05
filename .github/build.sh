@@ -3,58 +3,25 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-if [[ -z ${BSH_BUILD_PLATFORM-} ]]; then
-	>&2 echo "BSH_BUILD_PLATFORM not set"
-	exit 1
-fi
-if [[ -z ${BSH_HOST_ARCH-} ]]; then
-	>&2 echo "BSH_HOST_ARCH not set"
-	exit 1
-fi
-if [[ -z ${BSH_HOST_PLATFORM-} ]]; then
-	>&2 echo "BSH_HOST_PLATFORM not set"
-	exit 1
-fi
-if [[ -z ${BSH_HOST_LIBC-} ]]; then
-	>&2 echo "BSH_HOST_LIBC not set"
-	exit 1
-fi
-if [[ -z ${BSH_STATIC_DYNAMIC-} ]]; then
-	>&2 echo "BSH_STATIC_DYNAMIC not set"
-	exit 1
-fi
-if [[ -z ${BSH_DEBUG_RELEASE-} ]]; then
-	>&2 echo "BSH_DEBUG_RELEASE not set"
-	exit 1
-fi
-if [[ -z ${RELEASE_NAME-} ]]; then
-	>&2 echo "RELEASE_NAME not set"
-	exit 1
-fi
-if [[ -z ${RELEASE_TYPE-} ]]; then
-	>&2 echo "RELEASE_TYPE not set"
-	exit 1
-fi
-if [[ -z ${MOD_ID-} ]]; then
-	>&2 echo "MOD_ID not set"
-	exit 1
-fi
-if [[ -z ${SEPARATE_DEBUG-} ]]; then
-	>&2 echo "SEPARATE_DEBUG not set"
-	exit 1
-fi
-if [[ -z ${PACKAGE_MODE-} ]]; then
-	>&2 echo "PACKAGE_MODE not set"
-	exit 1
-fi
-if [[ -z ${ASSET_PATH-} ]]; then
-	>&2 echo "ASSET_PATH not set"
-	exit 1
-fi
-if [[ -z ${DEBUG_ASSET_PATH-} ]]; then
-	>&2 echo "DEBUG_ASSET_PATH not set"
-	exit 1
-fi
+if [[ -z ${BSH_BUILD_PLATFORM-} ]]; then >&2 echo "BSH_BUILD_PLATFORM not set"; exit 1; fi
+if [[ -z      ${BSH_HOST_ARCH-} ]]; then >&2 echo      "BSH_HOST_ARCH not set"; exit 1; fi
+if [[ -z  ${BSH_HOST_PLATFORM-} ]]; then >&2 echo  "BSH_HOST_PLATFORM not set"; exit 1; fi
+if [[ -z      ${BSH_HOST_LIBC-} ]]; then >&2 echo      "BSH_HOST_LIBC not set"; exit 1; fi
+if [[ -z ${BSH_STATIC_DYNAMIC-} ]]; then >&2 echo "BSH_STATIC_DYNAMIC not set"; exit 1; fi
+if [[ -z  ${BSH_DEBUG_RELEASE-} ]]; then >&2 echo  "BSH_DEBUG_RELEASE not set"; exit 1; fi
+if [[ -z       ${RELEASE_NAME-} ]]; then >&2 echo       "RELEASE_NAME not set"; exit 1; fi
+if [[ -z       ${RELEASE_TYPE-} ]]; then >&2 echo       "RELEASE_TYPE not set"; exit 1; fi
+if [[ -z             ${MOD_ID-} ]]; then >&2 echo             "MOD_ID not set"; exit 1; fi
+if [[ -z     ${SEPARATE_DEBUG-} ]]; then >&2 echo     "SEPARATE_DEBUG not set"; exit 1; fi
+if [[ -z       ${PACKAGE_MODE-} ]]; then >&2 echo       "PACKAGE_MODE not set"; exit 1; fi
+if [[ -z         ${ASSET_PATH-} ]]; then >&2 echo         "ASSET_PATH not set"; exit 1; fi
+if [[ -z   ${DEBUG_ASSET_PATH-} ]]; then >&2 echo   "DEBUG_ASSET_PATH not set"; exit 1; fi
+if [[ -z           ${APP_NAME-} ]]; then >&2 echo           "APP_NAME not set"; exit 1; fi
+if [[ -z        ${APP_COMMENT-} ]]; then >&2 echo        "APP_COMMENT not set"; exit 1; fi
+if [[ -z            ${APP_EXE-} ]]; then >&2 echo            "APP_EXE not set"; exit 1; fi
+if [[ -z             ${APP_ID-} ]]; then >&2 echo             "APP_ID not set"; exit 1; fi
+if [[ -z           ${APP_DATA-} ]]; then >&2 echo           "APP_DATA not set"; exit 1; fi
+if [[ -z         ${APP_VENDOR-} ]]; then >&2 echo         "APP_VENDOR not set"; exit 1; fi
 
 case $BSH_HOST_ARCH-$BSH_HOST_PLATFORM-$BSH_HOST_LIBC-$BSH_STATIC_DYNAMIC in
 x86_64-linux-gnu-static) ;;
@@ -75,6 +42,48 @@ arm-android-bionic-static) ;;
 aarch64-android-bionic-static) ;;
 *) >&2 echo "configuration $BSH_HOST_ARCH-$BSH_HOST_PLATFORM-$BSH_HOST_LIBC-$BSH_STATIC_DYNAMIC is not supported" && exit 1;;
 esac
+
+case $BSH_BUILD_PLATFORM in
+linux)
+	sudo apt update
+	if [[ $BSH_STATIC_DYNAMIC == static ]]; then
+		sudo apt install libc6-dev libc6-dev-i386
+	else
+		sudo apt install libluajit-5.1-dev libcurl4-openssl-dev libfftw3-dev zlib1g-dev libsdl2-dev libbz2-dev libjsoncpp-dev
+	fi
+	if [[ $BSH_HOST_PLATFORM-$BSH_HOST_LIBC == windows-mingw ]]; then
+		sudo apt install g++-mingw-w64-x86-64
+	fi
+	;;
+darwin)
+	brew install pkg-config binutils
+	if [[ $BSH_STATIC_DYNAMIC != static ]]; then
+		brew install luajit curl fftw zlib sdl2 bzip2 jsoncpp
+	fi
+	;;
+esac
+
+function inplace_sed() {
+	local subst=$1
+	local path=$2
+	if [[ $BSH_BUILD_PLATFORM == darwin ]]; then
+		sed -i "" -e $subst $path
+	else
+		sed -i $subst $path
+	fi
+}
+
+function subst_version() {
+	local path=$1
+	if [[ $BSH_HOST_PLATFORM == darwin ]]; then
+		inplace_sed "s|SUBST_MACOS_MIN_VER|$macos_min_ver|g" $path
+	else
+		inplace_sed "s|SUBST_DATE|$(date --iso-8601)|g" $path
+	fi
+	inplace_sed "s|SUBST_SAVE_VERSION|$save_version|g" $path
+	inplace_sed "s|SUBST_MINOR_VERSION|$minor_version|g" $path
+	inplace_sed "s|SUBST_BUILD_NUM|$build_num|g" $path
+}
 
 if [[ $BSH_HOST_PLATFORM == android ]]; then
 	android_platform=android-30
@@ -104,17 +113,16 @@ elif [[ $BSH_HOST_PLATFORM == darwin ]]; then
 	CC=clang
 	CXX=clang++
 	if [[ $BSH_HOST_ARCH == aarch64 ]]; then
-		if [[ $BSH_STATIC_DYNAMIC == static ]]; then
-			export MACOSX_DEPLOYMENT_TARGET=11.0
-		fi
+		macos_min_ver=11.0
 		CC+=" -arch arm64"
 		CXX+=" -arch arm64"
 	else
-		if [[ $BSH_STATIC_DYNAMIC == static ]]; then
-			export MACOSX_DEPLOYMENT_TARGET=10.9
-		fi
+		macos_min_ver=10.13
 		CC+=" -arch x86_64"
 		CXX+=" -arch x86_64"
+	fi
+	if [[ $BSH_STATIC_DYNAMIC == static ]]; then
+		export MACOSX_DEPLOYMENT_TARGET=$macos_min_ver
 	fi
 	export CC
 	export CXX
@@ -159,27 +167,33 @@ if [[ $BSH_HOST_PLATFORM-$BSH_HOST_LIBC != windows-msvc ]]; then
 	fi
 fi
 if [[ $BSH_HOST_PLATFORM-$BSH_STATIC_DYNAMIC == darwin-static ]]; then
-	if [[ $BSH_HOST_ARCH == aarch64 ]]; then
-		c_args+=\'-mmacosx-version-min=11.0\',
-		c_link_args+=\'-mmacosx-version-min=11.0\',
-	else
-		c_args+=\'-mmacosx-version-min=10.9\',
-		c_link_args+=\'-mmacosx-version-min=10.9\',
-	fi
+	c_args+=\'-mmacosx-version-min=$macos_min_ver\',
+	c_link_args+=\'-mmacosx-version-min=$macos_min_ver\',
 fi
 
 meson_configure=meson$'\t'setup
 if [[ $BSH_DEBUG_RELEASE == release ]]; then
 	meson_configure+=$'\t'-Dbuildtype=debugoptimized
 fi
+meson_configure+=$'\t'-Dapp_name=$APP_NAME
+meson_configure+=$'\t'-Dapp_comment=$APP_COMMENT
+meson_configure+=$'\t'-Dapp_exe=$APP_EXE
+meson_configure+=$'\t'-Dapp_id=$APP_ID
+meson_configure+=$'\t'-Dapp_data=$APP_DATA
+meson_configure+=$'\t'-Dapp_vendor=$APP_VENDOR
 meson_configure+=$'\t'-Db_strip=false
 meson_configure+=$'\t'-Db_staticpic=false
 meson_configure+=$'\t'-Dinstall_check=true
 meson_configure+=$'\t'-Dmod_id=$MOD_ID
-if [[ $BSH_HOST_ARCH-$BSH_HOST_PLATFORM-$BSH_HOST_LIBC == x86_64-linux-gnu ]]; then
+case $BSH_HOST_ARCH-$BSH_HOST_PLATFORM-$BSH_HOST_LIBC-$BSH_DEBUG_RELEASE in
+x86_64-linux-gnu-debug) ;&
+x86_64-windows-mingw-debug) ;&
+x86_64-windows-msvc-debug) ;&
+x86_64-darwin-macos-debug)
 	meson_configure+=$'\t'-Dbuild_render=true
 	meson_configure+=$'\t'-Dbuild_font=true
-fi
+	;;
+esac
 if [[ $BSH_STATIC_DYNAMIC == static ]]; then
 	meson_configure+=$'\t'-Dstatic=prebuilt
 	if [[ $BSH_HOST_PLATFORM == windows ]]; then
@@ -258,9 +272,14 @@ if [[ $BSH_HOST_PLATFORM-$BSH_HOST_ARCH == darwin-aarch64 ]]; then
 	meson_configure+=$'\t'--cross-file=.github/macaa64-ghactions.ini
 fi
 if [[ $RELEASE_TYPE == tptlibsdev ]] && ([[ $BSH_HOST_PLATFORM == windows ]] || [[ $BSH_STATIC_DYNAMIC == static ]]); then
-	if [[ -z "${GITHUB_REPOSITORY_OWNER-}" ]]; then
-		>&2 echo "GITHUB_REPOSITORY_OWNER not set"
-		exit 1
+	if [[ -z ${TPTLIBSREMOTE-} ]]; then
+		if [[ -z "${GITHUB_REPOSITORY_OWNER-}" ]]; then
+			>&2 echo "GITHUB_REPOSITORY_OWNER not set"
+			exit 1
+		fi
+		tptlibsremote=https://github.com/$GITHUB_REPOSITORY_OWNER/tpt-libs
+	else
+		tptlibsremote=$TPTLIBSREMOTE
 	fi
 	if [[ "$BSH_HOST_ARCH-$BSH_HOST_PLATFORM-$BSH_HOST_LIBC-$BSH_STATIC_DYNAMIC $BSH_BUILD_PLATFORM" == "x86_64-windows-mingw-dynamic linux" ]]; then
 		>&2 echo "this configuration is not supported in tptlibsdev mode"
@@ -268,10 +287,13 @@ if [[ $RELEASE_TYPE == tptlibsdev ]] && ([[ $BSH_HOST_PLATFORM == windows ]] || 
 		exit 0
 	fi
 	tptlibsbranch=$(echo $RELEASE_NAME | cut -d '-' -f 2-) # $RELEASE_NAME is tptlibsdev-BRANCH
+	if [[ -d build-tpt-libs ]] && [[ ${TPTLIBSRESET-} == yes ]]; then
+		rm -rf build-tpt-libs
+	fi
 	if [[ ! -d build-tpt-libs/tpt-libs ]]; then
 		mkdir -p build-tpt-libs
 		cd build-tpt-libs
-		git clone https://github.com/$GITHUB_REPOSITORY_OWNER/tpt-libs --branch $tptlibsbranch --depth 1
+		git clone $tptlibsremote --branch $tptlibsbranch --depth 1
 		cd ..
 	fi
 	tpt_libs_vtag=v00000000000000
@@ -333,19 +355,19 @@ strip_target=$ASSET_PATH
 if [[ $BSH_HOST_PLATFORM == android ]]; then
 	strip=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-$strip
 	objcopy=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-$objcopy
-	strip_target=libpowder.so
+	strip_target=lib$APP_EXE.so
 fi
 if [[ $PACKAGE_MODE == appimage ]]; then
 	# so far this can only happen with $BSH_HOST_PLATFORM-$BSH_HOST_LIBC == linux-gnu, but this may change later
 	meson configure -Dinstall_check=false -Dignore_updates=true -Dbuild_render=false -Dbuild_font=false
-	strip_target=powder
+	strip_target=$APP_EXE
 fi
 if [[ $BSH_BUILD_PLATFORM == windows ]]; then
 	set +e
 	ninja -v -d keeprsp
 	ninja_code=$?
 	set -e
-	cat powder.exe.rsp
+	cat $APP_EXE.exe.rsp
 	[[ $ninja_code == 0 ]];
 else
 	ninja -v
@@ -360,16 +382,39 @@ fi
 if [[ $BSH_HOST_PLATFORM == android ]]; then
 	$JAVA_HOME_8_X64/bin/keytool -genkeypair -keystore keystore.jks -alias androidkey -validity 10000 -keyalg RSA -keysize 2048 -keypass bagelsbagels -storepass bagelsbagels -dname "CN=nobody"
 	meson configure -Dandroid_keystore=$(realpath keystore.jks)
-	ANDROID_KEYSTORE_PASS=bagelsbagels ninja android/powder.apk
-	mv android/powder.apk powder.apk
+	ANDROID_KEYSTORE_PASS=bagelsbagels ninja android/$APP_EXE.apk
+	mv android/$APP_EXE.apk $APP_EXE.apk
 fi
-if [[ $PACKAGE_MODE == appimage ]]; then
+if [[ $PACKAGE_MODE == dmg ]]; then
+	# so far this can only happen with $BSH_HOST_PLATFORM-$BSH_HOST_LIBC == darwin-macos
+	appdir=$APP_NAME.app
+	mkdir $appdir
+	mkdir $appdir/Contents
+	cp resources/Info.plist $appdir/Contents/Info.plist
+	subst_version $appdir/Contents/Info.plist
+	mkdir $appdir/Contents/MacOS
+	cp $APP_EXE $appdir/Contents/MacOS/$APP_EXE
+	mkdir $appdir/Contents/Resources
+	mkdir icon_exe.iconset
+	cp ../resources/generated_icons/icon_exe_16.png icon_exe.iconset/icon_16x16.png
+	cp ../resources/generated_icons/icon_exe_32.png icon_exe.iconset/icon_32x32.png
+	cp ../resources/generated_icons/icon_exe.png    icon_exe.iconset/icon_128x128.png
+	iconutil -c icns icon_exe.iconset
+	cp icon_exe.icns $appdir/Contents/Resources/icon_exe.icns
+	mkdir icon_cps.iconset
+	cp ../resources/generated_icons/icon_cps_16.png icon_cps.iconset/icon_16x16.png
+	cp ../resources/generated_icons/icon_cps_32.png icon_cps.iconset/icon_32x32.png
+	cp ../resources/generated_icons/icon_cps.png    icon_cps.iconset/icon_128x128.png
+	iconutil -c icns icon_cps.iconset
+	cp icon_cps.icns $appdir/Contents/Resources/icon_cps.icns
+	mkdir dmgroot
+	mv $appdir dmgroot/$appdir
+	cp ../LICENSE dmgroot/LICENSE
+	cp ../README.md dmgroot/README.md
+	hdiutil create uncompressed.dmg -ov -volname $APP_NAME -fs HFS+ -srcfolder dmgroot
+	hdiutil convert uncompressed.dmg -format UDZO -o $ASSET_PATH
+elif [[ $PACKAGE_MODE == appimage ]]; then
 	# so far this can only happen with $BSH_HOST_PLATFORM-$BSH_HOST_LIBC == linux-gnu, but this may change later
-	cp resources/appdata.xml appdata.xml
-	sed -i "s|SUBST_DATE|$(date --iso-8601)|g" appdata.xml
-	sed -i "s|SUBST_SAVE_VERSION|$save_version|g" appdata.xml
-	sed -i "s|SUBST_MINOR_VERSION|$minor_version|g" appdata.xml
-	sed -i "s|SUBST_BUILD_NUM|$build_num|g" appdata.xml
 	case $BSH_HOST_ARCH in
 	aarch64) appimage_arch=aarch64;;
 	arm)     appimage_arch=armhf  ;;
@@ -385,12 +430,13 @@ if [[ $PACKAGE_MODE == appimage ]]; then
 	mkdir -p $appdir/usr/share/metainfo
 	mkdir -p $appdir/usr/share/applications
 	mkdir -p $appdir/usr/share/icons
-	cp powder $appdir/usr/bin/powder
+	cp $APP_EXE $appdir/usr/bin/$APP_EXE
 	mv AppRun $appdir/AppRun
-	cp ../resources/icon/powder-128.png $appdir/powder.png
-	cp resources/powder.desktop $appdir/uk.co.powdertoy.tpt.desktop
-	cp appdata.xml $appdir/usr/share/metainfo/uk.co.powdertoy.tpt.appdata.xml
-	cp $appdir/powder.png $appdir/usr/share/icons/powder.png
-	cp $appdir/uk.co.powdertoy.tpt.desktop $appdir/usr/share/applications/uk.co.powdertoy.tpt.desktop
+	cp ../resources/icon_exe.svg $appdir/$APP_VENDOR-$APP_EXE.svg
+	cp resources/powder.desktop $appdir/$APP_ID.desktop
+	cp resources/appdata.xml $appdir/usr/share/metainfo/$APP_ID.appdata.xml
+	subst_version $appdir/usr/share/metainfo/$APP_ID.appdata.xml
+	cp $appdir/$APP_VENDOR-$APP_EXE.svg $appdir/usr/share/icons/$APP_VENDOR-$APP_EXE.svg
+	cp $appdir/$APP_ID.desktop $appdir/usr/share/applications/$APP_ID.desktop
 	./appimagetool $appdir $ASSET_PATH
 fi

@@ -1,21 +1,23 @@
 --Cracker1000 mod interface script--
 local passreal = "12345678"
-local crackversion = 51.1 --51.5 Next version
+local crackversion = 54.0 --Next version: 54.5 
 local passreal2 = "DMND"
 local motw = "."
 local specialmsgval = 0
+local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 
 --TOOL for MISL
 local MISLT = elem.allocate("CR1K", "MIST")
 local tcount, posxt, posyt = 0,0,0
 elem.element(MISLT, elem.element(elem.DEFAULT_PT_DMND))
 elem.property(MISLT, "Name", "MIST")
+elem.property(MISLT, "Properties", elem.PROP_NOCTYPEDRAW)
 elem.property(MISLT, "Description", "Help: Missile Target Tool. Click once to place the holder and then click again to set the target. Places one at a time.")
 elem.property(MISLT, "Color", 0xFFA500)
 elem.property(MISLT, "MenuSection", elem.SC_TOOL)
 elem.property(MISLT, "Update", function (i)
 if tonumber(sim.elementCount(elem.CR1K_PT_MIST)) > 1 then
-pcall(tpt.set_property, "type",0,i)
+sim.partKill(i)
 elseif tonumber(sim.elementCount(elem.CR1K_PT_MIST)) < 2 then
 posxt = tpt.get_property("x",i)
 posyt = tpt.get_property("y",i)
@@ -27,7 +29,7 @@ pcall(tpt.set_property, "type",228,i)
 print("Target set ("..tpt.mousex..", "..tpt.mousey..")")
 end
 function setcoord2()
-pcall(tpt.set_property, "type",0,i)
+sim.partKill(i)
 print("Cancelled!")
 end
 if tcount == 0 then
@@ -62,23 +64,23 @@ end
 return false
 end
 --TOOL end
-local Exitplne = Button:new(03,290,20,15, "X", "Disable Plane")
-local PLNEBST = Button:new(60,290,20,15, "BST", "Toggle Booster.")
+local Exitplne = Button:new(10,295,20,12, "X", "Disable Space ship")
+local PLNEBST = Button:new(55,295,20,12, "BST", "Toggle Booster.")
 local planebwd = Button:new(10,322,20,15, "Ul", "Move Up + Left")
 local planebwa = Button:new(56,322,20,15, "Ur", "Move Up + Right")
-local planebcharge = Button:new(10,360,20,15, "Chrg", "Recharge.")
-local planebExpl = Button:new(56,360,20,15, "Exp", "Explode")
+local planebcharge = Button:new(10,358,20,15, "Chrg", "Recharge.")
+local planebExpl = Button:new(56,358,20,15, "Exp", "Explode")
 
 local planebw = Button:new(33,322,20,15, "^", "Move Up")
-local planebd = Button:new(60,340,15,15, ">", "Move Right")
-local planeba = Button:new(10,340,15,15, "<", "Move Left")
-local planebs = Button:new(33,360,20,15, "V", "Move Down")
-local planebst = Button:new(30,341,25,15, "Stop", "Stop")
-local planemoveval, Plx, Ply, PLNEFUEL, PLNEBOOST = 0,0,0,2000,0
+local planebd = Button:new(57,340,15,15, ">", "Move Right")
+local planeba = Button:new(13,340,15,15, "<", "Move Left")
+local planebs = Button:new(33,358,20,15, "V", "Move Down")
+local planebst = Button:new(30,340,25,15, "Stop", "Stop")
+local planemoveval, Plx, Ply, PLNEFUEL, PLNEBOOST = 0,0,0,4000,0
 
 planebcharge:action(function(sender)
-if PLNEFUEL < 2000 then
-PLNEFUEL = PLNEFUEL + 20
+if PLNEFUEL < 4000 then
+PLNEFUEL = PLNEFUEL + 50
 end
 end)
 
@@ -129,7 +131,7 @@ planemoveval = 0
 end)
 
 Exitplne:action(function(sender)
-sim.clearSim()
+deletespsh()
 event.unregister(event.tick,plnegraphics)
 interface.removeComponent(PLNEBST)
 interface.removeComponent(planebcharge)
@@ -148,6 +150,7 @@ end)
 local PLNE = elem.allocate("CR1K", "PLNE")
 elem.element(PLNE, elem.element(elem.DEFAULT_PT_EQVE))
 elem.property(PLNE, "Name", "SPSH")
+elem.property(PLNE, "Properties", elem.PROP_NOCTYPEDRAW)
 elem.property(PLNE, "Description", "Space ship. Flies with the on screen controller.")
 elem.property(PLNE, "Color", 0xAAAAA0)
 elem.property(PLNE, "MenuSection", elem.SC_SPECIAL)
@@ -157,8 +160,11 @@ Plx = tpt.get_property("vx",i)
 Ply = tpt.get_property("vy",i)
 Plosx = tpt.get_property("x",i)
 Plosy = tpt.get_property("y",i)
+function deletespsh()
+sim.partKill(i)
+end
 if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 1 then
-pcall(tpt.set_property, "type", 0, i)
+sim.partKill(i)
 end
 addbuttons()
 function Explode()
@@ -176,8 +182,8 @@ elseif PLNEBOOST == 1 then
 PLNEFUEL = PLNEFUEL - 4
 end
 end
-if PLNEFUEL > 2000 then
-PLNEFUEL = 2000
+if PLNEFUEL > 4000 then
+PLNEFUEL = 4000
 end
 if tpt.get_property("x",i) > 605 then
 pcall(tpt.set_property, "x", 600, i)
@@ -205,11 +211,11 @@ pcall(tpt.set_property, "vy", Ply  - Movespeed, i) --Up
 elseif planemoveval == 2 then
 pcall(tpt.set_property, "vy", Ply  + Movespeed, i) --Down
 elseif planemoveval == 6 then
-pcall(tpt.set_property, "vx", Plx  + Movespeed, i)
-pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + RIGHT
+pcall(tpt.set_property, "vx", Plx  + Movespeed, i) -- UP + RIGHT
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) 
 elseif planemoveval == 7 then
-pcall(tpt.set_property, "vx", Plx  - Movespeed, i)
-pcall(tpt.set_property, "vy", Ply  - Movespeed, i) -- UP + LEFT
+pcall(tpt.set_property, "vx", Plx  - Movespeed, i) -- UP + LEFT
+pcall(tpt.set_property, "vy", Ply  - Movespeed, i) 
 end
 end
 end
@@ -235,32 +241,39 @@ end
 
 function plnegraphics()
 if PLNEBOOST == 1 then
-gfx.fillRect(50,293,6,6,0,255,0,255)
+gfx.fillRect(45,298,6,6,0,255,0,255)
 else
-gfx.fillRect(50,293,6,6,255,0,0,255)
+gfx.fillRect(45,298,6,6,255,0,0,255)
 end
-gfx.drawRect(1,286,82,93,32,216,255,255)
-gfx.fillRect(1,286,82,93,32,216,255,15)
-if PLNEFUEL/10 >= 150 then
-gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
-elseif PLNEFUEL/10 < 150 and PLNEFUEL/10 >= 100 then
-gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,255,255,255)
+gfx.drawRect(7,292,72,85,32,216,255,255)
+gfx.fillRect(7,292,72,85,10,10,10,50)
+if tonumber(sim.elementCount(elem.CR1K_PT_PLNE)) > 0 then
+gfx.fillRect(14,308,60,12,10,10,10,100)
+if PLNEFUEL/10 >= 200 then
+gfx.drawText(19,310,"Fuel: "..PLNEFUEL/10,55,255,55,255)
+elseif PLNEFUEL/10 < 200 and PLNEFUEL/10 >= 100 then
+gfx.drawText(19,310,"Fuel: "..PLNEFUEL/10,255,255,255,255)
 elseif PLNEFUEL/10 < 100 and PLNEFUEL/10 > 10 then
-gfx.drawText(17,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
+gfx.drawText(19,310,"Fuel: "..PLNEFUEL/10,255,55,55,255)
 elseif PLNEFUEL/10 <= 10 then
 gfx.drawText(17,310,"Fuel: Empty",255,55,55,255)
 end
-if planemoveval ~= 0 then 
-gfx.drawRect(Plosx+1,Plosy+3,1,2,255,255,55,255)
-gfx.drawRect(Plosx+7,Plosy+3,1,2,255,255,55,255)
-gfx.drawCircle(Plosx+1,Plosy+4,2,2,55,55,255,255)
-gfx.drawCircle(Plosx+7,Plosy+4,2,2,55,55,255,255)
+if planemoveval ~= 0 and PLNEFUEL/10 > 10 then
+if PLNEBOOST == 1 then
+gfx.fillCircle(Plosx,Plosy+6,2,3,255,255,0,255)
+elseif  PLNEBOOST == 0 then
+gfx.fillCircle(Plosx,Plosy+6,2,3,131,0,255,255)
 end
-gfx.fillRect(Plosx,Plosy,10,2,255,55,55,255)
-gfx.drawCircle(Plosx+4,Plosy-3,3,2,55,55,255,255)
+end
+gfx.fillRect(Plosx-3,Plosy,8,2,255,55,55,255)
+gfx.fillCircle(Plosx,Plosy-3,3,3,55,55,255,255)
+gfx.drawCircle(Plosx,Plosy-3,3,3,255,255,255,255)
+else
+gfx.drawText(16,310,"Signal lost",255,55,55,255)
+end
 end 
+--PLNE END
 --Default theme for initial launch and resets
-local dr, dg, db, da, defaulttheme = 131,0,255,255, "Default"
 if MANAGER.getsetting("CRK", "pass") == "1" then
 local passmenu = Window:new(200,150, 200, 100)
 local passok = Button:new(110,75,80,20,"Enter", "Hide.")
@@ -424,7 +437,6 @@ local req3 = http.get("https://jimmyhoke.net/jimmysmodversion")
 local timermotd = 0
 local posix = 0
 local onlinestatus = 0 
-
 local errtimer = 0
 function runupdater()
 event.unregister(event.tick,errormesg)
@@ -440,14 +452,14 @@ event.unregister(event.tick,writefile2)
 end
 if req2:status() == "done" then
 local ret2, code2 = req2:finish()
+event.unregister(event.tick,writefile2)
 if code2 == 200 then
-
 end
+--specialmsg
+specialmsgval = string.sub(ret2,31,32)
 --Motd stuff
 motw = string.sub(ret2,40,300)
-specialmsgval = string.sub(ret2,31,32)
-onlinestatus = 1 
-if motw ~= "." then
+if motw ~= "." and onlinestatus == 1 then
 posix = graphics.textSize(motw)
 if motw ~= MANAGER.getsetting("CRK","storedmotd") then
 
@@ -469,21 +481,22 @@ end
 end
 
 function clicktomsg()
-if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 367 and tpt.mousey < 380 then
+if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 365 and tpt.mousey < 379 then
 open()
 return false
 end
 end
 
 function showmotdnot()
-if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 367 and tpt.mousey < 380 then
-tpt.fillrect(390,366,138,14,32,250,210,120)
+tpt.fillrect(390,365,138,14,10,10,10,250)
+if tpt.mousex >389 and tpt.mousex < 528 and tpt.mousey > 365 and tpt.mousey < 379 then
+tpt.fillrect(390,365,138,14,255,255,0,120)
 else
-tpt.fillrect(390,366,138,14,32,250,210,20)
+tpt.fillrect(390,365,138,14,255,255,0,20)
 end
-tpt.drawrect(390,366,138,14,32,250,210,255)
+tpt.drawrect(390,365,138,14,255,255,0,255)
 tpt.drawrect(418,408,51,14,255-ar,255-ag,255-ab,255)
-gfx.drawText(395,370,"New message, click to view.",32,250,210,255)
+gfx.drawText(395,369,"New message, click to view.",245,225,0,255)
 end
 
 local function strtelemgraph()
@@ -902,7 +915,7 @@ local ed7 = Label:new(151,183,120, 10,"Heat conductivity. 0 = No, 255 = Max.")
 local ed8 = Label:new(137,203,120, 10,"Flamability, 0 to a few thousand.")
 local ed9 = Label:new(169,223,120, 10,"Weight , Eg. 1 = Gas, 2 = Light, 98 = Heavy.")
 local ed10 = Label:new(173,243,120, 10,"Acid resistance , Eg. 0 = No effect, 50 = Max.")
-local ed11 = Label:new(137,263,120, 10,"Temp. at which element is spawn.")
+local ed11 = Label:new(137,263,120, 10,"Temp. of element when it is spawned.")
 local ed12 = Label:new(211,283,120, 10,"How much the particle wiggles, mainly for gases, range 0 - 10.")
 local ed13 = Label:new(156,303,120, 10,"How fast the particle falls. -0.1 to 0.4.")
 local ed14 = Label:new(205,323,120, 10,"How much the particle is accelerated by moving air. -1 to 01")
@@ -1033,7 +1046,7 @@ end)
 
 Help:action(function(sender)
 close()
-randsav = math.random(1,2880229)
+randsav = math.random(1,2963348)
 sim.loadSave(randsav, 0) 
 end)
 
@@ -1566,10 +1579,10 @@ local nextpg = Button:new(342, 400, 40, 15, "Next")
 local close2 = Button:new(570, 400, 50, 15, "Close")
 
 local wpage1 = "01) CWIR: Customisable wire. Conduction speed set using .tmp property (Range is 0 to 8) \n    .tmp2 property is used for setting melting point (default is 2000C).\n\n02) VSNS: Velocity sensor. Creates sprk when there's a particle with velocity higher than its temp.\n\n03) TIMC: Time Crystal, powder that converts into its ctype when sparked with PSCN.\n\n04) FUEL: Powerful fuel, explodes when temp is above 50C or Pressure above 14.\n\n05) THRM: Thermostat. Maintains the surrounding temp based on its own .temp property.\n\n06) CLNT: Coolant. Cools down the temp of the system. Use .tmp to configure the cooling/heating power.\n    Evaporates at extreme temperatures into WTRV.\n\n07) DMRN: Demron. Radioactive shielding material and a better indestructible heat insulator.\n    It can also block energy particles like PROT.\n\n08) FNTC & FPTC: Faster versions of NTCT and PTCT. Useful for making faster logic gates.\n\n09) PINV: Powered Invisible, allows particles to move through it only when activated. Use with PSCN and NSCN.\n\n10) UV: UV rays, harms stkms (-5 life every frame), visible with FILT, grows plnt, can sprk pscn and evaporates watr.\n    Can split WATR into O2 and H2 when passed through FILT. Makes PHOS glow, ionises RADN. PHOT + GRPH -> UV. \n\n11) SUN.: Emits rays which makes PLNT grow in direction of sun, emits UV radiation, makes PSCN spark and heals STKMs.\n\n12) CLUD: Realistic cloud, rains and creates LIGH after sometime (every 1000 frames). Cool below 0C to make it snow.\n\n13) LBTR: Lithium Ion Battery, Use with PSCN and NSCN. Charges with INST when deactivated. Life sets capacity.\n    Reacts with different elements like O2, WATR, ACID etc as IRL."
-local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, creats sprk when there is an element with higher .tmp than its temp. Supports .tmp deserialisation.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
-local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
+local wpage2 = "14) LED: Light Emmiting Diode. Use PSCN to power it on. Temp. sets the brightness. Glows in its dcolour (Default set to white).\n\n15) QGP: Quark Gluon Plasma, bursts out radiation afer sometime. Turns into Purple QGP when under 100C which is stable.\n    Glows in different colours just before exploding. \n\n16) TMPS: .tmp sensor, .tmp3 modes => value = 0 or 1 detects tmp, .tmp3 = 2 (.tmp2), 3 = .tmp3 and 4 = .tmp4. \n    Rest all is same as any other sensor. Supports serialisation and deserilisation of all tmp values too.\n\n17) PHOS: Phosphorus. Shiny white particle, slowly oxidises into red phosphorus with time. \n    Burns instantly with CFLM. Reacts violently with Oxygen. Burns slowly when ignited with FIRE.\n    Oil reverses the oxidation turning it back into white PHOS, acts as a fertiliser for PLNT. Melts at 45C. Glows under UV.\n\n18) CMNT: Cement, creates an exothermic reaction when mixed with water and gets solidified, darkens when solid.\n\n19) NTRG: Nitrogen gas, liquifies to LN2 when cooled or when under pressure, reacts with H2 to make NITR and puts out fire.\n\n20) PRMT: Promethium, radioactive element. Catches fire at high velocity (>12), creats NEUT when mixed with PLUT. \n    Explodes at low temp and emits neut at high temp.\n\n21) BEE: Eats PLNT. Makes wax hive at center when health > 90. Attacks STKMs and FIGH can regulate temp.\n    Gets aggresive if life gets below 30. Tries to return to center when life >90. Falls down when life is low.\n\n22) ECLR: Electronic eraser, clears the defined radius (.tmp) when activated (Use with PSCN and NSCN). \n\n23) PROJ: Projectile, converts into its's ctype upon collision. launch with PSCN. Temperature = power while .tmp = range.\n    Limits: Both .tmp and temp. if set to negative or >100 will be reset.\n\n24) PPTI and PPTO: Powered Versions of PRTI and PRTO, use with PSCN and NSCN.\n\n25) SEED: Grows into PLNT of random height when placed on DUST/SAND/CLST and Watered. Needs warm temp. to grow."
+local wpage3 = "26) CSNS: Ctype sensor, detects nearby element's ctype. Useful when working with LAVA.\n\n27) CPPR: Copper, excellent conductor. Loses conductivity when oxidised with O2 or when it is heated around temp. of 300C.\n    Oxide form breaks apart when under pressures above 4.0. Becomes a super conductor when cooled below -200C.\n\n28) CLRC: Clear coat. A white fluid that coats solids. Becomes invisible with UV. Non conductive and acid resistant.\n\n29) CEXP: Customisable explosive. Temperature = temp. that it reaches while exploding.\n    .Life and .tmp determines the pressure and power (0-10) respectively that it generates (preset to be stronger).\n\n30) PCON: Powered CONV. Use with PSCN and NSCN. Set its Ctype carefully!\n\n31) STRC: Structure, Falls apart without support. CNCT and Solids can support it. \n    .tmp2 = Max overhang strength. (Default = 10). \n\n32) BFLM: Black Flames. Burns everything it touches even VIRS, can't be stopped. DMRN & WALL are immune to it.\n\n33) TURB: Turbine, generates sprk under pressure. Discharges to PSCN. Changes colour as per pressure. \n    Performance = Poor when pressure is >4 and <16, Moderate above >16, Best above 30, breaks around 50.\n\n34) PET: STKM/STKM2's new AI friend. Follows them while also healing them. Tries to regulate temp. when healthy.\n    Colour of head shows health. Uses PLNT/WATR to stay alive. Avoids harmful particles like ACID/ LAVA. Can avoid falling. \n    Avoids areas of extreme temps. Kills nearby pets. Expands and blasts if life drops below 10. \n\n35) MISL: Missile, flies to target (X=tmp, Y=tmp2) shown as crosshair (use PSCN to hide it). Blasts when at coords or >500C.\n    Use the MIST tool under tools section for much better experience.\n\n36) AMBE: Sets ambient air temp as per its own Temp. Powered Element. tmp = area it affects (1-25).\n\n37) ACTY: Acetylene, light gas that burns quickly ~1100C, burns hotter ~3500C & longer with O2. Makes LBRD with Chlorine."
 local wpage4 = "38) Cl: Chlorine gas, settles down fast. Photochemical reaction with H2. 1/400 chance of Cl + H2 = ACID.\n    Cl + WATR = DSTW (distillation below 50C) or ACID (>50C). Kills STKM.\n    Decays organic matter like PLNT, YEST, WOOD, SEED, etc. Slows when cooled. Rusts IRON & BMTL.\n\n39) WALL: Walls now in element form (1x1), can block pressure, PROT and is an indestructible INSL.\n\n40) ELEX: A strange element that can turn into any random element (only when above 0C).\n\n41) RADN: A heavy radioactive gas with short half-life (Emits neut while decaying). Can conduct SPRK.\n    Ionises in presence of UV (glows red) and then emits different radioactive elements.\n\n42) GRPH: Graphite. Excellent heat and electricity conductor. Melts at 3900C. GRPH + O2 -> CO2 and PHOT + GRPH -> UV.\n    Once ignited (when > 450C) the flames are very difficult to stop. Absorbs NEUT and thus acting as a moderator.\n\n43) BASE: Base, forms salt when reacted with acid. Dissolves certain metals like METL, BMTL, GOLD, BRMT, IRON, BREL etc.\n    Strength reduces upon dilution with water (turns brown). Turns GRPH, COAL, BCOL etc to CO2. Evaporates when > 150C.\n\n44) WHEL: Wheel. Spins when powered with PSCN. RPM increases with time. Use .tmp to set the wheel size.\n    Wheel Size Range: 05-50 (8 = default). Use decoroations for spoke colour. Note: SPRK the center particle and not the rim.\n    Sparking with NSCN decreases the RPM eventually stopping it. Temperature (100C-1000C) sets the max RPM (400C default).\n\n45) NAPM: Napalm. Viscous liquid that's impossible to extinguish once ignited. Sticks to solids. Use in small amounts.\n    Reaches temp. around 1200C while burning. Ignites when around 100C.\n\n46) GSNS: Gravity sensor, creates sprk when nearby gravity is higher than its temp. (supports serialisation).\n\n47) EMGT: Electromagnet. Creates positive & negative EM fiels around it when sparked with PSCN or NSCN respectively.\n    Spark with both PSCN and NSCN and it becomes unstable heating and sparking nearby metals.\n    Can attract or repel metalic powders (BRMT, SLCN, BREL,PQRT, etc) or PHOT and ELEC depending upon the field created.\n    Heats while being powered (upto 400C), strength decreases with temperature. Melts around 1300C."
-local wpage5 = "48) SODM: Sodium shiny conductive metal. Reacts violently with WATR generating hydrogen. Turns powder when under pressure.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with chlorine when above 50C. Melts at 97C. Glows under vaccum.\n\n49) BALL: Bouncy glas balls, can spill away liquids and powders while bouncing. Breaks at 20 pressure and melts around 1900C\n\n50) SPSH: Space ship. Controlled via on screen buttons. Needs to be charged to move. Can explode!"
+local wpage5 = "48) SODM: Sodium shiny conductive metal. Reacts violently with WATR generating hydrogen. Turns powder when under pressure.\n    Absorbs O2 and Co2 to form oxide layers. Forms SALT with chlorine when above 50C. Melts at 97C. Glows under vaccum.\n\n49) BALL: Bouncy glas balls, can spill away liquids and powders while bouncing. Breaks at 20 pressure and melts around 1900C\n\n50) SPSH: Space ship. Controlled via on screen buttons. Needs charge to move. Pause the game to draw stuff while using SPSH.\n\n51) RUBR: Rubber fluid, sets into given shape when above 230C. Burns around 430C. Bounces off powders and liquids.\n    Blocks pressure like TTAN when solid and is a good heat insulator. Gets dissolved by GAS & OIL."
 
 creditw:addComponent(close2)
 creditw:addComponent(nextpg)
@@ -1670,6 +1683,7 @@ tpt.el.gsns.menu=0
 tpt.el.emgt.menu=0
 tpt.el.sodm.menu=0
 tpt.el.ball.menu=0
+tpt.el.rubr.menu=0
 elem.property(PLNE, "MenuVisible", 0)
 elem.property(MISLT, "MenuVisible", 0)
 end
@@ -1726,6 +1740,7 @@ tpt.el.gsns.menu=1
 tpt.el.emgt.menu=1
 tpt.el.sodm.menu=1
 tpt.el.ball.menu=1
+tpt.el.rubr.menu=1
 elem.property(PLNE, "MenuVisible", 1)
 elem.property(MISLT, "MenuVisible", 1)
 end
@@ -2293,12 +2308,7 @@ end)
 
 function startupcheck()
 event.register(event.tick,errormesg)
-if false then
-tpt.message_box("URS User Safety Warning!", "You are using the crackerk.lua script with a non supported version of TPT. Please download the original mod from mod thread. \nClick Dismiss to continue.")
-end
 fs.makeDirectory("scripts")
-os.remove("older.exe")
-os.remove("older")
 event.register(event.tick,writefile2)
 interface.addComponent(toggle)
 
@@ -2391,11 +2401,14 @@ end
 end)
 
 reset:action(function(sender)
+if tpt.confirm(" Mod resetter","Resetting the mod changes the mod settings back to their default values and disables all the lua scripts. Saves and other important data will remain intact. Click Full Reset to perform a hard mod reset.", "Full Reset") == true then
 os.remove("scripts/downloaded/2 LBPHacker-TPTMulti.lua")
 os.remove("scripts/downloaded/219 Maticzpl-Notifications.lua")
 os.remove("scripts/downloaded/scriptinfo.txt")
 os.remove("scripts/autorunsettings.txt")
+os.remove("oldmod")
 platform.restart()
+end
 end)
 
 function close()
@@ -2420,7 +2433,7 @@ graphics.fillRect(2,348,609, 10,20,20,20,200)
 graphics.drawText(posix2,349,motw,255,0,0,255)
 else
 graphics.fillRect(2,258,609, 10,20,20,20,200)
-graphics.drawText(posix2,259,motw,32,250,210,255)
+graphics.drawText(posix2,259,motw,245,225,0,255)
 end
 end
 end
@@ -6332,8 +6345,8 @@ fonts['7x10-Bold']['NULL'] = {
 chars_light = {
     ["0"] = {
         matrix = {
-            {0, 2, 3, 3, 0},
-            {2, 3, 1, 2, 3},
+            {0, 3, 3, 3, 0},
+            {3, 1, 1, 2, 3},
             {3, 1, 0, 0, 3},
             {3, 0, 2, 0, 3},
             {3, 0, 0, 0, 3},
@@ -6380,7 +6393,7 @@ chars_light = {
             {0, 0, 3, 1, 3},
             {0, 3, 1, 0, 3},
             {3, 1, 0, 1, 3},
-            {3, 3, 3, 2, 3},
+            {3, 3, 3, 3, 3},
             {0, 0, 0, 0, 3},
             {0, 0, 0, 1, 3}
         }
@@ -6393,7 +6406,7 @@ chars_light = {
             {2, 3, 3, 3, 2},
             {0, 0, 0, 0, 3},
             {1, 0, 0, 0, 3},
-            {2, 3, 3, 3, 1}
+            {3, 3, 3, 3, 1}
         }
     },
     ["6"] = {
@@ -6869,7 +6882,7 @@ chars_light = {
         matrix = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
-            {0, 3, 3, 1},
+            {0, 3, 3, 3},
             {3, 0, 0, 1},
             {0, 3, 3, 0},
             {1, 0, 0, 3},
@@ -6940,8 +6953,8 @@ chars_light = {
             {3, 0, 0, 3},
             {3, 0, 0, 3},
             {3, 0, 1, 3},
-            {3, 1, 3, 2},
-            {0, 3, 2, 0}
+            {3, 1, 1, 3},
+            {0, 3, 3, 0}
         }
     },
     ["W"] = {
@@ -6951,7 +6964,7 @@ chars_light = {
             {3, 1, 0, 3, 0, 1, 3},
             {1, 3, 0, 3, 0, 3, 1},
             {1, 3, 2, 3, 2, 3, 1},
-            {0, 3, 2, 0, 2, 3, 0},
+            {0, 3, 3, 0, 3, 3, 0},
             {0, 3, 0, 0, 0, 3, 0}
         }
     },
@@ -7380,7 +7393,7 @@ chars_light = {
 }
 
 function notificationscript()
--- Prevent multiple instances of the script running
+--- Prevent multiple instances of the script running
 if MaticzplNotifications ~= nil then
     return
 end
@@ -7588,8 +7601,8 @@ function MaticzplNotifications.CheckForChanges()
         -- FP
         notif.fpCompare = http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=16");
         -- By date
-        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate user%3A"..name))
-        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=sort%3Adate user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=sort%3Adate%20user%3A"..name))
+        table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=sort%3Adate%20user%3A"..name))
         -- By votes
         table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=0&Count=30&Search_Query=user%3A"..name))
         table.insert(notif.requests, http.get("https://powdertoy.co.uk/Browse.json?Start=30&Count=30&Search_Query=user%3A"..name))

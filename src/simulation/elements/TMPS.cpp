@@ -30,7 +30,7 @@ void Element::Element_TMPS()
 
 	DefaultProperties.temp = 4.0f + 273.15f;
 	HeatConduct = 0;
-	Description = "TMP sensor, creates a spark when there's a nearby particle with higher .TMP than its temperature.";
+	Description = "Tmp sensor. Use .tmp3 for detecting different tmp values. Read wiki for more information.";
 
 	Properties = TYPE_SOLID;
 
@@ -78,12 +78,10 @@ static int update(UPDATE_FUNC_ARGS)
 	bool doSerialization = false;
 	bool doDeserialization = false;
 	int tmpp = 0;
-
+//.tmp3 modes: .tmp3 = 0 or 1 (tmp), 2 = .tmp2, 3 = .tmp3 and so on. Currently supported upto .tmp4
 	for (int rx = -rd; rx < rd + 1; rx++)
 		for (int ry = -rd; ry < rd + 1; ry++)
 			if (x + rx >= 0 && y + ry >= 0 && x + rx < XRES && y + ry < YRES && (rx || ry))
-
-
 			{
 				int r = pmap[y + ry][x + rx];
 				if (!r)
@@ -98,7 +96,22 @@ static int update(UPDATE_FUNC_ARGS)
 					if (TYP(r) != PT_TMPS && TYP(r) != PT_FILT)
 					{
 						doSerialization = true;
-						tmpp = parts[ID(r)].tmp;
+						if (parts[i].tmp3 == 0 || parts[i].tmp3 == 1)
+						{
+							tmpp = parts[ID(r)].tmp;
+						}
+						else if (parts[i].tmp3 == 2)
+						{
+							tmpp = parts[ID(r)].tmp2;
+						}
+						else if (parts[i].tmp3 == 3)
+						{
+							tmpp = parts[ID(r)].tmp3;
+						}
+						else if (parts[i].tmp3 == 4)
+						{
+							tmpp = parts[ID(r)].tmp4;
+						}
 					}
 					break;
 				case 3:
@@ -111,13 +124,49 @@ static int update(UPDATE_FUNC_ARGS)
 					break;
 				case 2:
 					// Invert mode
-					if (TYP(r) != PT_METL && parts[ID(r)].tmp <= parts[i].temp - 273.15)
-						parts[i].life = 1;
+					if (parts[i].tmp3 == 0 || parts[i].tmp3 == 1)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp <= parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
+					else if (parts[i].tmp3 == 2)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp2 <= parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
+					else if (parts[i].tmp3 == 3)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp3 <= parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
+					else if (parts[i].tmp3 == 4)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp4 <= parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
 					break;
 				default:
 					// Normal mode
-					if (TYP(r) != PT_METL && parts[ID(r)].tmp > parts[i].temp - 273.15)
-						parts[i].life = 1;
+					if (parts[i].tmp3 == 0 || parts[i].tmp3 == 1)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp > parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
+					else if (parts[i].tmp3 == 2)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp2 > parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
+					else if (parts[i].tmp3 == 3)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp3 > parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
+					else if (parts[i].tmp3 == 4)
+					{
+						if (TYP(r) != PT_METL && parts[ID(r)].tmp4 > parts[i].temp - 273.15)
+							parts[i].life = 1;
+					}
 					break;
 				}
 			}
@@ -151,8 +200,24 @@ static int update(UPDATE_FUNC_ARGS)
 
 					if (TYP(r) != PT_FILT)
 					{
-						parts[ID(r)].tmp = tmpp - 0x10000000;
+						if (parts[i].tmp3 == 0 || parts[i].tmp3 == 1)
+						{
+							parts[ID(r)].tmp = tmpp - 0x10000000;
+						}
+						else if (parts[i].tmp3 == 2)
+						{
+							parts[ID(r)].tmp2 = tmpp - 0x10000000;
+						}
+						else if (parts[i].tmp3 == 3)
+						{
+							parts[ID(r)].tmp3 = tmpp - 0x10000000;
+						}
+						else if (parts[i].tmp3 == 4)
+						{
+							parts[ID(r)].tmp4 = tmpp - 0x10000000;
+						}
 						break;
+						
 					}
 				}
 			}

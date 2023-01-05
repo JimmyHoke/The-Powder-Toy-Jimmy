@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cmath>
 #include "SDLCompat.h"
+#include "Format.h"
 
 #include "OptionsController.h"
 #include "OptionsModel.h"
@@ -237,6 +238,19 @@ OptionsView::OptionsView():
 	scrollPanel->AddChild(tempLabel);
 
 	currentY+=20;
+	temperatureScale = new ui::DropDown(ui::Point(Size.X-95, currentY), ui::Point(80, 16));
+	scrollPanel->AddChild(temperatureScale);
+	temperatureScale->AddOption(std::pair<String, int>("Kelvin", 0));
+	temperatureScale->AddOption(std::pair<String, int>("Celsius", 1));
+	temperatureScale->AddOption(std::pair<String, int>("Fahrenheit", 2));
+	temperatureScale->SetActionCallback({ [this] { c->SetTemperatureScale(temperatureScale->GetOption().second); } });
+
+	tempLabel = new ui::Label(ui::Point(8, currentY), ui::Point(Size.X-96, 16), "Temperature Scale");
+	tempLabel->Appearance.HorizontalAlign = ui::Appearance::AlignLeft;
+	tempLabel->Appearance.VerticalAlign = ui::Appearance::AlignMiddle;
+	scrollPanel->AddChild(tempLabel);
+
+	currentY+=20;
 	tmpSeparator = new Separator(ui::Point(0, currentY), ui::Point(Size.X, 1));
 	scrollPanel->AddChild(tmpSeparator);
 
@@ -438,15 +452,22 @@ void OptionsView::UpdateAmbientAirTempPreview(float airTemp, bool isValid)
 	ambientAirTempPreview->Appearance.BackgroundHover = ambientAirTempPreview->Appearance.BackgroundInactive;
 }
 
+void OptionsView::AmbientAirTempToTextBox(float airTemp)
+{
+	StringBuilder sb;
+	sb << Format::Precision(2);
+	format::RenderTemperature(sb, airTemp, temperatureScale->GetOption().second);
+	ambientAirTemp->SetText(sb.Build());
+}
+
 void OptionsView::UpdateAirTemp(String temp, bool isDefocus)
 {
 	// Parse air temp and determine validity
-	float airTemp;
+	float airTemp = 0;
 	bool isValid;
 	try
 	{
-		void ParseFloatProperty(String value, float &out);
-		ParseFloatProperty(temp, airTemp);
+		airTemp = format::StringToTemperature(temp, temperatureScale->GetOption().second);
 		isValid = true;
 	}
 	catch (const std::exception &ex)
@@ -468,13 +489,8 @@ void OptionsView::UpdateAirTemp(String temp, bool isDefocus)
 			airTemp = MIN_TEMP;
 		else if (airTemp > MAX_TEMP)
 			airTemp = MAX_TEMP;
-		else
-			return;
 
-		// Update textbox with the new value
-		StringBuilder sb;
-		sb << Format::Precision(2) << airTemp;
-		ambientAirTemp->SetText(sb.Build());
+		AmbientAirTempToTextBox(airTemp);
 	}
 	// Out of range temperatures are invalid, preview should go away
 	else if (isValid && (airTemp < MIN_TEMP || airTemp > MAX_TEMP))
@@ -489,20 +505,18 @@ void OptionsView::UpdateAirTemp(String temp, bool isDefocus)
 
 void OptionsView::NotifySettingsChanged(OptionsModel * sender)
 {
+	temperatureScale->SetOption(sender->GetTemperatureScale()); // has to happen before AmbientAirTempToTextBox is called
 	heatSimulation->SetChecked(sender->GetHeatSimulation());
 	ambientHeatSimulation->SetChecked(sender->GetAmbientHeatSimulation());
 	newtonianGravity->SetChecked(sender->GetNewtonianGravity());
 	waterEqualisation->SetChecked(sender->GetWaterEqualisation());
 	airMode->SetOption(sender->GetAirMode());
 	// Initialize air temp and preview only when the options menu is opened, and not when user is actively editing the textbox
-	if (!initializedAirTempPreview)
+	if (!ambientAirTemp->IsFocused())
 	{
-		initializedAirTempPreview = true;
 		float airTemp = sender->GetAmbientAirTemperature();
 		UpdateAmbientAirTempPreview(airTemp, true);
-		StringBuilder sb;
-		sb << Format::Precision(2) << airTemp;
-		ambientAirTemp->SetText(sb.Build());
+		AmbientAirTempToTextBox(airTemp);
 	}
 	gravityMode->SetOption(sender->GetGravityMode());
 	customGravityX = sender->GetCustomGravityX();

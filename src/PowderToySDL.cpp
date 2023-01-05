@@ -2,6 +2,7 @@
 #include "common/tpt-minmax.h"
 
 #include <map>
+#include <optional>
 #include <ctime>
 #include <climits>
 #ifdef WIN
@@ -18,7 +19,7 @@
 
 #include <iostream>
 #if defined(LIN)
-# include "powder-128.png.h"
+# include "icon_exe.png.h"
 #endif
 #include <csignal>
 #include <stdexcept>
@@ -53,7 +54,6 @@
 #include "gui/interface/Engine.h"
 #include "gui/interface/Keys.h"
 
-#define INCLUDE_SYSWM
 #include "SDLCompat.h"
 
 int desktopWidth = 1280, desktopHeight = 1024;
@@ -195,27 +195,10 @@ void SDLOpen()
 		}
 	}
 
-#ifdef WIN
-	SDL_SysWMinfo SysInfo;
-	SDL_VERSION(&SysInfo.version);
-	if(SDL_GetWindowWMInfo(sdl_window, &SysInfo) <= 0)
-	{
-	    printf("%s : %p\n", SDL_GetError(), SysInfo.info.win.window);
-	    exit(-1);
-	}
-	HWND WindowHandle = SysInfo.info.win.window;
-
-	// Use GetModuleHandle to get the Exe HMODULE/HINSTANCE
-	HMODULE hModExe = GetModuleHandle(NULL);
-	HICON hIconSmall = (HICON)LoadImage(hModExe, MAKEINTRESOURCE(101), IMAGE_ICON, 16, 16, LR_SHARED);
-	HICON hIconBig = (HICON)LoadImage(hModExe, MAKEINTRESOURCE(101), IMAGE_ICON, 32, 32, LR_SHARED);
-	SendMessage(WindowHandle, WM_SETICON, ICON_SMALL, (LPARAM)hIconSmall);
-	SendMessage(WindowHandle, WM_SETICON, ICON_BIG, (LPARAM)hIconBig);
-#endif
 #ifdef LIN
 	std::vector<pixel> imageData;
 	int imgw, imgh;
-	if (PngDataToPixels(imageData, imgw, imgh, reinterpret_cast<const char *>(icon_png), icon_png_size, false))
+	if (PngDataToPixels(imageData, imgw, imgh, reinterpret_cast<const char *>(icon_exe_png), icon_exe_png_size, false))
 	{
 		SDL_Surface *icon = SDL_CreateRGBSurfaceFrom(&imageData[0], imgw, imgh, 32, imgw * sizeof(pixel), 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 		SDL_SetWindowIcon(sdl_window, icon);
@@ -311,104 +294,6 @@ bool RecreateWindow()
 unsigned int GetTicks()
 {
 	return SDL_GetTicks();
-}
-
-std::map<ByteString, ByteString> readArguments(int argc, char * argv[])
-{
-	std::map<ByteString, ByteString> arguments;
-
-	//Defaults
-	arguments["scale"] = "";
-	arguments["proxy"] = "";
-	arguments["cafile"] = "";
-	arguments["capath"] = "";
-	arguments["nohud"] = "false"; //the nohud, sound, and scripts commands currently do nothing.
-	arguments["sound"] = "false";
-	arguments["kiosk"] = "false";
-	arguments["redirect"] = "false";
-	arguments["scripts"] = "false";
-	arguments["open"] = "";
-	arguments["ddir"] = "";
-	arguments["ptsave"] = "";
-
-	for (int i=1; i<argc; i++)
-	{
-		if (!strncmp(argv[i], "scale:", 6) && argv[i][6])
-		{
-			arguments["scale"] = &argv[i][6];
-		}
-		else if (!strncmp(argv[i], "proxy:", 6))
-		{
-			if(argv[i][6])
-				arguments["proxy"] = &argv[i][6];
-			else
-				arguments["proxy"] = "false";
-		}
-		else if (!strncmp(argv[i], "cafile:", 7))
-		{
-			if(argv[i][7])
-				arguments["cafile"] = &argv[i][7];
-			else
-				arguments["cafile"] = "false";
-		}
-		else if (!strncmp(argv[i], "capath:", 7))
-		{
-			if(argv[i][7])
-				arguments["capath"] = &argv[i][7];
-			else
-				arguments["capath"] = "false";
-		}
-		else if (!strncmp(argv[i], "nohud", 5))
-		{
-			arguments["nohud"] = "true";
-		}
-		else if (!strncmp(argv[i], "kiosk", 5))
-		{
-			arguments["kiosk"] = "true";
-		}
-		else if (!strncmp(argv[i], "redirect", 8))
-		{
-			arguments["redirect"] = "true";
-		}
-		else if (!strncmp(argv[i], "sound", 5))
-		{
-			arguments["sound"] = "true";
-		}
-		else if (!strncmp(argv[i], "scripts", 8))
-		{
-			arguments["scripts"] = "true";
-		}
-		else if (!strncmp(argv[i], "file:", 5) && strlen(argv[i]) >= 7)
-		{
-			arguments["open"] = format::URLDecode(argv[i] + 7); // skip "file://"
-		}
-		else if (!strncmp(argv[i], "open", 5) && i+1<argc)
-		{
-			arguments["open"] = argv[i+1];
-			i++;
-		}
-		else if (!strncmp(argv[i], "ddir", 5) && i+1<argc)
-		{
-			arguments["ddir"] = argv[i+1];
-			i++;
-		}
-		else if (!strncmp(argv[i], "ptsave:", 7) && strlen(argv[i]) >= 8)
-		{
-			arguments["ptsave"] = argv[i];
-			break;
-		}
-		else if (!strncmp(argv[i], "ptsave", 7) && i+1<argc)
-		{
-			arguments["ptsave"] = argv[i+1];
-			i++;
-			break;
-		}
-		else if (!strncmp(argv[i], "disable-network", 16))
-		{
-			arguments["disable-network"] = "true";
-		}
-	}
-	return arguments;
 }
 
 int elapsedTime = 0, currentTime = 0, lastTime = 0, currentFrame = 0;
@@ -731,7 +616,7 @@ int GuessBestScale()
 
 int main(int argc, char * argv[])
 {
-#if defined(_DEBUG) && defined(_MSC_VER)
+#if defined(DEBUG) && defined(_MSC_VER)
 	_CrtSetReportMode(_CRT_ASSERT, _CRTDBG_MODE_DEBUG);
 #endif
 	currentWidth = WINDOWW;
@@ -747,14 +632,53 @@ int main(int argc, char * argv[])
 
 	Platform::originalCwd = Platform::GetCwd();
 
-	std::map<ByteString, ByteString> arguments = readArguments(argc, argv);
+	using Argument = std::optional<ByteString>;
+	std::map<ByteString, Argument> arguments;
 
-	if (arguments["ddir"].length())
+	for (auto i = 1; i < argc; ++i)
+	{
+		auto str = ByteString(argv[i]);
+		if (str.BeginsWith("file://"))
+		{
+			arguments.insert({ "open", format::URLDecode(str.substr(7 /* length of the "file://" prefix */)) });
+		}
+		else if (str.BeginsWith("ptsave:"))
+		{
+			arguments.insert({ "ptsave", str });
+		}
+		else if (auto split = str.SplitBy(':'))
+		{
+			arguments.insert({ split.Before(), split.After() });
+		}
+		else if (auto split = str.SplitBy('='))
+		{
+			arguments.insert({ split.Before(), split.After() });
+		}
+		else if (str == "open" || str == "ptsave" || str == "ddir")
+		{
+			if (i + 1 < argc)
+			{
+				arguments.insert({ str, argv[i + 1] });
+				i += 1;
+			}
+			else
+			{
+				std::cerr << "no value provided for command line parameter " << str << std::endl;
+			}
+		}
+		else
+		{
+			arguments.insert({ str, "" }); // so .has_value() is true
+		}
+	}
+
+	auto ddirArg = arguments["ddir"];
+	if (ddirArg.has_value())
 	{
 #ifdef WIN
-		int failure = _chdir(arguments["ddir"].c_str());
+		int failure = _chdir(ddirArg.value().c_str());
 #else
-		int failure = chdir(arguments["ddir"].c_str());
+		int failure = chdir(ddirArg.value().c_str());
 #endif
 		if (!failure)
 			Platform::sharedCwd = Platform::GetCwd();
@@ -803,14 +727,27 @@ int main(int argc, char * argv[])
 	momentumScroll = Client::Ref().GetPrefBool("MomentumScroll", true);
 	showAvatars = Client::Ref().GetPrefBool("ShowAvatars", true);
 
+	auto true_string = [](ByteString str) {
+		str = str.ToLower();
+		return str == "true" ||
+		       str == "t" ||
+		       str == "on" ||
+		       str == "yes" ||
+		       str == "y" ||
+		       str == ""; // standalone "redirect" or "disable-bluescreen" or similar arguments
+	};
+	auto true_arg = [&true_string](Argument arg) {
+		return arg.has_value() && true_string(arg.value());
+	};
 
-	if(arguments["kiosk"] == "true")
+	auto kioskArg = arguments["kiosk"];
+	if (kioskArg.has_value())
 	{
-		fullscreen = true;
+		fullscreen = true_string(kioskArg.value());
 		Client::Ref().SetPref("Fullscreen", fullscreen);
 	}
 
-	if(arguments["redirect"] == "true")
+	if (true_arg(arguments["redirect"]))
 	{
 		FILE *new_stdout = freopen("stdout.log", "w", stdout);
 		FILE *new_stderr = freopen("stderr.log", "w", stderr);
@@ -820,26 +757,34 @@ int main(int argc, char * argv[])
 		}
 	}
 
-	if(arguments["scale"].length())
+	auto scaleArg = arguments["scale"];
+	if (scaleArg.has_value())
 	{
-		scale = arguments["scale"].ToNumber<int>();
-		Client::Ref().SetPref("Scale", scale);
+		try
+		{
+			scale = scaleArg.value().ToNumber<int>();
+			Client::Ref().SetPref("Scale", scale);
+		}
+		catch (const std::runtime_error &e)
+		{
+			std::cerr << "failed to set scale: " << e.what() << std::endl;
+		}
 	}
 
-	auto clientConfig = [](ByteString cmdlineValue, ByteString configName, ByteString defaultValue) {
+	auto clientConfig = [](Argument arg, ByteString name, ByteString defaultValue) {
 		ByteString value;
-		if (cmdlineValue.length())
+		if (arg.has_value())
 		{
-			value = cmdlineValue;
-			if (value == "false")
+			value = arg.value();
+			if (value == "")
 			{
 				value = defaultValue;
 			}
-			Client::Ref().SetPref(configName, value);
+			Client::Ref().SetPref(name, value);
 		}
 		else
 		{
-			value = Client::Ref().GetPrefByteString(configName, defaultValue);
+			value = Client::Ref().GetPrefByteString(name, defaultValue);
 		}
 		return value;
 	};
@@ -847,9 +792,7 @@ int main(int argc, char * argv[])
 	ByteString cafileString = clientConfig(arguments["cafile"], "CAFile", "");
 	ByteString capathString = clientConfig(arguments["capath"], "CAPath", "");
 
-	bool disableNetwork = false;
-	if (arguments.find("disable-network") != arguments.end())
-		disableNetwork = true;
+	bool disableNetwork = true_arg(arguments["disable-network"]);
 
 	Client::Ref().Initialise(proxyString, cafileString, capathString, disableNetwork);
 
@@ -886,12 +829,16 @@ int main(int argc, char * argv[])
 	engine->Begin(WINDOWW, WINDOWH);
 	engine->SetFastQuit(Client::Ref().GetPrefBool("FastQuit", true));
 
-#if !defined(DEBUG) && !defined(_DEBUG)
-	//Get ready to catch any dodgy errors
-	signal(SIGSEGV, SigHandler);
-	signal(SIGFPE, SigHandler);
-	signal(SIGILL, SigHandler);
-	signal(SIGABRT, SigHandler);
+#if !defined(DEBUG)
+	bool enableBluescreen = !true_arg(arguments["disable-bluescreen"]);
+	if (enableBluescreen)
+	{
+		//Get ready to catch any dodgy errors
+		signal(SIGSEGV, SigHandler);
+		signal(SIGFPE, SigHandler);
+		signal(SIGILL, SigHandler);
+		signal(SIGABRT, SigHandler);
+	}
 #endif
 
 #ifdef X86_SSE
@@ -902,30 +849,29 @@ int main(int argc, char * argv[])
 #endif
 
 	GameController * gameController = NULL;
-#if !defined(DEBUG) && !defined(_DEBUG)
-	try {
-#endif
 
+	auto wrapWithBluescreen = [&]() {
 		gameController = new GameController();
 		engine->ShowWindow(gameController->GetView());
 
-		if(arguments["open"].length())
+		auto openArg = arguments["open"];
+		if (openArg.has_value())
 		{
 #ifdef DEBUG
-			std::cout << "Loading " << arguments["open"] << std::endl;
+			std::cout << "Loading " << openArg.value() << std::endl;
 #endif
-			if (Platform::FileExists(arguments["open"]))
+			if (Platform::FileExists(openArg.value()))
 			{
 				try
 				{
 					std::vector<char> gameSaveData;
-					if (!Platform::ReadFile(gameSaveData, arguments["open"]))
+					if (!Platform::ReadFile(gameSaveData, openArg.value()))
 					{
 						new ErrorMessage("Error", "Could not read file");
 					}
 					else
 					{
-						SaveFile * newFile = new SaveFile(arguments["open"]);
+						SaveFile * newFile = new SaveFile(openArg.value());
 						GameSave * newSave = new GameSave(std::move(gameSaveData));
 						newFile->SetGameSave(newSave);
 						gameController->LoadSaveFile(newFile);
@@ -944,18 +890,18 @@ int main(int argc, char * argv[])
 			}
 		}
 
-		if (arguments["ptsave"].length())
+		auto ptsaveArg = arguments["ptsave"];
+		if (ptsaveArg.has_value())
 		{
 			engine->g->fillrect((engine->GetWidth()/2)-101, (engine->GetHeight()/2)-26, 202, 52, 0, 0, 0, 210);
 			engine->g->drawrect((engine->GetWidth()/2)-100, (engine->GetHeight()/2)-25, 200, 50, 255, 255, 255, 180);
 			engine->g->drawtext((engine->GetWidth()/2)-(Graphics::textwidth("Loading save...")/2), (engine->GetHeight()/2)-5, "Loading save...", style::Colour::InformationTitle.Red, style::Colour::InformationTitle.Green, style::Colour::InformationTitle.Blue, 255);
 
 			blit(engine->g->vid);
-			ByteString ptsaveArg = arguments["ptsave"];
 			try
 			{
 				ByteString saveIdPart;
-				if (ByteString::Split split = arguments["ptsave"].SplitBy(':'))
+				if (ByteString::Split split = ptsaveArg.value().SplitBy(':'))
 				{
 					if (split.Before() != "ptsave")
 						throw std::runtime_error("Not a ptsave link");
@@ -991,14 +937,23 @@ int main(int argc, char * argv[])
 
 		EngineProcess();
 		SaveWindowPosition();
+	};
 
-#if !defined(DEBUG) && !defined(_DEBUG)
-	}
-	catch(std::exception& e)
+#if !defined(DEBUG)
+	if (enableBluescreen)
 	{
-		BlueScreen(ByteString(e.what()).FromUtf8());
+		try
+		{
+			wrapWithBluescreen();
+		}
+		catch (const std::exception &e)
+		{
+			BlueScreen(ByteString(e.what()).FromUtf8());
+		}
 	}
+	else
 #endif
+	wrapWithBluescreen(); // the else branch of the if in the #if !defined(DEBUG)
 
 	ui::Engine::Ref().CloseWindow();
 	delete gameController;

@@ -115,10 +115,15 @@ class LuaScriptInterface: public CommandInterface
 	static int simulation_framerender(lua_State * l);
 	static int simulation_gspeed(lua_State * l);
 	static int simulation_takeSnapshot(lua_State *l);
+	static int simulation_historyRestore(lua_State *l);
+	static int simulation_historyForward(lua_State *l);
 	static int simulation_replaceModeFlags(lua_State *l);
 	static int simulation_listCustomGol(lua_State *l);
 	static int simulation_addCustomGol(lua_State *l);
 	static int simulation_removeCustomGol(lua_State *l);
+	static int simulation_lastUpdatedID(lua_State *l);
+	static int simulation_updateUpTo(lua_State *l);
+	static int simulation_temperatureScale(lua_State *l);
 
 
 	//Renderer
@@ -211,6 +216,7 @@ public:
 
 	static void LuaGetProperty(lua_State* l, StructProperty property, intptr_t propertyAddress);
 	static void LuaSetProperty(lua_State* l, StructProperty property, intptr_t propertyAddress, int stackPos);
+	static void LuaSetParticleProperty(lua_State* l, int particleID, StructProperty property, intptr_t propertyAddress, int stackPos);
 
 	ui::Window * Window;
 	lua_State *l;

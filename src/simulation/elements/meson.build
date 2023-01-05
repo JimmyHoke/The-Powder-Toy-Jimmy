@@ -243,6 +243,7 @@ simulation_elem_ids = [
 	[ 'MGNT',   MOD_ELEMENT_OFFSET + 47 ],
 	[ 'SODM',   MOD_ELEMENT_OFFSET + 48 ],
 	[ 'BALL',   MOD_ELEMENT_OFFSET + 49 ],
+	[ 'RUBR',   MOD_ELEMENT_OFFSET + 50 ],
 	['JRAY', 500],
 	['EBCL', 501],
 	['GGOO', 502],
