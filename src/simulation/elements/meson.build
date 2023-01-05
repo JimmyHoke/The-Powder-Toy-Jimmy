@@ -253,7 +253,7 @@ simulation_elem_ids = [
 	['SYST', 507],
 	['JFUL', 508],
 	['HECL', 509],
-	['FRCF', 509],
+	['FRCF', 498],
 	['CPTL', 510],
 	['CPTG', 511],
 	['CPTS', 499],
